@@ -52,7 +52,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		characterSort:{
 			happy:{
-				correction_history:['cuishi'],
+				correction_history:['cuishi','shen_dongzhuo'],
 				honor_of_kings:['hok_lixin'],
 				our_kings:['shen_caozhi'],
 			},
@@ -64,11 +64,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_lixin:['male','shen',5,['lx_wangming','lx_dengshen',],['qun']],
 			// 神曹植
 			shen_caozhi:['male','shen',3,['caigao','badou','qibu','chengshi'],['wei']],
+			// 神董卓
+			shen_dongzhuo:['male','shen',5,['cannue','xiehan','huidu'],['qun']],
 		},
 		characterIntro:{
 			cuishi:'崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
 			hok_lixin:'炽心化寒剑，冰霜作铁衣，一人一兽化作比这些更冷冽锋利的存在，终破开风雪，终行至峰顶，终向这万仞寒山，挥出劈天裂地的一剑。心火重燃，山海可照。',
 			shen_caozhi:'字子建，沛国谯人，三国曹魏著名文学家，建安文学代表人物。魏武帝曹操之子，魏文帝曹丕之弟，生前曾为陈王，去世后谥号“思”，因此又称陈思王。南朝宋文学家谢灵运更有“天下才有一石，曹子建独占八斗”的评价。王士祯尝论汉魏以来二千年间诗家堪称“仙才”者，曹植、李白、苏轼三人耳。',
+			shen_dongzhuo:'字仲颖，陇西临洮人。东汉末年少帝、献帝时权臣，西凉军阀。官至太师、郿侯。其为人残忍嗜杀，倒行逆施，招致群雄联合讨伐，但联合军在董卓迁都长安不久后瓦解。后被其亲信吕布所杀。',
 		},
 		characterReplace:{
 			// shen_zhangliao:['shen_zhangliao','ol_zhangliao'],
@@ -165,54 +168,57 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			//将梅花手牌视为闪打出
-			// pianwan:{
-			// 	mod:{
-			// 		aiValue:function(player,card,num){
-			// 			if(get.name(card)!='shan'&&get.suit(card)!='club') return;
-			// 			var cards=player.getCards('h',function(card){
-			// 				return get.name(card)=='shan'||get.suit(card)=='club';
-			// 			});
-			// 			cards.sort(function(a,b){
-			// 				return (get.name(b)=='shan'?1:2)-(get.name(a)=='shan'?1:2);
-			// 			});
-			// 			var geti=function(){
-			// 				if(cards.contains(card)){
-			// 					return cards.indexOf(card);
-			// 				}
-			// 				return cards.length;
-			// 			};
-			// 			if(get.name(card)=='shan') return Math.min(num,[6,4,3][Math.min(geti(),2)])*0.6;
-			// 			return Math.max(num,[6.5,4,3][Math.min(geti(),2)]);
-			// 		},
-			// 		aiUseful:function(){
-			// 			return lib.skill.qingguo.mod.aiValue.apply(this,arguments);
-			// 		},
-			// 	},
-			// 	audio:2,
-			// 	enable:['chooseToRespond','chooseToUse'],
-			// 	filterCard:function(card){
-			// 		return get.suit(card)=='club';
-			// 	},
-			// 	viewAs:{name:'shan'},
-			// 	viewAsFilter:function(player){
-			// 		if(!player.countCards('h',{suit:'club'})) return false;
-			// 	},
-			// 	position:'h',
-			// 	prompt:'弃置一张梅花手牌当闪使用或打出',
-			// 	check:function(){return 1},
-			// 	ai:{
-			// 		order:3,
-			// 		respondShan:true,
-			// 		skillTagFilter:function(player){
-			// 			if(!player.countCards('h',{suit:'club'})) return false;
-			// 		},
-			// 		effect:{
-			// 			target:function(card,player,target,current){
-			// 				if(get.tag(card,'respondShan')&&current<0) return 0.6
-			// 			}
-			// 		}
-			// 	}
-			// },
+			/*
+			pianwan:{
+				mod:{
+					aiValue:function(player,card,num){
+						if(get.name(card)!='shan'&&get.suit(card)!='club') return;
+						var cards=player.getCards('h',function(card){
+							return get.name(card)=='shan'||get.suit(card)=='club';
+						});
+						cards.sort(function(a,b){
+							return (get.name(b)=='shan'?1:2)-(get.name(a)=='shan'?1:2);
+						});
+						var geti=function(){
+							if(cards.contains(card)){
+								return cards.indexOf(card);
+							}
+							return cards.length;
+						};
+						if(get.name(card)=='shan') return Math.min(num,[6,4,3][Math.min(geti(),2)])*0.6;
+						return Math.max(num,[6.5,4,3][Math.min(geti(),2)]);
+					},
+					aiUseful:function(){
+						return lib.skill.qingguo.mod.aiValue.apply(this,arguments);
+					},
+				},
+				audio:2,
+				enable:['chooseToRespond','chooseToUse'],
+				filterCard:function(card){
+					return get.suit(card)=='club';
+				},
+				viewAs:{name:'shan'},
+				viewAsFilter:function(player){
+					if(!player.countCards('h',{suit:'club'})) return false;
+				},
+				position:'h',
+				prompt:'弃置一张梅花手牌当闪使用或打出',
+				check:function(){return 1},
+				ai:{
+					order:3,
+					respondShan:true,
+					skillTagFilter:function(player){
+						if(!player.countCards('h',{suit:'club'})) return false;
+					},
+					effect:{
+						target:function(card,player,target,current){
+							if(get.tag(card,'respondShan')&&current<0) return 0.6
+						}
+					}
+				}
+			},
+			*/
+
 			// 神李信
 			lx_wangming:{
 				audio:2,
@@ -389,9 +395,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+
 			// 神曹植
 			caigao: {
-				audio: '',
+				audio: 'reluoying',
 				forced: true,
 				derivation: 'caigao_rewrite',
 				group: 'caigao_rewrite',
@@ -432,7 +439,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				subSkill: {
 					rewrite:{
-						audio:'',
+						audio:'reluoying',
 						forced:true,
 						trigger: {global: 'gainEnd'},
 						filter: function(event, player){
@@ -598,6 +605,195 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+
+			// 神董卓
+			cannue:{
+				audio:2,
+				forced:true,
+				unique:true,
+				group: ['cannue2','cannue3'],
+				marktext:'虐',
+				trigger:{
+					source:'damageSource',
+				},
+				filter:function(event, player){
+					return event.num>0 && player.countMark('cannue')<6; 
+				},
+				intro:{
+					name:'残虐',
+					content: 'mark',
+				},
+				content:function(){
+					player.addMark('cannue',(trigger.num+player.countMark('cannue')>6?6-player.countMark('cannue'):trigger.num));
+				},
+			},
+			cannue2:{
+				audio:2,
+				forced:true,
+				unique:true,
+				mod:{
+					cardname:function(card,player,name){
+						if(card.name=='wuge') return 'nanman';
+					},
+					cardname:function(card,player,name){
+						if(card.name=='taoyuan') return 'wanjian';
+					},
+				},
+				trigger:{player:'useCard'},
+				filter:function(event,player){
+					return event.card.name=='wuge'||event.card.name=='taoyuan';
+				},
+				prompt: '[五谷丰登]视为[南蛮入侵]	  [桃园结义]视为[万箭齐发]',
+			},
+			cannue3:{
+				audio:2,
+				audioname:['re_dongzhuo','ol_dongzhuo'],
+				trigger:{player:'useCardToPlayered',target:'useCardToTargeted'},
+				forced:true,
+				filter:function(event,player){
+					return event.card.name == 'sha';
+				},
+				check:function(event,player){
+					return player==event.player;
+				},
+				content:function(){
+					var id=(player==trigger.player?trigger.target:player).playerid;
+					var map=trigger.getParent().customArgs;
+					if(!map[id]) map[id]={};
+					if(typeof map[id].shanRequired=='number'){
+						map[id].shanRequired++;
+					}
+					else{
+						map[id].shanRequired=2;
+					}
+				},
+				ai:{
+					directHit_ai:true,
+					skillTagFilter:function(player,tag,arg){
+						if(arg.card.name!='sha'||arg.target.countCards('h','shan')>1) return false;
+					},
+				},
+			},
+			xiehan:{
+				audio:2,
+				forced: true,
+				group: 'xiehan2',
+				trigger: {global: 'drawBegin'},
+				filter: function(event, player){
+					return player!=event.player&&event.player!=_status.currentPhase&&event.num>1;
+				},
+				content: function(){
+					trigger.num--;
+				},
+				ai:{
+					threaten:1.2
+				}
+			},
+			xiehan2:{
+				audio:2,
+				forced: true,
+				trigger:{global:'dieAfter'},
+				content:function(){
+					player.gainMaxHp();
+					player.recover();
+				},
+				ai:{
+					threaten:1.5
+				}
+			},
+			huidu:{
+				audio:2,
+				forced:true,
+				unique:true,
+				trigger:{player:'phaseJieshuEnd'},
+				juexingji:true,
+				skillAnimation:true,
+				animationColor:'metal',
+				filter: function(event,player){
+					return player.countMark('cannue')>=6;
+				},
+				content:function(){
+					player.awakenSkill(event.name);
+					
+					var cards=[];
+					while(cards.length<70){
+						var card=get.cardPile2(function(card){
+							var info=get.info(card,false);
+							return !info.notarget && get.type2(card,'trick')=='trick';
+						});
+						if(card) {
+							cards.push(card);
+							game.cardsGotoOrdering([card]);
+							card.remove();
+							game.log('=======',card);
+						}
+						else break;
+					}
+					if(!cards.length) event.finish();
+					else{
+						event.cards=cards;
+						game.log(cards.length,'  ',cards);
+						// game.cardsGotoOrdering(cards);
+						
+						for(var i of cards){
+							var info=lib.card[i.name];
+							var list=game.filterPlayer(function(target){
+								return !target.isDead();
+							});
+							var source = list.randomGet();
+							var list2 = Array.from(list);
+							list2.splice(list2.indexOf(source),1);
+							var target=list2.randomGet();
+							if(info.selectTarget!=undefined){
+								if(Array.isArray(info.selectTarget)){
+									if(info.selectTarget[0]<0) {
+										source.useCard(i,'nowuxie');
+										game.log(source,'使用了',i.name);
+										game.delay(0.3);
+									}
+									var targets = [];
+									targets.push(target);
+									list2.splice(list2.indexOf(target),1);
+									var target2=list2.randomGet();
+									targets.push(target2);
+									source.useCard(i,'nowuxie',targets);
+									game.log(source,'对',target,'、',target2,'使用了',i.name);
+									game.delay(0.3);
+								}
+								else if(info.selectTarget<0) {
+									if(i.name == 'wuzhong'){
+										source.useCard(i,'nowuxie', source);
+										game.log(source,'对自己使用了',i.name);
+										game.delay(0.3);
+									}else if(i.name == 'wugu'){
+										source.useCard(i,'nowuxie', list);
+										game.log(source,'对',list,'使用了',i.name);
+										game.delay(0.3);
+									}else{
+										source.useCard(i,'nowuxie', list2);
+										game.log(source,'对',list2,'使用了',i.name);
+										game.delay(0.3);
+									}
+								}
+								else if(i.name == 'jiedao'){
+									target2 = list.randomGet();
+									var targets = [];
+									targets.push(target);
+									targets.push(target2);
+									source.useCard(i,'nowuxie',targets);
+									game.log(source,'对',target,'使用了',i.name);
+									game.delay(0.3);
+								}
+								else{
+									source.useCard(i,'nowuxie',target);
+									game.log(source,'对',target,'使用了',i.name);
+									game.delay(0.3);
+								}
+							}
+						}
+					}
+				},
+			},
 		},
 		dynamicTranslate:{
 			/*
@@ -641,7 +837,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 神董卓
 			shen_dongzhuo:'神董卓',
 			cannue:'残虐',
-			cannue_info:'锁定技，当你造成1点伤害后，你获得1枚“残虐”标记。你对其他角色、其他角色对你使用【杀】时,都需连续多使用一张【闪】才能抵消。',
+			cannue_info:'锁定技，你的[五谷丰登]视为[南蛮入侵]，你的[桃园结义]视为[万箭齐发]。当你造成1点伤害后，你的“残虐”标记不超过6，获得1枚“残虐”标记。你对其他角色、其他角色对你使用【杀】时,都需连续多使用一张【闪】才能抵消。',
+			xiehan:'挟汉',
+			xiehan_info:'锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你增加一点体力上限，回复一点体力。',
 			huidu:'毁都',
 			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记为6时，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择。',
 
