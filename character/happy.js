@@ -611,7 +611,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				forced:true,
 				unique:true,
-				group: ['cannue2','cannue3'],
+				group: ['cannue2','cannue3','cannue4'],
 				marktext:'虐',
 				trigger:{
 					source:'damageSource',
@@ -633,19 +633,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				unique:true,
 				mod:{
 					cardname:function(card,player,name){
-						if(card.name=='wuge') return 'nanman';
+						if(card.name=='wugu') return 'nanman';
 					},
+				},
+				trigger:{player:'useCard'},
+				filter:function(event,player){
+					return event.card.name=='wugu';
+				},
+				prompt: '[五谷丰登]视为[南蛮入侵]',
+			},
+			cannue3:{
+				audio:2,
+				forced:true,
+				unique:true,
+				mod:{
 					cardname:function(card,player,name){
 						if(card.name=='taoyuan') return 'wanjian';
 					},
 				},
 				trigger:{player:'useCard'},
 				filter:function(event,player){
-					return event.card.name=='wuge'||event.card.name=='taoyuan';
+					return event.card.name=='taoyuan';
 				},
-				prompt: '[五谷丰登]视为[南蛮入侵]	  [桃园结义]视为[万箭齐发]',
+				prompt: '[桃园结义]视为[万箭齐发]',
 			},
-			cannue3:{
+			cannue4:{
 				audio:2,
 				audioname:['re_dongzhuo','ol_dongzhuo'],
 				trigger:{player:'useCardToPlayered',target:'useCardToTargeted'},
@@ -747,7 +759,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(info.selectTarget!=undefined){
 								if(Array.isArray(info.selectTarget)){
 									if(info.selectTarget[0]<0) {
-										source.useCard(i,'nowuxie');
+										source.useCard(i);
 										game.log(source,'使用了',i.name);
 										game.delay(0.3);
 									}
@@ -756,42 +768,68 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									list2.splice(list2.indexOf(target),1);
 									var target2=list2.randomGet();
 									targets.push(target2);
-									source.useCard(i,'nowuxie',targets);
+									source.useCard(i,targets);
 									game.log(source,'对',target,'、',target2,'使用了',i.name);
 									game.delay(0.3);
 								}
 								else if(info.selectTarget<0) {
-									if(i.name == 'wuzhong'){
-										source.useCard(i,'nowuxie', source);
+									switch (i.name){
+									case 'wuzhong':
+									case 'shandian':
+										source.useCard(i, source);
 										game.log(source,'对自己使用了',i.name);
 										game.delay(0.3);
-									}else if(i.name == 'wugu'){
-										source.useCard(i,'nowuxie', list);
-										game.log(source,'对',list,'使用了',i.name);
+										break;
+									case 'wugu':
+										if(source != player){
+											source.useCard(i, list);
+											game.log(source,'对',list,'使用了',i.name);
+										} else {
+											var wunan = i;
+											wunan.name = 'nanman';
+											source.useCard(wunan, list2);
+											game.log(source,'对',list2,'使用了',i.name);
+										}
 										game.delay(0.3);
-									}else{
-										source.useCard(i,'nowuxie', list2);
+										break;
+									case 'taoyuan':
+										if(source != player){
+											source.useCard(i, list);
+											game.log(source,'对',list,'使用了',i.name);
+										} else {
+											var taowan = i;
+											taowan.name = 'wanjian';
+											source.useCard(taowan, list2);
+											game.log(source,'对',list2,'使用了',i.name);
+										}
+										game.delay(0.3);
+										break;
+									default:
+										source.useCard(i, list2);
 										game.log(source,'对',list2,'使用了',i.name);
 										game.delay(0.3);
 									}
 								}
 								else if(i.name == 'jiedao'){
-									target2 = list.randomGet();
+									list2.splice(list2.indexOf(target),1);
+									var target2=list2.randomGet();
 									var targets = [];
 									targets.push(target);
 									targets.push(target2);
-									source.useCard(i,'nowuxie',targets);
+									source.useCard(i,targets);
 									game.log(source,'对',target,'使用了',i.name);
 									game.delay(0.3);
 								}
 								else{
-									source.useCard(i,'nowuxie',target);
+									source.useCard(i,target);
 									game.log(source,'对',target,'使用了',i.name);
 									game.delay(0.3);
 								}
 							}
 						}
 					}
+
+					player.loseMaxHp(5);
 				},
 			},
 		},
@@ -841,7 +879,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xiehan:'挟汉',
 			xiehan_info:'锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你增加一点体力上限，回复一点体力。',
 			huidu:'毁都',
-			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记为6时，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择。',
+			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记为6时，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
 
 			// _info:'觉醒技，一名角色回合结束时，当你的“七步”标记为7时，你可以发动成诗，将视为使用牌堆中7张锦囊牌，每一张牌的使用者与目标随机选择。',
 			/*
