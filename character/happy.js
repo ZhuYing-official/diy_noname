@@ -271,6 +271,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(get.tag(card,'damage')){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
 								if(target.hp==1) return 0.8;
+								if(target.hp<=3) return 0.7;
+								if(target.hp==4) return 0.8;
 								return [0.5, 0.8];
 							}
 						}
@@ -319,20 +321,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						default:
 							player.addTempSkill('lx_tongkuang_renjie');
 					}
-				},
-				ai:{
-					threaten:function(player,target){
-						return 4.8;
-					},
-					// effect:{
-					// 	target:function(card,player,target){
-					// 		if(get.tag(card,'damage')){
-					// 			if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
-					// 			if(target.hp==1) return -2;
-					// 			return [1, 0];
-					// 		}
-					// 	}
-					// }
 				},
 				subSkill:{
 					renjie:{
