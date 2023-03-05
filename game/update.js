@@ -5,7 +5,7 @@ window.noname_update={
 		'整合@copcap 编写的48个武将',
 		'技能设计比赛入选稿：坂上智代',
 		'其他技能调整和bug修复',
-		'players://["ahuinan","chengbing","chenjiao","clan_xuncai","clan_xuncan","clan_xunchen","clan_xunshu","dc_hujinding","dc_yuejiu","dongguiren","gongsundu","key_tomoyo","leibo","liwan","liyixiejing","ol_furong","ol_liuba","panghui","re_caiyong","re_chengong","re_sundeng","re_xunyou","sb_caocao","sb_caoren","sb_ganning","sb_huanggai","sb_lvmeng","sb_machao","sb_sunquan","sb_sunshangxiang","sb_xiahoushi","sb_xuhuang","sb_zhangjiao","sb_zhenji","sb_zhouyu","shen_zhangjiao","shiyi","sp_caosong","sp_pengyang","sunlang","wangjun","wanglie","xin_caoxiu","xin_wuyi","xin_zhuzhi","yangfu","yuanji","zhangzhi","zhaozhi","zhujianping"]',
+		'players://["ahuinan","chengbing","chenjiao","clan_xuncai","clan_xuncan","clan_xunchen","clan_xunshu","dc_hujinding","dc_yuejiu","dongguiren","gongsundu","leibo","liwan","liyixiejing","ol_furong","ol_liuba","panghui","re_caiyong","re_chengong","re_sundeng","re_xunyou","sb_caocao","sb_caoren","sb_ganning","sb_huanggai","sb_lvmeng","sb_machao","sb_sunquan","sb_sunshangxiang","sb_xiahoushi","sb_xuhuang","sb_zhangjiao","sb_zhenji","sb_zhouyu","shen_zhangjiao","shiyi","sp_caosong","sp_pengyang","sunlang","wangjun","wanglie","xin_caoxiu","xin_wuyi","xin_zhuzhi","yangfu","yuanji","zhangzhi","zhaozhi","zhujianping"]',
 	],
 	files:[
 		//'card/extra.js',
@@ -37,7 +37,6 @@ window.noname_update={
 		'character/sp2.js',
 		//'character/standard.js',
 		//'character/tw.js',
-		//'character/xianjian.js',
 		'character/xinghuoliaoyuan.js',
 		'character/yijiang.js',
 		//'character/yingbian.js',

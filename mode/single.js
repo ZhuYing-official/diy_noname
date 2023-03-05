@@ -3,7 +3,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'single',
 		changbanCharacter:[
-			"key_rei","key_yoshino","key_noda","key_nagisa",
 			"re_caocao","re_caozhang","re_diaochan","re_ganning","re_gongsunzan","re_guojia","re_huangyueying","re_lidian","re_lvbu",
 			"re_simayi","sunquan","re_xiahoudun","re_xushu","yuanshu","xf_yiji","re_zhangfei","re_zhangliao","re_xuzhu",
 			"re_zhaoyun","re_zhouyu","re_zhugeliang","ol_xiahouyuan","re_huangzhong","re_weiyan","dianwei","te_yanwen","re_pangde",

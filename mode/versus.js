@@ -103,10 +103,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			else if(_status.mode=='three'){
 				if(lib.character.wenpin) lib.character.wenpin[3]=['zhenwei_three'];
 				if(lib.character.zhugejin) lib.character.zhugejin[3]=['hongyuan','huanshi_three','mingzhe'];
-				if(lib.character.key_yuzuru){
-					lib.character.key_yuzuru[2]=4;
-					lib.character.key_yuzuru[3]=['yuzuru_bujin'];
-				}
 				if(lib.character.guanyu) lib.character.guanyu[3]=['wusheng','zhongyi'];
 				if(lib.character.lvbu) lib.character.lvbu[3]=['wushuang','zhanshen'];
 				if(lib.character.xiahoudun) lib.character.xiahoudun[3]=['ganglie_three'];
@@ -4370,7 +4366,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			're_zhouyu','re_daqiao','sunshangxiang','sunjian','re_xiaoqiao','sunce','re_luxun','zhugejin',
 			'dingfeng','lingtong','guyong','xusheng','yufan','handang','panzhangmazhong','zhugeke',
 			'zumao','xuezong','re_huatuo','lvbu','diaochan','re_pangde','jiaxu','chengong',
-			're_gongsunzan','caifuren','gongsunyuan','yj_jushou','sp_liuqi','quyi','caiyong','key_yuzuru',
+			're_gongsunzan','caifuren','gongsunyuan','yj_jushou','sp_liuqi','quyi','caiyong',
 			'ol_lisu','zhanghuyuechen','xujing','zhoufang','re_taishici','ol_zhurong',
 		],
 		choiceFour:[

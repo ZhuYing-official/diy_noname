@@ -10377,7 +10377,6 @@
 			group_shu_bg:"蜀",
 			group_wu_bg:"吴",
 			group_qun_bg:"群",
-			group_key_bg:"键",
 			group_jin_bg:"晋",
 			zhengsu:'整肃',
 			zhengsu_leijin:'擂进',

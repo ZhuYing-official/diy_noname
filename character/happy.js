@@ -404,14 +404,36 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			minggua:{
 				auto: 2,
 				forced: true,
+				group: 'minggua2',
 				trigger:{
 					source: 'damageBegin2',
-					player: 'damageBegin2',
 				},
 				content:function(){
-					var r = 0.89;
+					var r = Math.random();
 					var tar = trigger.player;
-					var cards=player.getCards('hej');
+					var cards=tar.getCards('hej');
+					
+					var str=get.translation(player)+'占卜结果为：';
+					if(r<0.05){
+						// 1
+						str+='大吉';
+					} else if(r<0.25){
+						// 2
+						str+='中吉';
+					} else if(r<0.5){
+						// 3
+						str+='小吉';
+					} else if(r<0.75){
+						// 4
+						str+='小凶';
+					} else if(r<0.95){
+						// 5
+						str+='中凶';
+					} else{
+						str+='大凶';
+					}
+ 					event.dialog=ui.create.dialog(str);
+
 					if(r<0.05){
 						// 1
 						tar.die();
@@ -440,6 +462,67 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						tar.draw(4);
 					}
 					game.log(r);
+				},
+			},
+			minggua2:{
+				auto: 2,
+				forced: true,
+				trigger:{
+					player: 'damageBegin2',
+				},
+				content:function(){
+					var r = Math.random();
+					var tar = trigger.player;
+					var cards=tar.getCards('hej');
+					
+					var str=get.translation(player)+'占卜结果为：';
+					if(r<0.05){
+						// 1
+						str+='大凶';
+					} else if(r<0.25){
+						// 2
+						str+='中凶';
+					} else if(r<0.5){
+						// 3
+						str+='小凶';
+					} else if(r<0.75){
+						// 4
+						str+='小吉';
+					} else if(r<0.95){
+						// 5
+						str+='中吉';
+					} else{
+						str+='大吉';
+					}
+ 					event.dialog=ui.create.dialog(str);
+
+					if(r<0.05){
+						// 1
+						tar.die();
+					} else if(r<0.25){
+						// 2
+						trigger.num++;
+						if(cards.length>0){
+							tar.discard(cards.randomGet());
+						}
+					} else if(r<0.5){
+						// 3
+						if(cards.length>0){
+							tar.discard(cards.randomGet());
+						}
+					} else if(r<0.75){
+						// 4
+						tar.draw();
+					} else if(r<0.95){
+						// 5
+						trigger.cancel();
+						tar.recover(trigger.num);
+						tar.draw();
+					} else{
+						trigger.cancel();
+						tar.recover((tar.maxHp-tar.hp));
+						tar.draw(4);
+					}
 				},
 			},
 			biangua:{},

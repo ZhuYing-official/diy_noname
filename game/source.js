@@ -27,7 +27,6 @@ window.noname_source_list=[
 	'character/sp2.js',
 	'character/standard.js',
 	'character/tw.js',
-	'character/xianjian.js',
 	'character/xinghuoliaoyuan.js',
 	'character/yijiang.js',
 	'character/yingbian.js',

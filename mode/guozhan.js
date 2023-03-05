@@ -308,7 +308,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				'gz_jiangwei','gz_zhangfei','gz_sp_zhugeliang',
 				'gz_zhouyu','gz_lingcao','gz_daqiao','gz_dingfeng',
 				'gz_yuji','gz_caiwenji','gz_diaochan','gz_zuoci',
-				'gz_key_ushio','gz_jin_simazhao','gz_dongzhao',
+				'gz_jin_simazhao','gz_dongzhao',
 				'gz_liuba','gz_zhouyi','gz_re_xunchen',
 				'gz_fuwan','gz_zhugejin','gz_yangxiu',
 				'gz_yangyan',
@@ -368,7 +368,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				guozhan_double:['gz_tangzi','gz_liuqi','gz_mengda','gz_mifangfushiren','gz_zhanglu','gz_shixie','gz_xuyou','gz_xiahouba','gz_panjun','gz_xf_sufei','gz_wenqin','gz_pengyang'],
 				guozhan_yexinjia:['gz_zhonghui','gz_simazhao','gz_gongsunyuan','gz_sunchen'],
 				guozhan_zongheng:['gz_huaxin','gz_luyusheng','gz_zongyu','gz_miheng','gz_fengxi','gz_dengzhi','gz_re_xunchen','gz_dc_yanghu'],
-				guozhan_others:["gz_lingcao","gz_lifeng","gz_beimihu","gz_jianggan","gz_key_ushio","gz_sp_duyu","gz_re_nanhualaoxian","gz_zhouyi","gz_lvlingqi","gz_liaohua","gz_zhugejin","gz_yangxiu","gz_chendao","gz_fuwan","gz_zumao"],
+				guozhan_others:["gz_lingcao","gz_lifeng","gz_beimihu","gz_jianggan","gz_sp_duyu","gz_re_nanhualaoxian","gz_zhouyi","gz_lvlingqi","gz_liaohua","gz_zhugejin","gz_yangxiu","gz_chendao","gz_fuwan","gz_zumao"],
 			}
 		},
 		characterPack:{
@@ -560,8 +560,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				gz_zumao:['male','wu',4,['yinbing','juedi']],
 				gz_fuwan:['male','qun',4,['twmoukui']],
 				gz_chendao:["male","shu",4,["drlt_wanglie"],[]],
-
-				gz_key_ushio:['female','key',3,['ushio_huanxin','ushio_xilv'],['doublegroup:key:wei:shu:wu:qun:jin']],
 			}
 		},
 		skill:{
@@ -12796,13 +12794,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			gzwanyi_info:'出牌阶段每项各限一次。你可以将一张带有“合纵”标签的牌当做【联军盛宴】/【火烧连营】/【挟天子以令诸侯】/【戮力同心】使用。',
 			gzmaihuo:'埋祸',
 			gzmaihuo_info:'限定技。当有己方角色成为【杀】的目标时，你可以取消此【杀】的所有目标。然后此【杀】的使用者下回合开始时，其视为对你使用一张【杀】。若此【杀】对你造成伤害，则你防止此伤害，摸两张牌并移除此武将牌（若此武将牌为副将则改为变更副将）。',
-
-			gz_key_ushio:'冈崎汐',
-			ushio_huanxin:'幻心',
-			ushio_huanxin_info:'当你受到伤害后/使用【杀】造成伤害后/使用装备牌后，你可进行判定。然后你获得判定牌并弃置一张牌。',
-			ushio_xilv:'汐旅',
-			ushio_xilv2:'汐旅',
-			ushio_xilv_info:'锁定技，此武将牌可作为任意单势力武将牌的副将。当你进行判定后，你令你的手牌上限+1直至你的下个结束阶段。',
 
 			guozhan_default:"国战标准",
 			guozhan_zhen:"君临天下·阵",
