@@ -1,7 +1,6 @@
 window.noname_source_list=[
 	'card/extra.js',
 	'card/guozhan.js',
-	'card/hearth.js',
 	'card/huanlekapai.js',
 	'card/mtg.js',
 	'card/sp.js',
@@ -15,7 +14,6 @@ window.noname_source_list=[
 	'character/diy.js',
 	'character/extra.js',
 	'character/happy.js',
-	'character/hearth.js',
 	'character/mobile.js',
 	'character/mtg.js',
 	'character/offline.js',

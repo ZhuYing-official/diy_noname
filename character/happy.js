@@ -665,7 +665,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					source:'damageSource',
 				},
 				filter:function(event, player){
-					return event.num>0 && player.countMark('cannue')<6; 
+					return event.num>0 && player.countMark('cannue')<9; 
 				},
 				intro:{
 					name:'残虐',
@@ -811,6 +811,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.awakenSkill(event.name);
+					player.removeMark('cannue', 6);
 					
 					var cards=[];
 					while(cards.length<70){
@@ -975,11 +976,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 神董卓
 			shen_dongzhuo:'神董卓',
 			cannue:'残虐',
-			cannue_info:'锁定技，你的[五谷丰登]视为[南蛮入侵]，你的[桃园结义]视为[万箭齐发]。当你造成1点伤害后，你的“残虐”标记不超过6，获得1枚“残虐”标记。你对其他角色、其他角色对你使用【杀】时,都需连续多使用一张【闪】才能抵消。',
+			cannue_info:'锁定技，你的[五谷丰登]视为[南蛮入侵]，你的[桃园结义]视为[万箭齐发]。当你你的“残虐”标记小于9，你造成1点伤害后，获得1枚“残虐”标记。你对其他角色、其他角色对你使用【杀】时,都需连续多使用一张【闪】才能抵消。',
 			xiehan:'挟汉',
 			xiehan_info:'锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你的“残虐”标记不小于1，你失去1枚“残虐”，你增加一点体力上限。一名角色出牌阶段开始时，该角色选择一项：1.摸一张牌，视为使用了一张【酒】，你对其（包括自己）造成一点伤害；2.弃置一张牌。',
 			huidu:'毁都',
-			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记为6时，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
+			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
 
 			
 			correction_history:'正史',
