@@ -340,7 +340,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			guansuo:['guanyu'],
 			mateng:['machao','madai','mayunlu'],
 			chengpu:['zhouyu'],
-			hanba:['swd_muyun'],
 			dongbai:['dongzhuo'],
 			cuimao:['caopi'],
 			simazhao:['wangyuanji'],

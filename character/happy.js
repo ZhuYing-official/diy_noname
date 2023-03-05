@@ -52,16 +52,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		characterSort:{
 			happy:{
-				correction_history:['cuishi','shen_dongzhuo'],
-				honor_of_kings:['hok_lixin'],
-				our_kings:['shen_caozhi'],
+				correction_history:['cuishi'],
+				honor_of_kings:['hok_lixin','hok_mingshiyin'],
+				happy_kings:['shen_caozhi','shen_dongzhuo'],
 			},
 		},
 		character:{
 			// 崔氏
 			cuishi:['female','wei',3,['reluoshen','pianwan','huayi',]],
-			// 神李信
+			// 李信
 			hok_lixin:['male','shen',5,['lx_wangming','lx_dengshen',],['qun']],
+			// 明世隐
+			hok_mingshiyin:['male','shu',4,['minggua','biangua']],
 			// 神曹植
 			shen_caozhi:['male','shen',3,['caigao','badou','qibu','chengshi'],['wei']],
 			// 神董卓
@@ -70,6 +72,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterIntro:{
 			cuishi:'崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
 			hok_lixin:'炽心化寒剑，冰霜作铁衣，一人一兽化作比这些更冷冽锋利的存在，终破开风雪，终行至峰顶，终向这万仞寒山，挥出劈天裂地的一剑。心火重燃，山海可照。',
+			hok_mingshiyin:'揣测来事，见疑决之，卜者将今宵焰火尽入卦象——这宴游之日，千灯夺魁终选将至之时，幕后操控者却将众人与长安视为掌中棋子，布下注定惊动长安的谜局……',
 			shen_caozhi:'字子建，沛国谯人，三国曹魏著名文学家，建安文学代表人物。魏武帝曹操之子，魏文帝曹丕之弟，生前曾为陈王，去世后谥号“思”，因此又称陈思王。南朝宋文学家谢灵运更有“天下才有一石，曹子建独占八斗”的评价。王士祯尝论汉魏以来二千年间诗家堪称“仙才”者，曹植、李白、苏轼三人耳。',
 			shen_dongzhuo:'字仲颖，陇西临洮人。东汉末年少帝、献帝时权臣，西凉军阀。官至太师、郿侯。其为人残忍嗜杀，倒行逆施，招致群雄联合讨伐，但联合军在董卓迁都长安不久后瓦解。后被其亲信吕布所杀。',
 		},
@@ -219,7 +222,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			*/
 
-			// 神李信
+			// 李信
 			lx_wangming:{
 				audio:2,
 				marktext:'王',
@@ -272,7 +275,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
 								if(target.hp==1) return 0.8;
 								if(target.hp<=3) return 0.7;
-								if(target.hp==4) return 0.8;
+								if(target.hp==4) return 0.6;
 								return [0.5, 0.8];
 							}
 						}
@@ -328,7 +331,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						trigger:{player:'phaseDiscardBegin'},
 						frequent:true,
 						content:function(){
-							event.lx = ['pozhu','xinshanjia','reyingzi'];
+							event.lx = ['xinshanjia','pozhu','reyingzi'];
 							if(player.hasSkill('pozhu')){
 								event.lx.splice(event.lx.indexOf('pozhu'),1)
 							}
@@ -397,6 +400,49 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			// 明世隐
+			minggua:{
+				auto: 2,
+				forced: true,
+				trigger:{
+					source: 'damageBegin2',
+					player: 'damageBegin2',
+				},
+				content:function(){
+					var r = 0.89;
+					var tar = trigger.player;
+					var cards=player.getCards('hej');
+					if(r<0.05){
+						// 1
+						tar.die();
+					} else if(r<0.25){
+						// 2
+						trigger.num++;
+						if(cards.length>0){
+							tar.discard(cards.randomGet());
+						}
+					} else if(r<0.5){
+						// 3
+						if(cards.length>0){
+							tar.discard(cards.randomGet());
+						}
+					} else if(r<0.75){
+						// 4
+						tar.draw();
+					} else if(r<0.95){
+						// 5
+						trigger.cancel();
+						tar.recover(trigger.num);
+						tar.draw();
+					} else{
+						trigger.cancel();
+						tar.recover((tar.maxHp-tar.hp));
+						tar.draw(4);
+					}
+					game.log(r);
+				},
+			},
+			biangua:{},
 
 			// 神曹植
 			caigao: {
@@ -411,9 +457,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content: function(){
 					'step 0'
 					player.chooseControl('红色', '黑色').set('prompt', '猜测判定牌颜色').set('ai',function(event){
-						switch(Math.floor(Math.random()*3)){
-							case 0: case 2: return '红色';
-							case 1: return '黑色';
+						switch(Math.floor(Math.random()*5)){
+							case 0: case 2: case 4: return '红色';
+							case 1: case 3: return '黑色';
 						}
 					});
 					'step 1'
@@ -892,7 +938,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
 			huayi:'华衣',
 			huayi_info:'觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
-			// 神李信
+			// 李信
 			hok_lixin:'李信',
 			lx_wangming:'王命',
 			lx_wangming_info:'锁定技，游戏开始时，你获得2枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到1点伤害后，你获得一枚「王」标记。',
@@ -900,6 +946,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lx_dengshen_info:'觉醒技，准备阶段，若你武将牌上的「王」数不小于3，则你弃置2枚「王」，获得技能[统狂]、[英姿]。',
 			lx_tongkuang:'统狂',
 			lx_tongkuang_info:'锁定技，弃牌阶段前，你可以弃置一枚「王」标记，选择[人杰]、[统御]、[狂暴]路线中的一个，然后获得该路线的一个技能，并失去其他路线的技能。（人杰：[破竹][破竹][英姿]；统御：[慧识][灵策][定汉]；狂暴：[劫营][神裁][巡使]。）',
+			// 明世隐
+			hok_mingshiyin:'明世隐',
+			minggua:'命卦',
+			minggua_info:'锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
+				1.大吉/大凶：受到伤害的角色死亡；<br/>\
+				2.中吉/中凶：伤害加一，且受到伤害的角色随机弃置一张牌；<br/>\
+				3.小吉/小凶：受到伤害的角色随机弃置一张牌；<br/>\
+				4.小凶/小吉：受到伤害的角色摸一张牌；<br/>\
+				5.中凶/中吉：受到伤害的角色将此伤害改为回复体力并摸一张牌；<br/>\
+				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌',
+			biangua:'变卦',
+			biangua_info:'当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
 			// 神曹植
 			shen_caozhi:'神曹植',
 			caigao:'才高',
@@ -923,104 +981,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huidu:'毁都',
 			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记为6时，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
 
-			// _info:'觉醒技，一名角色回合结束时，当你的“七步”标记为7时，你可以发动成诗，将视为使用牌堆中7张锦囊牌，每一张牌的使用者与目标随机选择。',
-			/*
-			content:function(){
-					player.awakenSkill(event.name);
-					
-					var cards=[];
-					// var cc=get.cardPile2(function(card){
-					// 	var info=get.info(card,false);
-					// 	return !info.notarget && get.type2(card,'trick')=='trick';
-					// });
-					// while(cc)
-					while(cards.length<70){
-						var card=get.cardPile2(function(card){
-							for(var i of cards){
-								if(i.name==card.name) return false;
-							}
-							var info=get.info(card,false);
-							return !info.notarget && get.type2(card,'trick')=='trick';
-						});
-						if(card) {
-							cards.push(card);
-							game.cardsGotoOrdering([card]);
-							game.log('=======',card);
-						}
-						else break;
-					}
-					if(!cards.length) event.finish();
-					else{
-						event.cards=cards;
-						game.log(cards.length,'  ',cards);
-						// game.cardsGotoOrdering(cards);
-						
-						for(var i of cards){
-							var info=lib.card[i.name];
-							var list=game.filterPlayer(function(target){
-								return !target.isDead();
-							});
-							var source = list.randomGet();
-							var list2 = Array.from(list);
-							list2.splice(list2.indexOf(source),1);
-							// game.log('来源: ',list);
-							// game.log('目标: ',list2);
-							// game.log(i, '目标: ',info.selectTarget);
-							var target=list2.randomGet();
-							if(info.selectTarget!=undefined){
-								if(Array.isArray(info.selectTarget)){
-									if(info.selectTarget[0]<0) {
-										source.useCard(i,'nowuxie');
-										game.log(source,'使用了',i.name);
-										game.delay(0.5);
-									}
-									var targets = [];
-									targets.push(target);
-									list2.splice(list2.indexOf(target),1);
-									var target2=list2.randomGet();
-									targets.push(target2);
-									source.useCard(i,'nowuxie',targets);
-									game.log(source,'对',target,'、',target2,'使用了',i.name);
-									game.delay(0.5);
-								}
-								else if(info.selectTarget<0) {
-									if(i.name == 'wuzhong'){
-										source.useCard(i,'nowuxie', source);
-										game.log(source,'对自己使用了',i.name);
-										game.delay(0.5);
-									}else if(i.name == 'wugu'){
-										source.useCard(i,'nowuxie', list);
-										game.log(source,'对',list,'使用了',i.name);
-										game.delay(0.5);
-									}else{
-										source.useCard(i,'nowuxie', list2);
-										game.log(source,'对',list2,'使用了',i.name);
-										game.delay(0.5);
-									}
-								}
-								else if(i.name == 'jiedao'){
-									target2 = list.randomGet();
-									var targets = [];
-									targets.push(target);
-									targets.push(target2);
-									source.useCard(i,'nowuxie',targets);
-									game.log(source,'对',target,'使用了',i.name);
-									game.delay(0.5);
-								}
-								else{
-									source.useCard(i,'nowuxie',target);
-									game.log(source,'对',target,'使用了',i.name);
-									game.delay(0.5);
-								}
-							}
-						}
-					}
-				},
-				*/
 			
 			correction_history:'正史',
 			honor_of_kings:'王者荣耀',
-			our_kings:'众选神将',
+			happy_kings:'娱乐神将',
 		},
 	};
 });

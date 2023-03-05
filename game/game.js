@@ -9620,24 +9620,24 @@
 				mode.remove('connect');
 				mode.remove('brawl');
 				var banned=['shen_guanyu','shen_caocao','caopi','re_daqiao','caorui',
-					'daqiao','lingcao','liuzan','lusu','luxun','yanwen','zhouyu','ns_wangyue','gw_yenaifa',
-					'old_caozhen','swd_jiangziya','xuhuang','maliang','guojia','simayi','swd_kangnalishi','hs_siwangzhiyi','hs_nozdormu','old_zhuzhi'];
+					'daqiao','lingcao','liuzan','lusu','luxun','yanwen','zhouyu','ns_wangyue',
+					'old_caozhen','xuhuang','maliang','guojia','simayi','hs_siwangzhiyi','hs_nozdormu','old_zhuzhi'];
 				var bannedcards=['zengbin'];
 				var favs=["hs_tuoqi","hs_siwangxianzhi","hs_xukongzhiying","hs_hsjiasha","gjqt_xieyi","gjqt_yunwuyue","gjqt_beiluo",
-					"gjqt_cenying","shen_lvmeng","shen_zhaoyun","shen_zhugeliang","ow_ana","chenlin","ns_guanlu","hs_guldan","swd_guyue",
-					"pal_jiangyunfan","mtg_jiesi","swd_lanyin","pal_liumengli","swd_muyun","pal_nangonghuang","swd_muyue","pal_murongziying",
-					"swd_qiner","pal_shenqishuang","hs_taisi","wangji","pal_xingxuan","xunyou","hs_yelise","pal_yuejinzhao","pal_yueqi",
-					"gjqt_yuewuyi","swd_yuxiaoxue","ow_zhaliya","zhangchunhua","hs_zhihuanhua","swd_zhiyin","old_zhonghui","gjqt_bailitusu",
-					"hs_barnes","ow_dva","swd_hengai","pal_jushifang","hs_kazhakusi","hs_lafamu","ow_liekong","hs_lreno","pal_mingxiu",
-					"swd_murongshi","gw_oudimu","gjqt_ouyangshaogong","hs_pyros","qinmi","gw_sanhanya","hs_selajin","swd_shuwaner",
-					"swd_situqiang","hs_xialikeer","pal_xuejian","swd_yuchiyanhong","swd_yuwentuo","swd_zhaoyun","zhugeliang","gw_aigeleisi",
-					"gw_aimin","gjqt_aruan","hs_aya","swd_cheyun","swd_chenjingchou","gw_diandian","swd_huzhongxian","hs_jinglinglong",
-					"hs_kaituozhe","hs_kalimosi","gw_linjing","ow_luxiao","re_luxun","hs_morgl","swd_sikongyu","hs_sthrall","sunquan",
-					"sunshangxiang","gw_yioufeisisp","gw_yisilinni","hs_yogg","hs_ysera","pal_yuntianhe","zhugejin","zhugeke","gw_zhuoertan",
-					"hs_anduin","swd_anka","ow_banzang","ow_chanyata","diaochan","swd_duguningke","sp_diaochan","hetaihou","ns_huamulan",
-					"swd_huanglei","swd_huanyuanzhi","re_huatuo","gw_huoge","pal_jiangcheng","yj_jushou","swd_kendi","yxs_libai",
-					"mtg_lilianna","xin_liru","liuxie","pal_lixiaoyao","pal_longkui","ns_nanhua","swd_qi","swd_septem","gw_shasixiwusi",
-					"ow_tianshi","swd_weida","gjqt_xiayize","swd_xiyan","hs_xsylvanas","hs_yelinlonghou","ow_yuanshi","zuoci"];
+					"gjqt_cenying","shen_lvmeng","shen_zhaoyun","shen_zhugeliang","ow_ana","chenlin","ns_guanlu","hs_guldan",
+					"pal_jiangyunfan","mtg_jiesi","pal_liumengli","pal_nangonghuang","pal_murongziying",
+					"pal_shenqishuang","hs_taisi","wangji","pal_xingxuan","xunyou","hs_yelise","pal_yuejinzhao","pal_yueqi",
+					"gjqt_yuewuyi","ow_zhaliya","zhangchunhua","hs_zhihuanhua","old_zhonghui","gjqt_bailitusu",
+					"hs_barnes","ow_dva","pal_jushifang","hs_kazhakusi","hs_lafamu","ow_liekong","hs_lreno","pal_mingxiu",
+					"gjqt_ouyangshaogong","hs_pyros","qinmi","hs_selajin",
+					"hs_xialikeer","pal_xuejian","zhugeliang",
+					"gjqt_aruan","hs_aya","hs_jinglinglong",
+					"hs_kaituozhe","hs_kalimosi","ow_luxiao","re_luxun","hs_morgl","hs_sthrall","sunquan",
+					"sunshangxiang","hs_yogg","hs_ysera","pal_yuntianhe","zhugejin","zhugeke",
+					"hs_anduin","ow_banzang","ow_chanyata","diaochan","sp_diaochan","hetaihou","ns_huamulan",
+					"re_huatuo","pal_jiangcheng","yj_jushou","yxs_libai",
+					"mtg_lilianna","xin_liru","liuxie","pal_lixiaoyao","pal_longkui","ns_nanhua",
+					"ow_tianshi","gjqt_xiayize","hs_xsylvanas","hs_yelinlonghou","ow_yuanshi","zuoci"];
 				var vintage=['tianjian','shuiyun','zhuyue','zhimeng','poyun','qianfang','xfenxin','danqing','ywuhun','tianwu','xuelu',
 					'shahun','yuling','duhun','liaoyuan','touxi','wangchen','poyue','kunlunjing','huanhun','yunchou','tuzhen','cyqiaoxie',
 					'mufeng','duanyi','guozao','yaotong','pozhen','tanlin','susheng','jikong','shouyin','jilve','hxunzhi','huodan','shanxian',
@@ -9717,7 +9717,7 @@
 				ui.arena.classList.remove('tempnoe');
 			},
 			p:function(name,i,skin){
-				var list=['swd','hs','pal','gjqt','ow','gw'];
+				var list=['hs','pal','gjqt','ow'];
 				if(!lib.character[name]){
 					for(var j=0;j<list.length;j++){
 						if(lib.character[list[j]+'_'+name]){
