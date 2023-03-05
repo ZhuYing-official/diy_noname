@@ -450,6 +450,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						// 1
 						if(!gua1){
 							tar.die();
+							trigger.cancel();
 						}
 					} else if(r<0.25){
 						// 2
@@ -537,6 +538,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						// 1
 						if(!gua1){
 							tar.die();
+							trigger.cancel();
 						}
 					} else if(r<0.25){
 						// 2
@@ -598,6 +600,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			biangua:{
 				global: ['biangua2','biangua3'],
 				audio:2,
+				filter: function(event, player){
+					let tar = game.filterPlayer(function(target){
+						return target.hasSkill('biangua');
+					})[0];
+					return tar.isAlive();
+				}
 			},
 			biangua2:{
 				audio: 2,

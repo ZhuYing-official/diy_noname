@@ -18,7 +18,6 @@ window.noname_source_list=[
 	'character/mtg.js',
 	'character/offline.js',
 	'character/old.js',
-	'character/ow.js',
 	'character/rank.js',
 	'character/refresh.js',
 	'character/sb.js',

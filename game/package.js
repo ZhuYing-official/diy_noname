@@ -19,7 +19,6 @@ window.noname_package={
 		diy:'DIY',
 		yxs:'英雄杀',
 		mtg:'万智牌',
-		ow:'守望先锋',
 	},
 	card:{
 		standard:'标准',
@@ -85,7 +84,6 @@ window.noname_package={
 		planetarian_bg:'星梦',
 		heaven_bg:'红烧',
 		kyoani_bg:'京都',
-		xiaowu_bg:'小无',
 		noname_bg:'璀璨',
 		wuming_bg:'无名',
 		zhulin_bg:'竹林',

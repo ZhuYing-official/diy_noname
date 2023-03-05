@@ -9623,21 +9623,20 @@
 					'daqiao','lingcao','liuzan','lusu','luxun','yanwen','zhouyu','ns_wangyue',
 					'old_caozhen','xuhuang','maliang','guojia','simayi','hs_siwangzhiyi','hs_nozdormu','old_zhuzhi'];
 				var bannedcards=['zengbin'];
-				var favs=["hs_tuoqi","hs_siwangxianzhi","hs_xukongzhiying","hs_hsjiasha","gjqt_xieyi","gjqt_yunwuyue","gjqt_beiluo",
-					"gjqt_cenying","shen_lvmeng","shen_zhaoyun","shen_zhugeliang","ow_ana","chenlin","ns_guanlu","hs_guldan",
+				var favs=["hs_tuoqi","hs_siwangxianzhi","hs_xukongzhiying","hs_hsjiasha",
+					"shen_lvmeng","shen_zhaoyun","shen_zhugeliang","chenlin","ns_guanlu","hs_guldan",
 					"pal_jiangyunfan","mtg_jiesi","pal_liumengli","pal_nangonghuang","pal_murongziying",
 					"pal_shenqishuang","hs_taisi","wangji","pal_xingxuan","xunyou","hs_yelise","pal_yuejinzhao","pal_yueqi",
-					"gjqt_yuewuyi","ow_zhaliya","zhangchunhua","hs_zhihuanhua","old_zhonghui","gjqt_bailitusu",
-					"hs_barnes","ow_dva","pal_jushifang","hs_kazhakusi","hs_lafamu","ow_liekong","hs_lreno","pal_mingxiu",
-					"gjqt_ouyangshaogong","hs_pyros","qinmi","hs_selajin",
-					"hs_xialikeer","pal_xuejian","zhugeliang",
-					"gjqt_aruan","hs_aya","hs_jinglinglong",
-					"hs_kaituozhe","hs_kalimosi","ow_luxiao","re_luxun","hs_morgl","hs_sthrall","sunquan",
+					"zhangchunhua","hs_zhihuanhua","old_zhonghui",
+					"hs_barnes","pal_jushifang","hs_kazhakusi","hs_lafamu","hs_lreno","pal_mingxiu",
+					"hs_pyros","qinmi","hs_selajin",
+					"hs_xialikeer","pal_xuejian","zhugeliang","hs_aya","hs_jinglinglong",
+					"hs_kaituozhe","hs_kalimosi","re_luxun","hs_morgl","hs_sthrall","sunquan",
 					"sunshangxiang","hs_yogg","hs_ysera","pal_yuntianhe","zhugejin","zhugeke",
-					"hs_anduin","ow_banzang","ow_chanyata","diaochan","sp_diaochan","hetaihou","ns_huamulan",
+					"hs_anduin","diaochan","sp_diaochan","hetaihou","ns_huamulan",
 					"re_huatuo","pal_jiangcheng","yj_jushou","yxs_libai",
 					"mtg_lilianna","xin_liru","liuxie","pal_lixiaoyao","pal_longkui","ns_nanhua",
-					"ow_tianshi","gjqt_xiayize","hs_xsylvanas","hs_yelinlonghou","ow_yuanshi","zuoci"];
+					"hs_xsylvanas","hs_yelinlonghou","zuoci"];
 				var vintage=['tianjian','shuiyun','zhuyue','zhimeng','poyun','qianfang','xfenxin','danqing','ywuhun','tianwu','xuelu',
 					'shahun','yuling','duhun','liaoyuan','touxi','wangchen','poyue','kunlunjing','huanhun','yunchou','tuzhen','cyqiaoxie',
 					'mufeng','duanyi','guozao','yaotong','pozhen','tanlin','susheng','jikong','shouyin','jilve','hxunzhi','huodan','shanxian',
@@ -9717,7 +9716,7 @@
 				ui.arena.classList.remove('tempnoe');
 			},
 			p:function(name,i,skin){
-				var list=['hs','pal','gjqt','ow'];
+				var list=['hs','pal'];
 				if(!lib.character[name]){
 					for(var j=0;j<list.length;j++){
 						if(lib.character[list[j]+'_'+name]){
