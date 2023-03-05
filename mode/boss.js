@@ -2432,27 +2432,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
-			boss_zhiwang:{
-				derivation:'boss_zhiwang_planetarian',
-				trigger:{global:'gainEnd'},
-				filter:function(event,player){
-					return event.player!=player&&!(event.getParent().name=='draw'&&event.getParent(2).name=='phaseDraw')&&event.player.countCards('h');
-				},
-				forced:true,
-				logTarget:'player',
-				content:function(){
-					var evt=trigger.getParent('boss_zhiwang');
-					if(evt&&evt.name=='boss_zhiwang'){
-						trigger.player.uninit();
-						trigger.player.init('sunce');
-					}
-					var hs=trigger.player.getCards('h');
-					if(hs.length){
-						trigger.player.discard(hs.randomGet());
-					}
-				},
-				subSkill:{planetarian:{}},
-			},
 			boss_gongzheng:{
 				trigger:{player:'phaseZhunbeiBegin'},
 				forced:true,
@@ -9250,8 +9229,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_wuguanwang:'五官王·吕岱',
 			boss_zhiwang:'治妄',
 			boss_zhiwang_info:'锁定技，当其他角色于摸牌阶段外获得牌时，你随机弃置其一张手牌。',
-			boss_zhiwang_planetarian:'注意事项',
-			boss_zhiwang_planetarian_info:'若触发【治妄】的角色因【治妄】触发的其他的技能（如【伤逝】【连营】等）继续获得了牌，则该角色将其武将牌变更为孙策。',
 			boss_gongzheng:'公正',
 			boss_gongzheng_info:'锁定技，准备阶段，若你判定区有牌，你随机弃置一张你判定区的牌。',
 			boss_xuechi:'血池',

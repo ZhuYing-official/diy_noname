@@ -591,11 +591,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					event.dialog.close();
 				},
-				ai:{
-					order:function(){
-						return get.order({name:'sha'})-1;
-					},
-				},
 			},
 			biangua:{
 				global: ['biangua2','biangua3'],
@@ -624,7 +619,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					let tar = game.filterPlayer(function(target){
 						return target.hasSkill('biangua');
 					})[0];
-					return tar.countMark('biangua2')>7;
+					if(tar){
+						return tar.countMark('biangua2')>7;
+					}
+					return false;
 				},
 				content: function(){
 					'step 0'
@@ -645,7 +643,32 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 
 					'step 1'
-					player.chooseControl(guaList,'cancel2');
+					let target = game.filterPlayer(function(target){
+						return target.hasSkill('biangua');
+					})[0];
+					player.chooseControl(guaList,'cancel2').set('ai', function(target){
+						let att = get.attitude(_status.event.player,target);
+						let r = Math.random();
+						if(guaList.length<=2){
+							if(r>0.5){
+								return guaList[0];
+							}
+							return guaList[1];
+						}
+						if(att>0){
+							if(r>0.5){
+								return guaList[guaList.length-1];
+							}
+							return guaList[guaList.length-2];
+						} else if(att<0){
+							if(r>0.5){
+								return guaList[0];
+							}
+							return guaList[1];
+						} else{
+							return guaList[guaList.length/2-1];
+						}
+					});
 					'step 2'
 					switch (result.control){
 						case '大吉':
@@ -676,6 +699,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.removeMark('biangua2', 8);
 					}
 				},
+				ai:{
+					order:function(){
+						return get.order({name:'sha'})+1;
+					},
+					result:{player:1},
+				},
 			},
 
 			// 神曹植
@@ -691,7 +720,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content: function(){
 					'step 0'
-					player.chooseControl('红色', '黑色').set('prompt', '猜测判定牌颜色').set('ai',function(event){
+					player.chooseControl('红色', '黑色').set('prompt', '猜测判定牌颜色').set('ai', function(event){
 						switch(Math.floor(Math.random()*5)){
 							case 0: case 2: case 4: return '红色';
 							case 1: case 3: return '黑色';
