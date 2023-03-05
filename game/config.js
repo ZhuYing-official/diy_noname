@@ -6,15 +6,15 @@ window.config={
 	forbidai:['ns_liuzhang','yuji','re_yuji'],
 	forbidai_user:[],
 	forbidall:[],
-	forbidstone:['zhugedan','pal_xuanxiao','hs_malfurion','lusu','chenlin','hs_siwangzhiyi',
+	forbidstone:['zhugedan','hs_malfurion','lusu','chenlin','hs_siwangzhiyi',
 		'yuanshao','daqiao','re_daqiao','hs_xuanzhuanjijia',
 		'zhuran','huatuo','hs_guldan','wangyi','caoang',
 		'guojia','re_guojia','shen_caocao','caopi','hs_yngvar','guansuo',
 		'hs_anduin','yxs_yujix','yxs_luzhishen',
-		'pal_yuejinzhao','hs_antonidas','xushi','hs_lreno'
+		'hs_antonidas','xushi','hs_lreno'
 	],
 	forbidchess:['hetaihou'],
-	forbidboss:['caiwenji','pal_xuanxiao'],
+	forbidboss:['caiwenji'],
 	forbiddouble:['zhugedan','dongzhuo','wutugu','hs_siwangzhiyi','hs_ronghejuren','hs_shanlingjuren'],
 	forbidthreecard:['qiankunbiao','shenhuofeiya'],
 	zhinang_tricks:['guohe','wuxie','wuzhong','dongzhuxianji'],

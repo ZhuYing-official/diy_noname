@@ -2397,7 +2397,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							intro.innerHTML=get.translation(rarity);
 						}
 					}
-					game.leaderLord=['leader_caocao','leader_liubei','leader_sunquan','leader_yuri'];
+					game.leaderLord=['leader_caocao','leader_liubei','leader_sunquan'];
 					var dialog1=ui.create.dialog('选择君主','hidden');
 					event.dialog1=dialog1;
 					dialog1.classList.add('fullheight');
@@ -5626,7 +5626,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			leader_caocao:'曹操',
 			leader_liubei:'刘备',
 			leader_sunquan:'孙权',
-			leader_yuri:'由理',
 			leader_xiaoxiong:'枭雄',
 			leader_xiaoxiong_info:'当你造成伤害后，获胜后会得到一定数量的额外金币奖励。',
 			leader_renyi:'仁义',
@@ -6042,7 +6041,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			mode_chess:{
 				chess_default:["chess_zhangliao","chess_huangzhong","chess_taishici","chess_sunshangxiang","chess_diaochan"],
 				chess_boss:["chess_jinchidiao","chess_beimingjukun","chess_wuzhaojinlong","chess_dongzhuo","chess_xingtian"],
-				chess_leader:["leader_caocao","leader_liubei","leader_sunquan","leader_yuri"],
 			},
 		},
 		characterPack:{
@@ -6050,7 +6048,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				leader_caocao:['male','wei',4,['leader_xiaoxiong']],
 				leader_liubei:['male','shu',4,['leader_renyi']],
 				leader_sunquan:['male','wu',4,['leader_mouduan']],
-				leader_yuri:['female','key',4,['leader_zhenlve']],
 				// chess_caocao:['male','wei',3,['']],
 				// chess_xunyu:['male','wei',3,['']],
 				// chess_simayi:['male','wei',3,['']],
