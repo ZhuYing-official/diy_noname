@@ -1,5 +1,14 @@
 'use strict';
 //-------------------------------------------------------
+//明世隐
+let guaList = ['大吉','中吉','小吉','小凶','中凶','大凶'];
+let gua1 = false;
+let gua2 = false;
+let gua3 = false;
+let gua4 = false;
+let gua5 = false;
+let gua6 = false;
+
 //李信
 function removeRenjie(player){
 	if(player.hasSkill('pozhu')){
@@ -409,6 +418,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					source: 'damageBegin2',
 				},
 				content:function(){
+					'step 0'
 					var r = Math.random();
 					var tar = trigger.player;
 					var cards=tar.getCards('hej');
@@ -433,35 +443,60 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						str+='大凶';
 					}
  					event.dialog=ui.create.dialog(str);
+					game.delay(0.5);
+					game.log(str);
 
 					if(r<0.05){
 						// 1
-						tar.die();
+						if(!gua1){
+							tar.die();
+						}
 					} else if(r<0.25){
 						// 2
-						trigger.num++;
-						if(cards.length>0){
-							tar.discard(cards.randomGet());
+						if(!gua2){
+							trigger.num++;
+							if(cards.length>0){
+								tar.discard(cards.randomGet());
+							}
 						}
 					} else if(r<0.5){
 						// 3
-						if(cards.length>0){
-							tar.discard(cards.randomGet());
+						if(!gua3){
+							if(cards.length>0){
+								tar.discard(cards.randomGet());
+							}
 						}
 					} else if(r<0.75){
 						// 4
-						tar.draw();
+						if(!gua4){
+							tar.draw();
+						}
 					} else if(r<0.95){
 						// 5
-						trigger.cancel();
-						tar.recover(trigger.num);
-						tar.draw();
+						if(!gua5){
+							trigger.cancel();
+							tar.recover(trigger.num);
+							tar.draw();
+						}
 					} else{
-						trigger.cancel();
-						tar.recover((tar.maxHp-tar.hp));
-						tar.draw(4);
+						if(!gua6){
+							trigger.cancel();
+							tar.recover((tar.maxHp-tar.hp));
+							tar.draw(4);
+						}
 					}
-					game.log(r);
+					if(player.hasSkill('biangua')){
+						if(player.countMark('biangua2')<8){
+							player.addMark('biangua2', 1);
+						}
+					}
+					if(tar.hasSkill('biangua')){
+						if(tar.countMark('biangua2')<8){
+							tar.addMark('biangua2', 1);
+						}
+					}
+					'step 1'
+					event.dialog.close();
 				},
 			},
 			minggua2:{
@@ -471,6 +506,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player: 'damageBegin2',
 				},
 				content:function(){
+					'step 0'
 					var r = Math.random();
 					var tar = trigger.player;
 					var cards=tar.getCards('hej');
@@ -494,43 +530,151 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					} else{
 						str+='大吉';
 					}
- 					event.dialog=ui.create.dialog(str);
-
+					event.dialog=ui.create.dialog(str);
+					game.log(str);
+					
 					if(r<0.05){
 						// 1
-						tar.die();
+						if(!gua1){
+							tar.die();
+						}
 					} else if(r<0.25){
 						// 2
-						trigger.num++;
-						if(cards.length>0){
-							tar.discard(cards.randomGet());
+						if(!gua2){
+							trigger.num++;
+							if(cards.length>0){
+								tar.discard(cards.randomGet());
+							}
 						}
 					} else if(r<0.5){
 						// 3
-						if(cards.length>0){
-							tar.discard(cards.randomGet());
+						if(!gua3){
+							if(cards.length>0){
+								tar.discard(cards.randomGet());
+							}
 						}
 					} else if(r<0.75){
 						// 4
-						tar.draw();
+						if(!gua4){
+							tar.draw();
+						}
 					} else if(r<0.95){
 						// 5
-						trigger.cancel();
-						tar.recover(trigger.num);
-						tar.draw();
+						if(!gua5){
+							trigger.cancel();
+							tar.recover(trigger.num);
+							tar.draw();
+						}
 					} else{
-						trigger.cancel();
-						tar.recover((tar.maxHp-tar.hp));
-						tar.draw(4);
+						if(!gua6){
+							trigger.cancel();
+							tar.recover((tar.maxHp-tar.hp));
+							tar.draw(4);
+						}
+					}
+					var source = trigger.source;
+					if(source){
+						if(source.hasSkill('biangua')){
+							if(source.countMark('biangua2')<8){
+								source.addMark('biangua2', 1);
+							}
+						}
+						if(tar.hasSkill('biangua')){
+							if(tar.countMark('biangua2')<8){
+								tar.addMark('biangua2', 1);
+							}
+						}
+					}
+
+					'step 1'
+					event.dialog.close();
+				},
+				ai:{
+					order:function(){
+						return get.order({name:'sha'})-1;
+					},
+				},
+			},
+			biangua:{
+				global: ['biangua2','biangua3'],
+				audio:2,
+			},
+			biangua2:{
+				audio: 2,
+				mark: true,
+				marktext: '卦',
+				frequent: true,
+				intro:{
+					name: '卦象',
+					content: 'mark',
+				},
+			},
+			biangua3:{
+				audio: 2,
+				enable:'phaseUse',
+				filter: function(event, player){
+					let tar = game.filterPlayer(function(target){
+						return target.hasSkill('biangua');
+					})[0];
+					return tar.countMark('biangua2')>7;
+				},
+				content: function(){
+					'step 0'
+					if(gua1){
+						guaList.splice(guaList.indexOf('大吉'), 1);
+					} else if(gua2){
+						guaList.splice(guaList.indexOf('中吉'), 1);
+					} else if(gua3){
+						guaList.splice(guaList.indexOf('小吉'), 1);
+					} else if(gua4){
+						guaList.splice(guaList.indexOf('小凶'), 1);
+					} else if(gua5){
+						guaList.splice(guaList.indexOf('中凶'), 1);
+					} else if(gua6){
+						guaList.splice(guaList.indexOf('大凶'), 1);
+					} else{
+						return;
+					}
+
+					'step 1'
+					player.chooseControl(guaList,'cancel2');
+					'step 2'
+					switch (result.control){
+						case '大吉':
+							gua1 = true;
+							break;
+							case '中吉':
+							gua2 = true;
+							break;
+							case '小吉':
+							gua3 = true;
+							break;
+							case '小凶':
+							gua4 = true;
+							break;
+							case '中凶':
+							gua5 = true;
+							break;
+							case '大凶':
+							gua6 = true;
+							break;
+						default:
+					}
+					if(!player.hasSkill('biangua')){
+						game.filterPlayer(function(target){
+							return target.hasSkill('biangua');
+						})[0].removeMark('biangua2', 8);
+					} else{
+						player.removeMark('biangua2', 8);
 					}
 				},
 			},
-			biangua:{},
 
 			// 神曹植
 			caigao: {
 				audio: 'reluoying',
 				forced: true,
+				unique: true,
 				derivation: 'caigao_rewrite',
 				group: 'caigao_rewrite',
 				trigger: {global: 'gainEnd'},
@@ -589,6 +733,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			badou: {
 				audio:'rejiushi',
+				unique: true,
 				group:['badou2','badou3'],
 				frequent: true,
 				trigger:{player:['useCard','respond']},
@@ -1041,6 +1186,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				5.中凶/中吉：受到伤害的角色将此伤害改为回复体力并摸一张牌；<br/>\
 				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌',
 			biangua:'变卦',
+			biangua3:'变卦',
 			biangua_info:'当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
 			// 神曹植
 			shen_caozhi:'神曹植',
