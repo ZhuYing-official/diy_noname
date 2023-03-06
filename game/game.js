@@ -42,11 +42,11 @@
 		versionOL:27,
 		updateURLS:{
 			coding:'https://ghproxy.com/https://raw.githubusercontent.com/libccy/noname',
-			github:'https://raw.githubusercontent.com/libccy/noname',
+			github:'https://raw.githubusercontent.com/ZhuYing-official/diy_noname',
 		},
-		updateURL:'https://raw.githubusercontent.com/libccy/noname',
+		updateURL:'https://raw.githubusercontent.com/ZhuYing-official/diy_noname',
 		mirrorURL:'https://nakamurayuri.coding.net/p/noname/d/noname/git/raw',
-		hallURL:'47.99.105.222',
+		hallURL:'47.94.57.10',
 		assetURL:'',
 		changeLog:[],
 		updates:[],
@@ -6454,7 +6454,7 @@
 			globalId:0,
 		},
 		help:{
-			'关于游戏':'<div style="margin:10px">关于无名杀</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br><a href="https://github.com/libccy/noname">点击前往Github仓库</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！',
+			'关于游戏':'<div style="margin:10px">关于无名杀</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br><a href="https://github.com/ZhuYing-official/diy_noname">点击前往Github仓库</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！',
 			'游戏操作':'<ul><li>长按/鼠标悬停/右键单击显示信息。<li>触屏模式中，双指点击切换暂停；下划显示菜单，上划切换托管。<li>键盘快捷键<br>'+
 			'<table><tr><td>A<td>切换托管<tr><td>W<td>切换不询问无懈<tr><td>空格<td>暂停</table><li>编辑牌堆<br>在卡牌包中修改牌堆后，将自动创建一个临时牌堆，在所有模式中共用，当保存当前牌堆后，临时牌堆被清除。每个模式可设置不同的已保存牌堆，设置的牌堆优先级大于临时牌堆。</ul>',
 			'游戏命令':'<div style="margin:10px">变量名</div><ul style="margin-top:0"><li>场上角色<br>game.players<li>阵亡角色<br>game.dead'+
@@ -43154,7 +43154,7 @@
 							updatepx.style.whiteSpace='nowrap';
 							updatepx.style.marginTop='8px';
 							var buttonx=ui.create.node('button','访问项目主页',function(){
-								window.open('https://github.com/libccy/noname');
+								window.open('https://github.com/ZhuYing-official/diy_noname');
 							});
 							updatepx.appendChild(buttonx);
 							ui.updateUpdate=function(){

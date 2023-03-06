@@ -72,7 +72,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 李信
 			hok_lixin:['male','shen',5,['lx_wangming','lx_dengshen',],['qun']],
 			// 明世隐
-			hok_mingshiyin:['male','shu',4,['minggua','biangua']],
+			hok_mingshiyin:['male','shu',4,['taigua','minggua','biangua']],
 			// 神曹植
 			shen_caozhi:['male','shen',3,['caigao','badou','qibu','chengshi'],['wei']],
 			// 神董卓
@@ -410,100 +410,39 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			// 明世隐
+			taigua:{
+				audio: 2,
+				enable:'phaseUse',
+				usable:1,
+				filterTarget:function(card,player,target){
+					if(target.hp>=target.maxHp) return false;
+					return true;
+				},
+				content: function(){
+					'step 0'
+					player.removeSkill('minggua2');
+					'step 1'
+					player.damage();
+					'step 2'
+					player.line(target,'green');
+					target.recover();
+					player.addSkill('minggua2');
+				},
+				ai:{
+					order: get.order({name:'wanjian'})-1,
+					result:{
+						target:function(player,target){
+							if(target.hp==1) return 5;
+							return 1;
+						}
+					},
+					threaten:1,
+				}
+			},
 			minggua:{
 				auto: 2,
 				forced: true,
 				group: 'minggua2',
-				trigger:{
-					source: 'damageBegin2',
-				},
-				content:function(){
-					'step 0'
-					var r = Math.random();
-					var tar = trigger.player;
-					var cards=tar.getCards('hej');
-					
-					var str=get.translation(player)+'占卜结果为：';
-					if(r<0.05){
-						// 1
-						str+='大吉';
-					} else if(r<0.25){
-						// 2
-						str+='中吉';
-					} else if(r<0.5){
-						// 3
-						str+='小吉';
-					} else if(r<0.75){
-						// 4
-						str+='小凶';
-					} else if(r<0.95){
-						// 5
-						str+='中凶';
-					} else{
-						str+='大凶';
-					}
- 					event.dialog=ui.create.dialog(str);
-					game.delay(0.5);
-					game.log(str);
-
-					if(r<0.05){
-						// 1
-						if(!gua1){
-							tar.die();
-							trigger.cancel();
-						}
-					} else if(r<0.25){
-						// 2
-						if(!gua2){
-							trigger.num++;
-							if(cards.length>0){
-								tar.discard(cards.randomGet());
-							}
-						}
-					} else if(r<0.5){
-						// 3
-						if(!gua3){
-							if(cards.length>0){
-								tar.discard(cards.randomGet());
-							}
-						}
-					} else if(r<0.75){
-						// 4
-						if(!gua4){
-							tar.draw();
-						}
-					} else if(r<0.95){
-						// 5
-						if(!gua5){
-							trigger.cancel();
-							tar.recover(trigger.num);
-							tar.draw();
-						}
-					} else{
-						if(!gua6){
-							trigger.cancel();
-							tar.recover((tar.maxHp-tar.hp));
-							tar.draw(4);
-						}
-					}
-					if(player.hasSkill('biangua')){
-						if(player.countMark('biangua2')<8){
-							player.addMark('biangua2', 1);
-						}
-					}
-					if(tar.hasSkill('biangua')){
-						if(tar.countMark('biangua2')<8){
-							tar.addMark('biangua2', 1);
-						}
-					}
-					'step 1'
-					game.delay(0.5);
-					event.dialog.close();
-				},
-			},
-			minggua2:{
-				auto: 2,
-				forced: true,
 				trigger:{
 					player: 'damageBegin2',
 				},
@@ -514,19 +453,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var cards=tar.getCards('hej');
 					
 					var str=get.translation(trigger.source)+'占卜结果为：';
-					if(r<0.05){
+					if(r<0.01){
 						// 1
 						str+='大凶';
-					} else if(r<0.25){
+					} else if(r<0.21){
 						// 2
 						str+='中凶';
 					} else if(r<0.5){
 						// 3
 						str+='小凶';
-					} else if(r<0.75){
+					} else if(r<0.79){
 						// 4
 						str+='小吉';
-					} else if(r<0.95){
+					} else if(r<0.99){
 						// 5
 						str+='中吉';
 					} else{
@@ -535,13 +474,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.dialog=ui.create.dialog(str);
 					game.log(str);
 					
-					if(r<0.05){
+					if(r<0.01){
 						// 1
 						if(!gua1){
 							tar.die();
 							trigger.cancel();
 						}
-					} else if(r<0.25){
+					} else if(r<0.21){
 						// 2
 						if(!gua2){
 							trigger.num++;
@@ -556,12 +495,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								tar.discard(cards.randomGet());
 							}
 						}
-					} else if(r<0.75){
+					} else if(r<0.79){
 						// 4
 						if(!gua4){
 							tar.draw();
 						}
-					} else if(r<0.95){
+					} else if(r<0.99){
 						// 5
 						if(!gua5){
 							trigger.cancel();
@@ -589,6 +528,96 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
+					'step 1'
+					game.delay(0.5);
+					event.dialog.close();
+				},
+			},
+			minggua2:{
+				auto: 2,
+				forced: true,
+				trigger:{
+					source: 'damageBegin2',
+				},
+				content:function(){
+					'step 0'
+					var r = Math.random();
+					var tar = trigger.player;
+					var cards=tar.getCards('hej');
+					
+					var str=get.translation(player)+'占卜结果为：';
+					if(r<0.01){
+						// 1
+						str+='大吉';
+					} else if(r<0.21){
+						// 2
+						str+='中吉';
+					} else if(r<0.5){
+						// 3
+						str+='小吉';
+					} else if(r<0.79){
+						// 4
+						str+='小凶';
+					} else if(r<0.99){
+						// 5
+						str+='中凶';
+					} else{
+						str+='大凶';
+					}
+ 					event.dialog=ui.create.dialog(str);
+					game.delay(0.5);
+					game.log(str);
+
+					if(r<0.01){
+						// 1
+						if(!gua1){
+							tar.die();
+							trigger.cancel();
+						}
+					} else if(r<0.21){
+						// 2
+						if(!gua2){
+							trigger.num++;
+							if(cards.length>0){
+								tar.discard(cards.randomGet());
+							}
+						}
+					} else if(r<0.5){
+						// 3
+						if(!gua3){
+							if(cards.length>0){
+								tar.discard(cards.randomGet());
+							}
+						}
+					} else if(r<0.79){
+						// 4
+						if(!gua4){
+							tar.draw();
+						}
+					} else if(r<0.99){
+						// 5
+						if(!gua5){
+							trigger.cancel();
+							tar.recover(trigger.num);
+							tar.draw();
+						}
+					} else{
+						if(!gua6){
+							trigger.cancel();
+							tar.recover((tar.maxHp-tar.hp));
+							tar.draw(4);
+						}
+					}
+					if(player.hasSkill('biangua')){
+						if(player.countMark('biangua2')<8){
+							player.addMark('biangua2', 1);
+						}
+					}
+					if(tar.hasSkill('biangua')){
+						if(tar.countMark('biangua2')<8){
+							tar.addMark('biangua2', 1);
+						}
+					}
 					'step 1'
 					game.delay(0.5);
 					event.dialog.close();
@@ -649,27 +678,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return target.hasSkill('biangua');
 					})[0];
 					player.chooseControl(guaList,'cancel2').set('ai', function(target){
-						let att = get.attitude(_status.event.player,target);
-						let r = Math.random();
-						if(guaList.length<=2){
-							if(r>0.5){
-								return guaList[0];
-							}
-							return guaList[1];
-						}
-						if(att>0){
-							if(r>0.5){
-								return guaList[guaList.length-1];
-							}
-							return guaList[guaList.length-2];
-						} else if(att<0){
-							if(r>0.5){
-								return guaList[0];
-							}
-							return guaList[1];
-						} else{
-							return guaList[guaList.length/2-1];
-						}
+						let r = Math.random(guaList.length);
+						return Math.floor(r);
 					});
 					'step 2'
 					switch (result.control){
@@ -704,7 +714,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.removeMark('biangua2', 8);
 					}
 					'step 3'
-					game.delay(0.5);
+					game.delay(1);
 					event.dialog.close();
 				},
 				ai:{
@@ -1209,7 +1219,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// g绿 b蓝 r红 p粉
 			cuishi:'#b捞得一评级:3.6',
 			hok_lixin:'#r捞得一评级:4.3',
-			hok_mingshiyin:'#r耀世圣手评级:4.0',
+			hok_mingshiyin:'#r耀世圣手评级:4.1',
 			shen_caozhi:'#r捞得一评级:4.3',
 			shen_dongzhuo:'#r捞得一评级:4.3',
 		},
@@ -1230,6 +1240,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lx_tongkuang_info:'锁定技，弃牌阶段前，你可以弃置一枚「王」标记，选择[人杰]、[统御]、[狂暴]路线中的一个，然后获得该路线的一个技能，并失去其他路线的技能。（人杰：[破竹][破竹][英姿]；统御：[慧识][灵策][定汉]；狂暴：[劫营][神裁][巡使]。）',
 			// 明世隐
 			hok_mingshiyin:'明世隐',
+			taigua:'太卦',
+			taigua_info:'出牌阶段限一次，你对自己造成1点伤害，然后令一名其他角色回复1点体力。',
 			minggua:'命卦',
 			minggua_info:'锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
 				1.大吉/大凶：受到伤害的角色死亡；<br/>\
