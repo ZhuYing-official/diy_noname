@@ -70,7 +70,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 崔氏
 			cuishi:['female','wei',3,['reluoshen','pianwan','huayi',]],
 			// 李信
-			hok_lixin:['male','shen',5,['lx_wangming','lx_dengshen',],['qun']],
+			hok_lixin:['male','shen',4,['lx_wangming','lx_dengshen',],['qun']],
 			// 明世隐
 			hok_mingshiyin:['male','shu',4,['taigua','minggua','biangua']],
 			// 神曹植
