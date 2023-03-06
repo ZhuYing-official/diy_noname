@@ -1205,6 +1205,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			*/
 		},
+		characterTitle:{
+			// g绿 b蓝 r红 p粉
+			cuishi:'#b捞得一评级:3.6',
+			hok_lixin:'#r捞得一评级:4.3',
+			hok_mingshiyin:'#r捞得一评级:4.0',
+			shen_caozhi:'#r捞得一评级:4.3',
+			shen_dongzhuo:'#r捞得一评级:4.3',
+		},
 		translate:{
 			// 崔氏
 			cuishi:'崔氏',

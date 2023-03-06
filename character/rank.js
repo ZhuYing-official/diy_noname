@@ -1183,7 +1183,11 @@ window.noname_character_rank={
 			'tw_niufudongxie',
 			'tw_shen_lvmeng',
 
+			//捞得一
 			'hok_lixin',
+			'hok_mingshiyin',
+			'shen_caozhi',
+			'shen_dongzhuo',
 		],
 		epic:[
 			'hs_tyrande',
@@ -1334,6 +1338,9 @@ window.noname_character_rank={
 			'tw_zhangning',
 			'tw_zhugeguo',
 			'xuelingyun',
+
+			//捞得一
+			'cuishi',
 		],
 		rare:[
 			'hs_selajin',

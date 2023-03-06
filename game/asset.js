@@ -7152,7 +7152,6 @@ window.noname_asset_list=[
 	'image/splash/guozhan.jpg',
 	'image/splash/identity.jpg',
 	'image/splash/single.jpg',
-	// 'image/splash/tafang.jpg',
 	'image/splash/versus.jpg',
 	'theme/music/grid.png',
 	'theme/music/wood.png',
