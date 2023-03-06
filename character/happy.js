@@ -497,6 +497,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					'step 1'
+					game.delay(0.5);
 					event.dialog.close();
 				},
 			},
@@ -512,7 +513,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var tar = trigger.player;
 					var cards=tar.getCards('hej');
 					
-					var str=get.translation(player)+'占卜结果为：';
+					var str=get.translation(trigger.source)+'占卜结果为：';
 					if(r<0.05){
 						// 1
 						str+='大凶';
@@ -589,6 +590,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 
 					'step 1'
+					game.delay(0.5);
 					event.dialog.close();
 				},
 			},
@@ -690,7 +692,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							gua6 = true;
 							break;
 						default:
-					}
+						}
+					var str=get.translation(player)+'选择了：'+result.control;
+					event.dialog=ui.create.dialog(str);
+					game.log(str);
 					if(!player.hasSkill('biangua')){
 						game.filterPlayer(function(target){
 							return target.hasSkill('biangua');
@@ -698,6 +703,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					} else{
 						player.removeMark('biangua2', 8);
 					}
+					'step 3'
+					game.delay(0.5);
+					event.dialog.close();
 				},
 				ai:{
 					order:function(){

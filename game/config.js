@@ -10,8 +10,7 @@ window.config={
 		'yuanshao','daqiao','re_daqiao','hs_xuanzhuanjijia',
 		'zhuran','huatuo','hs_guldan','wangyi','caoang',
 		'guojia','re_guojia','shen_caocao','caopi','hs_yngvar','guansuo',
-		'hs_anduin','yxs_yujix','yxs_luzhishen',
-		'hs_antonidas','xushi','hs_lreno'
+		'hs_anduin','hs_antonidas','xushi','hs_lreno'
 	],
 	forbidchess:['hetaihou'],
 	forbidboss:['caiwenji'],

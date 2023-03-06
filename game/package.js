@@ -17,8 +17,6 @@ window.noname_package={
 		offline:'线下武将',
 		old:'怀旧',
 		diy:'DIY',
-		yxs:'英雄杀',
-		mtg:'万智牌',
 	},
 	card:{
 		standard:'标准',
@@ -30,7 +28,6 @@ window.noname_package={
 		yongjian:'用间篇',
 		zhenfa:'阵法',
 		yunchou:'运筹帷幄',
-		mtg:'万智牌',
 		huanlekapai:'欢乐卡牌',
 	},
 	play:{
@@ -48,7 +45,6 @@ window.noname_package={
 		doudizhu:'斗地主',
 		single:'单挑',
 		chess:'战棋',
-		tafang:'塔防',
 		brawl:'乱斗',
 	},
 	submode:{
