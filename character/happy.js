@@ -678,8 +678,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return target.hasSkill('biangua');
 					})[0];
 					player.chooseControl(guaList,'cancel2').set('ai', function(target){
-						let r = Math.random(guaList.length);
-						return Math.floor(r);
+						let r = Math.random()*guaList.length;
+						return guaList[Math.floor(r)];
 					});
 					'step 2'
 					switch (result.control){

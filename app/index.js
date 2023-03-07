@@ -18,8 +18,8 @@
         },
         onDeviceReady: function() {
             var site_g='https://raw.githubusercontent.com/ZhuYing-official/diy_noname/diy/';
-            // var site_c='https://ghproxy.com/https://raw.githubusercontent.com/libccy/noname/master/';
-            var site=g;
+            var site_c='https://ghproxy.com/https://raw.githubusercontent.com/ZhuYing-official/diy_noname/diy/';
+            var site=site_c;
             var button,changesite,help,version,versionnode;
             var req=function(url,onload,onerror,target){
 				var sScriptURL=url;
@@ -241,8 +241,8 @@
             helpnode.id='noname_init_help';
             var helpnodetext=document.createElement('div');
             helpnodetext.innerHTML=
-            '<div><ol><li>访问<a href="https://github.com/ZhuYing-official/diy_noname/">https://github.com/ZhuYing-official/diy_noname/</a>，下载zip文件'+
-            '<li>解压后将noname-diy目录内的所有文件放入对应文件夹：<br>windows/linux：resources/app<br>mac：（右键显示包内容）contents/resources/app<br>android：android/data/com.widget.noname<br>ios：documents（itunes—应用—文件共享）'+
+            '<div><ol><li>访问<a href="https://github.com/libccy/noname/">https://github.com/libccy/noname/</a>，下载zip文件'+
+            '<li>解压后将noname-master目录内的所有文件放入对应文件夹：<br>windows/linux：resources/app<br>mac：（右键显示包内容）contents/resources/app<br>android：android/data/com.widget.noname<br>ios：documents（itunes—应用—文件共享）'+
             '<li>完成上述步骤后，<a href="javascript:localStorage.setItem(\'noname_inited\',window.tempSetNoname);window.location.reload()">点击此处</a></div>';
             helpnode.appendChild(helpnodetext);
             help.onclick=function(){
@@ -267,15 +267,14 @@
                 window.tempSetNoname='nodejs';
             }
             changesite.onclick=function(){
-                site=site_g;
-                // if(this.classList.toggle('bluetext')){
-                //     site=site_g;
-                //     this.innerHTML='下载源: GitHub'
-                // }
-                // else{
-                //     site=site_c;
-                //     this.innerHTML='下载源: GitHub Proxy'
-                // }
+                if(this.classList.toggle('bluetext')){
+                    site=site_g;
+                    this.innerHTML='下载源: GitHub'
+                }
+                else{
+                    site=site_c;
+                    this.innerHTML='下载源: GitHub Proxy'
+                }
                 checkConnection();
             };
         }
