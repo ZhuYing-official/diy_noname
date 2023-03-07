@@ -1,9 +1,9 @@
 "use strict";
 (function(){
-	if(!localStorage.getItem('noname_alerted')){
-		localStorage.setItem('noname_alerted',true);
-		alert('无名杀官方发布地址仅有GitHub仓库！\n其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！');
-	}
+	// if(!localStorage.getItem('noname_alerted')){
+		// localStorage.setItem('noname_alerted',true);
+		// alert('无名杀官方发布地址仅有GitHub仓库！\n其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！');
+	// }
 	var _status={
 		paused:false,
 		paused2:false,
@@ -1078,7 +1078,7 @@
 					},
 					image_background:{
 						name:'游戏背景',
-						init:'default',
+						init:'longwen',
 						item:{},
 						visualBar:function(node,item,create){
 							if(node.created){
@@ -1334,7 +1334,7 @@
 					},
 					card_style:{
 						name:'卡牌样式',
-						init:'default',
+						init:'simple',
 						intro:'设置正面朝上的卡牌的样式',
 						item:{
 							wood:'木纹',
@@ -1455,7 +1455,7 @@
 						unfrequent:true,
 					},
 					cardback_style:{
-						name:'卡背样式',
+						name:'official',
 						intro:'设置背面朝上的卡牌的样式',
 						init:'default',
 						item:{
@@ -2047,7 +2047,7 @@
 					autoborder_count:{
 						name:'边框升级方式',
 						intro:'<strong>击杀</strong> 每击杀一人，边框提升两级<br><strong>伤害</strong> 每造成两点伤害，边框提升一级<br><strong>混合</strong> 击杀量决定边框颜色，伤害量决定边框装饰',
-						init:'kill',
+						init:'mix',
 						item:{
 							kill:'击杀',
 							damage:'伤害',
@@ -3818,7 +3818,7 @@
 						onclick:function(){
 							if(this.firstChild.innerHTML!='已重置'){
 								this.firstChild.innerHTML='已重置'
-								game.saveConfig('new_tutorial',false);
+								// game.saveConfig('new_tutorial',false);
 								game.saveConfig('prompt_hidebg');
 								game.saveConfig('prompt_hidepack');
 								var that=this;
@@ -9509,7 +9509,7 @@
 				ui.arena.classList.remove('tempnoe');
 			},
 			p:function(name,i,skin){
-				var list=['hs','pal','gjqt','ow'];
+				var list=['hs'];
 				if(!lib.character[name]){
 					for(var j=0;j<list.length;j++){
 						if(lib.character[list[j]+'_'+name]){
@@ -9582,7 +9582,6 @@
 							case 'qun':d++;if(lib.config.banned.contains(i)) sd++;break;
 							case 'jin':g++;if(lib.config.banned.contains(i)) sg++;break;
 							case 'western':e++;if(lib.config.banned.contains(i)) se++;break;
-							case 'key':f++;if(lib.config.banned.contains(i)) sf++;break;
 						}
 					}
 					console.log('魏：'+(a-sa)+'/'+a);
@@ -9591,7 +9590,6 @@
 					console.log('群：'+(d-sd)+'/'+d);
 					console.log('晋：'+(g-sg)+'/'+g);
 					console.log('西：'+(e-se)+'/'+e);
-					console.log('键：'+(f-sf)+'/'+f);
 					console.log('已启用：'+((a+b+c+d+e+f)-(sa+sb+sc+sd+se+sf))+'/'+(a+b+c+d+e+f));
 				}());
 				(function(){
@@ -10183,11 +10181,34 @@
 			db_def:'策略',
 			db_def1:'奇袭粮道',
 			db_def2:'开城诱敌',
+			cooperation_damage:'同仇',
+			cooperation_damage_info:'双方累计造成至少4点伤害',
+			cooperation_draw:'并进',
+			cooperation_draw_info:'双方累计摸至少8张牌',
+			cooperation_discard:'疏财',
+			cooperation_discard_info:'双方累计弃置至少4种花色的牌',
+			cooperation_use:'戮力',
+			cooperation_use_info:'双方累计使用至少4种花色的牌',
+			charge:'蓄力值',
 		},
 		element:{
 			content:{
 				emptyEvent:function(){
 					event.trigger(event.name);
+				},
+				chooseCooperationFor:function(){
+					'step 0'
+					var next=player.chooseButton([
+						'选择和'+get.translation(target)+'的协力方式',
+						[event.cardlist,'vcard'],
+					],true);
+					next.set('ai',event.ai||function(){
+						return Math.random();
+					});
+					'step 1'
+					if(result.bool){
+						player.cooperationWith(target,result.links[0][2].slice(12),event.reason);
+					}
 				},
 				chooseToPlayBeatmap:function(){
 					'step 0'
@@ -12935,7 +12956,9 @@
 					for(var i=0;i<event.lose_list.length;i++){
 						var next=event.lose_list[i][0].lose(event.lose_list[i][1],event.position);
 						game.log(event.lose_list[i][0],'弃置了',event.lose_list[i][1]);
-						next.type=='discard';
+						next.type='discard';
+						next.animate=false;
+						next.delay=false;
 						cards.addArray(event.lose_list[i][1]);
 						next.getlx=false;
 					}
@@ -13152,6 +13175,7 @@
 						next.num1=event.num1;
 						next.num2=event.num2;
 						next.setContent(event.callback);
+                        event.compareMultiple=true;
 					}
 					"step 6"
 					game.broadcastAll(ui.clear);
@@ -14181,6 +14205,7 @@
 					if(event.prompt2){
 						event.dialog.addText(event.prompt2);
 					}
+					event.dialog.add('<div class="text center">（若对话框显示不完整，可下滑操作）</div>');
 					var directh=!lib.config.unauto_choose;
 					for(var i=0;i<event.position.length;i++){
 						if(event.position[i]=='h'){
@@ -14246,6 +14271,8 @@
 							event.dialog.open();
 							game.check();
 							game.pause();
+							ui.arena.classList.add('choose-player-card');
+							event.dialog.classList.add('fullheight');
 						}
 						else if(event.isOnline()){
 							event.send();
@@ -14265,6 +14292,7 @@
 						event.result.cards=event.result.links.slice(0);
 					}
 					event.resume();
+					ui.arena.classList.remove('choose-player-card');
 				},
 				discardPlayerCard:function(){
 					"step 0"
@@ -14303,6 +14331,7 @@
 					if(event.prompt2){
 						event.dialog.addText(event.prompt2);
 					}
+					event.dialog.add('<div class="text center">（若对话框显示不完整，可下滑操作）</div>');
 					var directh=(!lib.config.unauto_choose&&!event.complexSelect);
 					for(var i=0;i<event.position.length;i++){
 						if(event.position[i]=='h'){
@@ -14364,6 +14393,8 @@
 							event.dialog.open();
 							game.check();
 							game.pause();
+							ui.arena.classList.add('discard-player-card');
+							event.dialog.classList.add('fullheight');
 						}
 						else if(event.isOnline()){
 							event.send();
@@ -14381,6 +14412,7 @@
 					event.dialog.close();
 					"step 2"
 					event.resume();
+					ui.arena.classList.remove('discard-player-card');
 					if(event.result.bool&&event.result.links&&!game.online){
 						if(event.logSkill){
 							if(typeof event.logSkill=='string'){
@@ -14449,6 +14481,7 @@
 					if(event.prompt2){
 						event.dialog.addText(event.prompt2);
 					}
+					event.dialog.add('<div class="text center">（若对话框显示不完整，可下滑操作）</div>');
 					var directh=(!lib.config.unauto_choose&&!event.complexSelect);
 					for(var i=0;i<event.position.length;i++){
 						if(event.position[i]=='h'){
@@ -14511,6 +14544,8 @@
 							event.dialog.open();
 							game.check();
 							game.pause();
+							ui.arena.classList.add('gain-player-card');
+							event.dialog.classList.add('fullheight');
 						}
 						else if(event.isOnline()){
 							event.send();
@@ -14528,6 +14563,7 @@
 					event.dialog.close();
 					"step 2"
 					event.resume();
+					ui.arena.classList.remove('gain-player-card');
 					if(game.online||!event.result.bool){
 						event.finish();
 					}
@@ -16312,6 +16348,7 @@
 					"step 5"
 					var evt=event.getParent();
 					if((evt.name!='discard'&&event.type!='discard')&&(evt.name!='loseToDiscardpile'&&event.type!='loseToDiscardpile')) return;
+					if(event.animate===false||event.delay===false) return;
 					if(evt.delay!=false){
 						if(evt.waitingForTransition){
 							_status.waitingForTransition=evt.waitingForTransition;
@@ -17141,6 +17178,67 @@
 			},
 			player:{
 				//新函数
+				cooperationWith:function(target,type,reason){
+					var player=this;
+					if(!player.storage.cooperation) player.storage.cooperation=[];
+					var info={
+						target:target,
+						type:type,
+						reason:reason,
+					};
+					player.storage.cooperation.add(info);
+					player.addTempSkill('cooperation',{player:'dieAfter'});
+					player.addSkill('cooperation_'+type,{player:'dieAfter'});
+					game.log(player,'向',target,'发起了“协力”，合作类型是','#g'+get.translation('cooperation_'+type));
+				},
+				chooseCooperationFor:function(){
+					var next=game.createEvent('chooseCooperationFor');
+					next.player=this;
+					for(var i=0;i<arguments.length;i++){
+						if(get.itemtype(arguments[i])=='player'){
+							next.target=arguments[i];
+						}
+						else if(Array.isArray(arguments[i])){
+							next.cardlist=arguments[i];
+						}
+						else if(typeof arguments[i]=='string'){
+							next.reason=arguments[i];
+						}
+					}
+					if(!next.cardlist) next.cardlist=['cooperation_damage','cooperation_draw','cooperation_discard','cooperation_use'];
+					next.setContent('chooseCooperationFor');
+					return next;
+				},
+				checkCooperationStatus:function(target,reason){
+					var storage=this.getStorage('cooperation');
+					for(var info of storage){
+						if(info.target==target&&info.reason==reason){
+							var skill=lib.skill['cooperation_'+info.type];
+							if(skill&&skill.checkx&&skill.checkx(info)) return true;
+						}
+					}
+					return false;
+				},
+				removeCooperation:function(info){
+					var player=this;
+					var storage=player.getStorage('cooperation');
+					if(!storage.contains(info)) return;
+					storage.remove(info);
+					var unmark=true,reason=info.type;
+					if(!storage.length){
+						player.removeSkill('cooperation');
+					}
+					else{
+						for(var i of storage){
+							if(i.type==reason){
+								unmark=false;
+								break;
+							}
+						}
+					}
+					if(unmark) player.removeSkill('cooperation_'+reason);
+					else player.markSkill('cooperation_'+reason);
+				},
 				hasClan:function(clan,unseen){
 					if(unseen||!this.isUnseen(0)){
 						var info=lib.character[this.name1];
@@ -26766,6 +26864,21 @@
 		},
 		card:{
 			list:[],
+			cooperation_damage:{
+				fullskin:true,
+			},
+			cooperation_draw:{
+				fullskin:true,
+				cardimage:'cooperation_damage',
+			},
+			cooperation_discard:{
+				fullskin:true,
+				cardimage:'cooperation_damage',
+			},
+			cooperation_use:{
+				fullskin:true,
+				cardimage:'cooperation_damage',
+			},
 			pss_paper:{
 				type:'pss',
 				fullskin:true,
@@ -27377,6 +27490,268 @@
 			}
 		},
 		skill:{
+			charge:{
+				markimage:'image/card/charge.png',
+				intro:{
+					content:'当前蓄力点数：#',
+				},
+			},
+			cooperation:{
+				charlotte:true,
+				trigger:{
+					global:['phaseAfter','dieAfter'],
+				},
+				forced:true,
+				lastDo:true,
+				filter:function(event,player){
+					if(event.name=='die'&&event.player.isAlive()) return false;
+					var storage=player.getStorage('cooperation');
+					for(var info of storage){
+						if(info.target==event.player) return true;
+					}
+					return false;
+				},
+				content:function(){
+					for(var i=0;i<player.storage.cooperation.length;i++){
+						var info=player.storage.cooperation[i];
+						if(info.target==trigger.player){
+							player.removeCooperation(info);
+							i--;
+						}
+					}
+				},
+				onremove:function(player,skill){
+					var storage=player.getStorage(skill);
+					var reasons=[];
+					for(var i of storage) reasons.add(i.type);
+					for(var i of reasons) player.removeSkill(skill+'_'+i);
+					delete player.storage[i];
+				},
+				subSkill:{
+					damage:{
+						mark:true,
+						trigger:{global:'damage'},
+						forced:true,
+						charlotte:true,
+						popup:false,
+						firstDo:true,
+						filter:function(event,player){
+							if(!event.source) return false;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='damage'&&(event.source==player||event.source==info.target)) return true;
+							}
+							return false;
+						},
+						checkx:(info)=>(info.damage&&info.damage>3),
+						content:function(){
+							var source=trigger.source;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='damage'&&(source==player||source==info.target)){
+									if(!info.damage) info.damage=0;
+									info.damage+=trigger.num;
+								}
+							}
+							player.markSkill('cooperation_damage');
+						},
+						marktext:'仇',
+						intro:{
+							name:'协力 - 同仇',
+							markcount:function(storage,player){
+								return Math.max.apply(Math,player.getStorage('cooperation').map(function(info){
+									return info.damage||0;
+								}));
+							},
+							content:function(storage,player){
+								var str='',storage=player.getStorage('cooperation');
+								for(var info of storage){
+									if(info.type=='damage'){
+										str+='<br><li>协力角色：'+get.translation(info.target);
+										str+='<br><li>协力原因：'+get.translation(info.reason);
+										str+='<br><li>协力进度：'
+										var num=(info.damage||0);
+										str+=num;
+										str+='/4';
+										str+=(num>3?' (已完成)':' (未完成)');
+										str+='<br>　　';
+									}
+								}
+								return str.slice(4,str.length-6);
+							},
+						},
+					},
+					draw:{
+						mark:true,
+						trigger:{global:'gainAfter'},
+						forced:true,
+						charlotte:true,
+						popup:false,
+						firstDo:true,
+						filter:function(event,player){
+							if(event.getParent().name!='draw') return false;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='draw'&&(event.player==player||event.player==info.target)) return true;
+							}
+							return false;
+						},
+						checkx:(info)=>(info.draw&&info.draw>7),
+						content:function(){
+							var source=trigger.player;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='draw'&&(source==player||source==info.target)){
+									if(!info.draw) info.draw=0;
+									info.draw+=trigger.cards.length;
+								}
+							}
+							player.markSkill('cooperation_draw');
+						},
+						marktext:'进',
+						intro:{
+							name:'协力 - 并进',
+							markcount:function(storage,player){
+								return Math.max.apply(Math,player.getStorage('cooperation').map(function(info){
+									return info.draw||0;
+								}));
+							},
+							content:function(storage,player){
+								var str='',storage=player.getStorage('cooperation');
+								for(var info of storage){
+									if(info.type=='draw'){
+										str+='<br><li>协力角色：'+get.translation(info.target);
+										str+='<br><li>协力原因：'+get.translation(info.reason);
+										str+='<br><li>协力进度：'
+										var num=(info.draw||0);
+										str+=num;
+										str+='/8';
+										str+=(num>7?' (已完成)':' (未完成)');
+										str+='<br>　　';
+									}
+								}
+								return str.slice(4,str.length-6);
+							},
+						},
+					},
+					discard:{
+						mark:true,
+						trigger:{global:'loseAfter'},
+						forced:true,
+						charlotte:true,
+						popup:false,
+						firstDo:true,
+						filter:function(event,player){
+							if(event.type!='discard') return false;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='discard'&&(event.player==player||event.player==info.target)) return true;
+							}
+							return false;
+						},
+						checkx:(info)=>(info.discard&&info.discard.length>3),
+						content:function(){
+							var source=trigger.player;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='discard'&&(source==player||source==info.target)){
+									if(!info.discard) info.discard=[];
+									for(var i of trigger.cards2){
+										var suit=get.suit(i,player);
+										if(lib.suit.contains(suit)) info.discard.add(suit);
+									}
+								}
+							}
+							player.markSkill('cooperation_discard');
+						},
+						marktext:'财',
+						intro:{
+							name:'协力 - 疏财',
+							markcount:function(storage,player){
+								return Math.max.apply(Math,player.getStorage('cooperation').map(function(info){
+									return info.discard?info.discard.length:0;
+								}));
+							},
+							content:function(storage,player){
+								var str='',storage=player.getStorage('cooperation');
+								for(var info of storage){
+									if(info.type=='discard'){
+										str+='<br><li>协力角色：'+get.translation(info.target);
+										str+='<br><li>协力原因：'+get.translation(info.reason);
+										str+='<br><li>进度：';
+										var suits=info.discard||[];
+										var suits2=[['spade','♠','♤'],['heart','♥','♡'],['club','♣','♧'],['diamond','♦','♢']];
+										for(var i of suits2){
+											str+=(suits.contains(i[0])?i[1]:i[2]);
+										}
+										str+=(suits.length>3?' (已完成)':' (未完成)');
+										str+='<br>　　';
+									}
+								}
+								return str.slice(4,str.length-6);
+							},
+						},
+					},
+					use:{
+						mark:true,
+						trigger:{global:'useCard1'},
+						forced:true,
+						charlotte:true,
+						popup:false,
+						firstDo:true,
+						filter:function(event,player){
+							var suit=get.suit(event.card);
+							if(!lib.suit.contains(suit)) return false;
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='use'
+									&&(event.player==player||event.player==info.target)&&
+									(!info.used||!info.used.contains(suit))) return true;
+							}
+							return false;
+						},
+						checkx:(info)=>(info.used&&info.used.length>3),
+						content:function(){
+							var source=trigger.player,suit=get.suit(trigger.card);
+							var storage=player.getStorage('cooperation');
+							for(var info of storage){
+								if(info.type=='use'&&(source==player||source==info.target)){
+									if(!info.used) info.used=[];
+									info.used.add(suit);
+								}
+							}
+							player.markSkill('cooperation_use');
+						},
+						marktext:'戮',
+						intro:{
+							name:'协力 - 戮力',
+							markcount:function(storage,player){
+								return Math.max.apply(Math,player.getStorage('cooperation').map(function(info){
+									return info.used?info.used.length:0;
+								}));
+							},
+							content:function(storage,player){
+								var str='',storage=player.getStorage('cooperation');
+								for(var info of storage){
+									if(info.type=='use'){
+										str+='<br><li>协力角色：'+get.translation(info.target);
+										str+='<br><li>协力原因：'+get.translation(info.reason);
+										str+='<br><li>进度：';
+										var suits=info.used||[];
+										var suits2=[['spade','♠','♤'],['heart','♥','♡'],['club','♣','♧'],['diamond','♦','♢']];
+										for(var i of suits2){
+											str+=(suits.contains(i[0])?i[1]:i[2]);
+										}
+										str+=(suits.length>3?' (已完成)':' (未完成)');
+										str+='<br>　　';
+									}
+								}
+								return str.slice(4,str.length-6);
+							},
+						},
+					},
+				},
+			},
 			zhengsu:{
 				trigger:{player:'phaseDiscardEnd'},
 				forced:true,
@@ -36887,7 +37262,7 @@
 		roundNumber:0,
 		shuffleNumber:0,
 	};
-	window['b'+'ann'+'e'+'dE'+'x'+'ten'+'s'+'i'+'o'+'ns']=['\u4fa0\u4e49','\u5168\u6559\u7a0b'];
+	window['b'+'ann'+'e'+'dE'+'x'+'ten'+'s'+'i'+'o'+'ns']=[];
 	var ui={
 		updates:[],
 		thrown:[],
@@ -45902,11 +46277,11 @@
 					(lib.arenaReady.shift())();
 				}
 				delete lib.arenaReady;
-				if(lib.config.auto_check_update){
-					setTimeout(function(){
-						game.checkForUpdate(false);
-					},3000);
-				}
+				// if(lib.config.auto_check_update){
+					// setTimeout(function(){
+						// game.checkForUpdate(false);
+					// },3000);
+				// }
 				if(!lib.config.asset_version){
 					lib.onfree.push(function(){
 						setTimeout(function(){
@@ -48359,7 +48734,8 @@
 						if(ui.confirm){
 							ui.confirm.close();
 						}
-						ui.click.ok();
+						var event=_status.event;
+						if(!event.filterOk||event.filterOk()) ui.click.ok();
 						ui.canvas.width=ui.arena.offsetWidth;
 						ui.canvas.height=ui.arena.offsetHeight;
 					}
@@ -48803,7 +49179,8 @@
 							if(ui.confirm){
 								ui.confirm.close();
 							}
-							ui.click.ok();
+							var event=_status.event;
+							if(!event.filterOk||event.filterOk()) ui.click.ok();
 						}
 						else{
 							game.uncheck();
@@ -53787,7 +54164,7 @@
 							if(ui.throwEmotion){
 								for(var i of ui.throwEmotion) i.classList.remove('exclude');
 							}
-						},(emotion=='flower'||emotion=='egg')?5000:10000)
+						},(emotion=='flower'||emotion=='egg')?5:10)
 					};
 					var td;
 					var table=document.createElement('div');
