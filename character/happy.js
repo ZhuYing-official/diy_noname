@@ -284,7 +284,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
 								if(target.hp==1) return 0.8;
 								if(target.hp<=3) return 0.7;
-								if(target.hp==4) return 0.6;
 								return [0.5, 0.8];
 							}
 						}
@@ -416,6 +415,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				usable:1,
 				filterTarget:function(card,player,target){
 					if(target.hp>=target.maxHp) return false;
+					if(target==player) return false;
 					return true;
 				},
 				content: function(){
@@ -1240,7 +1240,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lx_tongkuang_info:'锁定技，弃牌阶段前，你可以弃置一枚「王」标记，选择[人杰]、[统御]、[狂暴]路线中的一个，然后获得该路线的一个技能，并失去其他路线的技能。（人杰：[破竹][破竹][英姿]；统御：[慧识][灵策][定汉]；狂暴：[劫营][神裁][巡使]。）',
 			// 明世隐
 			hok_mingshiyin:'明世隐',
-			taigua:'太卦',
+			taigua:'泰卦',
 			taigua_info:'出牌阶段限一次，你对自己造成1点伤害，然后令一名其他角色回复1点体力。',
 			minggua:'命卦',
 			minggua_info:'锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
