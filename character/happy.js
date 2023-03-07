@@ -275,16 +275,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					maixie:true,
 					maixie_hp:true,
 					threaten:function(player,target){
-						if(target.hp==1) return 2.5;
+						if(target.hp==1) return 3.5;
 						return 1;
 					},
 					effect:{
 						target:function(card,player,target){
 							if(get.tag(card,'damage')){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
-								if(target.hp==1) return 0.8;
-								if(target.hp<=3) return 0.7;
-								return [0.5, 0.8];
+								if(target.hasSkill('lx_tongkuang')&&target.countMark('lx_wangming')==0){
+									return [0.5, 1];
+								}
+								if(!target.hasSkill('lx_tongkuang')){
+									return [0.5, 0.8];
+								}
+								return [0.5, 0.6];
 							}
 						}
 					}
@@ -406,7 +410,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.syncStorage('lx_wangming');
 						}
 					}
-				}
+				},
 			},
 			// 明世隐
 			taigua:{
@@ -1218,10 +1222,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterTitle:{
 			// g绿 b蓝 r红 p粉
 			cuishi:'#b捞得一评级:3.6',
-			hok_lixin:'#r捞得一评级:4.3',
+			hok_lixin:'#r捞得一评级:4.2',
 			hok_mingshiyin:'#r耀世圣手评级:4.1',
-			shen_caozhi:'#r捞得一评级:4.3',
-			shen_dongzhuo:'#r捞得一评级:4.3',
+			shen_caozhi:'#r捞得一评级:4.2',
+			shen_dongzhuo:'#r捞得一评级:4.2',
 		},
 		translate:{
 			// 崔氏
