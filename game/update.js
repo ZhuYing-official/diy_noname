@@ -1,11 +1,11 @@
 window.noname_update={
-	version:'1.9.120',
-	update:'1.9.119',
+	version:'1.9.120.1',
+	update:'1.9.120',
 	changeLog:[
-		'整合@copcap 编写的48个武将',
-		'技能设计比赛入选稿：坂上智代',
+		'整合@萌新 (活动武将扩展)和@copcap 编写的61个武将',
+		'露娜Q技能调整',
 		'其他技能调整和bug修复',
-		'players://["ahuinan","chengbing","chenjiao","clan_xuncai","clan_xuncan","clan_xunchen","clan_xunshu","dc_hujinding","dc_yuejiu","dongguiren","gongsundu","leibo","liwan","liyixiejing","ol_furong","ol_liuba","panghui","re_caiyong","re_chengong","re_sundeng","re_xunyou","sb_caocao","sb_caoren","sb_ganning","sb_huanggai","sb_lvmeng","sb_machao","sb_sunquan","sb_sunshangxiang","sb_xiahoushi","sb_xuhuang","sb_zhangjiao","sb_zhenji","sb_zhouyu","shen_zhangjiao","shiyi","sp_caosong","sp_pengyang","sunlang","wangjun","wanglie","xin_caoxiu","xin_wuyi","xin_zhuzhi","yangfu","yuanji","zhangzhi","zhaozhi","zhujianping"]',
+		'players://["dc_chenqun","dc_sp_jiaxu","dc_wangyun","dc_zhouxuān","liupi","re_mazhong","sb_zhangfei","sb_zhaoyun","tw_baoxin","tw_bianfuren","tw_bingyuan","tw_caoxiu","tw_chendong","tw_chenzhen","tw_daxiaoqiao","tw_dengzhi","tw_fanchou","tw_feiyi","tw_fengxí","tw_furong","tw_guanqiujian","tw_guyong","tw_handang","tw_haomeng","tw_huchuquan","tw_jiangji","tw_jiangqing","tw_jianshuo","tw_jiling","tw_liufuren","tw_liuzhang","tw_liwei","tw_madai","tw_mateng","tw_niufudongxie","tw_niujin","tw_qiaogong","tw_qiaorui","tw_re_fazheng","tw_shen_lvmeng","tw_sunyi","tw_wangling","tw_weixu","tw_xiahouen","tw_xiahoushang","tw_xuezong","tw_xujing","tw_xunchen","tw_yangyi","tw_yanxiang","tw_yl_luzhi","tw_yufuluo","tw_zhangfei","tw_zhangji","tw_zhangnan","tw_zhangning","tw_zhouchu","tw_zhugeguo","tw_zongyu","xia_liyàn","xia_tongyuan","xia_wangyue","xia_xushu","xuelingyun"]',
 	],
 	files:[
 		//'card/extra.js',
