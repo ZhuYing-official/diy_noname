@@ -1047,6 +1047,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.removeMark('cannue',1);
 					player.syncStorage('cannue');
 					player.gainMaxHp();
+					player.draw();
 					// player.recover();
 				},
 				ai:{
