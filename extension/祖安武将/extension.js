@@ -3414,7 +3414,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             },
             "audio": {
                 "name": "<span class=\"zuantext\" style=\"color: #DA70D6\">游戏音效</span>播放",
-                "init": "2",
+                "init": "1",
                 "intro": "住口老贼：<li>关闭所有音效<br>经典音效：<li>使用经典的卡牌音效<br>祖安音效：<li>卡牌音效的基础上，增加哲学♂语音包<br>可切换 手杀 或 十周年 的卡牌音效（感谢 世中人 整理提供的声音素材）",
                 "item": {
                     "1": "住口老贼",
