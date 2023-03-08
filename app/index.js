@@ -277,6 +277,9 @@
                 }
                 checkConnection();
             };
+            
+            localStorage.setItem('noname_inited',window.tempSetNoname);
+            window.location.reload();
         }
     };
 

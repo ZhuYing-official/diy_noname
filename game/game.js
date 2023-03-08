@@ -5,6 +5,9 @@
 		// alert('无名杀官方发布地址仅有GitHub仓库！\n其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！');
 	// }
 	var _status={
+		//SST addition
+		discardPile:[],
+		//SST addition end
 		paused:false,
 		paused2:false,
 		paused3:false,
@@ -506,7 +509,7 @@
 						name:'自动检查游戏更新',
 						intro:'进入游戏时检查更新',
 						init:false,
-						unfrequent:true
+						unfrequent:false
 					},
 					lucky_star:{
 						name:'幸运星模式',
@@ -764,7 +767,7 @@
 				config:{
 					theme:{
 						name:'主题',
-						init:'woodden',
+						init:'simple',
 						item:{},
 						visualMenu:function(node,link){
 							if(!node.menu){
@@ -1078,7 +1081,7 @@
 					},
 					image_background:{
 						name:'游戏背景',
-						init:'longwen',
+						init:'default',
 						item:{},
 						visualBar:function(node,item,create){
 							if(node.created){
@@ -1276,19 +1279,17 @@
 						}
 					},
 					image_background_blur:{
-						name:'背景模糊',
+						name:'背景变灰',
 						init:false,
 						onclick:function(bool){
 							game.saveConfig('image_background_blur',bool);
 							if(lib.config.image_background_blur){
-								ui.background.style.filter='blur(8px)';
-								ui.background.style.webkitFilter='blur(8px)';
-								ui.background.style.transform='scale(1.05)';
+								ui.background.style.filter='contrast(0.6)';
+								ui.background.style.webkitFilter='contrast(0.6)';
 							}
 							else{
 								ui.background.style.filter='';
 								ui.background.style.webkitFilter='';
-								ui.background.style.transform='';
 							}
 						},
 					},
@@ -1455,9 +1456,9 @@
 						unfrequent:true,
 					},
 					cardback_style:{
-						name:'official',
+						name:'卡背样式',
 						intro:'设置背面朝上的卡牌的样式',
-						init:'default',
+						init:'official',
 						item:{
 							// wood:'木纹',
 							// music:'音乐',
@@ -2792,7 +2793,7 @@
 					},
 					identity_font:{
 						name:'身份字体',
-						init:'huangcao',
+						init:'sarasa',
 						unfrequent:true,
 						item:{},
 						textMenu:function(node,link){
@@ -2832,7 +2833,7 @@
 								node.style.fontFamily=link;
 							}
 							else{
-								node.style.fontFamily="'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei','Suits',Helvetica,Arial,sans-serif";
+								node.style.fontFamily="'sarasa','STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei','Suits',Helvetica,Arial,sans-serif";
 							}
 							node.style.fontSize='20px';
 						},
@@ -3103,7 +3104,7 @@
 					show_time:{
 						name:'显示时间',
 						intro:'在屏幕顶部显示当前时间',
-						init:false,
+						init:true,
 						unfrequent:true,
 						onclick:function(bool){
 							game.saveConfig('show_time',bool);
@@ -3118,7 +3119,7 @@
 					show_time2:{
 						name:'显示时间',
 						intro:'在触屏按钮处显示当前时间',
-						init:false,
+						init:true,
 						unfrequent:true,
 						onclick:function(bool){
 							game.saveConfig('show_time2',bool);
@@ -3525,7 +3526,7 @@
 					},
 					show_cardpile_number:{
 						name:'显示剩余牌数',
-						init:false,
+						init:true,
 						unfrequent:true,
 						onclick:function(bool){
 							game.saveConfig('show_cardpile_number',bool);
@@ -3646,7 +3647,7 @@
 					},
 					volumn_audio:{
 						name:'音效音量',
-						init:8,
+						init:4,
 						item:{
 							'0':'〇',
 							'1':'一',
@@ -3664,7 +3665,7 @@
 					},
 					volumn_background:{
 						name:'音乐音量',
-						init:8,
+						init:2,
 						item:{
 							'0':'〇',
 							'1':'一',
@@ -5702,6 +5703,12 @@
 						frequent:true,
 						intro:'在用户填写的IP地址没有直接指定使用WS/WSS协议的情况下，默认使用WSS协议，而非WS协议来连接到联机服务器。<br>请不要轻易勾选此项！',
 					},
+					extensions_enable:{
+						name:'启用扩展',
+						init:true,
+						frequent:true,
+						intro:'联机时启用扩展(房间内需要扩展一致，否则出现bug自行承担)'
+					},
 				}
 			},
 			boss:{
@@ -7463,13 +7470,15 @@
 								//lib.init.onload=backup_onload;
 								_status.evaluatingExtension=false;
 							}
-							else if(lib.config.mode!='connect'||(!localStorage.getItem(lib.configprefix+'directstart')&&show_splash)){
+							// else if(lib.config.mode!='connect'||(!localStorage.getItem(lib.configprefix+'directstart')&&show_splash)){
+							else if(lib.config.mode!='connect'||get.config('extensions_enable','connect')){
 								extensionlist.push(lib.config.extensions[i]);
 							}
 						}
 					}
 					else{
-						if(lib.config.mode!='connect'||(!localStorage.getItem(lib.configprefix+'directstart')&&show_splash)){
+						// if(lib.config.mode!='connect'||(!localStorage.getItem(lib.configprefix+'directstart')&&show_splash)){
+						if(lib.config.mode!='connect'||get.config('extensions_enable','connect')){
 							var alerted=false;
 							for(var i=0;i<lib.config.extensions.length;i++){
 								if(window.bannedExtensions.contains(lib.config.extensions[i])){
@@ -7541,7 +7550,8 @@
 					var styleLoaded=function(){
 						styleToLoad--;
 						if(styleToLoad==0){
-							if(extensionlist.length&&(lib.config.mode!='connect'||show_splash)){
+							// if(extensionlist.length&&(lib.config.mode!='connect'||show_splash)){
+							if(extensionlist.length&&(lib.config.mode!='connect'||get.config('extensions_enable','connect'))){
 								var extToLoad=extensionlist.length;
 								var extLoaded=function(){
 									extToLoad--;
@@ -9455,7 +9465,7 @@
 				game.saveConfig('show_favourite',false);
 				game.saveConfig('animation', false);
 				game.saveConfig('hover_all', false);
-				game.saveConfig('asset_version', 'v1.9');
+				game.saveConfig('asset_version', 'v1.9.120.1');
 				// game.saveConfig('characters',lib.config.all.characters);
 				// game.saveConfig('cards',lib.config.all.cards);
 				game.saveConfig('plays',['cardpile']);
@@ -9992,6 +10002,8 @@
 			egg:'鸡蛋',
 			wine:'酒杯',
 			shoe:'拖鞋',
+			flowerSpam:'连续鲜花',
+			eggSpam:'连续鸡蛋',
 			yuxisx:'玉玺',
 			jiasuo:'枷锁',
 			junk:'平凡',
@@ -46290,16 +46302,16 @@
 							}
 							else{
 								var func=function(){
-									if(confirm('是否下载图片和字体素材？（约175MB）')){
-										if(!ui.arena.classList.contains('menupaused')){
-											ui.click.configMenu();
-											ui.click.menuTab('其它');
-										}
-										setTimeout(game.checkForAssetUpdate,500);
-									}
-									else{
-										game.saveConfig('asset_version','无');
-									}
+									// if(confirm('是否下载图片和字体素材？（约175MB）')){
+									// 	if(!ui.arena.classList.contains('menupaused')){
+									// 		ui.click.configMenu();
+									// 		ui.click.menuTab('其它');
+									// 	}
+									// 	setTimeout(game.checkForAssetUpdate,500);
+									// }
+									// else{
+									// 	game.saveConfig('asset_version','无');
+									// }
 								}
 								if(_status.new_tutorial){
 									_status.new_tutorial=func;
