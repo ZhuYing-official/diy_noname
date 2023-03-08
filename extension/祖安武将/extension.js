@@ -1,14 +1,11 @@
 game.import("extension", function (lib, game, ui, get, ai, _status) {
     return {
         name: "祖安武将", editable: false, content: function (config, pack) {
-            //delete lib.extensionMenu.extension_祖安武将.author;
-            //delete lib.extensionMenu.extension_祖安武将.delete;
-            //delete lib.extensionMenu.extension_祖安武将.edit;
             // ---------------------------------------开发者模式------------------------------------------//
             if (1 == 0) {
-                lib.config['extension_祖安武将_upspeed'] = '0';
-                lib.config['extension_祖安武将_newui'] = '4';
-                lib.config['extension_祖安武将_helasisy'] = true;
+                // lib.config['extension_祖安武将_upspeed'] = '0';
+                // lib.config['extension_祖安武将_newui'] = '4';
+                // lib.config['extension_祖安武将_helasisy'] = true;
                 if (1 == 0) {
                     lib.config['extension_祖安武将_bizhi'] = '3';
                     lib.config['extension_祖安武将_wallpaper'] = '10';
@@ -39,9 +36,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             lib.config['extension_祖安武将_falseedit'] = '0';
             lib.config.zuanboss = 1;
             lib.config.zuanusecardTX = 'none';
-            if (parseFloat(lib.config['extension_祖安武将_mode']) != '1' && parseFloat(lib.config['extension_祖安武将_upspeed']) == '0') {
-                game.saveConfig('extension_祖安武将_upspeed', '10');
-            }
+            // if (parseFloat(lib.config['extension_祖安武将_mode']) != '1' && parseFloat(lib.config['extension_祖安武将_upspeed']) == '0') {
+            //     game.saveConfig('extension_祖安武将_upspeed', '10');
+            // }
             var wallpaper = parseFloat(lib.config['extension_祖安武将_wallpaper']);
             if (wallpaper == '0' || wallpaper == '2' || wallpaper == '6') lib.config['extension_祖安武将_wallpaper']++;
             var bizhi = parseFloat(lib.config['extension_祖安武将_bizhi']);
@@ -50,23 +47,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             if (items.indexOf('next_') != -1) {
                 lib.config['extension_祖安武将_zhishixian'] = items.slice(5);
             }
-            if (parseFloat(lib.config['extension_祖安武将_zuancoveropacity']) != 'NaN') {
-                lib.config.zuancoveropacity = parseFloat(lib.config['extension_祖安武将_zuancoveropacity'] * 0.1);
-            } else {
-                lib.config.zuancoveropacity = '0.8';
-            }
-            /*
-            if(parseFloat(lib.config['extension_祖安武将_isPC'])=='2') {
-                if(parseFloat(lib.config['extension_祖安武将_fun'])=='7') {
-                lib.config['extension_祖安武将_fun']='1';
-                alert('抱歉！   _(´ཀ`」 ∠)__ \n      目前由于特殊字符的原因，为防止出现错误，元气系统 在电脑端暂不能使用！\n      已为您暂时关闭此 娱乐玩法。\n      再次选择 娱乐玩法 的其他选项后将不会再次出现此弹窗。');
-                }
-            }
-            */
+            // if (parseFloat(lib.config['extension_祖安武将_zuancoveropacity']) != 'NaN') {
+            //     lib.config.zuancoveropacity = parseFloat(lib.config['extension_祖安武将_zuancoveropacity'] * 0.1);
+            // } else {
+            //     lib.config.zuancoveropacity = '0.8';
+            // }
             // ---------------------------------------处理dying显示------------------------------------------//
             game.dyingShow = function (player, newui) {
                 'step 0'
-                //alert(player.name);
                 var rdying = false;
                 if (player.hasSkill('zuan_hudun')) {
                     if (player.hp <= 1 && player.countMark('zuan_hudun') < 1) rdying = true;
@@ -84,7 +72,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     player.storage.dyingimgshow = true;
                     game.broadcastAll(function (player) {
                         player.storage.dying_img = document.createElement('div');
-                        player.storage.dying_img.style.opacity = lib.config.zuancoveropacity;
+                        // player.storage.dying_img.style.opacity = lib.config.zuancoveropacity;
                         player.storage.dying_img.style.backgroundSize = 'cover';
                         player.storage.dying_img.style.width = '100%';
                         player.storage.dying_img.style.height = '100%';
@@ -120,11 +108,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 setTimeout(function () {
                     window.newaliveusing = false;
                 }, time * 1000 + 250);
-                //('extension/祖安武将/mode/mode_hellfire.gif',3); 
                 function zuangif(file, opa, click) {
                     window.zuanalivegif = ui.create.node('img');
                     zuanalivegif.src = lib.assetURL + file;
-                    //alert(window.innerWidth);
                     var zuanwid = game.checkWH(zuanalivegif.width, zuanalivegif.height);
                     if (click) {
                         zuanalivegif.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + opa * 0.1 * lawer + ';display: block;position: absolute;background:none;z-index: 999;' + zuanwid + '!important;left: 0;bottom: 0';
@@ -157,9 +143,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     }, 25);
                 }
                 zuanfora(0);
-                /*setTimeout(function () {
-                    zuanalivegif.remove();
-                }, time*1000);*/
             };
             window.newaudiousing = false;
             game.newaudio = function (file, time) {
@@ -187,120 +170,117 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 }
 
             };
-            game.expRevive = function (dd) {
-                if (parseFloat(lib.config['extension_祖安武将_audio']) >= '2') game.playAudio('..', 'extension', '祖安武将', 'audio', 'revive.ogg');
-                dd.revive(dd.maxHp);
-                game.addVideo('revive', dd);
-                dd.draw(Math.ceil(dd.storage._levelskill * 0.5));
-                dd.storage.relife = Math.ceil(dd.storage._levelskill * 0.4 + 0.1);
-                dd.markSkill('_expskill');
-                dd.syncStorage('_expskill');
-                dd.markSkill('_levelskill');
-                dd.syncStorage('_levelskill');
-                if (dd.hasSkill('zuan_hudun')) {
-                    dd.storage.zuan_hudun = dd.storage.zuan_maxhujia;
-                    dd.markSkill('zuan_hudun');
-                    dd.syncStorage('zuan_hudun');
-                }
-                dd.update();
-                dd.$damagepop('重生');
-                game.log(dd, '<span class=\"zuantext\" style=\"color: #7CFC00\">获得了重生</span>');
-                return get.translation(dd.name);
-            };
-            game.zuanExp = function (player, exp) {
-                if (parseFloat(lib.config['extension_祖安武将_upspeed']) != '0') {
-                    var speed = 0.1 * parseFloat(lib.config['extension_祖安武将_upspeed']);
-                } else {
-                    var speed = 1;
-                }
-                var adds = Math.ceil(exp * speed);
-                player.addMark('_expskill', adds, false);
-                if (lib.config['extension_祖安武将_levelsay']) player.say('获得了' + adds + '点经验');
-                var maxexp = 20 + 2 * player.storage._levelskill;
-                if (player.storage._expskill >= maxexp && player.storage._levelskill < 10) {
-                    if (parseFloat(lib.config['extension_祖安武将_audio']) >= '4') {
-                        if (parseFloat(lib.config['extension_祖安武将_audio']) == '4') {
-                            var versons = 'shousha';
-                        } else {
-                            var versons = 'ten';
-                        }
-                        game.playAudio('..', 'extension', '祖安武将', 'audio', versons, 'level.mp3');
-                    } else if (parseFloat(lib.config['extension_祖安武将_audio']) >= '2') game.playAudio('..', 'extension', '祖安武将', 'audio', 'level.ogg');
-                    player.removeMark('_expskill', maxexp, false);
-                    player.addMark('_levelskill', 1, false);
-                    game.log(player, '提升了一个<span class=\"zuantext\" style=\"color: #FFFF00\">等级</span>');
-                    if (!lib.config['extension_祖安武将_balance']) player.draw();
-                    if (player.storage._levelskill == 4) {
-                        if (parseFloat(lib.config['extension_祖安武将_mode']) == '6') {
-                            var skillget = ['hongyan', 'lianhuan', 'tiandu'].randomGet();
-                            if (player.hasSkill('lianhuan')) var skillget = ['hongyan', 'tiandu'].randomGet();
-                            if (player.hasSkill('tiandu')) var skillget = ['hongyan', 'lianhuan'].randomGet();
-                            if (player.hasSkill('hongyan')) var skillget = ['lianhuan', 'tiandu'].randomGet();
-                            player.addSkill(skillget);
-                        }
-                    }
-                    if (player.storage._levelskill == 8) {
-                        if (parseFloat(lib.config['extension_祖安武将_mode']) == '6') {
-                            var skillget = ['guanxing', 'kanpo', 'guicai'].randomGet();
-                            if (player.hasSkill('guanxing')) var skillget = ['kanpo', 'guicai'].randomGet();
-                            if (player.hasSkill('kanpo')) var skillget = ['guanxing', 'guicai'].randomGet();
-                            if (player.hasSkill('guicai')) var skillget = ['guanxing', 'kanpo'].randomGet();
-                            player.addSkill(skillget);
-                        }
-                    }
-                    if (lib.config['extension_祖安武将_levelstrong'] == 'old') {
-                        if (player.storage._levelskill == 4) {
-                            player.changeHujia();
-                        }
-                        //if(player.storage._levelskill==7) player.addSkill('plusdistance');
-                        if (player.storage._levelskill == 8) {
-                            player.gainMaxHp();
-                        }
-                        //if(player.storage._levelskill==10) player.addSkill('maxlevel');
-                    } else if (lib.config['extension_祖安武将_levelstrong'] == 'new') {
-                        if (player.storage._levelskill == 8) {
-                            player.gainMaxHp();
-                        }
-                    }
-                    if (lib.config['extension_祖安武将_levelsay']) player.say('提升了一个等级');
-                    player.storage.relife = Math.ceil(player.storage._levelskill * 0.4 + 0.1);
-                    if (parseFloat(lib.config['extension_祖安武将_mode']) == '7' && player.group != 'western' && Math.ceil(player.storage._levelskill * 0.5) != player.storage._levelskill * 0.5) {
-                        player.logSkill('huanhai');
-                        var list = [];
-                        var list2 = [];
-                        var players = game.players.concat(game.dead);
-                        for (i = 0; i < players.length; i++) {
-                            list2.add(players[i].name);
-                            list2.add(players[i].name1);
-                            list2.add(players[i].name2);
-                        }
-                        for (var i in lib.character) {
-                            if (lib.character[i][1] != player.group) continue;
-                            if (lib.character[i][3].length < 1) continue;
-                            if (lib.character[i][4].contains('forbidai')) continue;
-                            if (lib.character[i][4].contains('boss')) continue;
-                            if (lib.character[i][4].contains('minskin')) continue;
-                            if (player.storage.huanhai.contains(i)) continue;
-                            if (list2.contains(i)) continue;
-                            list.push(i);
-                        }
-                        var name = list.randomGet();
-                        player.storage.huanhai.push(name);
-                        player.markSkill('huanhai');
-                        var skills = lib.character[name][3];
-                        player.addSkill(skills.randomGet());
-                        game.delay();
-                    }
-                }
-                if (player.storage._levelskill >= 10) player.removeMark('_expskill', player.storage._expskill);
-                return player.storage._levelskill;
-            };
+            // game.expRevive = function (dd) {
+            //     if (parseFloat(lib.config['extension_祖安武将_audio']) >= '2') game.playAudio('..', 'extension', '祖安武将', 'audio', 'revive.ogg');
+            //     dd.revive(dd.maxHp);
+            //     game.addVideo('revive', dd);
+            //     dd.draw(Math.ceil(dd.storage._levelskill * 0.5));
+            //     dd.storage.relife = Math.ceil(dd.storage._levelskill * 0.4 + 0.1);
+            //     dd.markSkill('_expskill');
+            //     dd.syncStorage('_expskill');
+            //     dd.markSkill('_levelskill');
+            //     dd.syncStorage('_levelskill');
+            //     if (dd.hasSkill('zuan_hudun')) {
+            //         dd.storage.zuan_hudun = dd.storage.zuan_maxhujia;
+            //         dd.markSkill('zuan_hudun');
+            //         dd.syncStorage('zuan_hudun');
+            //     }
+            //     dd.update();
+            //     dd.$damagepop('重生');
+            //     game.log(dd, '<span class=\"zuantext\" style=\"color: #7CFC00\">获得了重生</span>');
+            //     return get.translation(dd.name);
+            // };
+            // game.zuanExp = function (player, exp) {
+            //     if (parseFloat(lib.config['extension_祖安武将_upspeed']) != '0') {
+            //         var speed = 0.1 * parseFloat(lib.config['extension_祖安武将_upspeed']);
+            //     } else {
+            //         var speed = 1;
+            //     }
+            //     var adds = Math.ceil(exp * speed);
+            //     player.addMark('_expskill', adds, false);
+            //     if (lib.config['extension_祖安武将_levelsay']) player.say('获得了' + adds + '点经验');
+            //     var maxexp = 20 + 2 * player.storage._levelskill;
+            //     if (player.storage._expskill >= maxexp && player.storage._levelskill < 10) {
+            //         if (parseFloat(lib.config['extension_祖安武将_audio']) >= '4') {
+            //             if (parseFloat(lib.config['extension_祖安武将_audio']) == '4') {
+            //                 var versons = 'shousha';
+            //             } else {
+            //                 var versons = 'ten';
+            //             }
+            //             game.playAudio('..', 'extension', '祖安武将', 'audio', versons, 'level.mp3');
+            //         } else if (parseFloat(lib.config['extension_祖安武将_audio']) >= '2') game.playAudio('..', 'extension', '祖安武将', 'audio', 'level.ogg');
+            //         player.removeMark('_expskill', maxexp, false);
+            //         player.addMark('_levelskill', 1, false);
+            //         game.log(player, '提升了一个<span class=\"zuantext\" style=\"color: #FFFF00\">等级</span>');
+            //         if (!lib.config['extension_祖安武将_balance']) player.draw();
+            //         if (player.storage._levelskill == 4) {
+            //             if (parseFloat(lib.config['extension_祖安武将_mode']) == '6') {
+            //                 var skillget = ['hongyan', 'lianhuan', 'tiandu'].randomGet();
+            //                 if (player.hasSkill('lianhuan')) var skillget = ['hongyan', 'tiandu'].randomGet();
+            //                 if (player.hasSkill('tiandu')) var skillget = ['hongyan', 'lianhuan'].randomGet();
+            //                 if (player.hasSkill('hongyan')) var skillget = ['lianhuan', 'tiandu'].randomGet();
+            //                 player.addSkill(skillget);
+            //             }
+            //         }
+            //         if (player.storage._levelskill == 8) {
+            //             if (parseFloat(lib.config['extension_祖安武将_mode']) == '6') {
+            //                 var skillget = ['guanxing', 'kanpo', 'guicai'].randomGet();
+            //                 if (player.hasSkill('guanxing')) var skillget = ['kanpo', 'guicai'].randomGet();
+            //                 if (player.hasSkill('kanpo')) var skillget = ['guanxing', 'guicai'].randomGet();
+            //                 if (player.hasSkill('guicai')) var skillget = ['guanxing', 'kanpo'].randomGet();
+            //                 player.addSkill(skillget);
+            //             }
+            //         }
+            //         if (lib.config['extension_祖安武将_levelstrong'] == 'old') {
+            //             if (player.storage._levelskill == 4) {
+            //                 player.changeHujia();
+            //             }
+            //             if (player.storage._levelskill == 8) {
+            //                 player.gainMaxHp();
+            //             }
+            //         } else if (lib.config['extension_祖安武将_levelstrong'] == 'new') {
+            //             if (player.storage._levelskill == 8) {
+            //                 player.gainMaxHp();
+            //             }
+            //         }
+            //         if (lib.config['extension_祖安武将_levelsay']) player.say('提升了一个等级');
+            //         player.storage.relife = Math.ceil(player.storage._levelskill * 0.4 + 0.1);
+            //         if (parseFloat(lib.config['extension_祖安武将_mode']) == '7' && player.group != 'western' && Math.ceil(player.storage._levelskill * 0.5) != player.storage._levelskill * 0.5) {
+            //             player.logSkill('huanhai');
+            //             var list = [];
+            //             var list2 = [];
+            //             var players = game.players.concat(game.dead);
+            //             for (i = 0; i < players.length; i++) {
+            //                 list2.add(players[i].name);
+            //                 list2.add(players[i].name1);
+            //                 list2.add(players[i].name2);
+            //             }
+            //             for (var i in lib.character) {
+            //                 if (lib.character[i][1] != player.group) continue;
+            //                 if (lib.character[i][3].length < 1) continue;
+            //                 if (lib.character[i][4].contains('forbidai')) continue;
+            //                 if (lib.character[i][4].contains('boss')) continue;
+            //                 if (lib.character[i][4].contains('minskin')) continue;
+            //                 if (player.storage.huanhai.contains(i)) continue;
+            //                 if (list2.contains(i)) continue;
+            //                 list.push(i);
+            //             }
+            //             var name = list.randomGet();
+            //             player.storage.huanhai.push(name);
+            //             player.markSkill('huanhai');
+            //             var skills = lib.character[name][3];
+            //             player.addSkill(skills.randomGet());
+            //             game.delay();
+            //         }
+            //     }
+            //     if (player.storage._levelskill >= 10) player.removeMark('_expskill', player.storage._expskill);
+            //     return player.storage._levelskill;
+            // };
             game.strengthPlayer = function (player) {
                 'step 0'
                 game.sthpla = [];
                 game.sthpla.oldhp = player.hp;
                 game.sthpla.oldmaxhp = player.maxHp;
-                //game.sthpla.oldstorage=player.storage;
                 lib.characterPackSsr = {
                     "mode_extension_祖安武将": lib.characterPack["mode_extension_祖安武将"]
                 }
@@ -313,7 +293,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 'step 1'
                 game.sthpla.changehp = false;
                 game.sthpla.namelist = ['fazheng', 'xin_fazheng', 'yuanshu', 're_yuanshu', 'yiji', 'xf_yiji', 'yuanshao', 're_yuanshao', 'yuji', 're_yuji', 'lusu', 're_lusu', 'zhangliang', 're_zhangliang', 'xuhuang', 're_xuhuang', 'xiahouyuan', 're_xiahouyuan', 'xushu', 're_xushu'];
-                //alert(player.name);
                 game.sthpla.myname1 = player[game.sthpla.hisname];
                 if (player.name2) {
                     game.sthpla.myname2 = player.name2;
@@ -408,7 +387,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 }
                 player.hp = game.sthpla.oldhp;
                 player.maxHp = game.sthpla.oldmaxhp;
-                //player.storage=game.sthpla.oldstorage;
                 player.update();
                 return 'Finished.';
             };
@@ -428,23 +406,47 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             if (bizhi == '11') game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/menu/yuanxi.jpg");
             if (bizhi == '12') game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/menu/canglong.jpg");
             if (bizhi == '13') game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/menu/posui.jpg");
-            if (lib.config['extension_祖安武将_exwallpaper']) {
-                if (lib.config.mode == 'boss') {
-                    lib.config.zuanexwallpaper = 'on';
-                    game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/boss/menu.jpg");
-                }
-                if (lib.config.mode == 'chess' || lib.config.mode == 'tafang' || lib.config.mode == 'stone') {
-                    lib.config.zuanexwallpaper = 'on';
-                    game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/chess/chess.jpg");
-                }
-                if (lib.config.mode == 'versus' || lib.config.mode == 'single') {
-                    lib.config.zuanexwallpaper = 'on';
-                    game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/versus/menu.jpg");
-                }
-            }
+            // if (lib.config['extension_祖安武将_exwallpaper']) {
+            //     if (lib.config.mode == 'boss') {
+            //         lib.config.zuanexwallpaper = 'on';
+            //         game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/boss/menu.jpg");
+            //     }
+            //     if (lib.config.mode == 'chess') {
+            //         lib.config.zuanexwallpaper = 'on';
+            //         game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/chess/chess.jpg");
+            //     }
+            //     if (lib.config.mode == 'versus' || lib.config.mode == 'single') {
+            //         lib.config.zuanexwallpaper = 'on';
+            //         game.broadcastAll() + ui.background.setBackgroundImage("extension/祖安武将/wallpaper/versus/menu.jpg");
+            //     }
+            // }
             if (1 == 0) {
                 alert("最后：\n给你呈现一张壁纸，它是来自作者的广告\n你可以在拓展页面中“前置壁纸”选项中关闭！\n（本弹窗只会弹出一次）");
             }
+
+
+
+
+
+            // ---------------------------------------开始界面------------------------------------------//
+
+
+            // if (typeof (czuanbackground) != 'undefined' && czuanbackground) {
+            //     tlogo.remove();
+            //     backgroundtop.remove();
+            //     var plogo = localStorage.getItem("backgroundlogo");
+            //     if (!(plogo == "5" || plogo == "9")) {
+            //         backgroundpaper.remove();
+            //     }
+            //     forunderlinefinish = true;
+            //     //backunderline.remove();
+            //     czuanbackground = false;
+            // }
+            // if (typeof (formovepaperfinish) != 'undefined' && !formovepaperfinish) {
+            //     movepaper.remove();
+            //     movepaperbasic.remove();
+            //     formovepaperfinish = true;
+            // }
 
 
 
@@ -828,10 +830,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         }, total / 3);
                     });
                     longtou.listenTransition(function () {
-                        //setTimeout(function(){
                         if (longtou.classList.contains('removing')) return;
                         longtou.delete();
-                        //},total/3);
                     });
                 }
                 return node;
@@ -1168,7 +1168,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
 
             // ---------------------------------------游戏音效------------------------------------------//
-            //if(false) {
             lib.skill._extraphaseskill = {//回合开始音效//
                 trigger: {
                     player: ["phaseBefore"],
@@ -1611,12 +1610,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         event.background = 'none';
                         if (parseFloat(lib.config['extension_祖安武将_biankuang']) == '1') {
                             event.back = 'guozhan';
-                            if (player.group == 'wei' || player.group == 'jin') event.back = 'xuanwu';
-                            if (player.group == 'shu') event.back = 'zhuque';
-                            if (player.group == 'wu') event.back = 'qinglong';
-                            if (player.group == 'qun' || player.group == 'xi') event.back = 'baihu';
+                            if (player.group == 'wei' || player.group == 'jin') event.back = 'guozhan';
+                            if (player.group == 'shu') event.back = 'guozhan';
+                            if (player.group == 'wu') event.back = 'guozhan';
+                            if (player.group == 'qun' || player.group == 'xi') event.back = 'guozhan';
                         }
-                        if (parseFloat(lib.config['extension_祖安武将_biankuang']) == '2') event.back = ['qinglong', 'baihu', 'zhuque', 'xuanwu'].randomGet();
+                        if (parseFloat(lib.config['extension_祖安武将_biankuang']) == '2') event.back = ['guozhan', 'zhulu'].randomGet();
                         if (parseFloat(lib.config['extension_祖安武将_biankuang']) == '3') event.back = 'zhulu';
                         if (parseFloat(lib.config['extension_祖安武将_biankuang']) == '4') event.back = 'guozhan';
                         event.biankuang = "extension/祖安武将/handcard/Handcard_background_" + event.back + '.png';
@@ -1722,7 +1721,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 }
             }
             // ---------------------------------------动态背景------------------------------------------//  
-            if (parseFloat(lib.config['extension_祖安武将_wallpaper']) != '1' || lib.config['extension_祖安武将_exwallpaper']) {
+            if (parseFloat(lib.config['extension_祖安武将_wallpaper']) != '1') {
                 lib.skill._newBackground = {
                     trigger: {
                         player: ['phaseBefore', 'judgeAfter', 'dieAfter'],
@@ -1731,15 +1730,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     priority: 20,
                     filter: function (event, player) {
                         if (lib.config.zuanchoose == 'none') return false;
-                        if (lib.config['extension_祖安武将_texiao']) {
-                            if (parseFloat(lib.config['extension_祖安武将_wallpaper']) == '1' && !lib.config['extension_祖安武将_exwallpaper']) return false;
-                            return (player == game.me && event.card && event.card.name);
-                        }
+                        // if (lib.config['extension_祖安武将_texiao']) {
+                        //     if (parseFloat(lib.config['extension_祖安武将_wallpaper']) == '1') return false;
+                        //     return (player == game.me && event.card && event.card.name);
+                        // }
                     },
                     content: function () {
                         'step 0'
                         //ui.background.style.backgroundImage=lib.config.standardbackground;
-                        if ((parseFloat(lib.config['extension_祖安武将_wallpaper']) != '1' || (lib.config['extension_祖安武将_exwallpaper'] && lib.config.zuanexwallpaper == 'on')) && parseFloat(lib.config['extension_祖安武将_isPC']) != '0') {
+                        if ((parseFloat(lib.config['extension_祖安武将_wallpaper']) != '1' || (lib.config.zuanexwallpaper == 'on')) && parseFloat(lib.config['extension_祖安武将_isPC']) != '0') {
                             if (trigger.card.name == 'shandian') game.delay(1);
                             if (trigger.card.name == 'huoshan') game.delay(2.5);
                             if (trigger.card.name == 'hongshui') game.delay(2.5);
@@ -1759,15 +1758,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     direct: true,
                     priority: 120,
                     filter: function (event, player) {
-                        if (parseFloat(lib.config['extension_祖安武将_wallpaper']) == '1' && !lib.config['extension_祖安武将_exwallpaper']) return false;
+                        if (parseFloat(lib.config['extension_祖安武将_wallpaper']) == '1') return false;
                         return player == game.me;
                     },
                     content: function () {
                         'step 0'
-                        var off = lib.config['extension_祖安武将_helasisy'];
-                        if (!off) {
-                            game.delay(2.5);
-                        }
+                        // var off = lib.config['extension_祖安武将_helasisy'];
+                        // if (!off) {
+                        //     game.delay(2.5);
+                        // }
                         // ---------------------------------------壁纸栏------------------------------------------//
                         'step 1'
                         //ui.background.style.backgroundImage=lib.config.standardbackground;
@@ -1780,7 +1779,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // ---------------------------------------梦幻壁纸
                             event.pack = 'menghuan';
                             event.list = [];
-                            for (var i = 1; i < 98; i++) {
+                            for (var i = 1; i < 83; i++) {
                                 event.list.push(i);
                             }
                             lib.config.zuanchoose = event.list.randomGet();
@@ -1817,37 +1816,37 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // ---------------------------------------壁纸结束
                         }
                         lib.config.zuanbackground = "extension/祖安武将/wallpaper/background/" + event.pack + "/" + lib.config.zuanchoose + ".jpg";
-                        if (lib.config['extension_祖安武将_exwallpaper']) {
-                            if (lib.config.mode == 'boss') {
-                                var gui = ['boss_hundun', 'boss_qiongqi', 'boss_taotie', 'boss_taowu', 'boss_xiangliu', 'boss_zhuyan', 'boss_bifang', 'boss_yingzhao', 'boss_nianshou'];
-                                var god = ['boss_lvbu1', 'boss_lvbu2', 'boss_lvbu3', 'boss_caocao', 'boss_guojia', 'boss_zhangchunhua', 'boss_zhenji', 'boss_liubei', 'boss_zhugeliang', 'boss_huangyueying', 'boss_pangtong', 'boss_zhouyu', 'boss_caiwenji', 'boss_zhangjiao', 'boss_zuoci', 'boss_diaochan', 'boss_huatuo', 'boss_dongzhuo', 'boss_sunce'];
-                                for (i = 0; i < game.players.length; i++) {
-                                    game.log(game.players[i], game.players[i].identity);
-                                    if (game.players[i].identity == 'zhu') {
-                                        if (gui.includes(game.players[i].name)) {
-                                            lib.config.zuanboss = "gui";
-                                        }
-                                        if (god.includes(game.players[i].name)) {
-                                            lib.config.zuanboss = "god";
-                                        }
-                                    }
-                                }
-                                lib.config.zuanchoose = 'boss';
-                                lib.config.zuanbackground = "extension/祖安武将/wallpaper/boss/" + lib.config.zuanboss + ".jpg";
-                            }
-                            if (lib.config.mode == 'chess' || lib.config.mode == 'tafang' || lib.config.mode == 'stone') {
-                                lib.config.zuanchoose = 'chess';
-                                lib.config.zuanbackground = "extension/祖安武将/wallpaper/chess/chess.jpg";
-                            }
-                            if (lib.config.mode == 'single') {
-                                lib.config.zuanchoose = 'versus';
-                                lib.config.zuanbackground = "extension/祖安武将/wallpaper/versus/versus.jpg";
-                            }
-                            if (lib.config.mode == 'versus') {
-                                lib.config.zuanchoose = 'versus';
-                                lib.config.zuanbackground = "extension/祖安武将/wallpaper/versus/versus2.jpg";
-                            }
-                        }
+                        // if (lib.config['extension_祖安武将_exwallpaper']) {
+                        //     if (lib.config.mode == 'boss') {
+                        //         var gui = ['boss_hundun', 'boss_qiongqi', 'boss_taotie', 'boss_taowu', 'boss_xiangliu', 'boss_zhuyan', 'boss_bifang', 'boss_yingzhao', 'boss_nianshou'];
+                        //         var god = ['boss_lvbu1', 'boss_lvbu2', 'boss_lvbu3', 'boss_caocao', 'boss_guojia', 'boss_zhangchunhua', 'boss_zhenji', 'boss_liubei', 'boss_zhugeliang', 'boss_huangyueying', 'boss_pangtong', 'boss_zhouyu', 'boss_caiwenji', 'boss_zhangjiao', 'boss_zuoci', 'boss_diaochan', 'boss_huatuo', 'boss_dongzhuo', 'boss_sunce'];
+                        //         for (i = 0; i < game.players.length; i++) {
+                        //             game.log(game.players[i], game.players[i].identity);
+                        //             if (game.players[i].identity == 'zhu') {
+                        //                 if (gui.includes(game.players[i].name)) {
+                        //                     lib.config.zuanboss = "gui";
+                        //                 }
+                        //                 if (god.includes(game.players[i].name)) {
+                        //                     lib.config.zuanboss = "god";
+                        //                 }
+                        //             }
+                        //         }
+                        //         lib.config.zuanchoose = 'boss';
+                        //         lib.config.zuanbackground = "extension/祖安武将/wallpaper/boss/" + lib.config.zuanboss + ".jpg";
+                        //     }
+                        //     if (lib.config.mode == 'chess' || lib.config.mode == 'tafang' || lib.config.mode == 'stone') {
+                        //         lib.config.zuanchoose = 'chess';
+                        //         lib.config.zuanbackground = "extension/祖安武将/wallpaper/chess/chess.jpg";
+                        //     }
+                        //     if (lib.config.mode == 'single') {
+                        //         lib.config.zuanchoose = 'versus';
+                        //         lib.config.zuanbackground = "extension/祖安武将/wallpaper/versus/versus.jpg";
+                        //     }
+                        //     if (lib.config.mode == 'versus') {
+                        //         lib.config.zuanchoose = 'versus';
+                        //         lib.config.zuanbackground = "extension/祖安武将/wallpaper/versus/versus2.jpg";
+                        //     }
+                        // }
                         if (lib.config.zuanchoose != 'none') game.broadcastAll() + ui.background.setBackgroundImage(lib.config.zuanbackground);
                         // ---------------------------------------动态壁纸刷新
                     },
@@ -1859,13 +1858,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     direct: true,
                     priority: 15,
                     filter: function (event, player) {
-                        if (lib.config['extension_祖安武将_exwallpaper']) {
-                            return (lib.config.mode == 'boss' && player.identity == 'zhu');
-                        }
+                        // if (lib.config['extension_祖安武将_exwallpaper']) {
+                        //     return (lib.config.mode == 'boss' && player.identity == 'zhu');
+                        // }
                     },
                     content: function () {
                         'step 0'
-                        //ui.background.style.backgroundImage=lib.config.standardbackground;
                         if (lib.config.zuanboss != 'god' && lib.config.zuanboss != 'gui' && parseFloat(lib.config.zuanboss) < 3) lib.config.zuanboss++;
                         'step 1'
                         lib.config.zuanbackground = "extension/祖安武将/wallpaper/boss/" + lib.config.zuanboss + ".jpg";
@@ -2790,19 +2788,19 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             } else {
                                 var chat = ['收到！！', '这把好好玩', '大家配合一下', '懂的懂的', '懂的都懂——', '我明了', '大家好！', '不乱玩不乱玩', 'OK', 'Ojbk', '开了开了', '这把看我乱杀', '别砍我，球球你们', '潜水ing', '打酱油的', '再集火我就托管了啊', '对我友好些，好么？', '多多互相帮助啊', '呵呵..啊哈哈哈哈哈', '鸡汤来啰~'].randomGet()
                             }
-                            var ds = new Date();
-                            var month = ds.getMonth() + 1;
-                            var date = ds.getDate();
-                            var year = ds.getFullYear();
-                            var birmon = parseFloat(lib.config['extension_祖安武将_birthdaymonth']);
-                            var birday = parseFloat(lib.config['extension_祖安武将_birthdaydate']);
-                            if (month == birmon && date == birday) {
-                                if (player == game.me) {
-                                    var chat = ['谢谢大家~', '感动ing', '我要吹蜡烛', '好耶', '今天我生日', '嗯呢', '哈哈好', '今天是我生日捏', '快祝我生日快乐！'].randomGet();
-                                } else {
-                                    var chat = ['生日快乐', '生日快乐噢', '生日快乐！', '祝你生日快乐~', '祝贺祝贺！', '又大了一岁啊', '来来来，吹蜡烛', '快许个愿！'].randomGet();
-                                }
-                            }
+                            // var ds = new Date();
+                            // var month = ds.getMonth() + 1;
+                            // var date = ds.getDate();
+                            // var year = ds.getFullYear();
+                            // var birmon = parseFloat(lib.config['extension_祖安武将_birthdaymonth']);
+                            // var birday = parseFloat(lib.config['extension_祖安武将_birthdaydate']);
+                            // if (month == birmon && date == birday) {
+                            //     if (player == game.me) {
+                            //         var chat = ['谢谢大家~', '感动ing', '我要吹蜡烛', '好耶', '今天我生日', '嗯呢', '哈哈好', '今天是我生日捏', '快祝我生日快乐！'].randomGet();
+                            //     } else {
+                            //         var chat = ['生日快乐', '生日快乐噢', '生日快乐！', '祝你生日快乐~', '祝贺祝贺！', '又大了一岁啊', '来来来，吹蜡烛', '快许个愿！'].randomGet();
+                            //     }
+                            // }
                             if (lib.config['extension_祖安武将_girlspeak'] && player.sex == 'female') {
                                 var chat2 = [' 加油>v<', ' QvQ！', ' QwQ..', ' 我会努力哒！嘻嘻OvO'].randomGet()
                                 var chat = chat + chat2;
@@ -2858,7 +2856,95 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             if (windows == "7") {
                 resize_window(1090, 570);
             }
-           
+            if (parseFloat(lib.config['extension_祖安武将_isPC']) == '1' || windows == "7") {
+                var plogo = localStorage.getItem("backgroundlogo");
+                // function onlinelogo() {
+                //     window.tlogo = ui.create.node('img');
+                //     tlogo.src = asset + 'extension/祖安武将/basic/online_logo.png';
+                //     tlogo.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:99;width: 35%!important;height: 35%!important;left:3%;right:0;bottom: 70%';
+                //     document.body.appendChild(tlogo);
+                // }
+                function sanguologo() {
+                    window.tlogo = ui.create.node('img');
+                    tlogo.src = asset + 'extension/祖安武将/basic/sanguo_logo.png';
+                    tlogo.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:99;width: 35%!important;height: 35%!important;left:0;right:0;bottom: 70%';
+                    document.body.appendChild(tlogo);
+                }
+                // function nonamelogo() {
+                //     window.tlogo = ui.create.node('img');
+                //     tlogo.src = asset + 'extension/祖安武将/basic/noname_logo.png';
+                //     tlogo.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:99;width: 35%!important;height: 32%!important;left:0;right:0;bottom: 70%';
+                //     document.body.appendChild(tlogo);
+                // }
+                // function backgroundpapers() {
+                //     window.backgroundpaper = ui.create.node('img');
+                //     backgroundpaper.src = asset + 'extension/祖安武将/basic/backgroundpaper.png';
+                //     backgroundpaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:0;width: 100%!important;height: 79%!important;left:0;right:0;bottom: 9%';
+                //     document.body.appendChild(backgroundpaper);
+                // }
+                // function backgroundtops() {
+                //     window.backgroundtop = ui.create.node('img');
+                //     backgroundtop.src = asset + 'extension/祖安武将/basic/backgroundtop.png';
+                //     backgroundtop.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:90;width: 100%!important;height: 79%!important;left:0;right:0;bottom: 9%';
+                //     document.body.appendChild(backgroundtop);
+                // }
+                // function backgroundtopb() {
+                //     window.backgroundtop = ui.create.node('img');
+                //     backgroundtop.src = asset + 'extension/祖安武将/basic/backgroundblack.png';
+                //     backgroundtop.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 0.5;display: block;position: absolute;background:none;z-index:0;width: 100%!important;height: 70%!important;left:0;right:0;bottom: 15%';
+                //     document.body.appendChild(backgroundtop);
+                // }
+                // function underline(opa) {
+                //     window.backunderline = ui.create.node('img');
+                //     backunderline.src = asset + 'extension/祖安武将/basic/underline.png';
+                //     backunderline.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + opa * 0.05 + ';display: block;position: absolute;background:none;z-index:98;width: 55%!important;height: 17%!important;left: 0%;right:0;bottom: 1%';
+                //     document.body.appendChild(backunderline);
+                // }
+            } else {
+                var plogo = localStorage.getItem("backgroundlogo");
+                // function onlinelogo() {
+                //     window.tlogo = ui.create.node('img');
+                //     tlogo.src = asset + 'extension/祖安武将/basic/online_logo.png';
+                //     tlogo.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:99;width: 40%!important;height: 35%!important;left:5%;right:0;bottom: 65%';
+                //     document.body.appendChild(tlogo);
+                // }
+                function sanguologo() {
+                    window.tlogo = ui.create.node('img');
+                    tlogo.src = asset + 'extension/祖安武将/basic/sanguo_logo.png';
+                    tlogo.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:99;width: 40%!important;height: 35%!important;left:0;right:0;bottom: 65%';
+                    document.body.appendChild(tlogo);
+                }
+                // function nonamelogo() {
+                //     window.tlogo = ui.create.node('img');
+                //     tlogo.src = asset + 'extension/祖安武将/basic/noname_logo.png';
+                //     tlogo.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:99;width: 40%!important;height: 32%!important;left:0;right:0;bottom: 65%';
+                //     document.body.appendChild(tlogo);
+                // }
+                // function backgroundpapers() {
+                //     window.backgroundpaper = ui.create.node('img');
+                //     backgroundpaper.src = asset + 'extension/祖安武将/basic/backgroundpaper.png';
+                //     backgroundpaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:0;width: 100%!important;height: 70%!important;left:0;right:0;bottom: 14%';
+                //     document.body.appendChild(backgroundpaper);
+                // }
+                // function backgroundtops() {
+                //     window.backgroundtop = ui.create.node('img');
+                //     backgroundtop.src = asset + 'extension/祖安武将/basic/backgroundtop.png';
+                //     backgroundtop.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:90;width: 100%!important;height: 70%!important;left:0;right:0;bottom: 14%';
+                //     document.body.appendChild(backgroundtop);
+                // }
+                // function backgroundtopb() {
+                //     window.backgroundtop = ui.create.node('img');
+                //     backgroundtop.src = asset + 'extension/祖安武将/basic/backgroundblack.png';
+                //     backgroundtop.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 0.5;display: block;position: absolute;background:none;z-index:0;width: 100%!important;height: 50%!important;left:0;right:0;bottom: 25%';
+                //     document.body.appendChild(backgroundtop);
+                // }
+                // function underline(opa) {
+                //     window.backunderline = ui.create.node('img');
+                //     backunderline.src = asset + 'extension/祖安武将/basic/underline.png';
+                //     backunderline.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + opa * 0.05 + ';display: block;position: absolute;background:none;z-index:98;width: 55%!important;height: 16%!important;left: 0%;right:0;bottom: 2%';
+                //     document.body.appendChild(backunderline);
+                // }
+            }
             //开始界面
             /*
                             "0":"◈关闭———",
@@ -2882,24 +2968,24 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 if (jiemian == "2") jiemian = "3";
                 if (jiemian == "6") jiemian = "7";
             } else {
-                jiemian = "1";
+                jiemian = "7";
             }
             if (jiemian != "1") {
                 var jiemianopen = 'no';
                 if (jiemian == "3") {
                     var numsum = [];
-                    for (i = 1; i < 88; i++) {
+                    for (i = 1; i < 84; i++) {
                         numsum.push(i);
                     }
                     jiemianopen = 'yuanhua/' + numsum.randomGet() + '.png';
                 }
-                if (jiemian == "4") {
-                    var numsum = [];
-                    for (i = 1; i < 21; i++) {
-                        numsum.push(i);
-                    }
-                    jiemianopen = 'shihai/' + numsum.randomGet() + '.jpg';
-                }
+                // if (jiemian == "4") {
+                //     var numsum = [];
+                //     for (i = 1; i < 21; i++) {
+                //         numsum.push(i);
+                //     }
+                //     jiemianopen = 'shihai/' + numsum.randomGet() + '.jpg';
+                // }
                 if (jiemian == "5") {
                     var numsum = [];
                     for (i = 1; i < 34; i++) {
@@ -2913,8 +2999,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 if (jiemian == "11") jiemianopen = 'shengong.jpg';
                 if (jiemian == "12") jiemianopen = 'scl.jpg';
                 if (jiemian == "13") jiemianopen = 'online.png';
-                //alert(jiemianopen);
-                //var zuanwid=game.checkWH(zuanalivegif.width,zuanalivegif.height);
                 function movebackgroundbasic() {
                     window.movepaperbasic = ui.create.node('img');
                     movepaperbasic.src = asset + 'extension/祖安武将/wallpaper/startgame/' + jiemianopen;
@@ -2922,10 +3006,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     document.body.appendChild(movepaperbasic);
                 }
                 function movebackground(s) {
-                    var enlarge = 0.25;
+                    // var enlarge = 0.25;
                     window.movepaper = ui.create.node('img');
                     movepaper.src = asset + 'extension/祖安武将/wallpaper/startgame/' + jiemianopen;
-                    movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + (0.8 - s * 0.02) + ';display: block;position: absolute;background:none;z-index:-1;width: ' + (100 + s * enlarge) + '%!important;height: ' + (100 + s * enlarge) + '%!important;left: ' + (-s * enlarge * 0.5) + '%!important;bottom: ' + (-s * enlarge * 0.5) + '%!important';
+                    // movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + (0.8 - s * 0.02) + ';display: block;position: absolute;background:none;z-index:-1;width: ' + (100 + s * enlarge) + '%!important;height: ' + (100 + s * enlarge) + '%!important;left: ' + (-s * enlarge * 0.5) + '%!important;bottom: ' + (-s * enlarge * 0.5) + '%!important';
+                    movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;display: block;position: absolute;background:none;z-index:-1;width: 100%!important;height: 100%!important;left: 0;bottom: 0';
                     document.body.appendChild(movepaper);
                 }
             }
@@ -2994,57 +3079,48 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 var i = 20;
                 if (open.indexOf('blackgold') != -1) {
                     var mp3 = asset + 'extension/祖安武将/audio/GameStart_blackgold.mp3';
-                    //var mp3 = new Audio(mp3);
-                    //mp3.play(); //播放 mp3这个音频对象
                     openmp3 = true;
                 }
                 if (open.indexOf('goldsand') != -1) {
                     var mp3 = asset + 'extension/祖安武将/audio/GameStart_goldsand.mp3';
-                    //var mp3 = new Audio(mp3);
-                    //mp3.play(); //播放 mp3这个音频对象
                     openmp3 = true;
                 }
                 if (open.indexOf('mutouren') != -1) {
                     var mp3 = asset + 'extension/祖安武将/audio/GameStart_mutouren.mp3';
-                    //var mp3 = new Audio(mp3);
-                    //mp3.play(); //播放 mp3这个音频对象
                     openmp3 = true;
                 }
                 if (openmp3) {
                     var mp3 = new Audio(mp3);
                     mp3.volume = lib.config.volumn_audio / 8;//mp3 的音量
                     mp3.play(); //播放 mp3这个音频对象
-                    //暂停
-                    //mp3.pause();
-                    //mp3.load();
                 }
-                function send() {
-                    var start = ui.create.node('img');
-                    start.src = asset + 'extension/祖安武将/effects/GameStart/' + open + '.gif';
-                    start.style.cssText = 'text-align: center;margin: auto;opacity: ' + i * 0.05 + ';display: block;position: absolute;background:none;z-index:100;' + zuancheckWH(start.width, start.height) + '!important;left:0;right:0;top:0;bottom:0';
-                    document.body.appendChild(start);
-                    i--;
-                    if (i == 20) {
-                        if (open.indexOf('mutouren') != -1) {
-                            setTimeout(function () {
-                                start.remove();
-                                send();
-                            }, 3000);
-                        } else {
-                            setTimeout(function () {
-                                start.remove();
-                                send();
-                            }, 3500);
-                        }
-                    } else if (i > 0) {
-                        setTimeout(function () {
-                            start.remove();
-                            send();
-                        }, 50);
-                    } else {
-                        start.remove();
-                    }
-                }
+                // function send() {
+                //     var start = ui.create.node('img');
+                //     start.src = asset + 'extension/祖安武将/effects/GameStart/' + open + '.gif';
+                //     start.style.cssText = 'text-align: center;margin: auto;opacity: ' + i * 0.05 + ';display: block;position: absolute;background:none;z-index:100;' + zuancheckWH(start.width, start.height) + '!important;left:0;right:0;top:0;bottom:0';
+                //     document.body.appendChild(start);
+                //     i--;
+                //     if (i == 20) {
+                //         if (open.indexOf('mutouren') != -1) {
+                //             setTimeout(function () {
+                //                 start.remove();
+                //                 send();
+                //             }, 3000);
+                //         } else {
+                //             setTimeout(function () {
+                //                 start.remove();
+                //                 send();
+                //             }, 3500);
+                //         }
+                //     } else if (i > 0) {
+                //         setTimeout(function () {
+                //             start.remove();
+                //             send();
+                //         }, 50);
+                //     } else {
+                //         start.remove();
+                //     }
+                // }
                 if (i == 20) send();
             }
             if (plogo == "0") plogo = "1";
@@ -3302,7 +3378,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             },
             "zuan": {
                 "name": "<span class=\"zuantext\" style=\"color:#FFA500\">祖安人民</span>讲话",
-                "init": "3",
+                "init": "2",
                 "intro": "住口老贼：<li>关闭对话<br>独自唱戏：<li>只有使用者和目标会发炎<br>祖安大战：<br>联动队友敌人一起暴露身份",
                 "item": {
                     "1": "住口老贼",
@@ -3401,7 +3477,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
             }
         }, package: {
             intro: "",
-            //author:"<span class=\"helasisytext\" style=\"color:#87CEFA\">Helasisy星云</span>",
             author: "",
             diskURL: "",
             forumURL: "",
