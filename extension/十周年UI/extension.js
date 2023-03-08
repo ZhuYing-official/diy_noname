@@ -9860,7 +9860,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			},
 			cardPrettify: {
 				name: '卡牌美化(需重启)',
-				init: 'webp',
+				init: 'off',
 				item: {
 					off: '关闭',
 					webp: 'WEBP素材',
@@ -9869,7 +9869,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			},
 			dynamicBackground: {
 				name: '动态背景',
-				init: 'skin_xiaosha_default',
+				init: 'skin_zhenji_才颜双绝',
 				item: {
 					off: '关闭',
 					skin_xiaosha_default: '小杀',
@@ -9948,7 +9948,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			},
 			dynamicSkin: {
 				name: '动态皮肤',
-				init: false,
+				init: true,
 			},
 			dynamicSkinOutcrop: {
 				name: '动皮露头',
