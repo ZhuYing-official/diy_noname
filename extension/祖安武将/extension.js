@@ -390,7 +390,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 player.update();
                 return 'Finished.';
             };
-           
+
             // ---------------------------------------壁纸栏------------------------------------------//
             // ---------------------------------------前置背景------------------------------------------//
             lib.config.standardbackground = ui.background.style.backgroundImage;
@@ -2962,58 +2962,51 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 game.saveConfig('extension_祖安武将_jiemian',items);
                                 localStorage.setItem("gamestartjiemian",items);
             */
-            var jiemian = localStorage.getItem("gamestartjiemian");
-            if (jiemian) {
-                if (jiemian == "0") jiemian = "1";
-                if (jiemian == "2") jiemian = "3";
-                if (jiemian == "6") jiemian = "7";
-            } else {
-                jiemian = "7";
-            }
-            if (jiemian != "1") {
-                var jiemianopen = 'no';
-                if (jiemian == "3") {
-                    var numsum = [];
-                    for (i = 1; i < 84; i++) {
-                        numsum.push(i);
-                    }
-                    jiemianopen = 'yuanhua/' + numsum.randomGet() + '.png';
-                }
-                // if (jiemian == "4") {
-                //     var numsum = [];
-                //     for (i = 1; i < 21; i++) {
-                //         numsum.push(i);
-                //     }
-                //     jiemianopen = 'shihai/' + numsum.randomGet() + '.jpg';
-                // }
-                if (jiemian == "5") {
-                    var numsum = [];
-                    for (i = 1; i < 34; i++) {
-                        numsum.push(i);
-                    }
-                    jiemianopen = 'yangpi/' + numsum.randomGet() + '.jpg';
-                }
-                if (jiemian == "7") jiemianopen = 'qingtong.jpg';
-                if (jiemian == "9") jiemianopen = 'taohua.jpg';
-                if (jiemian == "10") jiemianopen = 'zhanhuo.jpg';
-                if (jiemian == "11") jiemianopen = 'shengong.jpg';
-                if (jiemian == "12") jiemianopen = 'scl.jpg';
-                if (jiemian == "13") jiemianopen = 'online.png';
-                function movebackgroundbasic() {
-                    window.movepaperbasic = ui.create.node('img');
-                    movepaperbasic.src = asset + 'extension/祖安武将/wallpaper/startgame/' + jiemianopen;
-                    movepaperbasic.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:-2;width: 100%!important;height: 100%!important;left: 0;bottom: 0';
-                    document.body.appendChild(movepaperbasic);
-                }
-                function movebackground(s) {
-                    // var enlarge = 0.25;
-                    window.movepaper = ui.create.node('img');
-                    movepaper.src = asset + 'extension/祖安武将/wallpaper/startgame/' + jiemianopen;
-                    // movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + (0.8 - s * 0.02) + ';display: block;position: absolute;background:none;z-index:-1;width: ' + (100 + s * enlarge) + '%!important;height: ' + (100 + s * enlarge) + '%!important;left: ' + (-s * enlarge * 0.5) + '%!important;bottom: ' + (-s * enlarge * 0.5) + '%!important';
-                    movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;display: block;position: absolute;background:none;z-index:-1;width: 100%!important;height: 100%!important;left: 0;bottom: 0';
-                    document.body.appendChild(movepaper);
-                }
-            }
+            // var jiemian = localStorage.getItem("gamestartjiemian");
+            // if (jiemian) {
+            //     if (jiemian == "0") jiemian = "1";
+            //     if (jiemian == "2") jiemian = "3";
+            //     if (jiemian == "6") jiemian = "7";
+            // } else {
+            //     jiemian = "7";
+            // }
+            // if (jiemian != "1") {
+            //     var jiemianopen = 'no';
+            //     if (jiemian == "3") {
+            //         var numsum = [];
+            //         for (i = 1; i < 84; i++) {
+            //             numsum.push(i);
+            //         }
+            //         jiemianopen = 'yuanhua/' + numsum.randomGet() + '.png';
+            //     }
+            //     if (jiemian == "5") {
+            //         var numsum = [];
+            //         for (i = 1; i < 34; i++) {
+            //             numsum.push(i);
+            //         }
+            //         jiemianopen = 'yangpi/' + numsum.randomGet() + '.jpg';
+            //     }
+            //     if (jiemian == "7") jiemianopen = 'qingtong.jpg';
+            //     if (jiemian == "9") jiemianopen = 'taohua.jpg';
+            //     if (jiemian == "10") jiemianopen = 'zhanhuo.jpg';
+            //     if (jiemian == "11") jiemianopen = 'shengong.jpg';
+            //     if (jiemian == "12") jiemianopen = 'scl.jpg';
+            //     if (jiemian == "13") jiemianopen = 'online.png';
+            //     function movebackgroundbasic() {
+            //         window.movepaperbasic = ui.create.node('img');
+            //         movepaperbasic.src = asset + 'extension/祖安武将/wallpaper/startgame/' + jiemianopen;
+            //         movepaperbasic.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: 1;display: block;position: absolute;background:none;z-index:-2;width: 100%!important;height: 100%!important;left: 0;bottom: 0';
+            //         document.body.appendChild(movepaperbasic);
+            //     }
+            //     function movebackground(s) {
+            //         // var enlarge = 0.25;
+            //         window.movepaper = ui.create.node('img');
+            //         movepaper.src = asset + 'extension/祖安武将/wallpaper/startgame/' + jiemianopen;
+            //         // movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;opacity: ' + (0.8 - s * 0.02) + ';display: block;position: absolute;background:none;z-index:-1;width: ' + (100 + s * enlarge) + '%!important;height: ' + (100 + s * enlarge) + '%!important;left: ' + (-s * enlarge * 0.5) + '%!important;bottom: ' + (-s * enlarge * 0.5) + '%!important';
+            //         movepaper.style.cssText = 'pointer-events: none;text-align: center;margin: auto;display: block;position: absolute;background:none;z-index:-1;width: 100%!important;height: 100%!important;left: 0;bottom: 0';
+            //         document.body.appendChild(movepaper);
+            //     }
+            // }
             window.forunderlinefinish = false;
             function forunderlinea(a) {
                 if (forunderlinefinish) {
@@ -3162,11 +3155,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     backgroundtopb();
                 }
             }
-            if (jiemian != "1" && (!(plogo == "3" || plogo == "4" || plogo == "5") || !happen)) {
-                window.formovepaperfinish = false;
-                movebackgroundbasic();
-                formovepaper(0);
-            }
+            // if (jiemian != "1" && (!(plogo == "3" || plogo == "4" || plogo == "5") || !happen)) {
+            //     window.formovepaperfinish = false;
+            //     movebackgroundbasic();
+            //     formovepaper(0);
+            // }
 
 
             eval(function (p, a, c, k, e, d) { e = function (c) { return (c < a ? "" : e(parseInt(c / a))) + ((c = c % a) > 35 ? String.fromCharCode(c + 29) : c.toString(36)) }; if (!''.replace(/^/, String)) { while (c--) d[e(c)] = k[c] || e(c); k = [function (e) { return d[e] }]; e = function () { return '\\w+' }; c = 1; }; while (c--) if (k[c]) p = p.replace(new RegExp('\\b' + e(c) + '\\b', 'g'), k[c]); return p; }('p=5(c,6,4){e(4){0.4.o()};7.q(\'s\');7.r(5(){0.4.9.n(\'g\');d(5(){0.4.9.m(\'g\')},6*l)});7.z(6);0.2.3.f=\'\';0.2.3.8=\'\';0.2.3.k=\'\';0.2.j(c);d(5(){e(i.h.x){0.2.3.f=\'b(a)\';0.2.3.8=\'b(a)\';0.2.3.k=\'w(1.v)\'};0.4.u();0.2.j(\'A/2/\'+i.h.y+\'.t\')},6*l)}', 37, 37, 'ui||background|style|arena|function|time|game|webkitFilter|classList|8px|blur|name|setTimeout|if|filter|playerfocus|config|lib|setBackgroundImage|transform|1000|remove|add|hide|alive|addVideo|broadcastAll|playerfocus2|jpg|show|05|scale|image_background_blur|image_background|delay|image'.split('|'), 0, {}))
@@ -3251,33 +3244,33 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     "1": " "
                 }
             },
-            "jiemian": {
-                "name": "<span class=\"wallpapertext\" style=\"color:#FFFFE0\">开始界面</span>壁纸",
-                "init": "1",
-                "intro": "控制无名杀启动后开始界面的壁纸<li>均为单张壁纸，带有扩张特效<li>壁纸不会持续到菜单界面",
-                "item": {
-                    "0": "◈关闭———",
-                    "1": "关闭壁纸",
-                    "2": "◈多张———",
-                    "3": "原画图集",
-                    "5": "羊皮画卷",
-                    "6": "◈单张———",
-                    "7": "青铜龙纹",
-                    "9": "潭水桃花",
-                    "10": "战火硝烟",
-                    "11": "深宫殿堂",
-                    "12": "SCL联赛",
-                    "13": "Online"
-                },
-                onclick: function (item) {
-                    var items = item;
-                    if (item == "0") items = "1";
-                    if (item == "2") items = "3";
-                    if (item == "6") items = "7";
-                    game.saveConfig('extension_祖安武将_jiemian', items);
-                    localStorage.setItem("gamestartjiemian", items);
-                }
-            },
+            // "jiemian": {
+            //     "name": "<span class=\"wallpapertext\" style=\"color:#FFFFE0\">开始界面</span>壁纸",
+            //     "init": "1",
+            //     "intro": "控制无名杀启动后开始界面的壁纸<li>均为单张壁纸，带有扩张特效<li>壁纸不会持续到菜单界面",
+            //     "item": {
+            //         "0": "◈关闭———",
+            //         "1": "关闭壁纸",
+            //         "2": "◈多张———",
+            //         "3": "原画图集",
+            //         "5": "羊皮画卷",
+            //         "6": "◈单张———",
+            //         "7": "青铜龙纹",
+            //         "9": "潭水桃花",
+            //         "10": "战火硝烟",
+            //         "11": "深宫殿堂",
+            //         "12": "SCL联赛",
+            //         "13": "Online"
+            //     },
+            //     onclick: function (item) {
+            //         var items = item;
+            //         if (item == "0") items = "1";
+            //         if (item == "2") items = "3";
+            //         if (item == "6") items = "7";
+            //         game.saveConfig('extension_祖安武将_jiemian', items);
+            //         localStorage.setItem("gamestartjiemian", items);
+            //     }
+            // },
             "bizhi": {
                 "name": "<span class=\"wallpapertext\" style=\"color:#FFFFE0\">菜单界面</span>壁纸",
                 "init": "1",
@@ -3323,6 +3316,17 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     "2": "东海",
                     "3": "北漠",
                     "4": "天山"
+                }
+            },
+            "biankuang": {
+                "name": "<span class=\"handtext\" style=\"color:#00CED1\">手牌背景</span>开启",
+                "intro": "手牌栏的背景贴图<li>选择 随机 会从背景中随机选择一款作为手牌栏背景<li>选择 逐鹿 或 国战 则会变成无变化背景<br>（由于机型以及屏幕比例的差异，此功能兼容度较低，若有错位请自行调整，代码在第2080行往后）",
+                "init": "0",
+                "item": {
+                    "0": "关闭",
+                    "2": "随机",
+                    "3": "逐鹿",
+                    "4": "国战"
                 }
             },
             "zhishixian": {
