@@ -1056,6 +1056,8 @@
 						unfrequent:true,
 						init:'normal',
 						item:{
+							small60:'60%',
+							small70:'70%',
 							esmall:'80%',
 							vsmall:'90%',
 							small:'95%',
@@ -1063,16 +1065,30 @@
 							big:'105%',
 							vbig:'110%',
 							ebig:'120%',
+							big130:'130%',
+							big140:'140%',
+							big150:'150%',
+							big160:'160%',
+							big170:'170%',
+							big200:'200%',
 						},
 						onclick:function(zoom){
 							game.saveConfig('ui_zoom',zoom);
 							switch(zoom){
+								case 'small60':zoom=0.6;break;
+								case 'small70':zoom=0.7;break;
 								case 'esmall':zoom=0.8;break;
 								case 'vsmall':zoom=0.9;break;
 								case 'small':zoom=0.93;break;
 								case 'big':zoom=1.05;break;
 								case 'vbig':zoom=1.1;break;
 								case 'ebig':zoom=1.2;break;
+								case 'big130':zoom=1.3;break;
+								case 'big140':zoom=1.4;break;
+								case 'big150':zoom=1.5;break;
+								case 'big160':zoom=1.6;break;
+								case 'big170':zoom=1.7;break;
+								case 'big200':zoom=2;break;
 								default:zoom=1;
 							}
 							game.documentZoom=game.deviceZoom*zoom;
