@@ -1079,7 +1079,7 @@
 								case 'small70':zoom=0.7;break;
 								case 'esmall':zoom=0.8;break;
 								case 'vsmall':zoom=0.9;break;
-								case 'small':zoom=0.93;break;
+								case 'small':zoom=0.95;break;
 								case 'big':zoom=1.05;break;
 								case 'vbig':zoom=1.1;break;
 								case 'ebig':zoom=1.2;break;
@@ -46018,12 +46018,20 @@
 
 				var zoom;
 				switch(lib.config.ui_zoom){
+					case 'small60':zoom=0.6;break;
+					case 'small70':zoom=0.7;break;
 					case 'esmall':zoom=0.8;break;
 					case 'vsmall':zoom=0.9;break;
-					case 'small':zoom=0.93;break;
+					case 'small':zoom=0.95;break;
 					case 'big':zoom=1.05;break;
 					case 'vbig':zoom=1.1;break;
 					case 'ebig':zoom=1.2;break;
+					case 'big130':zoom=1.3;break;
+					case 'big140':zoom=1.4;break;
+					case 'big150':zoom=1.5;break;
+					case 'big160':zoom=1.6;break;
+					case 'big170':zoom=1.7;break;
+					case 'big200':zoom=2;break;
 					default:zoom=1;
 				}
 				game.documentZoom=game.deviceZoom*zoom;

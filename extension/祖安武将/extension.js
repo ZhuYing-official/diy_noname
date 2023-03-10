@@ -3426,42 +3426,42 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     "4": "手杀音效",
                 }
             },
-            "lineh": {
-                "name": "<li>更多设置----->>>",
-                "init": "1",
-                "intro": "我是分割线_(:з」∠)_",
-                "item": {
-                    "1": " "
-                }
-            },
-            "isPC": {
-                "name": "<span class=\"zuantext\" style=\"color: #4169E1\">界面比例</span>设置",
-                "init": "1",
-                "intro": "根据不同的配置选择适合的比例显示才不会错位<li>目前不包含所有机型，PC端(小)为在电脑上模拟手机窗口大小的调整比例，PC端(大)为电脑全屏时的比例<li>设置后会自动调整相应的显示最佳比例，可以在游戏设置中二次修改<li>手机端为95%，PC端(小)为80%，PC端(大)为120%<li>若没有兼容的比例可关闭 武将回合特效 以及 手牌栏的选项",
-                "item": {
-                    "1": "手机端",
-                    "2": "PC端(小)",
-                    "3": "PC端(大)"
-                },
-                onclick: function (item) {
-                    if (item == "1") var zoom = 'small';
-                    if (item == "2") var zoom = 'esmall';
-                    if (item == "3") var zoom = 'ebig';
-                    game.saveConfig('ui_zoom', zoom);
-                    switch (zoom) {
-                        case 'esmall': zoom = 0.8; break;
-                        case 'vsmall': zoom = 0.9; break;
-                        case 'small': zoom = 0.93; break;
-                        case 'big': zoom = 1.05; break;
-                        case 'vbig': zoom = 1.1; break;
-                        case 'ebig': zoom = 1.2; break;
-                        default: zoom = 1;
-                    }
-                    game.saveConfig('extension_祖安武将_isPC', item);
-                    game.documentZoom = game.deviceZoom * zoom;
-                    ui.updatez();
-                }
-            },
+            // "lineh": {
+            //     "name": "<li>更多设置----->>>",
+            //     "init": "1",
+            //     "intro": "我是分割线_(:з」∠)_",
+            //     "item": {
+            //         "1": " "
+            //     }
+            // },
+            // "isPC": {
+            //     "name": "<span class=\"zuantext\" style=\"color: #4169E1\">界面比例</span>设置",
+            //     "init": "1",
+            //     "intro": "根据不同的配置选择适合的比例显示才不会错位<li>目前不包含所有机型，PC端(小)为在电脑上模拟手机窗口大小的调整比例，PC端(大)为电脑全屏时的比例<li>设置后会自动调整相应的显示最佳比例，可以在游戏设置中二次修改<li>手机端为95%，PC端(小)为80%，PC端(大)为120%<li>若没有兼容的比例可关闭 武将回合特效 以及 手牌栏的选项",
+            //     "item": {
+            //         "1": "手机端",
+            //         "2": "PC端(小)",
+            //         "3": "PC端(大)"
+            //     },
+            //     onclick: function (item) {
+            //         if (item == "1") var zoom = 'small';
+            //         if (item == "2") var zoom = 'esmall';
+            //         if (item == "3") var zoom = 'ebig';
+            //         game.saveConfig('ui_zoom', zoom);
+            //         switch (zoom) {
+            //             case 'esmall': zoom = 0.8; break;
+            //             case 'vsmall': zoom = 0.9; break;
+            //             case 'small': zoom = 0.93; break;
+            //             case 'big': zoom = 1.05; break;
+            //             case 'vbig': zoom = 1.1; break;
+            //             case 'ebig': zoom = 1.2; break;
+            //             default: zoom = 1;
+            //         }
+            //         game.saveConfig('extension_祖安武将_isPC', item);
+            //         game.documentZoom = game.deviceZoom * zoom;
+            //         ui.updatez();
+            //     }
+            // },
             "aboutH": {
                 "name": "———————————",
                 "init": "1",
