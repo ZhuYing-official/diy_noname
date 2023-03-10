@@ -14,11 +14,11 @@ function removeRenjie(player){
 	if(player.hasSkill('pozhu')){
 		player.removeSkill('pozhu');
 	}
-	if(player.hasSkill('xinshanjia')){
-		player.removeSkill('xinshanjia');
+	if(player.hasSkill('olqingyi')){
+		player.removeSkill('olqingyi');
 	}
-	if(player.hasSkill('reyingzi')){
-		player.removeSkill('reyingzi');
+	if(player.hasSkill('rexuanhuo')){
+		player.removeSkill('rexuanhuo');
 	}
 };
 function removeTongyu(player){
@@ -39,8 +39,8 @@ function removeKuangbao(player){
 	if(player.hasSkill('shencai')){
 		player.removeSkill('shencai');
 	}
-	if(player.hasSkill('xunshi')){
-		player.removeSkill('xunshi');
+	if(player.hasSkill('drlt_poxi')){
+		player.removeSkill('drlt_poxi');
 	}
 };
 function lx_remove(player, arrays){
@@ -237,6 +237,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				marktext:'王',
 				unique:true,
 				trigger:{
+					source:'damageSource',
 					player:['damageEnd','enterGame'],
 					global:'phaseBefore',
 				},
@@ -282,11 +283,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						target:function(card,player,target){
 							if(get.tag(card,'damage')){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
-								if(target.hasSkill('lx_tongkuang')&&target.countMark('lx_wangming')==0){
-									return [0.5, 1];
-								}
 								if(!target.hasSkill('lx_tongkuang')){
-									return [0.5, 0.8];
+									return [0.5, 0.7];
 								}
 								return [0.5, 0.6];
 							}
@@ -302,7 +300,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				juexingji:true,
 				skillAnimation:true,
 				animationColor:'water',
-				derivation: ['lx_tongkuang','pozhu','xinshanjia','reyingzi','reshuishi','lingce','dinghan','drlt_jieying','shencai','xunshi'],
+				derivation: ['lx_tongkuang','pozhu','olqingyi','rexuanhuo','reshuishi','lingce','dinghan','shencai','drlt_jieying','drlt_poxi'],
 				filter:function(event,player){
 					return player.countMark('lx_wangming')>=3;
 				},
@@ -311,17 +309,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.syncStorage('lx_wangming');
 					player.awakenSkill(event.name);
 					player.addSkill('lx_tongkuang');
-					player.addSkill('reyingzi');
+					player.addSkill('rexuanhuo');
 				},
 			},
 			lx_tongkuang:{
 				audio:2,
-				trigger: {player:'phaseDiscardBefore'},
-				filter:function(event,player){
-					return player.countMark('lx_wangming')>=1;
-				},
-				usable:1,
+				// trigger: {player:'phaseDiscardBefore'},
+				trigger: {player:'phaseJudgeBefore'},
 				forced:true,
+				filter:function(event,player){
+					return player.countMark('lx_wangming')>=2;
+				},
+				// enable:'phaseUse',
+				usable:1,
 				content:function(){
 					'step 0'
 					player.chooseControl('人杰','统御','狂暴').set('prompt','选择一个路线');
@@ -340,32 +340,40 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				subSkill:{
 					renjie:{
 						audio:2,
-						trigger:{player:'phaseDiscardBegin'},
-						frequent:true,
+						// trigger:{player:'phaseDiscardBegin'},
+						// trigger:{player:'phaseUse'},
+						// frequent:true,
+						// forced:true,
+						enable:'phaseUse',
+						usable:1,
 						content:function(){
-							event.lx = ['xinshanjia','pozhu','reyingzi'];
+							event.lx = ['olqingyi','pozhu','rexuanhuo'];
 							if(player.hasSkill('pozhu')){
 								event.lx.splice(event.lx.indexOf('pozhu'),1)
 							}
-							if(player.hasSkill('xinshanjia')){
-								event.lx.splice(event.lx.indexOf('xinshanjia'),1)
+							if(player.hasSkill('olqingyi')){
+								event.lx.splice(event.lx.indexOf('olqingyi'),1)
 							}
-							if(player.hasSkill('reyingzi')){
-								event.lx.splice(event.lx.indexOf('reyingzi'),1)
+							if(player.hasSkill('rexuanhuo')){
+								event.lx.splice(event.lx.indexOf('rexuanhuo'),1)
 							}
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
 							lx_remove(player, ['tongyu','kuangbao']);
 							player.addSkillLog(result.control);
-							player.removeMark('lx_wangming',1);
+							player.removeMark('lx_wangming',2);
 							player.syncStorage('lx_wangming');
 						}
 					},
 					tongyu:{
 						audio:2,
-						trigger:{player:'phaseJieshuBegin'},
-						frequent:true,
+						// trigger:{player:'phaseDiscardBegin'},
+						// trigger:{player:'phaseUse'},
+						// frequent:true,
+						// forced:true,
+						enable:'phaseUse',
+						usable:1,
 						content:function(){
 							event.lx = ['reshuishi','lingce','dinghan'];
 							if(player.hasSkill('reshuishi')){
@@ -382,31 +390,35 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 1'
 							lx_remove(player, ['renjie','kuangbao']);
 							player.addSkillLog(result.control);
-							player.removeMark('lx_wangming',1);
+							player.removeMark('lx_wangming',2);
 							player.syncStorage('lx_wangming');
 						},
 					},
 					kuangbao:{
 						audio:2,
-						trigger:{player:'phaseJieshuBegin'},
-						frequent:true,
+						// trigger:{player:'phaseDiscardBegin'},
+						// trigger:{player:'phaseUse'},
+						// frequent:true,
+						// forced:true,
+						enable:'phaseUse',
+						usable:1,
 						content:function(){
-							event.lx = ['drlt_jieying','shencai','xunshi'];
+							event.lx = ['shencai','drlt_jieying','drlt_poxi'];
 							if(player.hasSkill('drlt_jieying')){
 								event.lx.splice(event.lx.indexOf('drlt_jieying'),1)
 							}
 							if(player.hasSkill('shencai')){
 								event.lx.splice(event.lx.indexOf('shencai'),1)
 							}
-							if(player.hasSkill('xunshi')){
-								event.lx.splice(event.lx.indexOf('xunshi'),1)
+							if(player.hasSkill('drlt_poxi')){
+								event.lx.splice(event.lx.indexOf('drlt_poxi'),1)
 							}
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
 							lx_remove(player, ['tongyu','renjie']);
 							player.addSkillLog(result.control);
-							player.removeMark('lx_wangming',1);
+							player.removeMark('lx_wangming',2);
 							player.syncStorage('lx_wangming');
 						}
 					}
@@ -1238,11 +1250,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 李信
 			hok_lixin:'李信',
 			lx_wangming:'王命',
-			lx_wangming_info:'锁定技，游戏开始时，你获得2枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到1点伤害后，你获得一枚「王」标记。',
+			lx_wangming_info:'锁定技，游戏开始时，你获得2枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害后，你获得一枚「王」标记。',
 			lx_dengshen:'登神',
-			lx_dengshen_info:'觉醒技，准备阶段，若你武将牌上的「王」数不小于3，则你弃置2枚「王」，获得技能[统狂]、[英姿]。',
+			lx_dengshen_info:'觉醒技，准备阶段，若你武将牌上的「王」数不小于3，则你弃置2枚「王」，获得技能[统狂]、[眩惑]。',
 			lx_tongkuang:'统狂',
-			lx_tongkuang_info:'锁定技，弃牌阶段前，你可以弃置一枚「王」标记，选择[人杰]、[统御]、[狂暴]路线中的一个，然后获得该路线的一个技能，并失去其他路线的技能。（人杰：[破竹][破竹][英姿]；统御：[慧识][灵策][定汉]；狂暴：[劫营][神裁][巡使]。）',
+			lx_tongkuang_info:'判断阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；出牌阶段，你可以弃置2枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][眩惑]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
+			lx_tongkuang_renjie:'人杰',
+			lx_tongkuang_tongyu:'统御',
+			lx_tongkuang_kuangbao:'狂暴',
 			// 明世隐
 			hok_mingshiyin:'明世隐',
 			taigua:'泰卦',
