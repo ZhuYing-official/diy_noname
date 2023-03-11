@@ -1247,6 +1247,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
 			huayi:'华衣',
 			huayi_info:'觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
+			// 妲己
+			hok_daji:'妲己',
+			meixin:'魅心',
+			meixin_info:'出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
+			huhuo:'狐火',
+			huhuo_info:'限定技，出牌阶段，当你的“魅心”标记大于3，你可以弃置所有手牌对攻击范围内的目标随机造成3点火焰伤害，你可以减少其中一个目标。',
 			// 李信
 			hok_lixin:'李信',
 			lx_wangming:'王命',
@@ -1258,6 +1264,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lx_tongkuang_renjie:'人杰',
 			lx_tongkuang_tongyu:'统御',
 			lx_tongkuang_kuangbao:'狂暴',
+			// 马克波罗
+			hok_makeboluo:'马克波罗',
+			zuolun:'左轮',
+			zuolun_info:'当你对其他角色造成伤害且该角色“破防”标记不超过3时，该角色获得1枚“破防”标记，破防标记为3时受到马克波罗的伤害视为体力流失。',
+			danyu:'弹雨',
+			danyu_info:'出牌阶段，你可以弃置全部手牌（至少2张）并翻面，选择1至3名目标，视为对其依次造成2点雷电伤害。',
 			// 明世隐
 			hok_mingshiyin:'明世隐',
 			taigua:'泰卦',
@@ -1273,6 +1285,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			biangua:'变卦',
 			biangua3:'变卦',
 			biangua_info:'当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
+			// 孙悟空
+			hok_sunwukong:'孙悟空',
+			qitian:'齐天',
+			qitain_info:'锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
+			shengbang:'圣棒',
+			shengbang_info:'锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
+			naogong:'闹宫',
+			naogong_info:'限定技，本回合出牌阶段令你的杀的次数限制为3，弃牌阶段弃置所有手牌。',
 			// 神曹植
 			shen_caozhi:'神曹植',
 			caigao:'才高',
@@ -1295,7 +1315,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xiehan_info:'锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你的“残虐”标记不小于1，你失去1枚“残虐”，你增加一点体力上限。一名角色出牌阶段开始时，该角色选择一项：1.摸一张牌，视为使用了一张【酒】，你对其（包括自己）造成一点伤害；2.弃置一张牌。',
 			huidu:'毁都',
 			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
-
 			
 			correction_history:'正史',
 			honor_of_kings:'王者荣耀',
