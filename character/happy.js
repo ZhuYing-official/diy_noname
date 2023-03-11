@@ -833,7 +833,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return event.num>0; 
 				},
 				content:function(){
-					if(trigger.player.countMark('hok_zuolun')<3){
+					if(trigger.player.countMark('hok_zuolun')<2){
 						trigger.player.addMark('hok_zuolun', 1);
 					}
 				},
@@ -848,7 +848,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return event.name=='damage';
 				},
 				content:function(){
-					if(trigger.player.countMark('hok_zuolun')>=3){
+					if(trigger.player.countMark('hok_zuolun')>=2 && trigger.source.hasSkill('hok_zuolun')){
 						trigger.cancel();
 						trigger.player.loseHp(trigger.num);
 					}
@@ -862,13 +862,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:'phaseUse',
 				usable:1,
 				filter:function(event,player){
-					return player.countCards('hs')>=3;
+					return player.countCards('hs')>=4;
 				},
 				content:function(){
 					'step 0'
 					event.danyuCards=player.getCards('hs');
 					'step 1'
-					player.chooseTarget(get.prompt('hok_danyu'),'选择至多三名其他角色，对这些角色造成两次1点雷电伤害',[1,3],function(card,player,target){
+					player.chooseTarget(get.prompt('hok_danyu'),'选择至多三名其他角色，对这些角色造成随机1~2次1点雷电伤害',[1,3],function(card,player,target){
 						return player!=target;
 					}).set('ai',target=>{
 						var player=_status.event.player;
@@ -878,16 +878,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(event.danyuCards!=undefined){
 						player.discard(event.danyuCards);
 					}
-					if(!player.isTurnedOver()){
-						player.turnOver();
-					}
+					// if(!player.isTurnedOver()){
+					// 	player.turnOver();
+					// }
 					if(result.bool){
 						var targets=result.targets;
 						targets.sortBySeat();
 						player.logSkill('hok_danyu',targets);
 						for(var target of targets){
-							target.damage(1,'thunder');
-							target.damage(1,'thunder');
+							var r = Math.floor(Math.random()*2)+1;
+							for(var dan=0;dan<r;dan++){
+								target.damage(1,'thunder');
+							}
 						}
 					}
 				}
@@ -1419,9 +1421,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 马克波罗
 			hok_makeboluo:'马克波罗',
 			hok_zuolun:'左轮',
-			hok_zuolun_info:'锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过3时，该角色获得1枚“破防”标记，破防标记为3时受到马克波罗的伤害视为体力流失。',
+			hok_zuolun_info:'锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
 			hok_danyu:'弹雨',
-			hok_danyu_info:'出牌阶段限1次，你可以弃置全部手牌（至少3张）并翻面至背面向上，选择1至3名目标，对其造成两次1点雷电伤害。',
+			hok_danyu_info:'出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// 明世隐
 			hok_mingshiyin:'明世隐',
 			hok_taigua:'泰卦',
