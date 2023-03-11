@@ -43,7 +43,7 @@ function removeKuangbao(player){
 		player.removeSkill('drlt_poxi');
 	}
 };
-function lx_remove(player, arrays){
+function hok_remove(player, arrays){
 	if(arrays.includes('renjie')){
 		removeRenjie(player);
 	}
@@ -62,17 +62,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterSort:{
 			happy:{
 				correction_history:['cuishi'],
-				honor_of_kings:['hok_lixin','hok_mingshiyin'],
+				honor_of_kings:['hok_daji','hok_lixin','hok_makeboluo','hok_mingshiyin','hok_sunwukong'],
 				happy_kings:['shen_caozhi','shen_dongzhuo'],
 			},
 		},
 		character:{
 			// 崔氏
 			cuishi:['female','wei',3,['reluoshen','pianwan','huayi',]],
+			// 妲己
+			hok_daji:['female','qun',3,['hok_meixin','hok_huhuo']],
 			// 李信
-			hok_lixin:['male','shen',4,['lx_wangming','lx_dengshen',],['qun']],
+			hok_lixin:['male','shen',4,['hok_wangming','hok_dengshen',],['qun']],
+			// 马可波罗
+			hok_makeboluo:['male','qun',3,['hok_zuolun','hok_danyu']],
 			// 明世隐
-			hok_mingshiyin:['male','shu',4,['taigua','minggua','biangua']],
+			hok_mingshiyin:['male','shu',4,['hok_taigua','hok_minggua','hok_biangua']],
+			// 孙悟空
+			hok_sunwukong:['male','shen',4,['hok_qitian','hok_shengbang','hok_naogong'],['qun']],
 			// 神曹植
 			shen_caozhi:['male','shen',3,['caigao','badou','qibu','chengshi'],['wei']],
 			// 神董卓
@@ -231,8 +237,78 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			*/
 
+			// 妲己
+			hok_meixin:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				marktext:'魅',
+				intro:{
+					name:'魅心',
+					content: 'mark',
+				},
+				filter:function(event,player){
+					return player.countCards('h',{color:'red'})>0;
+				},
+				enable:'chooseToUse',
+				filterCard:function(card){
+					return get.color(card)=='red';
+				},
+				position:'h',
+				viewAs:{name:'lebu'},
+				prompt:'将一张红色手牌当乐不思蜀使用',
+				onuse: function(result, player){
+					if(player.countMark('hok_meixin')<3){
+						player.addMark('hok_meixin',1);
+					}
+				},
+				check:function(card){return 6-get.value(card)},
+				ai:{
+					threaten:1.5
+				}
+			},
+			hok_huhuo:{
+				audio:2,
+				unique: true,
+				limited: true,
+				enable:'phaseUse',
+				skillAnimation:true,
+				animationColor:'orange',
+				filter:function(event,player){
+					return player.countMark('hok_meixin')>=3;
+				},
+				content:function(){
+					'step 0'
+					player.awakenSkill('hok_huhuo');
+					event.huhuoCards=player.getCards('h');
+					'step 1'
+					if(event.huhuoCards!=undefined){
+						player.discard(event.huhuoCards);
+					}
+					player.chooseTarget('为狐火减少一个目标',function(card,player,target){
+						return player.inRange(target);
+					}).set('targets',trigger.targets).set('ai',function(target){
+						if(target==player){
+							return false;
+						}
+						return get.attitude(_status.event.player,target);
+					});
+					'step 2'
+					for(var i=0;i<3;i++){
+						event.huhuoList=game.filterPlayer(function(target){
+							return player.inRange(target)&&!target.isDead()&&target!=player;
+						});
+						if(result.bool){
+							event.huhuoList.splice(event.huhuoList.indexOf(result.targets[0]), 1);
+						}
+						huhuoTarget = event.huhuoList.randomGet();
+						player.line(huhuoTarget,'fire');
+						huhuoTarget.damage('fire');
+					}
+				},
+			},
 			// 李信
-			lx_wangming:{
+			hok_wangming:{
 				audio:2,
 				marktext:'王',
 				unique:true,
@@ -246,7 +322,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return (event.name!='damage'&&(event.name!='phase'||game.phaseNumber==0))||event.num>0; 
 				},
 				content:function(){
-					player.addMark('lx_wangming',trigger.name=='damage'?1:2);
+					player.addMark('hok_wangming',trigger.name=='damage'?1:2);
 					var list=[];
 					var zhu=get.zhu(player);
 					if(zhu&&zhu!=player&&zhu.skills){
@@ -283,7 +359,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						target:function(card,player,target){
 							if(get.tag(card,'damage')){
 								if(player.hasSkillTag('jueqing',false,target)) return [1,-2];
-								if(!target.hasSkill('lx_tongkuang')){
+								if(!target.hasSkill('hok_tongkuang')){
 									return [0.5, 0.7];
 								}
 								return [0.5, 0.6];
@@ -292,7 +368,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
-			lx_dengshen:{
+			hok_dengshen:{
 				audio:2,
 				trigger:{player:'phaseBegin'},
 				forced:true,
@@ -300,25 +376,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				juexingji:true,
 				skillAnimation:true,
 				animationColor:'water',
-				derivation: ['lx_tongkuang','pozhu','olqingyi','rexuanhuo','reshuishi','lingce','dinghan','shencai','drlt_jieying','drlt_poxi'],
+				derivation: ['hok_tongkuang','pozhu','olqingyi','rexuanhuo','reshuishi','lingce','dinghan','shencai','drlt_jieying','drlt_poxi'],
 				filter:function(event,player){
-					return player.countMark('lx_wangming')>=3;
+					return player.countMark('hok_wangming')>=3;
 				},
 				content:function(){
-					player.removeMark('lx_wangming',2);
-					player.syncStorage('lx_wangming');
+					player.removeMark('hok_wangming',2);
+					player.syncStorage('hok_wangming');
 					player.awakenSkill(event.name);
-					player.addSkill('lx_tongkuang');
+					player.addSkill('hok_tongkuang');
 					player.addSkill('rexuanhuo');
 				},
 			},
-			lx_tongkuang:{
+			hok_tongkuang:{
 				audio:2,
 				// trigger: {player:'phaseDiscardBefore'},
 				trigger: {player:'phaseJudgeBefore'},
 				forced:true,
 				filter:function(event,player){
-					return player.countMark('lx_wangming')>=2;
+					return player.countMark('hok_wangming')>=2;
 				},
 				// enable:'phaseUse',
 				usable:1,
@@ -328,13 +404,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					switch (result.control) {
 						case '统御':
-							player.addTempSkill('lx_tongkuang_tongyu');
+							player.addTempSkill('hok_tongkuang_tongyu');
 							break;
 						case '狂暴':
-							player.addTempSkill('lx_tongkuang_kuangbao');
+							player.addTempSkill('hok_tongkuang_kuangbao');
 							break;
 						default:
-							player.addTempSkill('lx_tongkuang_renjie');
+							player.addTempSkill('hok_tongkuang_renjie');
 					}
 				},
 				subSkill:{
@@ -360,10 +436,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
-							lx_remove(player, ['tongyu','kuangbao']);
+							hok_remove(player, ['tongyu','kuangbao']);
 							player.addSkillLog(result.control);
-							player.removeMark('lx_wangming',2);
-							player.syncStorage('lx_wangming');
+							player.removeMark('hok_wangming',2);
+							player.syncStorage('hok_wangming');
 						}
 					},
 					tongyu:{
@@ -388,10 +464,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
-							lx_remove(player, ['renjie','kuangbao']);
+							hok_remove(player, ['renjie','kuangbao']);
 							player.addSkillLog(result.control);
-							player.removeMark('lx_wangming',2);
-							player.syncStorage('lx_wangming');
+							player.removeMark('hok_wangming',2);
+							player.syncStorage('hok_wangming');
 						},
 					},
 					kuangbao:{
@@ -416,16 +492,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
-							lx_remove(player, ['tongyu','renjie']);
+							hok_remove(player, ['tongyu','renjie']);
 							player.addSkillLog(result.control);
-							player.removeMark('lx_wangming',2);
-							player.syncStorage('lx_wangming');
+							player.removeMark('hok_wangming',2);
+							player.syncStorage('hok_wangming');
 						}
 					}
 				},
 			},
 			// 明世隐
-			taigua:{
+			hok_taigua:{
 				audio: 2,
 				enable:'phaseUse',
 				usable:1,
@@ -436,13 +512,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content: function(){
 					'step 0'
-					player.removeSkill('minggua2');
+					player.removeSkill('hok_minggua2');
 					'step 1'
 					player.damage();
 					'step 2'
 					player.line(target,'green');
 					target.recover();
-					player.addSkill('minggua2');
+					player.addSkill('hok_minggua2');
 				},
 				ai:{
 					order: get.order({name:'wanjian'})-1,
@@ -455,10 +531,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					threaten:1,
 				}
 			},
-			minggua:{
+			hok_minggua:{
 				auto: 2,
 				forced: true,
-				group: 'minggua2',
+				group: 'hok_minggua2',
 				trigger:{
 					player: 'damageBegin2',
 				},
@@ -532,14 +608,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					var source = trigger.source;
 					if(source){
-						if(source.hasSkill('biangua')){
-							if(source.countMark('biangua2')<8){
-								source.addMark('biangua2', 1);
+						if(source.hasSkill('hok_biangua')){
+							if(source.countMark('hok_biangua2')<8){
+								source.addMark('hok_biangua2', 1);
 							}
 						}
-						if(tar.hasSkill('biangua')){
-							if(tar.countMark('biangua2')<8){
-								tar.addMark('biangua2', 1);
+						if(tar.hasSkill('hok_biangua')){
+							if(tar.countMark('hok_biangua2')<8){
+								tar.addMark('hok_biangua2', 1);
 							}
 						}
 					}
@@ -549,7 +625,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.dialog.close();
 				},
 			},
-			minggua2:{
+			hok_minggua2:{
 				auto: 2,
 				forced: true,
 				trigger:{
@@ -624,14 +700,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							tar.draw(4);
 						}
 					}
-					if(player.hasSkill('biangua')){
-						if(player.countMark('biangua2')<8){
-							player.addMark('biangua2', 1);
+					if(player.hasSkill('hok_biangua')){
+						if(player.countMark('hok_biangua2')<8){
+							player.addMark('hok_biangua2', 1);
 						}
 					}
-					if(tar.hasSkill('biangua')){
-						if(tar.countMark('biangua2')<8){
-							tar.addMark('biangua2', 1);
+					if(tar.hasSkill('hok_biangua')){
+						if(tar.countMark('hok_biangua2')<8){
+							tar.addMark('hok_biangua2', 1);
 						}
 					}
 					'step 1'
@@ -639,17 +715,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.dialog.close();
 				},
 			},
-			biangua:{
-				global: ['biangua2','biangua3'],
+			hok_biangua:{
+				global: ['hok_biangua2','hok_biangua3'],
 				audio:2,
 				filter: function(event, player){
 					let tar = game.filterPlayer(function(target){
-						return target.hasSkill('biangua');
+						return target.hasSkill('hok_biangua');
 					})[0];
 					return tar.isAlive();
 				}
 			},
-			biangua2:{
+			hok_biangua2:{
 				audio: 2,
 				mark: true,
 				marktext: '卦',
@@ -659,15 +735,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					content: 'mark',
 				},
 			},
-			biangua3:{
+			hok_biangua3:{
 				audio: 2,
 				enable:'phaseUse',
 				filter: function(event, player){
 					let tar = game.filterPlayer(function(target){
-						return target.hasSkill('biangua');
+						return target.hasSkill('hok_biangua');
 					})[0];
 					if(tar){
-						return tar.countMark('biangua2')>7;
+						return tar.countMark('hok_biangua2')>7;
 					}
 					return false;
 				},
@@ -691,7 +767,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
 					'step 1'
 					let target = game.filterPlayer(function(target){
-						return target.hasSkill('biangua');
+						return target.hasSkill('hok_biangua');
 					})[0];
 					player.chooseControl(guaList,'cancel2').set('ai', function(target){
 						let r = Math.random()*guaList.length;
@@ -722,12 +798,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var str=get.translation(player)+'选择了：'+result.control;
 					event.dialog=ui.create.dialog(str);
 					game.log(str);
-					if(!player.hasSkill('biangua')){
+					if(!player.hasSkill('hok_biangua')){
 						game.filterPlayer(function(target){
-							return target.hasSkill('biangua');
-						})[0].removeMark('biangua2', 8);
+							return target.hasSkill('hok_biangua');
+						})[0].removeMark('hok_biangua2', 8);
 					} else{
-						player.removeMark('biangua2', 8);
+						player.removeMark('hok_biangua2', 8);
 					}
 					'step 3'
 					game.delay(1);
@@ -739,6 +815,82 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 					result:{player:1},
 				},
+			},
+			// 马可波罗
+			hok_zuolun:{
+				audio:2,
+				marktext:'轮',
+				intro:{
+					name:'左轮',
+					content: 'mark',
+				},
+				forced:true,
+				group:['hok_zuolun_effect'],
+				trigger:{
+					source:'damageSource',
+				},
+				filter:function(event){
+					return event.num>0; 
+				},
+				content:function(){
+					if(trigger.player.countMark('hok_zuolun')<3){
+						trigger.player.addMark('hok_zuolun', 1);
+					}
+				},
+			},
+			hok_zuolun_effect:{
+				audio:2,
+				forced:true,
+				trigger:{
+					global:['damageBefore'],
+				},
+				filter:function(event,player){
+					return event.name=='damage';
+				},
+				content:function(){
+					if(trigger.player.countMark('hok_zuolun')>=3){
+						trigger.cancel();
+						trigger.player.loseHp(trigger.num);
+					}
+				},
+				ai:{
+					jueqing:true
+				},
+			},
+			hok_danyu:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.countCards('hs')>=3;
+				},
+				content:function(){
+					'step 0'
+					event.danyuCards=player.getCards('hs');
+					'step 1'
+					player.chooseTarget(get.prompt('hok_danyu'),'选择至多三名其他角色，对这些角色造成两次1点雷电伤害',[1,3],function(card,player,target){
+						return player!=target;
+					}).set('ai',target=>{
+						var player=_status.event.player;
+						return get.damageEffect(target,player,player,'thunder');
+					});
+					'step 2'
+					if(event.danyuCards!=undefined){
+						player.discard(event.danyuCards);
+					}
+					if(!player.isTurnedOver()){
+						player.turnOver();
+					}
+					if(result.bool){
+						var targets=result.targets;
+						targets.sortBySeat();
+						player.logSkill('hok_danyu',targets);
+						for(var target of targets){
+							target.damage(1,'thunder');
+							target.damage(1,'thunder');
+						}
+					}
+				}
 			},
 
 			// 神曹植
@@ -1249,50 +1401,50 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huayi_info:'觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
 			// 妲己
 			hok_daji:'妲己',
-			meixin:'魅心',
-			meixin_info:'出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
-			huhuo:'狐火',
-			huhuo_info:'限定技，出牌阶段，当你的“魅心”标记大于3，你可以弃置所有手牌对攻击范围内的目标随机造成3点火焰伤害，你可以减少其中一个目标。',
+			hok_meixin:'魅心',
+			hok_meixin_info:'出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
+			hok_huhuo:'狐火',
+			hok_huhuo_info:'限定技，出牌阶段，当你的“魅心”标记大于3，你可以弃置所有手牌对攻击范围内的目标随机造成3点火焰伤害，你可以减少其中一个目标。',
 			// 李信
 			hok_lixin:'李信',
-			lx_wangming:'王命',
-			lx_wangming_info:'锁定技，游戏开始时，你获得2枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害后，你获得一枚「王」标记。',
-			lx_dengshen:'登神',
-			lx_dengshen_info:'觉醒技，准备阶段，若你武将牌上的「王」数不小于3，则你弃置2枚「王」，获得技能[统狂]、[眩惑]。',
-			lx_tongkuang:'统狂',
-			lx_tongkuang_info:'判断阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；出牌阶段，你可以弃置2枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][眩惑]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
-			lx_tongkuang_renjie:'人杰',
-			lx_tongkuang_tongyu:'统御',
-			lx_tongkuang_kuangbao:'狂暴',
+			hok_wangming:'王命',
+			hok_wangming_info:'锁定技，游戏开始时，你获得2枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害后，你获得一枚「王」标记。',
+			hok_dengshen:'登神',
+			hok_dengshen_info:'觉醒技，准备阶段，若你武将牌上的「王」数不小于3，则你弃置2枚「王」，获得技能[统狂]、[眩惑]。',
+			hok_tongkuang:'统狂',
+			hok_tongkuang_info:'判断阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；出牌阶段，你可以弃置2枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][眩惑]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
+			hok_tongkuang_renjie:'人杰',
+			hok_tongkuang_tongyu:'统御',
+			hok_tongkuang_kuangbao:'狂暴',
 			// 马克波罗
 			hok_makeboluo:'马克波罗',
-			zuolun:'左轮',
-			zuolun_info:'当你对其他角色造成伤害且该角色“破防”标记不超过3时，该角色获得1枚“破防”标记，破防标记为3时受到马克波罗的伤害视为体力流失。',
-			danyu:'弹雨',
-			danyu_info:'出牌阶段，你可以弃置全部手牌（至少2张）并翻面，选择1至3名目标，视为对其依次造成2点雷电伤害。',
+			hok_zuolun:'左轮',
+			hok_zuolun_info:'锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过3时，该角色获得1枚“破防”标记，破防标记为3时受到马克波罗的伤害视为体力流失。',
+			hok_danyu:'弹雨',
+			hok_danyu_info:'出牌阶段限1次，你可以弃置全部手牌（至少3张）并翻面至背面向上，选择1至3名目标，对其造成两次1点雷电伤害。',
 			// 明世隐
 			hok_mingshiyin:'明世隐',
-			taigua:'泰卦',
-			taigua_info:'出牌阶段限一次，你对自己造成1点伤害，然后令一名其他角色回复1点体力。',
-			minggua:'命卦',
-			minggua_info:'锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
+			hok_taigua:'泰卦',
+			hok_taigua_info:'出牌阶段限一次，你对自己造成1点伤害，然后令一名其他角色回复1点体力。',
+			hok_minggua:'命卦',
+			hok_minggua_info:'锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
 				1.大吉/大凶：受到伤害的角色死亡；<br/>\
 				2.中吉/中凶：伤害加一，且受到伤害的角色随机弃置一张牌；<br/>\
 				3.小吉/小凶：受到伤害的角色随机弃置一张牌；<br/>\
 				4.小凶/小吉：受到伤害的角色摸一张牌；<br/>\
 				5.中凶/中吉：受到伤害的角色将此伤害改为回复体力并摸一张牌；<br/>\
 				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌',
-			biangua:'变卦',
-			biangua3:'变卦',
-			biangua_info:'当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
+			hok_biangua:'变卦',
+			hok_biangua3:'变卦',
+			hok_biangua_info:'当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
 			// 孙悟空
 			hok_sunwukong:'孙悟空',
-			qitian:'齐天',
-			qitain_info:'锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
-			shengbang:'圣棒',
-			shengbang_info:'锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
-			naogong:'闹宫',
-			naogong_info:'限定技，本回合出牌阶段令你的杀的次数限制为3，弃牌阶段弃置所有手牌。',
+			hok_qitian:'齐天',
+			hok_qitain_info:'锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
+			hok_shengbang:'圣棒',
+			hok_shengbang_info:'锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
+			hok_naogong:'闹宫',
+			hok_naogong_info:'限定技，本回合出牌阶段令你的杀的次数限制为3，弃牌阶段弃置所有手牌。',
 			// 神曹植
 			shen_caozhi:'神曹植',
 			caigao:'才高',
