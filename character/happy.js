@@ -54,6 +54,26 @@ function hok_remove(player, arrays){
 		removeKuangbao(player);
 	}
 };
+// 孙悟空
+function shengbangJudge(trigger, player, result){
+	'step 0'
+	player.judge(function(card){
+		if(get.color(card)=='red'){
+			trigger.num*=2;
+			return 1.5;
+		}
+		return -1.5;
+	}).judge2=function(result){
+		return result.bool;
+	};
+
+	'step 1'
+	if (result.bool){
+		return true;
+	} else{
+		return false;
+	}
+}
 //-------------------------------------------------------------
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
@@ -63,7 +83,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			happy:{
 				correction_history:['cuishi'],
 				honor_of_kings:['hok_daji','hok_lixin','hok_makeboluo','hok_mingshiyin','hok_sunwukong'],
-				happy_kings:['shen_caozhi','shen_dongzhuo'],
+				happy_kings:['shen_caozhi','shen_dongzhuo','shen_lusu'],
 			},
 		},
 		character:{
@@ -83,6 +103,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			shen_caozhi:['male','shen',3,['caigao','badou','qibu','chengshi'],['wei']],
 			// 神董卓
 			shen_dongzhuo:['male','shen',5,['cannue','xiehan','huidu'],['qun']],
+			// 神鲁肃
+			shen_lusu:['male','shen',4,['diying','fusheng','chiyan','lianmeng'],['wu']],
 		},
 		characterIntro:{
 			cuishi:'崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
@@ -563,7 +585,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					} else{
 						str+='大吉';
 					}
-					event.dialog=ui.create.dialog(str);
+					// event.dialog=ui.create.dialog(str);
+					player.popup(str);
 					game.log(str);
 					
 					if(r<0.01){
@@ -622,7 +645,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
 					'step 1'
 					game.delay(0.5);
-					event.dialog.close();
+					// event.dialog.close();
 				},
 			},
 			hok_minggua2:{
@@ -656,7 +679,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					} else{
 						str+='大凶';
 					}
- 					event.dialog=ui.create.dialog(str);
+ 					// event.dialog=ui.create.dialog(str);
+					player.popup(str);
 					game.delay(0.5);
 					game.log(str);
 
@@ -712,7 +736,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					'step 1'
 					game.delay(0.5);
-					event.dialog.close();
+					// event.dialog.close();
 				},
 			},
 			hok_biangua:{
@@ -894,6 +918,88 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			// 孙悟空
+			hok_qitian:{
+				audio:2,
+				forced:true,
+				trigger:{
+					player:['chooseToRespond','chooseToUse'],
+				},
+				mod:{
+					cardname:function(card,player){
+						if(['trick','delay'].contains(lib.card[card.name].type)) return 'sha';
+					},
+					cardnature:function(card,player){
+						if(['trick','delay'].contains(lib.card[card.name].type)&&get.color(card)=='red') return 'fire';
+						if(['trick','delay'].contains(lib.card[card.name].type)&&get.color(card)=='black') return 'thunder';
+					},
+					targetInRange:function(card,player){
+						if(card.name=='sha'&&(card.nature=='fire'||card.nature=='thunder')) return true;
+					},
+				},
+			},
+			hok_shengbang:{
+				audio:2,
+				locked:true,
+				trigger:{
+					source:'damageBefore',
+				},
+				filter:function(event, player){
+					return event.num>0&&player.countCards('hes')>0;
+				},
+				content:function(){
+					'step 0'
+					player.chooseToDiscard('hes');
+					'step 1'
+					if(result.bool){
+						shengbangJudge(trigger, player, result);
+					}
+				},
+			},
+			hok_naogong:{
+				audio:2,
+				unique: true,
+				limited: true,
+				enable:'phaseUse',
+				skillAnimation:true,
+				animationColor:'metal',
+				filter:function(event,player){
+					return player.countCards('hs')>=3;
+				},
+				content:function(){
+					player.awakenSkill('hok_naogong');
+					player.addTempSkill('hok_naogong_effect');
+					player.addTempSkill('hok_naogong_discard');
+				},
+				subSkill:{
+					effect:{
+						audio:2,
+						forced:true,
+						onremove:true,
+						mod:{
+							cardUsable:function(card,player,num){
+								if(card.name=='sha') return 3;
+							}
+						},
+					},
+					discard:{
+						trigger:{player:'phaseUseEnd'},
+						forced:true,
+						onremove:true,
+						filter:function(event,player){
+							return player.countCards('hs')>0;
+						},
+						content:function(){
+							'step 0'
+							event.naogongCards=player.getCards('hs');
+							'step 1'
+							if(event.naogongCards!=undefined){
+								player.discard(event.naogongCards);
+							}
+						},
+					},
+				}
+			},
 
 			// 神曹植
 			caigao: {
@@ -1061,7 +1167,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.caigao_rewrite=true;
 
 					'step 1'
-					player.chooseTarget('令一名角色回复一点体力并获得“豆”标记').set('ai',function(target){
+					player.chooseTarget('令一名角色回复一点体力并获得“豆”标记').set('ai',function(card,player,target){
 						if(target==player){
 							return false;
 						}
@@ -1375,6 +1481,122 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					game.log('毁都使用了',cards.length,'张锦囊牌，如下：',cards);
 				},
 			},
+
+			// 神鲁肃
+			diying:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				content:function(){
+					'step 0'
+					player.chooseTarget('选择一名角色获得〖弘德〗〖弼政〗〖博图〗〖诫训〗〖缔盟〗〖决堰〗中的一个，直到其回合结束。').set('ai',function(target){
+						var att = get.attitude(_status.event.player,target);
+						if(att>0){
+							return true;
+						}
+						if(target==player){
+							return true;
+						}
+						return false;
+					});
+						
+					'step 1'
+					if(result.bool){
+						var list=['hongde','bizheng','rebotu','jiexun','oldimeng','drlt_jueyan'];
+						var diyingSkill = list.randomGet();
+						var target=result.targets[0];
+						if(!target.hasSkill(diyingSkill)){
+							target.addTempSkill(diyingSkill,{player:'phaseAfter'});
+							target.popup('获得技能');
+							target.popup(diyingSkill);
+						} else{
+							target.popup('已有技能');
+							target.popup(diyingSkill);
+						}
+					}
+				},
+			},
+			fusheng:{
+				audio:2,
+				trigger:{target:'useCardToBefore'},
+				forced:true,
+				priority:15,
+				filter:function(event,player){
+					return event.card&&event.card.name=='sha'&&event.card.suit=='heart';
+				},
+				content:function(){
+					trigger.cancel();
+				},
+				ai:{
+					target:function(card,player,target){
+						if(card&&card.name=='sha'&&card.suit=='heart') return 'zerotarget';
+					},
+				},
+			},
+			chiyan:{
+				audio:2,
+				trigger:{player:'phaseDiscardEnd'},
+				direct:true,
+				filter:function(event,player){
+					var cards=[];
+					player.getHistory('lose',function(evt){
+						if(evt.type=='discard'&&evt.getParent('phaseDiscard')==event) cards.addArray(evt.cards2);
+					});
+					return cards.length>1;
+				},
+				content:function(){
+					"step 0"
+					player.chooseTarget(get.prompt('chiyan'),'选择一名其他角色，对其造成1点火属性伤害').set('ai',target=>{
+						var player=_status.event.player;
+						return get.damageEffect(target,player,player,'fire');
+					});
+					'step 1'
+					if(result.bool){
+						var target=result.targets[0];
+						target.damage(1,'fire');
+					}
+				},
+				ai:{
+					expose:0.2,
+					threaten:2
+				}
+			},
+			lianmeng:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.countCards('h')>=2;
+				},
+				content:function(){
+					'step 0'
+					player.chooseCardTarget({
+						prompt:'请选择【联盟】的牌和目标',
+						prompt2:'将两张手牌交给一名其他角色，然后你摸三张牌',
+						selectCard:2,
+						filterCard:true,
+						filterTarget:lib.filter.notMe,
+						ai1:function(card){
+							if(get.tag(card,'recover')&&!game.hasPlayer(function(current){
+								return get.attitude(current,player)>0&&!current.hasSkillTag('nogain');
+							})) return 0;
+							return 1/Math.max(0.1,get.value(card));
+						},
+						ai2:function(target){
+							var player=_status.event.player,att=get.attitude(player,target);
+							if(target.hasSkillTag('nogain')) att/=9;
+							return 4+att;
+						},
+					});
+					'step 1'
+					if(result.bool){
+						var target=result.targets[0];
+						player.line(target,'green');
+						player.give(result.cards,target);
+						player.draw(3);
+					}
+				}
+			},
 		},
 		dynamicTranslate:{
 			/*
@@ -1389,10 +1611,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterTitle:{
 			// g绿 b蓝 r红 p粉
 			cuishi:'#b捞得一评级:3.6',
+			hok_daji:'#b捞得一评级:3.7',
 			hok_lixin:'#r捞得一评级:4.2',
+			hok_makeboluo:'#b捞得一评级:3.9',
 			hok_mingshiyin:'#r耀世圣手评级:4.1',
+			hok_sunwukong:'#b捞得一评级:3.8',
 			shen_caozhi:'#r捞得一评级:4.2',
 			shen_dongzhuo:'#r捞得一评级:4.2',
+			shen_lusu:'#r捞得一评级:4.2',
 		},
 		translate:{
 			// 崔氏
@@ -1442,11 +1668,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 孙悟空
 			hok_sunwukong:'孙悟空',
 			hok_qitian:'齐天',
-			hok_qitain_info:'锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
+			hok_qitian_info:'锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
 			hok_shengbang:'圣棒',
 			hok_shengbang_info:'锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
 			hok_naogong:'闹宫',
-			hok_naogong_info:'限定技，本回合出牌阶段令你的杀的次数限制为3，弃牌阶段弃置所有手牌。',
+			hok_naogong_info:'限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
 			// 神曹植
 			shen_caozhi:'神曹植',
 			caigao:'才高',
@@ -1469,6 +1695,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xiehan_info:'锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你的“残虐”标记不小于1，你失去1枚“残虐”，你增加一点体力上限。一名角色出牌阶段开始时，该角色选择一项：1.摸一张牌，视为使用了一张【酒】，你对其（包括自己）造成一点伤害；2.弃置一张牌。',
 			huidu:'毁都',
 			huidu_info:'觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
+			// 神鲁肃
+			shen_lusu:'神鲁肃',
+			diying:'帝迎',
+			diying_info:'出牌阶段限一次，你选择一名角色，令其获得〖弘德〗〖弼政〗〖博图〗〖诫训〗〖缔盟〗〖决堰〗中的一个，直到其回合结束。',
+			fusheng:'赴圣',
+			fusheng_info:'锁定技，红桃杀对你无效。',
+			chiyan:'赤炎',
+			chiyan_info:'弃牌阶段结束时，若你于此阶段内弃置过两张或更多的牌，则你可以视为对一名角色造成一点火属性伤害。',
+			lianmeng:'联盟',
+			lianmeng_info:'出牌阶段限一次，你可以选择两张手牌交给一名其他角色，你摸三张牌。',
+
 			
 			correction_history:'正史',
 			honor_of_kings:'王者荣耀',

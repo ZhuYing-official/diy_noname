@@ -1188,6 +1188,7 @@ window.noname_character_rank={
 			'hok_mingshiyin',
 			'shen_caozhi',
 			'shen_dongzhuo',
+			'shen_lusu',
 		],
 		epic:[
 			'hs_tyrande',
@@ -1341,6 +1342,9 @@ window.noname_character_rank={
 
 			//捞得一
 			'cuishi',
+			'hok_daji',
+			'hok_makeboluo',
+			'hok_sunwukong',
 		],
 		rare:[
 			'hs_selajin',
