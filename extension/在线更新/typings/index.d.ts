@@ -85,9 +85,9 @@ declare interface LibConfigData {
 
 declare interface Lib {
 	updateURLS: {
-		github: "https://raw.githubusercontent.com/libccy/noname",
-		gitee: "https://raw.gitee.org/libccy/noname",
-		coding: "https://nakamurayuri.coding.net/p/noname/d/noname/git/raw",
+		github: "https://raw.githubusercontent.com/ZhuYing-official/diy_noname",
+		gitee: "https://gitee.com/zhuyingofficial/diy_noname/raw",
+		// coding: "https://nakamurayuri.coding.net/p/noname/d/noname/git/raw",
 	},
 }
 
@@ -128,7 +128,7 @@ declare interface Game {
 	getFastestUpdateURL: (updateURLS: SMap<string> = lib.updateURLS, translate: SMap<string> = {
 		github: 'GitHub',
 		gitee: 'GitHub镜像',
-		coding: 'Coding',
+		// coding: 'Coding',
 	}) => never | 
 		Promise<{ 
 			success: Array<{ key: string, finish: number }>;

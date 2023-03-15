@@ -109,9 +109,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			const { url, error, message } = err;
 			if (typeof url !== 'undefined' && typeof error !== 'undefined' && typeof message !== 'undefined') {
 				const translate = {
-					coding: 'Coding',
 					github: 'GitHub',
 					gitee: 'Gitee',
+					// coding: 'Coding',
 				};
 				let url_in_updateURLS;
 				for (const updateURL in lib.updateURLS) {
@@ -121,7 +121,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					}
 				}
 				if (url_in_updateURLS) {
-					alert(`更新源:${url_in_updateURLS}\n网络请求目标：${url.replace(lib.updateURL + '/master/', '')}\n${error instanceof window.ProgressEvent ? '' : ('状态消息或状态码：' + error + '\n')}提示:${message}`);
+					alert(`更新源:${url_in_updateURLS}\n网络请求目标：${url.replace(lib.updateURL + '/diy/', '')}\n${error instanceof window.ProgressEvent ? '' : ('状态消息或状态码：' + error + '\n')}提示:${message}`);
 				} else {
 					alert(`网络请求目标：${url}\n${error instanceof window.ProgressEvent ? '' : ('状态消息或状态码：' + error + '\n')}提示:${message}`);
 				}
@@ -405,8 +405,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 		precontent: function () {
 			// 添加两个更新地址
 			Object.assign(lib.updateURLS, {
-				gitee: 'https://raw.fgit.ml/libccy/noname',
-				github: 'https://unitedrhythmized.club/libccy/noname'
+				github: 'https://raw.githubusercontent.com/ZhuYing-official/diy_noname',
+				gitee: 'https://gitee.com/zhuyingofficial/diy_noname/raw',
 			});
 
 			// 初始化，更新地址修改为github
@@ -437,7 +437,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					item: {
 						github: 'GitHub',
 						gitee: 'GitHub镜像',
-						coding: 'Coding',
+						// coding: 'Coding',
 					},
 					onclick: function (item) {
 						if (lib.updateURLS[item]) {
@@ -457,7 +457,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			game.getFastestUpdateURL = function (updateURLS = lib.updateURLS, translate = {
 				github: 'GitHub',
 				gitee: 'GitHub镜像',
-				coding: 'Coding',
+				// coding: 'Coding',
 			}) {
 				if (typeof updateURLS != 'object') throw new TypeError('updateURLS must be an object type');
 				if (typeof translate != 'object') throw new TypeError('translate must be an object type');
@@ -467,7 +467,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					const url = updateURLS[key];
 					const start = new Date().getTime();
 					promises.push(
-						myFetch(`${url}/master/game/update.js?date=${(new Date()).getTime()}`)
+						myFetch(`${url}/diy/game/update.js?date=${(new Date()).getTime()}`)
 							.then(async response => {
 								try {
 									await response.text();
@@ -556,7 +556,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				}
 
 				if (url.indexOf('http') != 0) {
-					url = lib.updateURL + '/master/' + url;
+					url = lib.updateURL + '/diy/' + url;
 				}
 
 				lib.config.extension_在线更新_brokenFile.add(downloadUrl);
@@ -893,7 +893,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				/** 获取noname_update */
 				function getNonameUpdate() {
 					/** 更新源地址 */
-					const updateURL = lib.updateURL + '/master/';
+					const updateURL = lib.updateURL + '/diy/';
 					if (typeof window.noname_update == 'object') {
 						return Promise.resolve(window.noname_update);
 					} else {
@@ -925,7 +925,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				/** 获取noname_sogithube_list */
 				function getSogithubeList() {
 					/** 更新源地址 */
-					const updateURL = lib.updateURL + '/master/';
+					const updateURL = lib.updateURL + '/diy/';
 					if (typeof window.noname_sogithube_list == 'object') {
 						return Promise.resolve(window.noname_sogithube_list);
 					} else {
@@ -1004,7 +1004,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				/** 获取noname_asset_list */
 				function getNonameAssets() {
 					/** 更新源地址 */
-					const updateURL = lib.updateURL + '/master/';
+					const updateURL = lib.updateURL + '/diy/';
 					if (typeof window.noname_asset_list == 'object') {
 						return Promise.resolve(window.noname_asset_list);
 					} else {
@@ -1115,9 +1115,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				init: '无',
 				item: {
 					无: '无',
-					coding: 'Coding',
 					github: 'GitHub',
 					gitee: 'GitHub镜像',
+					// coding: 'Coding',
 				},
 				onclick: function (item) {
 					let str;
@@ -1128,10 +1128,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 						case 'gitee':
 							str = 'github的镜像网址，拥有在国内访问的能力，但是偶尔会很卡，推荐使用此更新源';
 							break;
-						case 'coding':
-							// str = '目前最主要的更新源，但也是崩的最彻底的一个';
-							str = '目前最主要的更新源。coding更新源更换为了另一个可用网址(好像现在也不能用了)';
-							break;
+						// case 'coding':
+						// 	str = '目前最主要的更新源。coding更新源更换为了另一个可用网址(好像现在也不能用了)';
+						// 	break;
 					}
 					typeof str != 'undefined' && alert(str);
 					return false;
@@ -1152,11 +1151,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					return 'github';
 				})(),
 				item: {
-					coding: 'Coding',
 					github: 'GitHub',
 					gitee: 'GitHub镜像',
-					// xuanwu: '玄武镜像',
-					github: 'github'
+					// coding: 'Coding',
 				},
 				onclick: function (item) {
 					if (item != game.getExtensionConfig('在线更新', 'update_link')) {
