@@ -1333,6 +1333,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.addMark('cannue',(trigger.num+player.countMark('cannue')>6?6-player.countMark('cannue'):trigger.num));
 				},
+				ai:{
+					threaten:1,
+				}
 			},
 			cannue2:{
 				audio:2,
@@ -1441,6 +1444,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
 					trigger.player.chooseToDiscard('hes','1.弃置1张牌 或 2.摸一张牌，神董卓对你造成一点伤害，视为使用了一张【酒】').set('ai',function(card){
 						if(ui.selected.cards.length>=_status.event.getParent().num) return -1;
+						game.log(':',get.damageEffect(trigger.player));
+						if(get.damageEffect(trigger.player)>-1) return false;
 						if(_status.event.res>=0) return 6-get.value(card);
 						if(get.type(card)!='basic'){
 							return 10-get.value(card);
@@ -1455,7 +1460,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
-					threaten:2,
+					threaten:0,
+					effect:{
+						target:function(event,player,target){
+							if(get.tag(event,'damage')){
+								if(player.hasSkillTag('jueqing',false,target)) return [0,-1];
+								if(player.hp==1) return [0,-1.5];
+								if(player.hasSkill('cannue',false,target)&&player.hasSkill('xiehan',false,target)){
+									if(player.hp==2) return [0,-0.5];
+									return [0,2];
+								}
+								return [0, -1];
+							}
+						}
+					}
 				}
 			},
 			huidu:{
