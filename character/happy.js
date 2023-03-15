@@ -81,14 +81,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		characterSort:{
 			happy:{
-				correction_history:['cuishi'],
+				correction_history:['cuishi','liucong'],
 				honor_of_kings:['hok_daji','hok_lixin','hok_makeboluo','hok_mingshiyin','hok_sunwukong'],
 				happy_kings:['shen_caozhi','shen_dongzhuo','shen_lusu'],
 			},
 		},
 		character:{
 			// 崔氏
-			cuishi:['female','wei',3,['reluoshen','pianwan','huayi',]],
+			cuishi:['female','wei',3,['reluoshen','pianwan','huayi']],
+			// 刘琮
+			liucong:['male','qun',3,['decadezongshi','tunquan','rexianzhou','quxiang']],
 			// 妲己
 			hok_daji:['female','qun',3,['hok_meixin','hok_huhuo']],
 			// 李信
@@ -108,6 +110,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterIntro:{
 			cuishi:'崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
+			liucong:'刘琮（？-？），山阳高平（今山东微山两城乡）人。东汉末年荆州牧刘表次子，刘琦之弟。刘表死后继承刘表官爵，当曹操大军南下之时，他在蔡瑁等人的劝说之下举荆州而降，被曹操封为青州刺史，后迁谏议大夫，爵封列侯。',
 			hok_lixin:'炽心化寒剑，冰霜作铁衣，一人一兽化作比这些更冷冽锋利的存在，终破开风雪，终行至峰顶，终向这万仞寒山，挥出劈天裂地的一剑。心火重燃，山海可照。',
 			hok_mingshiyin:'揣测来事，见疑决之，卜者将今宵焰火尽入卦象——这宴游之日，千灯夺魁终选将至之时，幕后操控者却将众人与长安视为掌中棋子，布下注定惊动长安的谜局……',
 			shen_caozhi:'字子建，沛国谯人，三国曹魏著名文学家，建安文学代表人物。魏武帝曹操之子，魏文帝曹丕之弟，生前曾为陈王，去世后谥号“思”，因此又称陈思王。南朝宋文学家谢灵运更有“天下才有一石，曹子建独占八斗”的评价。王士祯尝论汉魏以来二千年间诗家堪称“仙才”者，曹植、李白、苏轼三人耳。',
@@ -258,6 +261,77 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			*/
+			// 刘琮
+			tunquan:{
+				audio:2,
+				skillAnimation:true,
+				animationColor:'gray',
+				trigger:{player:'phaseZhunbeiBegin'},
+				forced:true,
+				unique:true,
+				juexingji:true,
+				filter:function(event,player){
+					for(var i=0;i<game.players.length;i++){
+						var name = game.players[i].name1;
+						while(name.indexOf('_')!=-1){
+							name=name.slice(name.indexOf('_')+1);
+						}
+						if(name.indexOf('caocao')==0){
+							return true;
+						}
+					}
+					return false;
+				},
+				content:function(){
+					player.awakenSkill('tunquan');
+					player.storage.quxiang_rewrite=true;
+				}
+			},
+			quxiang:{
+				audio:2,
+				derivation: 'quxiang_rewrite',
+				group: 'quxiang_rewrite',
+				usable:1,
+				trigger:{player:'damageBegin2'},
+				filter:function(event,player){
+					return player.countCards('h')>0&&!player.storage.quxiang_rewrite==true;
+				},
+				content:function(){
+					'step 0'
+					player.line(trigger.source,'green');
+					player.give(player.getCards('h'),trigger.source);
+					trigger.cancel();
+					'step 1'
+					var str = '交给'+get.translation(player)+'一张手牌';
+					trigger.source.chooseCard('h',true,str);
+					'step 2'
+					if(result.cards){
+						trigger.source.give(result.cards,player);
+					}
+				},
+				subSkill:{
+					rewrite:{
+						audio:2,
+						usable:1,
+						trigger:{player:'damageBegin4'},
+						filter:function(event,player){
+							return player.countCards('h')>0&&player.storage.quxiang_rewrite==true;
+						},
+						content:function(){
+							'step 0'
+							player.line(trigger.source,'green');
+							player.give(player.getCards('h'),trigger.source);
+							'step 1'
+							var str = '交给'+get.translation(player)+'一张手牌';
+							trigger.source.chooseCard('h',true,str);
+							'step 2'
+							if(result.cards){
+								trigger.source.give(result.cards,player);
+							}
+						},
+					},
+				},
+			},
 
 			// 妲己
 			hok_meixin:{
@@ -327,6 +401,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.line(huhuoTarget,'fire');
 						huhuoTarget.damage('fire');
 					}
+				},
+				ai:{
+					order:0.1,
+					expose:0.2,
 				},
 			},
 			// 李信
@@ -566,7 +644,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var tar = trigger.player;
 					var cards=tar.getCards('hej');
 					
-					var str=get.translation(trigger.source)+'占卜结果为：';
+					// var str=get.translation(trigger.source)+'占卜结果为：';
+					var str='';
 					if(r<0.01){
 						// 1
 						str+='大凶';
@@ -660,7 +739,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var tar = trigger.player;
 					var cards=tar.getCards('hej');
 					
-					var str=get.translation(player)+'占卜结果为：';
+					// var str=get.translation(player)+'占卜结果为：';
+					var str='';
 					if(r<0.01){
 						// 1
 						str+='大吉';
@@ -916,7 +996,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							}
 						}
 					}
-				}
+				},
+				ai:{
+					order:0.1,
+					expose:0.2,
+				},
 			},
 			// 孙悟空
 			hok_qitian:{
@@ -970,6 +1054,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('hok_naogong');
 					player.addTempSkill('hok_naogong_effect');
 					player.addTempSkill('hok_naogong_discard');
+				},
+				ai:{
+					order:0.1,
+					expose:0.2,
+					result:{
+						target:function(player,target){
+							if(target==player){
+								return false;
+							}
+							var att = get.attitude(_status.event.player,target);
+							if(att<0){
+									return true;
+							}
+							return false;
+						},
+					},
 				},
 				subSkill:{
 					effect:{
@@ -1611,6 +1711,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterTitle:{
 			// g绿 b蓝 r红 p粉
 			cuishi:'#b捞得一评级:3.6',
+			liucong:'捞得一评级:1.0',
 			hok_daji:'#b捞得一评级:3.7',
 			hok_lixin:'#r捞得一评级:4.2',
 			hok_makeboluo:'#b捞得一评级:3.9',
@@ -1627,6 +1728,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
 			huayi:'华衣',
 			huayi_info:'觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
+			// 刘琮
+			liucong:'刘琮',
+			tunquan:'豚犬',
+			tunquan_info:'觉醒技，准备阶段开始时，当场上有曹操时，你修改屈降。',
+			quxiang:'屈降',
+			quxiang_info:'当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后其给你一张手牌。',
+			quxiang_rewrite:'屈降·改',
+			quxiang_rewrite_info:'当你受到伤害时，你可以将所有手牌交给伤害来源，然后其给你一张手牌。',
+
 			// 妲己
 			hok_daji:'妲己',
 			hok_meixin:'魅心',
@@ -1673,6 +1783,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_shengbang_info:'锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
 			hok_naogong:'闹宫',
 			hok_naogong_info:'限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
+
 			// 神曹植
 			shen_caozhi:'神曹植',
 			caigao:'才高',

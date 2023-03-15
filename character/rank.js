@@ -822,6 +822,9 @@ window.noname_character_rank={
 		'tw_yufuluo',
 		'tw_zongyu',
 		'xia_xushu',
+
+		// 捞得一
+		'liucong',
 	],
 	bm:[
 		'diy_xizhenxihong',
@@ -1716,6 +1719,8 @@ window.noname_character_rank={
 			'xia_liyàn',
 			'xia_tongyuan',
 			'xia_wangyue',
+
+			// 捞得一
 		],
 		junk:[
 			'sunshao',
@@ -1747,6 +1752,8 @@ window.noname_character_rank={
 			'xin_wuyi',
 			'xin_zhuzhi',
 			'tw_xiahouen',
+
+			// 捞得一
 		],
 	}
 };
