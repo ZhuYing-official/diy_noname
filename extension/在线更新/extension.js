@@ -406,15 +406,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			// 添加两个更新地址
 			Object.assign(lib.updateURLS, {
 				gitee: 'https://raw.fgit.ml/libccy/noname',
-				// xuanwu: 'https://kuangthree.coding.net/p/nonamexwjh/d/nonamexwjh/git/raw',
-				URC: 'https://unitedrhythmized.club/libccy/noname'
+				github: 'https://unitedrhythmized.club/libccy/noname'
 			});
 
-			// 初始化，更新地址修改为URC
+			// 初始化，更新地址修改为github
 			if (!game.getExtensionConfig('在线更新', 'update_link')) {
-				game.saveConfig('update_link', 'URC');
-				game.saveExtensionConfig('在线更新', 'update_link', 'URC');
-				lib.updateURL = lib.updateURLS['URC'];
+				game.saveConfig('update_link', 'github');
+				game.saveExtensionConfig('在线更新', 'update_link', 'github');
+				lib.updateURL = lib.updateURLS['github'];
 			} else {
 				game.saveConfig('update_link', game.getExtensionConfig('在线更新', 'update_link'));
 			}
@@ -430,17 +429,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								return url;
 							}
 						}
-						game.saveConfig('update_link', 'URC');
-						game.saveExtensionConfig('在线更新', 'update_link', 'URC');
-						lib.updateURL = lib.updateURLS.URC;
-						return 'URC';
+						game.saveConfig('update_link', 'github');
+						game.saveExtensionConfig('在线更新', 'update_link', 'github');
+						lib.updateURL = lib.updateURLS.github;
+						return 'github';
 					})(),
 					item: {
-						coding: 'Coding',
 						github: 'GitHub',
-						// gitee: 'GitHub镜像',
-						// xuanwu: '玄武镜像',
-						URC: 'URC'
+						gitee: 'GitHub镜像',
+						coding: 'Coding',
 					},
 					onclick: function (item) {
 						if (lib.updateURLS[item]) {
@@ -458,11 +455,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			/** 检测最快连接到的更新源  */
 			// @ts-ignore
 			game.getFastestUpdateURL = function (updateURLS = lib.updateURLS, translate = {
-				coding: 'Coding',
 				github: 'GitHub',
-				// gitee: 'GitHub镜像',
-				// xuanwu: '玄武镜像',
-				URC: 'URC'
+				gitee: 'GitHub镜像',
+				coding: 'Coding',
 			}) {
 				if (typeof updateURLS != 'object') throw new TypeError('updateURLS must be an object type');
 				if (typeof translate != 'object') throw new TypeError('translate must be an object type');
@@ -624,7 +619,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 						};
 						console.error({
 							message: e.body,
-							source: e.source,
+							sogithube: e.sogithube,
 							status: e.http_status,
 							target: e.target,
 							error: errorCode[e.code]
@@ -927,17 +922,17 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 							});
 					}
 				}
-				/** 获取noname_source_list */
-				function getSourceList() {
+				/** 获取noname_sogithube_list */
+				function getSogithubeList() {
 					/** 更新源地址 */
 					const updateURL = lib.updateURL + '/master/';
-					if (typeof window.noname_source_list == 'object') {
-						return Promise.resolve(window.noname_source_list);
+					if (typeof window.noname_sogithube_list == 'object') {
+						return Promise.resolve(window.noname_sogithube_list);
 					} else {
-						return myFetch(`${updateURL}game/source.js?date=${(new Date()).getTime()}`)
+						return myFetch(`${updateURL}game/sogithube.js?date=${(new Date()).getTime()}`)
 							.then(response => response.text())
 							.then(text => {
-								//赋值window.noname_source_list
+								//赋值window.noname_sogithube_list
 								try {
 									const data = JSON.parse(text);
 									if (data.msg.user_not_login == '用户未登录') {
@@ -945,17 +940,17 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 										return Promise.reject('user_not_login');
 									} else {
 										eval(text);
-										if (typeof window.noname_source_list != 'object') {
-											return Promise.reject('更新内容获取失败(game/source.js)，请重试');
+										if (typeof window.noname_sogithube_list != 'object') {
+											return Promise.reject('更新内容获取失败(game/sogithube.js)，请重试');
 										}
 									}
 								} catch (e) {
 									try { eval(text) } catch (error) { console.log(error) }
-									if (typeof window.noname_source_list != 'object') {
-										return Promise.reject('更新内容获取失败(game/source.js)，请重试');
+									if (typeof window.noname_sogithube_list != 'object') {
+										return Promise.reject('更新内容获取失败(game/sogithube.js)，请重试');
 									}
 								}
-								return window.noname_source_list;
+								return window.noname_sogithube_list;
 							});
 					}
 				}
@@ -964,22 +959,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					if (!game.download) {
 						reject(new Error('此版本不支持游戏内更新，请手动更新'));
 					}
-					if (window.noname_update && window.noname_source_list) {
+					if (window.noname_update && window.noname_sogithube_list) {
 						resolve({
 							update: window.noname_update,
-							source_list: window.noname_source_list
+							sogithube_list: window.noname_sogithube_list
 						});
 					} else {
 						// 设置最大重试次数为5次
 						let i = 0;
-						while (!(window.noname_update && window.noname_source_list) && i < 5) {
+						while (!(window.noname_update && window.noname_sogithube_list) && i < 5) {
 							try {
-								await getNonameUpdate().then(() => getSourceList()).then(() => {
+								await getNonameUpdate().then(() => getSogithubeList()).then(() => {
 									resolve({
 										// @ts-ignore
 										update: window.noname_update,
 										// @ts-ignore
-										source_list: window.noname_source_list
+										sogithube_list: window.noname_sogithube_list
 									});
 								});
 							} catch (e) {
@@ -988,14 +983,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								if (e == 'user_not_login') return reject(e);
 							}
 						}
-						if (i == 5 && !(window.noname_update && window.noname_source_list)) {
+						if (i == 5 && !(window.noname_update && window.noname_sogithube_list)) {
 							reject('达到最大重试次数(5次), 请重试');
-						} else if (window.noname_update && window.noname_source_list) {
+						} else if (window.noname_update && window.noname_sogithube_list) {
 							resolve({
 								// @ts-ignore
 								update: window.noname_update,
 								// @ts-ignore
-								source_list: window.noname_source_list
+								sogithube_list: window.noname_sogithube_list
 							});
 						} else {
 							reject('遇到其他错误, 请重试');
@@ -1122,28 +1117,21 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					无: '无',
 					coding: 'Coding',
 					github: 'GitHub',
-					// gitee: 'GitHub镜像',
-					// xuanwu: '玄武镜像',
-					URC: 'URC',
+					gitee: 'GitHub镜像',
 				},
 				onclick: function (item) {
 					let str;
 					switch (item) {
-						case 'coding':
-							// str = '目前最主要的更新源，但也是崩的最彻底的一个';
-							str = '目前最主要的更新源。从v1.9.115.3以后(不包括)，coding更新源更换为了另一个可用网址(好像现在也不能用了)';
-							break;
 						case 'github':
 							str = '国外的更新源，没有vpn或修改host设置的情况下几乎连不上此更新源';
 							break;
 						case 'gitee':
 							str = 'github的镜像网址，拥有在国内访问的能力，但是偶尔会很卡，推荐使用此更新源';
 							break;
-						case 'xuanwu':
-							str = '由寰宇星城创建的更新源，和coding差不多，版本的更新需要他在苏婆更新后手动拉代码到服务器上。目前因coding网址的政策已废弃';
+						case 'coding':
+							// str = '目前最主要的更新源，但也是崩的最彻底的一个';
+							str = '目前最主要的更新源。coding更新源更换为了另一个可用网址(好像现在也不能用了)';
 							break;
-						case 'URC':
-							str = '由Show-K大佬提供，名字取自United Rhythmized Club，推荐使用此更新源。此更新源能否连接取决于服务器是否还有剩余流量';
 					}
 					typeof str != 'undefined' && alert(str);
 					return false;
@@ -1158,17 +1146,17 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 							return url;
 						}
 					}
-					game.saveConfig('update_link', 'URC');
-					game.saveExtensionConfig('在线更新', 'update_link', 'URC');
-					lib.updateURL = lib.updateURLS['URC'];
-					return 'URC';
+					game.saveConfig('update_link', 'github');
+					game.saveExtensionConfig('在线更新', 'update_link', 'github');
+					lib.updateURL = lib.updateURLS['github'];
+					return 'github';
 				})(),
 				item: {
 					coding: 'Coding',
 					github: 'GitHub',
 					gitee: 'GitHub镜像',
 					// xuanwu: '玄武镜像',
-					URC: 'URC'
+					github: 'github'
 				},
 				onclick: function (item) {
 					if (item != game.getExtensionConfig('在线更新', 'update_link')) {
@@ -1313,7 +1301,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 						button.innerHTML = '正在检查更新';
 						button.disabled = true;
 
-						game.shijianGetUpdateFiles().then(({ update, source_list: updates }) => {
+						game.shijianGetUpdateFiles().then(({ update, sogithube_list: updates }) => {
 							game.saveConfig('check_version', update.version);
 							//要更新的版本和现有的版本一致
 							if (update.version == lib.version) {
@@ -1348,7 +1336,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
 							let goupdate = (files, update) => {
 								lib.version = update.version;
-								delete window.noname_source_list;
+								delete window.noname_sogithube_list;
 
 								if (!game.getExtensionConfig('在线更新', 'updateAll') && Array.isArray(files)) {
 									files.add('game/update.js');
@@ -1908,7 +1896,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				clear: true,
 				nopointer: true,
 				name: `</br>
-					最新完整包下载地址：
+					最新无名杀官方完整包下载地址：
 					<a target='_self' href='https://hub.fgit.ml/libccy/noname/archive/refs/heads/master.zip'><span style='text-decoration: underline;'>点击下载</span></a></br>
 					</br>
 				`,

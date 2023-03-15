@@ -85,9 +85,9 @@ declare interface LibConfigData {
 
 declare interface Lib {
 	updateURLS: {
-		coding: "https://nakamurayuri.coding.net/p/noname/d/noname/git/raw",
-		gitee: "https://raw.gitee.org/libccy/noname",
 		github: "https://raw.githubusercontent.com/libccy/noname",
+		gitee: "https://raw.gitee.org/libccy/noname",
+		coding: "https://nakamurayuri.coding.net/p/noname/d/noname/git/raw",
 	},
 }
 
@@ -120,19 +120,15 @@ declare interface Game {
 	 * 获取最快连接到的更新源
 	 * @param updateURLS 默认为lib.updateURL
 	 * @param translate 默认为{
-		coding: 'Coding',
 		github: 'GitHub',
 		gitee: 'GitHub镜像',
-		xuanwu: '玄武镜像',
-		URC: 'URC'
+		coding: 'Coding',
 	}
 	 */
 	getFastestUpdateURL: (updateURLS: SMap<string> = lib.updateURLS, translate: SMap<string> = {
-		coding: 'Coding',
 		github: 'GitHub',
 		gitee: 'GitHub镜像',
-		xuanwu: '玄武镜像',
-		URC: 'URC'
+		coding: 'Coding',
 	}) => never | 
 		Promise<{ 
 			success: Array<{ key: string, finish: number }>;
