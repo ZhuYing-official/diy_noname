@@ -44,11 +44,12 @@
 		configprefix:'noname_0.9_',
 		versionOL:27,
 		updateURLS:{
-			coding:'https://ghproxy.com/https://raw.githubusercontent.com/libccy/noname',
+			// coding:'https://ghproxy.com/https://raw.githubusercontent.com/libccy/noname',
 			github:'https://raw.githubusercontent.com/ZhuYing-official/diy_noname',
+			gitee: "https://gitee.com/zhuyingofficial/diy_noname/raw",
 		},
 		updateURL:'https://raw.githubusercontent.com/ZhuYing-official/diy_noname',
-		mirrorURL:'https://nakamurayuri.coding.net/p/noname/d/noname/git/raw',
+		mirrorURL:"https://gitee.com/zhuyingofficial/diy_noname/raw",
 		hallURL:'47.94.57.10',
 		assetURL:'',
 		changeLog:[],
@@ -42754,7 +42755,7 @@
 						var extensionURL;
 						var source=lib.config.extension_sources,index=lib.config.extension_source;
 						if(source&&source[index]) extensionURL=source[index];
-						else extensionURL=lib.updateURL.replace(/noname/g,'noname-extension')+'/master/';
+						else extensionURL=lib.updateURL.replace(/noname/g,'noname-extension')+'/diy/';
 
 						var reloadnode=ui.create.div('.config.toggle.pointerdiv','重新启动',page,game.reload);
 						reloadnode.style.display='none';
@@ -51884,7 +51885,7 @@
 				url+='/';
 			}
 			if(master!='nodev'){
-				return url+'master/';
+				return url+'diy/';
 			}
 			else{
 				return url+'v'+lib.version+'/';

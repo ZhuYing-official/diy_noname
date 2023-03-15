@@ -1,6 +1,6 @@
 window.config={
 	extension_sources:{
-		GitHub:'https://raw.githubusercontent.com/libccy/noname-extension/master/',
+		GitHub:'https://raw.githubusercontent.com/libccy/noname-extension/diy/',
 	},
 	extension_source:'Coding',
 	forbidai:[],
