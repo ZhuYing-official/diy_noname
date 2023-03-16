@@ -601,6 +601,98 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			// 马可波罗
+			hok_zuolun:{
+				audio:2,
+				marktext:'轮',
+				intro:{
+					name:'左轮',
+					content: 'mark',
+				},
+				forced:true,
+				group:['hok_zuolun_effect'],
+				trigger:{
+					source:'damageSource',
+				},
+				filter:function(event){
+					return event.num>0; 
+				},
+				content:function(){
+					if(trigger.player.countMark('hok_zuolun')<2){
+						trigger.player.addMark('hok_zuolun', 1);
+					}
+				},
+			},
+			hok_zuolun_effect:{
+				audio:2,
+				forced:true,
+				trigger:{
+					global:['damageBefore'],
+				},
+				filter:function(event,player){
+					return event.name=='damage';
+				},
+				content:function(){
+					if(trigger.player.countMark('hok_zuolun')>=2 && trigger.source.hasSkill('hok_zuolun')){
+						trigger.cancel();
+						trigger.player.loseHp(trigger.num);
+					}
+				},
+				ai:{
+					jueqing:true
+				},
+			},
+			hok_danyu:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.countCards('hs')>=4;
+				},
+				content:function(){
+					'step 0'
+					event.danyuCards=player.getCards('hs');
+					'step 1'
+					player.chooseTarget(get.prompt('hok_danyu'),'选择至多三名其他角色，对这些角色造成随机1~2次1点雷电伤害',[1,3],function(card,player,target){
+						return player!=target;
+					}).set('ai',target=>{
+						var player=_status.event.player;
+						return get.damageEffect(target,player,player,'thunder');
+					});
+					'step 2'
+					if(event.danyuCards!=undefined){
+						player.discard(event.danyuCards);
+					}
+					// if(!player.isTurnedOver()){
+					// 	player.turnOver();
+					// }
+					if(result.bool){
+						var targets=result.targets;
+						targets.sortBySeat();
+						player.logSkill('hok_danyu',targets);
+						for(var target of targets){
+							var r = Math.floor(Math.random()*2)+1;
+							for(var dan=0;dan<r;dan++){
+								target.damage(1,'thunder');
+							}
+						}
+					}
+				},
+				ai:{
+					order:function(){
+						return get.order({name:'shunshou'})-0.1;
+					},
+					expose:0.2,
+					threaten:4,
+					result:{
+						target:function(player,target){
+							if(player.hp>2){
+								return -1;
+							}
+						},
+					},
+				},
+			},
 			// 明世隐
 			hok_taigua:{
 				audio: 2,
@@ -671,13 +763,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					
 					if(r<0.01){
 						// 1
-						if(!gua1){
+						if(!gua6){
 							tar.die();
 							trigger.cancel();
 						}
 					} else if(r<0.21){
 						// 2
-						if(!gua2){
+						if(!gua5){
 							trigger.num++;
 							if(cards.length>0){
 								tar.discard(cards.randomGet());
@@ -685,25 +777,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					} else if(r<0.5){
 						// 3
-						if(!gua3){
+						if(!gua4){
 							if(cards.length>0){
 								tar.discard(cards.randomGet());
 							}
 						}
 					} else if(r<0.79){
 						// 4
-						if(!gua4){
+						if(!gua3){
 							tar.draw();
 						}
 					} else if(r<0.99){
 						// 5
-						if(!gua5){
+						if(!gua2){
 							trigger.cancel();
 							tar.recover(trigger.num);
 							tar.draw();
 						}
 					} else{
-						if(!gua6){
+						if(!gua1){
 							trigger.cancel();
 							tar.recover((tar.maxHp-tar.hp));
 							tar.draw(4);
@@ -919,88 +1011,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return get.order({name:'sha'})+1;
 					},
 					result:{player:1},
-				},
-			},
-			// 马可波罗
-			hok_zuolun:{
-				audio:2,
-				marktext:'轮',
-				intro:{
-					name:'左轮',
-					content: 'mark',
-				},
-				forced:true,
-				group:['hok_zuolun_effect'],
-				trigger:{
-					source:'damageSource',
-				},
-				filter:function(event){
-					return event.num>0; 
-				},
-				content:function(){
-					if(trigger.player.countMark('hok_zuolun')<2){
-						trigger.player.addMark('hok_zuolun', 1);
-					}
-				},
-			},
-			hok_zuolun_effect:{
-				audio:2,
-				forced:true,
-				trigger:{
-					global:['damageBefore'],
-				},
-				filter:function(event,player){
-					return event.name=='damage';
-				},
-				content:function(){
-					if(trigger.player.countMark('hok_zuolun')>=2 && trigger.source.hasSkill('hok_zuolun')){
-						trigger.cancel();
-						trigger.player.loseHp(trigger.num);
-					}
-				},
-				ai:{
-					jueqing:true
-				},
-			},
-			hok_danyu:{
-				audio:2,
-				enable:'phaseUse',
-				usable:1,
-				filter:function(event,player){
-					return player.countCards('hs')>=4;
-				},
-				content:function(){
-					'step 0'
-					event.danyuCards=player.getCards('hs');
-					'step 1'
-					player.chooseTarget(get.prompt('hok_danyu'),'选择至多三名其他角色，对这些角色造成随机1~2次1点雷电伤害',[1,3],function(card,player,target){
-						return player!=target;
-					}).set('ai',target=>{
-						var player=_status.event.player;
-						return get.damageEffect(target,player,player,'thunder');
-					});
-					'step 2'
-					if(event.danyuCards!=undefined){
-						player.discard(event.danyuCards);
-					}
-					// if(!player.isTurnedOver()){
-					// 	player.turnOver();
-					// }
-					if(result.bool){
-						var targets=result.targets;
-						targets.sortBySeat();
-						player.logSkill('hok_danyu',targets);
-						for(var target of targets){
-							var r = Math.floor(Math.random()*2)+1;
-							for(var dan=0;dan<r;dan++){
-								target.damage(1,'thunder');
-							}
-						}
-					}
-				},
-				ai:{
-					order:0.1,
-					expose:0.2,
 				},
 			},
 			// 孙悟空
