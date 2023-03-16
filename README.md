@@ -1,4 +1,4 @@
-无名杀官方客户端下载戳这里：
+无名杀官方客户端下载地址：
 
 GitHub： https://github.com/libccy/noname/releases/tag/SSS
 
