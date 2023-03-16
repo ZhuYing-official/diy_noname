@@ -381,15 +381,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(event.huhuoCards!=undefined){
 						player.discard(event.huhuoCards);
 					}
+					'step 2'
 					player.chooseTarget('为狐火减少一个目标',function(card,player,target){
 						return player.inRange(target);
-					}).set('targets',trigger.targets).set('ai',function(target){
-						if(target==player){
+					}).set('ai',function(target){
+						if(target==player||!player.inRange(target)){
 							return false;
 						}
 						return get.attitude(_status.event.player,target);
 					});
-					'step 2'
+					'step 3'
 					for(var i=0;i<3;i++){
 						event.huhuoList=game.filterPlayer(function(target){
 							return player.inRange(target)&&!target.isDead()&&target!=player;
@@ -1444,8 +1445,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
 					trigger.player.chooseToDiscard('hes','1.弃置1张牌 或 2.摸一张牌，神董卓对你造成一点伤害，视为使用了一张【酒】').set('ai',function(card){
 						if(ui.selected.cards.length>=_status.event.getParent().num) return -1;
-						game.log(':',get.damageEffect(trigger.player));
-						if(get.damageEffect(trigger.player)>-1) return false;
+						// game.log(':',get.damageEffect(trigger.player));
+						if(get.damageEffect(trigger.player)>-1&&trigger.player.countCards('hs','sha')) return false;
 						if(_status.event.res>=0) return 6-get.value(card);
 						if(get.type(card)!='basic'){
 							return 10-get.value(card);
@@ -1728,7 +1729,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterTitle:{
 			// g绿 b蓝 r红 p粉
-			cuishi:'#b捞得一评级:3.6',
+			cuishi:'#b捞得一评级:3.3',
 			liucong:'捞得一评级:1.0',
 			hok_daji:'#b捞得一评级:3.8',
 			hok_lixin:'#r捞得一评级:4.2',
