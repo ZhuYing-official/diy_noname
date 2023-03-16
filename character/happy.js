@@ -1737,7 +1737,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_sunwukong:'#r捞得一评级:4.1',
 			shen_caozhi:'#r捞得一评级:4.2',
 			shen_dongzhuo:'#r捞得一评级:4.2',
-			shen_lusu:'#r捞得一评级:4.2',
+			shen_lusu:'#r捞得一评级:4.3',
 		},
 		translate:{
 			// 崔氏
