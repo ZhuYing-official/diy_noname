@@ -9,7 +9,7 @@ window.noname_update={
 	],
 	files:[
 		//'card/extra.js',
-		'card/guozhan.js',
+		// 'card/guozhan.js',
 		//'card/huanlekapai.js',
 		// 'card/sp.js',
 		// 'card/standard.js',
