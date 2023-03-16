@@ -547,20 +547,20 @@
 					},
 					update_link:{
 						name:'更新地址',
-						init:'coding',
+						init:'github',
 						unfrequent:true,
 						item:{
-							coding:'Github Proxy',
 							github:'GitHub',
+							gitee:'Gitee',
 						},
 						onclick:function(item){
 							game.saveConfig('update_link',item);
-							lib.updateURL=lib.updateURLS[item]||lib.updateURLS.coding;
+							lib.updateURL=lib.updateURLS[item]||lib.updateURLS.github;
 						},
 					},
 					extension_source:{
 						name:'获取扩展地址',
-						init:'Coding',
+						init:'github',
 						unfrequent:true,
 						item:{},
 						intro:function(){
@@ -43105,8 +43105,8 @@
 							if(str==lib.updateURLS.github){
 								return 'GitHub';
 							}
-							if(str==lib.updateURLS.coding){
-								return 'Coding';
+							if(str==lib.updateURLS.gitee){
+								return 'Gitee';
 							}
 							var index;
 							index=str.indexOf('://');
@@ -45836,7 +45836,7 @@
 				}
 				lib.init.js(lib.assetURL+'game','keyWords',function(){});
 				
-				lib.updateURL=lib.updateURLS[lib.config.update_link]||lib.updateURLS.coding;
+				lib.updateURL=lib.updateURLS[lib.config.update_link]||lib.updateURLS.github;
 
 				lib.init.cssstyles();
 

@@ -5005,7 +5005,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				var source = lib.config.extension_sources,
 					index = lib.config.extension_source;
 				if (source && source[index]) extensionURL = source[index];
-				else extensionURL = lib.updateURL.replace(/noname/g, 'noname-extension') + '/master/';
+				else extensionURL = lib.updateURL.replace(/noname/g, 'noname-extension') + '/diy/';
 
 				var reloadnode = ui.create.div('.config.toggle.pointerdiv', '重新启动', page, game.reload);
 				reloadnode.style.display = 'none';
