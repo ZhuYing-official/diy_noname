@@ -1189,6 +1189,7 @@ window.noname_character_rank={
 			//捞得一
 			'hok_lixin',
 			'hok_mingshiyin',
+			'hok_sunwukong',
 			'shen_caozhi',
 			'shen_dongzhuo',
 			'shen_lusu',
@@ -1347,7 +1348,6 @@ window.noname_character_rank={
 			'cuishi',
 			'hok_daji',
 			'hok_makeboluo',
-			'hok_sunwukong',
 		],
 		rare:[
 			'hs_selajin',
