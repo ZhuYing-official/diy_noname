@@ -100,7 +100,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 明世隐
 			hok_mingshiyin:['male','shu',4,['hok_taigua','hok_minggua','hok_biangua']],
 			// 孙悟空
-			hok_sunwukong:['male','shen',4,['hok_qitian','hok_shengbang','hok_naogong'],['qun']],
+			hok_sunwukong:['male','shen',4,['hok_qitian','hok_shengbang','hok_houmao','hok_naogong'],['qun']],
 			// 神曹植
 			shen_caozhi:['male','shen',3,['caigao','badou','qibu','chengshi'],['wei']],
 			// 神董卓
@@ -1051,6 +1051,73 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			hok_houmao:{
+				audio:2,
+				unique:true,
+				mark:true,
+				skillAnimation:true,
+				animationColor:'metal',
+				limited:true,
+				trigger:{player:'phaseZhunbeiBegin'},
+				init:function(player){
+					player.storage.hok_houmao=false;
+				},
+				filter:function(event,player){
+					if(player.storage.hok_houmao) return false;
+					if(typeof player.storage.hok_houmao2=='number'){
+						return player.hp<player.storage.hok_houmao2;
+					}
+					return false;
+				},
+				check:function(event,player){
+					if(player.hp<=1) return true;
+					return player.hp<player.storage.hok_houmao2-1;
+				},
+				content:function(){
+					player.awakenSkill('hok_houmao');
+					player.recover(player.storage.hok_houmao2-player.hp);
+					var card=get.cardPile(function(card){
+						switch(Math.floor(Math.random()*5)){
+							case 0: case 2: return get.name(card,'leisha')=='leisha';
+							case 1: case 3: return get.name(card,'huosha')=='huosha';
+							case 4: return get.name(card,'sha')=='sha';
+						}
+					}) 
+					if(card){
+						player.gain(card,'gain2');
+					}
+					player.storage.hok_houmao=true;
+				},
+				intro:{
+					mark:function(dialog,content,player){
+						if(player.storage.hok_houmao) return;
+						if(typeof player.storage.hok_houmao2!='number'){
+							return '上回合体力：无';
+						}
+						return '上回合体力：'+player.storage.hok_houmao2;
+					},
+					content:'limited'
+				},
+				group:['hok_houmao2']
+			},
+			hok_houmao2:{
+				trigger:{player:'phaseJieshuBegin'},
+				priority:-10,
+				silent:true,
+				content:function(){
+					player.storage.hok_houmao2=player.hp;
+					game.broadcast(function(player){
+						player.storage.hok_houmao2=player.hp;
+					},player);
+					game.addVideo('storage',player,['hok_houmao2',player.storage.hok_houmao2]);
+				},
+				intro:{
+					content:function(storage,player){
+						if(player.storage.hok_houmao) return;
+						return '上回合体力：'+storage;
+					}
+				}
+			},
 			hok_naogong:{
 				audio:2,
 				unique: true,
@@ -1810,6 +1877,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_qitian_info:'锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
 			hok_shengbang:'圣棒',
 			hok_shengbang_info:'锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
+			hok_houmao:'猴毛',
+			hok_houmao_info:'限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，随机获得一张杀/雷杀/火杀。',
 			hok_naogong:'闹宫',
 			hok_naogong_info:'限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
 
