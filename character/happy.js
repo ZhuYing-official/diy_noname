@@ -509,22 +509,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					switch (result.control) {
 						case '统御':
 							player.addTempSkill('hok_tongkuang_tongyu');
+							hok_remove(player, ['renjie','kuangbao']);
 							break;
 						case '狂暴':
 							player.addTempSkill('hok_tongkuang_kuangbao');
+							hok_remove(player, ['tongyu','renjie']);
 							break;
 						default:
 							player.addTempSkill('hok_tongkuang_renjie');
+							hok_remove(player, ['tongyu','kuangbao']);
 					}
 				},
 				subSkill:{
 					renjie:{
 						audio:2,
-						// trigger:{player:'phaseDiscardBegin'},
+						trigger:{player:'phaseDiscardBegin'},
 						// trigger:{player:'phaseUse'},
 						// frequent:true,
-						// forced:true,
-						enable:'phaseUse',
+						forced:true,
+						// enable:'phaseUse',
 						usable:1,
 						content:function(){
 							event.lx = ['olqingyi','pozhu','rexuanhuo'];
@@ -540,7 +543,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
-							hok_remove(player, ['tongyu','kuangbao']);
 							player.addSkillLog(result.control);
 							player.removeMark('hok_wangming',2);
 							player.syncStorage('hok_wangming');
@@ -548,11 +550,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 					tongyu:{
 						audio:2,
-						// trigger:{player:'phaseDiscardBegin'},
+						trigger:{player:'phaseDiscardBegin'},
 						// trigger:{player:'phaseUse'},
 						// frequent:true,
-						// forced:true,
-						enable:'phaseUse',
+						forced:true,
+						// enable:'phaseUse',
 						usable:1,
 						content:function(){
 							event.lx = ['reshuishi','lingce','dinghan'];
@@ -568,7 +570,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
-							hok_remove(player, ['renjie','kuangbao']);
 							player.addSkillLog(result.control);
 							player.removeMark('hok_wangming',2);
 							player.syncStorage('hok_wangming');
@@ -576,11 +577,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 					kuangbao:{
 						audio:2,
-						// trigger:{player:'phaseDiscardBegin'},
+						trigger:{player:'phaseDiscardBegin'},
 						// trigger:{player:'phaseUse'},
 						// frequent:true,
-						// forced:true,
-						enable:'phaseUse',
+						forced:true,
+						// enable:'phaseUse',
 						usable:1,
 						content:function(){
 							event.lx = ['shencai','drlt_jieying','drlt_poxi'];
@@ -596,7 +597,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
 							'step 1'
-							hok_remove(player, ['tongyu','renjie']);
 							player.addSkillLog(result.control);
 							player.removeMark('hok_wangming',2);
 							player.syncStorage('hok_wangming');
@@ -1849,7 +1849,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_dengshen:'登神',
 			hok_dengshen_info:'觉醒技，准备阶段，若你武将牌上的「王」数不小于3，则你弃置2枚「王」，获得技能[统狂]、[眩惑]。',
 			hok_tongkuang:'统狂',
-			hok_tongkuang_info:'判断阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；出牌阶段，你可以弃置2枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][眩惑]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
+			hok_tongkuang_info:'判断阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；弃牌阶段开始时，你可以弃置2枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][眩惑]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
 			hok_tongkuang_renjie:'人杰',
 			hok_tongkuang_tongyu:'统御',
 			hok_tongkuang_kuangbao:'狂暴',
