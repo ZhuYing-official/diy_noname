@@ -1821,7 +1821,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			cuishi:'#b捞得一评级:3.3',
 			liucong:'捞得一评级:1.0',
 			hok_daji:'#b捞得一评级:3.8',
-			hok_lixin:'#r捞得一评级:4.2',
+			hok_lixin:'#r捞得一评级:4.3',
 			hok_makeboluo:'#b捞得一评级:3.9',
 			hok_mingshiyin:'#r耀世圣手评级:4.1',
 			hok_sunwukong:'#r捞得一评级:4.1',
