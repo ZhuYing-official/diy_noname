@@ -1738,9 +1738,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					trigger.cancel();
 				},
 				ai:{
-					target:function(card,player,target){
-						if(card&&card.name=='sha'&&card.suit=='heart') return 'zerotarget';
-					},
+					effect:{
+						target:function(card,player,target){
+							if(card&&card.name=='sha'&&card.suit=='heart') return 0;
+						},
+					}
 				},
 			},
 			chiyan:{
