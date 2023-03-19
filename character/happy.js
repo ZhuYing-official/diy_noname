@@ -709,7 +709,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_taigua:{
 				audio: 2,
 				enable:'phaseUse',
-				usable:1,
+				usable:2,
 				filterTarget:function(card,player,target){
 					if(target.hp>=target.maxHp) return false;
 					if(target==player) return false;
@@ -723,6 +723,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.line(target,'green');
 					target.recover();
+				},
+				contentAfter: function(){
 					player.addSkill('hok_minggua2');
 				},
 				ai:{
@@ -1871,7 +1873,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 明世隐
 			hok_mingshiyin:'明世隐',
 			hok_taigua:'泰卦',
-			hok_taigua_info:'出牌阶段限一次，你对自己造成1点伤害，然后令一名其他角色回复1点体力。',
+			hok_taigua_info:'出牌阶段限两次，你对自己造成1点伤害，然后令一名其他角色回复1点体力。',
 			hok_minggua:'命卦',
 			hok_minggua_info:'锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
 				1.大吉/大凶：受到伤害的角色死亡；<br/>\
