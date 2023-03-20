@@ -99,7 +99,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 马可波罗
 			hok_makeboluo:['male','qun',3,['hok_zuolun','hok_qianglin','hok_danyu']],
 			// 明世隐
-			hok_mingshiyin:['male','shu',4,['hok_taigua','hok_minggua','hok_biangua']],
+			hok_mingshiyin:['male','shu',4,['hok_taigua','hok_minggua','hok_minggua2','hok_biangua']],
 			// 孙悟空
 			hok_sunwukong:['male','shen',4,['hok_qitian','hok_shengbang','hok_houmao','hok_naogong'],['qun']],
 			// 神曹植
@@ -706,8 +706,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					player.line(target,'green');
 					target.recover();
-				},
-				contentAfter: function(){
 					player.addSkill('hok_minggua2');
 				},
 				ai:{
@@ -724,7 +722,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_minggua:{
 				auto: 2,
 				forced: true,
-				group: 'hok_minggua2',
+				// group: 'hok_minggua2',
 				trigger:{
 					player: 'damageBegin2',
 				},
@@ -800,11 +798,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					var source = trigger.source;
 					if(source){
-						if(source.hasSkill('hok_biangua')){
-							if(source.countMark('hok_biangua2')<8){
-								source.addMark('hok_biangua2', 1);
-							}
-						}
 						if(tar.hasSkill('hok_biangua')){
 							if(tar.countMark('hok_biangua2')<8){
 								tar.addMark('hok_biangua2', 1);
@@ -897,11 +890,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(player.hasSkill('hok_biangua')){
 						if(player.countMark('hok_biangua2')<8){
 							player.addMark('hok_biangua2', 1);
-						}
-					}
-					if(tar.hasSkill('hok_biangua')){
-						if(tar.countMark('hok_biangua2')<8){
-							tar.addMark('hok_biangua2', 1);
 						}
 					}
 					'step 1'
@@ -1044,7 +1032,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseToDiscard('hes');
 					'step 1'
 					if(result.bool){
-						shengbangJudge(trigger, player, result);
+						// shengbangJudge(trigger, player, result);
+						player.judge(function(card){
+							if(get.color(card)=='red'){
+								trigger.num*=2;
+								return 1.5;
+							}
+							return -1.5;
+						}).judge2=function(result){
+							return result.bool;
+						};
 					}
 				},
 			},
