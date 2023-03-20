@@ -59,16 +59,17 @@ function shengbangJudge(trigger, player, result){
 	'step 0'
 	player.judge(function(card){
 		if(get.color(card)=='red'){
-			trigger.num*=2;
+			// trigger.num*=2;
 			return 1.5;
 		}
 		return -1.5;
 	}).judge2=function(result){
 		return result.bool;
 	};
-
+	
 	'step 1'
 	if (result.bool){
+		trigger.num*=2;
 		return true;
 	} else{
 		return false;
@@ -96,7 +97,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 李信
 			hok_lixin:['male','shen',4,['hok_wangming','hok_dengshen',],['qun']],
 			// 马可波罗
-			hok_makeboluo:['male','qun',3,['hok_zuolun','hok_danyu']],
+			hok_makeboluo:['male','qun',3,['hok_zuolun','hok_qianglin','hok_danyu']],
 			// 明世隐
 			hok_mingshiyin:['male','shu',4,['hok_taigua','hok_minggua','hok_biangua']],
 			// 孙悟空
@@ -185,6 +186,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					aiUseful:function(){
 						return lib.skill.qingguo.mod.aiValue.apply(this,arguments);
 					},
+					maxHandcard:function(player,num){
+						return 1+num;
+					}
 				},
 				enable:['chooseToRespond','chooseToUse'],
 				filterCard:function(card){
@@ -213,57 +217,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
-			//将梅花手牌视为闪打出
-			/*
-			pianwan:{
-				mod:{
-					aiValue:function(player,card,num){
-						if(get.name(card)!='shan'&&get.suit(card)!='club') return;
-						var cards=player.getCards('h',function(card){
-							return get.name(card)=='shan'||get.suit(card)=='club';
-						});
-						cards.sort(function(a,b){
-							return (get.name(b)=='shan'?1:2)-(get.name(a)=='shan'?1:2);
-						});
-						var geti=function(){
-							if(cards.contains(card)){
-								return cards.indexOf(card);
-							}
-							return cards.length;
-						};
-						if(get.name(card)=='shan') return Math.min(num,[6,4,3][Math.min(geti(),2)])*0.6;
-						return Math.max(num,[6.5,4,3][Math.min(geti(),2)]);
-					},
-					aiUseful:function(){
-						return lib.skill.qingguo.mod.aiValue.apply(this,arguments);
-					},
-				},
-				audio:2,
-				enable:['chooseToRespond','chooseToUse'],
-				filterCard:function(card){
-					return get.suit(card)=='club';
-				},
-				viewAs:{name:'shan'},
-				viewAsFilter:function(player){
-					if(!player.countCards('h',{suit:'club'})) return false;
-				},
-				position:'h',
-				prompt:'弃置一张梅花手牌当闪使用或打出',
-				check:function(){return 1},
-				ai:{
-					order:3,
-					respondShan:true,
-					skillTagFilter:function(player){
-						if(!player.countCards('h',{suit:'club'})) return false;
-					},
-					effect:{
-						target:function(card,player,target,current){
-							if(get.tag(card,'respondShan')&&current<0) return 0.6
-						}
-					}
-				}
-			},
-			*/
 			// 刘琮
 			tunquan:{
 				audio:2,
@@ -368,9 +321,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			hok_huhuo:{
 				audio:2,
-				unique: true,
-				limited: true,
 				enable:'phaseUse',
+				usable:1,
 				skillAnimation:true,
 				animationColor:'orange',
 				filter:function(event,player){
@@ -378,11 +330,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					player.awakenSkill('hok_huhuo');
 					event.huhuoCards=player.getCards('h');
 					'step 1'
 					if(event.huhuoCards!=undefined){
 						player.discard(event.huhuoCards);
+						player.removeMark('hok_meixin',3);
 					}
 					'step 2'
 					player.chooseTarget('为狐火减少一个目标',function(card,player,target){
@@ -654,6 +606,37 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					jueqing:true
 				},
 			},
+			hok_qianglin:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.countCards('h')>=2;
+				},
+				content:function(){
+					'step 0'
+					player.chooseToDiscard(get.prompt('hok_qianglin'),2,'h','弃置2张手牌，视为对一名其他角色使用一张无距离限制且不计入出牌阶段使用次数的雷杀。');
+					player.addSkill('hok_qianglin_draw');
+					'step 1'
+					if(result.bool){
+						player.chooseUseTarget({name:'sha',nature:'thunder'},'是否视为使用一张【雷杀】？',false,'nodistance');
+					}
+					'step 2'
+					player.removeSkill('hok_qianglin_draw');
+				},
+				subSkill:{
+					draw:{
+						trigger:{
+							global:['damageEnd','loseHpEnd'],
+						},
+						forced:true,
+						usabel:1,
+						content:function(){
+							player.draw(trigger.num);
+						},
+					},
+				},
+			},
 			hok_danyu:{
 				audio:2,
 				enable:'phaseUse',
@@ -695,7 +678,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return get.order({name:'shunshou'})-0.1;
 					},
 					expose:0.2,
-					threaten:4,
+					threaten:2,
 					result:{
 						target:function(player,target){
 							if(player.hp>2){
@@ -1822,7 +1805,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterTitle:{
 			// g绿 b蓝 r红 p粉
-			cuishi:'#b捞得一评级:3.3',
+			cuishi:'#b捞得一评级:3.4',
 			liucong:'捞得一评级:1.0',
 			hok_daji:'#b捞得一评级:3.8',
 			hok_lixin:'#r捞得一评级:4.3',
@@ -1837,7 +1820,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 崔氏
 			cuishi:'崔氏',
 			pianwan:'翩婉',
-			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
+			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。你的手牌上限+1。',
 			huayi:'华衣',
 			huayi_info:'觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
 			// 刘琮
@@ -1854,7 +1837,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_meixin:'魅心',
 			hok_meixin_info:'出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
 			hok_huhuo:'狐火',
-			hok_huhuo_info:'限定技，出牌阶段，当你的“魅心”标记大于3，你可以弃置所有手牌对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。',
+			hok_huhuo_info:'出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记和所有手牌对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。（X为你弃置的“魅心”标记数）',
 			// 李信
 			hok_lixin:'李信',
 			hok_wangming:'王命',
@@ -1870,6 +1853,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hok_makeboluo:'马克波罗',
 			hok_zuolun:'左轮',
 			hok_zuolun_info:'锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
+			hok_qianglin:'枪林',
+			hok_qianglin_info:'出牌阶段限1次，你可以弃置2张手牌，视为对一名其他角色使用一张无距离限制且不计入出牌阶段使用次数的雷杀。若你因此【雷杀】令任意角色体力减少，则你摸X张牌（X为目标角色体力减少的数量）。',
 			hok_danyu:'弹雨',
 			hok_danyu_info:'出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// 明世隐
