@@ -51296,6 +51296,34 @@
 			return num;
 		},
 		connectNickname:function(){
+			if(lib.config.connect_nickname=='捞得num'){
+				var week = new Date().getDay();  
+				switch (week){
+					case 0:
+						lib.config.connect_nickname='捞得日';
+						break;
+					case 1:
+						lib.config.connect_nickname='捞得一';
+						break;
+					case 2:
+						lib.config.connect_nickname='捞得二';
+						break;
+					case 3:
+						lib.config.connect_nickname='捞得三';
+						break;
+					case 4:
+						lib.config.connect_nickname='捞得四';
+						break;
+					case 5:
+						lib.config.connect_nickname='捞得五';
+						break;
+					case 6:
+						lib.config.connect_nickname='捞得六';
+						break;
+					default:
+						lib.config.connect_nickname='捞得一';
+				}
+			}
 			return typeof lib.config.connect_nickname=='string'?(lib.config.connect_nickname.slice(0,12)):'无名玩家';
 		},
 		zhinangs:function(filter){
