@@ -54,27 +54,6 @@ function hok_remove(player, arrays){
 		removeKuangbao(player);
 	}
 };
-// 孙悟空
-function shengbangJudge(trigger, player, result){
-	'step 0'
-	player.judge(function(card){
-		if(get.color(card)=='red'){
-			// trigger.num*=2;
-			return 1.5;
-		}
-		return -1.5;
-	}).judge2=function(result){
-		return result.bool;
-	};
-	
-	'step 1'
-	if (result.bool){
-		trigger.num*=2;
-		return true;
-	} else{
-		return false;
-	}
-}
 //-------------------------------------------------------------
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
@@ -187,8 +166,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return lib.skill.qingguo.mod.aiValue.apply(this,arguments);
 					},
 					maxHandcard:function(player,num){
-						return 1+num;
-					}
+						return (3>player.hp)?3:player.hp;
+					},
 				},
 				enable:['chooseToRespond','chooseToUse'],
 				filterCard:function(card){
@@ -1032,7 +1011,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseToDiscard('hes');
 					'step 1'
 					if(result.bool){
-						// shengbangJudge(trigger, player, result);
 						player.judge(function(card){
 							if(get.color(card)=='red'){
 								trigger.num*=2;
@@ -1817,7 +1795,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			// 崔氏
 			cuishi:'崔氏',
 			pianwan:'翩婉',
-			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。你的手牌上限+1。',
+			pianwan_info:'锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。你的手牌上限至少为3。',
 			huayi:'华衣',
 			huayi_info:'觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
 			// 刘琮
