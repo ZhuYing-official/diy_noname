@@ -823,7 +823,7 @@ window.noname_character_rank={
 		'tw_zongyu',
 		'xia_xushu',
 
-		// 捞得一
+		// 捞德一
 		'liucong',
 	],
 	bm:[
@@ -1186,7 +1186,7 @@ window.noname_character_rank={
 			'tw_niufudongxie',
 			'tw_shen_lvmeng',
 
-			//捞得一
+			//捞德一
 			'hok_lixin',
 			'hok_mingshiyin',
 			'hok_sunwukong',
@@ -1344,7 +1344,7 @@ window.noname_character_rank={
 			'tw_zhugeguo',
 			'xuelingyun',
 
-			//捞得一
+			//捞德一
 			'cuishi',
 			'hok_daji',
 			'hok_makeboluo',
@@ -1720,7 +1720,7 @@ window.noname_character_rank={
 			'xia_tongyuan',
 			'xia_wangyue',
 
-			// 捞得一
+			// 捞德一
 		],
 		junk:[
 			'sunshao',
@@ -1753,7 +1753,7 @@ window.noname_character_rank={
 			'xin_zhuzhi',
 			'tw_xiahouen',
 
-			// 捞得一
+			// 捞德一
 		],
 	}
 };

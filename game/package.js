@@ -10,7 +10,7 @@ window.noname_package={
 		clan:'门阀士族',
 		sp2:'系列专属',
 		extra:'神将',		
-		happy:'捞得一',
+		happy:'捞德一',
 		sb:'谋攻篇',
 		mobile:'移动版',
 		tw:'外服武将',
