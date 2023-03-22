@@ -1317,7 +1317,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.caigao_rewrite=true;
 
 					'step 1'
-					player.chooseTarget('令一名角色回复一点体力并获得“豆”标记').set('ai',function(card,player,target){
+					player.chooseTarget('令一名角色回复一点体力并获得“豆”标记',function(card,player,target){
+						return player!=target;
+					}).set('ai',function(card,player,target){
 						if(target==player){
 							return false;
 						}
