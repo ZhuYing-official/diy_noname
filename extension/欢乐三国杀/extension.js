@@ -64,7 +64,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         characterSort: {
                             happykill: {
                                 biao_zhu: ['hpp_caocao', 'hpp_liubei', 'hpp_sunquan'],
-                                biao_hu: ['hpp_guanyu','hpp_zhangfei','hpp_zhaoyun','hpp_machao','hpp_huangzhong'],
+                                biao_hu: ['hpp_guanyu', 'hpp_zhangfei', 'hpp_zhaoyun', 'hpp_machao', 'hpp_huangzhong'],
                                 biao_meng: [],
                                 biao_jiao: [],
                                 biao_wei: [],
@@ -99,9 +99,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         },
                         character: {
                             // 欢乐曹操
-                            hpp_caocao: ["male", "wei", 4, ["new_rejianxiong", "hujia"], ['zhu']],
+                            hpp_caocao: ["male", "wei", 4, ["hpp_jianxiong", "hujia"], ['zhu']],
                             // 欢乐关羽
-                            hpp_guanyu: ['male','shu',4, ['hpp_wusheng'], []],
+                            hpp_guanyu: ['male', 'shu', 4, ['hpp_wusheng'], []],
                             // 欢乐黄忠
                             hpp_huangzhong: ['male', 'shu', 4, ['hpp_liegong'], []],
                             // 欢乐刘备
@@ -118,21 +118,72 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         characterIntro: {
                         },
                         characterReplace: {
-                            caocao:['hpp_caocao','re_caocao','caocao'],
-                            guanyu:['hpp_guanyu','re_guanyu','guanyu'],
-                            huangzhong:['hpp_huangzhong','re_huangzhong','huangzhong'],
-                            machao:['hpp_machao','re_machao','machao'],
-                            liubei:['hpp_liubei','re_liubei','liubei'],
-                            sunquan:['hpp_sunquan','re_sunquan','sunquan'],
-                            zhangfei:['hpp_zhangfei','re_zhangfei','tw_zhangfei','xin_zhangfei','old_zhangfei','zhangfei'],
-                            zhaoyun:['hpp_zhaoyun','re_zhaoyun','old_zhaoyun','zhaoyun'],
+                            caocao: ['hpp_caocao', 're_caocao', 'caocao'],
+                            guanyu: ['hpp_guanyu', 're_guanyu', 'guanyu'],
+                            huangzhong: ['hpp_huangzhong', 're_huangzhong', 'huangzhong'],
+                            machao: ['hpp_machao', 're_machao', 'machao'],
+                            liubei: ['hpp_liubei', 're_liubei', 'liubei'],
+                            sunquan: ['hpp_sunquan', 're_sunquan', 'sunquan'],
+                            zhangfei: ['hpp_zhangfei', 're_zhangfei', 'tw_zhangfei', 'xin_zhangfei', 'old_zhangfei', 'zhangfei'],
+                            zhaoyun: ['hpp_zhaoyun', 're_zhaoyun', 'old_zhaoyun', 'zhaoyun'],
                         },
                         characterFilter: {
                         },
                         skill: {
+                            // 曹操
+                            hpp_jianxiong: {
+                                audio: "rejianxiong",
+                                audioname: ['shen_caopi'],
+                                trigger: {
+                                    player: "damageEnd",
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.chooseControl('摸一张牌并获得造成伤害的牌','摸两张').set('prompt').set('ai',function(event,player){
+                                        var value = 0;
+                                        if (get.itemtype(trigger.cards) == 'cards' && get.position(trigger.cards[0], true) == 'o') {
+                                            for(i in trigger.cards){
+                                                game.log(i);
+                                                value+=get.value(i);
+                                            }
+                                        }
+                                        game.log(value);
+                                    });
+                                    "step 1"
+                                    if(result.control=='摸一张牌并获得造成伤害的牌'){
+                                        if (get.itemtype(trigger.cards) == 'cards' && get.position(trigger.cards[0], true) == 'o') {
+                                            player.gain(trigger.cards, "gain2");
+                                        }
+                                        player.draw('nodelay');
+                                    } else{
+                                        player.draw(2,'nodelay');
+                                    }
+                                },
+                                ai: {
+                                    maixie: true,
+                                    "maixie_hp": true,
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (player.hasSkillTag('jueqing', false, target)) return [1, -1];
+                                            if (get.tag(card, 'damage') && player != target) {
+                                                var cards = card.cards, evt = _status.event;
+                                                if (evt.player == target && card.name == 'damage' && evt.getParent().type == 'card') cards = evt.getParent().cards.filterInD();
+                                                if (target.hp <= 1) return;
+                                                if (get.itemtype(cards) != 'cards') return;
+                                                for (var i of cards) {
+                                                    if (get.name(i, target) == 'tao') return [1, 5];
+                                                }
+                                                if (get.value(cards, target) >= (7 + target.getDamagedHp())) return [1, 3];
+                                                return [1, 0.6];
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+
                             // 关羽
                             hpp_wusheng: {
-                                frequent:true,
+                                frequent: true,
                                 audio: 'wusheng',
                                 group: 'hpp_wusheng_damage',
                                 audioname2: { hpp_guansuo: 'wusheng_guansuo' },
@@ -147,16 +198,16 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     damage: {
                                         audio: 'wusheng',
                                         audioname2: { hpp_guansuo: 'wusheng_guansuo' },
-                                        trigger:{source:'damageBegin1'},
-                                        filter:function(event){
-                                            return event.card&&event.card.name=='sha'&&get.color(event.card)=='red'&&event.notLink();
+                                        trigger: { source: 'damageBegin1' },
+                                        filter: function (event) {
+                                            return event.card && event.card.name == 'sha' && get.color(event.card) == 'red' && event.notLink();
                                         },
                                         mod: {
                                             aiOrder: function (player, card, num) {
                                                 if (get.itemtype(card) == 'card' && card.name == 'sha' && get.color(card) == 'red') return num + 0.1;
                                             },
                                         },
-                                        content:function(){
+                                        content: function () {
                                             trigger.num++;
                                         },
                                     },
@@ -356,7 +407,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                             },
-                            
+
                             // 孙权
                             hpp_jiuyuan: {
                                 group: 'hpp_jiuyuan_tao',
@@ -572,12 +623,16 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huangzhong: '#r捞德一评级:4.0',
                             hpp_liubei: '#b捞德一评级:3.7',
                             hpp_machao: '#r捞德一评级:4.2',
-                            hpp_sunquan:'#b捞德一评级:3.1',
+                            hpp_sunquan: '#b捞德一评级:3.1',
                             hpp_zhangfei: '#r捞德一评级:4.3',
                             hpp_zhaoyun: '#r捞德一评级:4.0',
                         },
                         translate: {
                             hpp_caocao: '曹操',
+                            hpp_jianxiong: '奸雄',
+                            hpp_jianxiong_info: '当你受到1点伤害时，你可以摸一张牌，并获得对你造成伤害的牌；或摸两张牌。',
+                            hpp_hujia: '护驾',
+                            hpp_hujia_info: '主公技，其他魏势力角色可以替你使用或打出【闪】。其他魏势力角色若以此法使用或打出【闪】时，可令你摸一张牌，每回合限一张。',
                             hpp_guanyu: '关羽',
                             hpp_wusheng: '武圣',
                             hpp_wusheng_info: '回合开始时，你获得一张红色【杀】。你的红色【杀】伤害+1。',
@@ -601,7 +656,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhaoyun: '赵云',
                             hpp_yajiao: '涯角',
                             hpp_yajiao_info: '当你于回合外使用或打出手牌时，你可以展示牌堆顶的一张牌并将其交给一名角色；当你于自己回合内使用过【龙胆】，本回合结束阶段摸一张牌。',
-                            
+
 
                             biao_zhu: '标·主',
                             biao_hu: '标·虎',

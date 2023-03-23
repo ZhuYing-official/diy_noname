@@ -17,8 +17,8 @@ function removeRenjie(player){
 	if(player.hasSkill('olqingyi')){
 		player.removeSkill('olqingyi');
 	}
-	if(player.hasSkill('xinfu_zuilun')){
-		player.removeSkill('xinfu_zuilun');
+	if(player.hasSkill('bingzheng')){
+		player.removeSkill('bingzheng');
 	}
 };
 function removeTongyu(player){
@@ -411,7 +411,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				juexingji:true,
 				skillAnimation:true,
 				animationColor:'water',
-				derivation: ['hok_tongkuang','pozhu','olqingyi','xinfu_zuilun','reshuishi','lingce','dinghan','shencai','drlt_jieying','drlt_poxi'],
+				derivation: ['hok_tongkuang','pozhu','olqingyi','bingzheng','reshuishi','lingce','dinghan','shencai','drlt_jieying','drlt_poxi'],
 				filter:function(event,player){
 					return player.countMark('hok_wangming')>=3;
 				},
@@ -420,7 +420,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.syncStorage('hok_wangming');
 					player.awakenSkill(event.name);
 					player.addSkill('hok_tongkuang');
-					player.addSkill('xinfu_zuilun');
+					player.addSkill('bingzheng');
 				},
 			},
 			hok_tongkuang:{
@@ -464,15 +464,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						// enable:'phaseUse',
 						usable:1,
 						content:function(){
-							event.lx = ['olqingyi','pozhu','xinfu_zuilun'];
+							event.lx = ['olqingyi','pozhu','bingzheng'];
 							if(player.hasSkill('pozhu')){
 								event.lx.splice(event.lx.indexOf('pozhu'),1)
 							}
 							if(player.hasSkill('olqingyi')){
 								event.lx.splice(event.lx.indexOf('olqingyi'),1)
 							}
-							if(player.hasSkill('xinfu_zuilun')){
-								event.lx.splice(event.lx.indexOf('xinfu_zuilun'),1)
+							if(player.hasSkill('bingzheng')){
+								event.lx.splice(event.lx.indexOf('bingzheng'),1)
 							}
 							'step 0'
 							player.chooseControl(event.lx).set('prompt','选择获得一个技能');
@@ -1767,7 +1767,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.give(result.cards,target);
 						player.draw(3);
 					}
-				}
+				},
 			},
 		},
 		dynamicTranslate:{
