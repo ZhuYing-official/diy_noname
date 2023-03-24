@@ -1383,7 +1383,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					content: 'mark',
 				},
 				content:function(){
-					player.addMark('cannue',(trigger.num+player.countMark('cannue')>6?6-player.countMark('cannue'):trigger.num));
+					player.addMark('cannue',(trigger.num+player.countMark('cannue')>9?9-player.countMark('cannue'):trigger.num));
 				},
 				ai:{
 					threaten:1,
