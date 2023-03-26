@@ -716,10 +716,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 enable: 'phaseUse',
                                 usable: 3,
                                 filter: function (event, player) {
-                                    game.log(player.getStat('skill').hpp_zhiheng);
-                                    game.log('delay:' + player.storage.zhihengDelay);
-                                    game.log('notbasic:' + player.storage.zhihengNotBasic);
-                                    game.log(player.getStat('skill').hpp_zhiheng);
                                     if (player.getStat('skill').hpp_zhiheng == 1) {
                                         return !player.storage.zhihengDelay;
                                     } else if (player.getStat('skill').hpp_zhiheng == 2) {
@@ -761,6 +757,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     'step 2'
                                     if (player.getStat('skill').hpp_zhiheng != undefined) {
                                         if (player.getStat('skill').hpp_zhiheng == 1) {
+                                            player.storage.zhihengDelay = false;
+                                            player.storage.zhihengNotBasic = false;
                                             for (i of result) {
                                                 if (get.type(i) == 'delay') {
                                                     player.storage.zhihengDelay = true;
@@ -768,15 +766,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                                 }
                                             }
                                         } else if (player.getStat('skill').hpp_zhiheng == 2) {
+                                            player.storage.zhihengDelay = false;
+                                            player.storage.zhihengNotBasic = false;
                                             for (i of result) {
                                                 if (get.type(i) != 'basic') {
                                                     player.storage.zhihengNotBasic = true;
                                                     player.storage.zhihengDelay = false;
                                                 }
                                             }
-                                        } else {
-                                            player.storage.zhihengDelay = false;
-                                            player.storage.zhihengNotBasic = false;
                                         }
                                     }
                                 },
@@ -1005,7 +1002,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huangzhong: '#r捞德一评级:4.0',
                             hpp_liubei: '#r捞德一评级:4.2',
                             hpp_machao: '#r捞德一评级:4.2',
-                            hpp_sunquan: '#b捞德一评级:4.3',
+                            hpp_sunquan: '#r捞德一评级:4.3',
                             hpp_zhangfei: '#r捞德一评级:4.2',
                             hpp_zhaoyun: '#r捞德一评级:4.0',
                         },
