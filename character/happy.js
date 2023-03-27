@@ -239,7 +239,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					trigger.cancel();
 					'step 1'
 					var repayCards = player.storage.quxiangCards.length > 1 ? 2 : 1;
-					game.log(repayCards);
 					var str = '交给' + get.translation(player) + repayCards + '张手牌';
 					trigger.source.chooseCard('h', repayCards, true, str);
 					'step 2'
@@ -274,7 +273,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 			// 妲己
 			hok_meixin: {
-				audio: 2,
 				enable: 'phaseUse',
 				usable: 1,
 				marktext: '魅',
@@ -297,9 +295,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						player.addMark('hok_meixin', 1);
 					}
 				},
-				check: function (card) { return 6 - get.value(card) },
+				check: function (card) {
+					return 7 - get.value(card);
+				},
 				ai: {
-					threaten: 1.5
+					result: {
+						target: function (player, target) {
+							return get.effect(target, { name: 'lebu' }, player, target);
+						}
+					},
+					order: 9,
 				}
 			},
 			hok_huhuo: {
@@ -342,8 +347,29 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				},
 				ai: {
-					order: 0.1,
+					order: 1,
 					expose: 0.2,
+					result: {
+						player: function (player) {
+							var list = game.filterPlayer(function (target) {
+								// game.log(target, " " + (player.inRange(target) && !target.isDead() && target != player && get.attitude(_status.event.player, target) < 0 ? true : false));
+								return player.inRange(target) && !target.isDead() && target != player && get.attitude(_status.event.player, target) < 0 ? true : false;
+							});
+							if (list.length >= 1) {
+								return 1;
+							}
+							return 0;
+						}
+					},
+					effect: {
+						target: function (card, player, target) {
+							if (player == target && (get.subtype(card) == 'equip1' || get.subtype(card) == 'equip4')) {
+								if (get.equipValue(card) < 5) return 0;
+							}
+							if (!target.isEmpty(1)) return;
+							return 1;
+						}
+					}
 				},
 			},
 			// 李信
@@ -593,17 +619,20 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				audio: 2,
 				enable: 'phaseUse',
 				usable: 1,
+				filterCard: lib.filter.cardDiscardable,
+				discard: false,
+				lose: false,
+				delay: false,
+				selectCard: 2,
 				filter: function (event, player) {
 					return player.countCards('h') >= 2;
 				},
 				content: function () {
 					'step 0'
-					player.chooseToDiscard(get.prompt('hok_qianglin'), 2, 'h', '弃置2张手牌，视为对一名其他角色使用一张无距离限制且不计入出牌阶段使用次数的雷杀。');
+					player.discard(cards);
 					player.addSkill('hok_qianglin_draw');
 					'step 1'
-					if (result.bool) {
-						player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, '是否视为使用一张【雷杀】？', false, 'nodistance');
-					}
+					player.chooseUseTarget({ name: 'sha', nature: 'thunder'}, '是否视为使用一张【雷杀】？');
 					'step 2'
 					player.removeSkill('hok_qianglin_draw');
 				},
@@ -615,7 +644,26 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						forced: true,
 						usabel: 1,
 						content: function () {
-							player.draw(trigger.num);
+							player.draw(2);
+						},
+					},
+				},
+				ai: {
+					order: function () {
+						return get.order({ name: 'sha' }) - 0.1;
+					},
+					expose: 0.2,
+					threaten: 2,
+					result: {
+						player: function (player) {
+							var qianglin = game.filterPlayer(function (target) {
+								var player = _status.event.player;
+								if (get.attitude(player, target) < 0 ? true : false) {
+									return (player.countCards('h') >= player.hp + 2) || player.hp == 1 || target.hp == 1;
+								}
+								return false;
+							});
+							return qianglin.length > 0 ? 1 : 0;
 						},
 					},
 				},
@@ -627,46 +675,50 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				filter: function (event, player) {
 					return player.countCards('hs') >= 4;
 				},
+				filterTarget: lib.filter.notMe,
+				selectTarget: [1, 3],
+				multitarget: true,
+				multiline: true,
 				content: function () {
 					'step 0'
 					event.danyuCards = player.getCards('hs');
 					'step 1'
-					player.chooseTarget(get.prompt('hok_danyu'), '选择至多三名其他角色，对这些角色造成随机1~2次1点雷电伤害', [1, 3], function (card, player, target) {
-						return player != target;
-					}).set('ai', target => {
-						var player = _status.event.player;
-						return get.damageEffect(target, player, player, 'thunder');
-					});
-					'step 2'
 					if (event.danyuCards != undefined) {
 						player.discard(event.danyuCards);
 					}
-					// if(!player.isTurnedOver()){
-					// 	player.turnOver();
-					// }
-					if (result.bool) {
-						var targets = result.targets;
-						targets.sortBySeat();
-						player.logSkill('hok_danyu', targets);
-						for (var target of targets) {
-							var r = Math.floor(Math.random() * 2) + 1;
-							for (var dan = 0; dan < r; dan++) {
-								target.damage(1, 'thunder');
-							}
+					targets.sortBySeat();
+					'step 2'
+					for (var target of targets) {
+						var r = Math.floor(Math.random() * 2) + 1;
+						for (var dan = 0; dan < r; dan++) {
+							target.damage(1, 'thunder');
 						}
 					}
 				},
 				ai: {
 					order: function () {
-						return get.order({ name: 'shunshou' }) - 0.1;
+						return get.order({ name: 'sha' }) + 0.1;
+						return 9;
 					},
 					expose: 0.2,
 					threaten: 2,
 					result: {
 						target: function (player, target) {
-							if (player.hp > 2) {
-								return -1;
+							var residualBlood = false;
+							var list = game.filterPlayer(function (target) {
+								var att = get.attitude(_status.event.player, target) <= -1;
+								if (att && target.hp <= 2) {
+									residualBlood = true;
+								}
+								return target != player && att || player.hp <= 2;
+							});
+							if (list.length >= 3 && residualBlood) {
+								game.log(target, '  ', get.attitude(player, target))
+								if (get.attitude(player, target) <= -1) {
+									return -1;
+								}
 							}
+							return 0;
 						},
 					},
 				},
@@ -1032,6 +1084,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						};
 					}
 				},
+				ai: {
+					result: {
+						target: function (player, target) {
+							return get.effect(target, trigger.cards, player, target);
+						}
+					},
+				}
 			},
 			hok_houmao: {
 				audio: 2,
@@ -1116,15 +1175,20 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.addTempSkill('hok_naogong_discard');
 				},
 				ai: {
-					order: 14,
+					order: function () {
+						return get.order({ name: 'sha' }) - 0.1;
+					},
 					expose: 0.2,
 					result: {
 						player: function (player) {
 							if (player.hp < 2) return 1;
 							var mindist = player.hp;
-							if (player.countCards('hs') >= 5 && player.countCards('hs', 'sha') >= 3) mindist++;
+							var natureSha = player.countCards('hs', { name: 'sha', nature: 'fire' })
+								+ player.countCards('hs', { name: 'sha', nature: 'thunder' })
+								+ player.countCards('hs', { name: 'sha', nature: 'ice' });
 							if (game.hasPlayer(function (current) {
-								return (player.canUse('sha', current, false) && get.effect(current, { name: 'sha' }, player, player) > 0);
+								return (player.countCards('hs') >= 4 && player.canUse('sha', current, false) && natureSha >= 2
+									&& get.effect(current, { name: 'sha' }, player, player) > 0);
 							})) {
 								return 1;
 							}
@@ -1328,6 +1392,27 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.storage.caigao_rewrite = true;
 
 					'step 1'
+					var maxValueDou = 0;
+					game.filterPlayer(function (target) {
+						if (target == player) {
+							return false;
+						}
+						var att = get.attitude(_status.event.player, target);
+						var valueDou = 0;
+						if (att > 0) {
+							if (target.isDamaged()) {
+								valueDou += 2;
+							}
+							if (target.group == 'wei') {
+								valueDou += 1;
+							}
+							valueDou += 1;
+							if (valueDou > maxValueDou) {
+								maxValueDou = valueDou;
+							}
+						}
+						return false;
+					});
 					player.chooseTarget('令一名角色回复一点体力并获得“豆”标记', function (card, player, target) {
 						return player != target;
 					}).set('ai', function (card, player, target) {
@@ -1344,7 +1429,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								valueDou += 1;
 							}
 							valueDou += 1;
-							if (valueDou > 1) {
+							game.log('v:', valueDou, ' max:', maxValueDou);
+							if (valueDou == maxValueDou) {
 								return true;
 							}
 						}
@@ -1825,7 +1911,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_meixin: '魅心',
 			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
-			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记和所有手牌对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。（X为你弃置的“魅心”标记数）',
+			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记和所有手牌对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。',
 			// 李信
 			hok_lixin: '李信',
 			hok_wangming: '王命',
