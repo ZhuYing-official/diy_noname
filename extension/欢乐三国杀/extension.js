@@ -139,6 +139,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 content: function () {
                                     'step 0'
+                                    event.count = trigger.num;
+                                    'step 1'
+                                    event.count--;
                                     player.chooseControl('摸一张牌并获得造成伤害的牌', '摸两张').set('prompt').set('ai', function (event, player) {
                                         var value = 0;
                                         if (get.itemtype(trigger.cards) == 'cards' && get.position(trigger.cards[0], true) == 'o') {
@@ -152,7 +155,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             return '摸两张';
                                         }
                                     });
-                                    "step 1"
+                                    "step 2"
                                     if (result.control == '摸一张牌并获得造成伤害的牌') {
                                         if (get.itemtype(trigger.cards) == 'cards' && get.position(trigger.cards[0], true) == 'o') {
                                             player.gain(trigger.cards, "gain2");
@@ -160,6 +163,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         player.draw('nodelay');
                                     } else {
                                         player.draw(2, 'nodelay');
+                                    }
+                                    'step 3'
+                                    if (event.count > 0) {
+                                        event.goto(1);
                                     }
                                 },
                                 ai: {
@@ -997,7 +1004,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         },
                         characterTitle: {
                             // g绿 b蓝 r红 p粉
-                            hpp_caocao: '#r捞德一评级:4.0',
+                            hpp_caocao: '#r捞德一评级:4.1',
                             hpp_guanyu: '#r捞德一评级:4.2',
                             hpp_huangzhong: '#r捞德一评级:4.0',
                             hpp_liubei: '#r捞德一评级:4.2',
