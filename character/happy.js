@@ -144,6 +144,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			pianwan: {
+				audio: 'reqingguo',
 				mod: {
 					aiValue: function (player, card, num) {
 						if (get.name(card) != 'shan' && get.suit(card) != 'club') return;
@@ -383,6 +384,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				forced: true,
 				filter: function (event) {
+					if (player.countMark('hok_wangming') >= 7) {
+						return false;
+					}
 					return (event.name != 'damage' && (event.name != 'phase' || game.phaseNumber == 0)) || event.num > 0;
 				},
 				content: function () {
@@ -412,25 +416,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					name: '王命',
 					content: 'mark',
 				},
-				ai: {
-					maixie: true,
-					maixie_hp: true,
-					threaten: function (player, target) {
-						if (target.hp == 1) return 3.5;
-						return 1;
-					},
-					effect: {
-						target: function (card, player, target) {
-							if (get.tag(card, 'damage')) {
-								if (player.hasSkillTag('jueqing', false, target)) return [1, -2];
-								if (!target.hasSkill('hok_tongkuang')) {
-									return [0.5, 0.7];
-								}
-								return [0.5, 0.6];
-							}
-						}
-					}
-				}
 			},
 			hok_dengshen: {
 				audio: 2,
@@ -445,22 +430,32 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					return player.countMark('hok_wangming') >= 5;
 				},
 				content: function () {
-					player.removeMark('hok_wangming', 2);
-					player.syncStorage('hok_wangming');
 					player.awakenSkill(event.name);
 					player.addSkill('hok_tongkuang');
 					player.addSkill('bingzheng');
 				},
+				ai: {
+					maixie: true,
+					maixie_hp: true,
+					threaten: function (player, target) {
+						if (target.hp == 1) return 3.5;
+						return 1;
+					},
+					effect: {
+						target: function (card, player, target) {
+							if (player.hasSkillTag('jueqing', false, target)) return [1, -1];
+							return 0.8;
+						}
+					}
+				}
 			},
 			hok_tongkuang: {
 				audio: 2,
-				// trigger: {player:'phaseDiscardBefore'},
 				trigger: { player: 'phaseJudgeBefore' },
 				forced: true,
 				filter: function (event, player) {
 					return player.countMark('hok_wangming') >= 0;
 				},
-				// enable:'phaseUse',
 				usable: 1,
 				content: function () {
 					'step 0'
@@ -484,13 +479,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					renjie: {
 						audio: 2,
 						trigger: { player: 'phaseDiscardBegin' },
-						// trigger:{player:'phaseUse'},
-						// frequent:true,
 						forced: true,
 						filter: function (event, player) {
-							return player.countMark('hok_wangming') >= 3;
+							return player.countMark('hok_wangming') >= 5;
 						},
-						// enable:'phaseUse',
 						usable: 1,
 						content: function () {
 							event.lx = ['olqingyi', 'pozhu', 'bingzheng'];
@@ -507,20 +499,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							player.chooseControl(event.lx).set('prompt', '选择获得一个技能');
 							'step 1'
 							player.addSkillLog(result.control);
-							player.removeMark('hok_wangming', 2);
+							player.removeMark('hok_wangming', 5);
 							player.syncStorage('hok_wangming');
 						}
 					},
 					tongyu: {
 						audio: 2,
 						trigger: { player: 'phaseDiscardBegin' },
-						// trigger:{player:'phaseUse'},
-						// frequent:true,
 						forced: true,
 						filter: function (event, player) {
-							return player.countMark('hok_wangming') >= 3;
+							return player.countMark('hok_wangming') >= 5;
 						},
-						// enable:'phaseUse',
 						usable: 1,
 						content: function () {
 							event.lx = ['reshuishi', 'lingce', 'dinghan'];
@@ -537,20 +526,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							player.chooseControl(event.lx).set('prompt', '选择获得一个技能');
 							'step 1'
 							player.addSkillLog(result.control);
-							player.removeMark('hok_wangming', 2);
+							player.removeMark('hok_wangming', 5);
 							player.syncStorage('hok_wangming');
 						},
 					},
 					kuangbao: {
 						audio: 2,
 						trigger: { player: 'phaseDiscardBegin' },
-						// trigger:{player:'phaseUse'},
-						// frequent:true,
 						forced: true,
 						filter: function (event, player) {
-							return player.countMark('hok_wangming') >= 3;
+							return player.countMark('hok_wangming') >= 5;
 						},
-						// enable:'phaseUse',
 						usable: 1,
 						content: function () {
 							event.lx = ['shencai', 'drlt_jieying', 'drlt_poxi'];
@@ -567,7 +553,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							player.chooseControl(event.lx).set('prompt', '选择获得一个技能');
 							'step 1'
 							player.addSkillLog(result.control);
-							player.removeMark('hok_wangming', 2);
+							player.removeMark('hok_wangming', 5);
 							player.syncStorage('hok_wangming');
 						}
 					}
@@ -752,7 +738,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_minggua: {
 				auto: 2,
 				forced: true,
-				// group: 'hok_minggua2',
+				group: 'hok_minggua3',
 				trigger: {
 					player: 'damageBegin2',
 				},
@@ -762,7 +748,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					var tar = trigger.player;
 					var cards = tar.getCards('hej');
 
-					// var str=get.translation(trigger.source)+'占卜结果为：';
 					var str = '';
 					if (r < 0.01) {
 						// 1
@@ -925,6 +910,34 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 1'
 					game.delay(0.5);
 					// event.dialog.close();
+				},
+			},
+			hok_minggua3: {
+				forceDie: true,
+				trigger: { player: 'die' },
+				skillAnimation: true,
+				animationColor: 'gray',
+				direct: true,
+				filter: function (event, player) {
+					return game.hasPlayer(function (current) {
+						return current.maxHp >= player.maxHp;
+					});
+				},
+				content: function () {
+					'step 0'
+					player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
+						return target.maxHp >= player.maxHp;
+					}).set('forceDie', true).set('ai', (target) => get.attitude(_status.event.player, target));
+					'step 1'
+					if (result.bool) {
+						var target = result.targets[0];
+						event.target = target;
+						player.logSkill('hok_minggua', target);
+					}
+					else event.finish();
+					'step 2'
+					target.addSkillLog('hok_minggua');
+					target.addSkill('hok_minggua2');
 				},
 			},
 			hok_biangua: {
@@ -1380,7 +1393,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			chengshi: {
-				audio: 2,
+				audio: 'chengzhang',
 				trigger: { global: 'phaseJieshuEnd' },
 				forced: true,
 				unique: true,
@@ -1388,7 +1401,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				skillAnimation: true,
 				animationColor: 'water',
 				filter: function (event, player) {
-					return player.countMark('qibu') >= 1;
+					return player.countMark('qibu') >= 7;
 				},
 				content: function () {
 					'step 0'
@@ -1467,10 +1480,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				},
 			},
-
 			// 神董卓
 			cannue: {
-				audio: 2,
+				audio: 'olbaonue',
 				forced: true,
 				unique: true,
 				group: ['cannue2', 'cannue3', 'cannue4'],
@@ -1524,7 +1536,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			cannue4: {
 				audio: 2,
-				audioname: ['re_dongzhuo', 'ol_dongzhuo'],
 				trigger: { player: 'useCardToPlayered', target: 'useCardToTargeted' },
 				forced: true,
 				filter: function (event, player) {
@@ -1552,7 +1563,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			xiehan: {
-				audio: 2,
 				forced: true,
 				group: ['xiehan2', 'xiehan3'],
 				trigger: { global: 'drawBegin' },
@@ -1567,7 +1577,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			xiehan2: {
-				audio: 2,
 				forced: true,
 				trigger: { global: 'dieAfter' },
 				filter: function (event, player) {
@@ -1585,7 +1594,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			xiehan3: {
-				audio: 2,
 				forced: true,
 				trigger: { global: 'phaseUseBegin' },
 				filter: function (event, player) {
@@ -1631,7 +1639,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			huidu: {
-				audio: 2,
+				audio: 'olbaonue',
 				forced: true,
 				unique: true,
 				trigger: { player: 'phaseJieshuEnd' },
@@ -1639,7 +1647,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				skillAnimation: true,
 				animationColor: 'metal',
 				filter: function (event, player) {
-					return player.countMark('cannue') >= 6;
+					return player.countMark('cannue') >= 1;
 				},
 				content: function () {
 					player.awakenSkill(event.name);
@@ -1740,14 +1748,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					}
 
-					player.loseMaxHp(5);
+					player.loseMaxHp(4);
 					game.log('毁都使用了', cards.length, '张锦囊牌，如下：', cards);
 				},
 			},
-
 			// 神鲁肃
 			diying: {
-				audio: 2,
+				audio: 'olhaoshi',
 				enable: 'phaseUse',
 				usable: 1,
 				content: function () {
@@ -1756,11 +1763,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						var att = get.attitude(_status.event.player, target);
 						if (att > 0) {
 							return true;
-						}
-						if (target == player) {
+						} else if (target == player) {
 							return true;
+						} else {
+							return false;
 						}
-						return false;
 					});
 
 					'step 1'
@@ -1778,6 +1785,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					}
 				},
+				ai: {
+					order: 10,
+					result: {
+						player: function (player, target) {
+							return 5;
+						}
+					},
+					threaten: 1,
+				}
 			},
 			fusheng: {
 				audio: 2,
@@ -1807,17 +1823,18 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.getHistory('lose', function (evt) {
 						if (evt.type == 'discard' && evt.getParent('phaseDiscard') == event) cards.addArray(evt.cards2);
 					});
-					return cards.length > 1;
+					return cards.length >= 2;
 				},
 				content: function () {
 					"step 0"
-					player.chooseTarget(get.prompt('chiyan'), '选择一名其他角色，对其造成1点火属性伤害').set('ai', target => {
+					player.chooseTarget(get.prompt('chiyan'), '对一名其他角色造成1点火属性伤害').set('ai', target => {
 						var player = _status.event.player;
 						return get.damageEffect(target, player, player, 'fire');
 					});
 					'step 1'
 					if (result.bool) {
 						var target = result.targets[0];
+						player.line(target, 'fire');
 						target.damage(1, 'fire');
 					}
 				},
@@ -1827,9 +1844,89 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			lianmeng: {
-				audio: 2,
+				audio: 'oldimeng',
 				enable: 'phaseUse',
 				usable: 1,
+				filterCard: true,
+				selectCard: 2,
+				discard: false,
+				lose: false,
+				delay: 0,
+				filterTarget: function (card, player, target) {
+					return player != target;
+				},
+				filter: function (event, player) {
+					return player.countCards('h') >= 2;
+				},
+				check: function (card) {
+					if (ui.selected.cards.length && ui.selected.cards[0].name == 'du') return 0;
+					if (!ui.selected.cards.length && card.name == 'du') return 20;
+					var player = get.owner(card);
+					if (ui.selected.cards.length >= Math.max(2, player.countCards('h') - player.hp)) return 0;
+					if (player.hp == player.maxHp || player.countCards('h') <= 1) {
+						var players = game.filterPlayer();
+						for (var i = 0; i < players.length; i++) {
+							if (players[i].hasSkill('haoshi') &&
+								!players[i].isTurnedOver() &&
+								!players[i].hasJudge('lebu') &&
+								get.attitude(player, players[i]) >= 3 &&
+								get.attitude(players[i], player) >= 3) {
+								return 11 - get.value(card);
+							}
+						}
+						if (player.countCards('h') > player.hp) return 10 - get.value(card);
+						if (player.countCards('h') >= 2) return 8 - get.value(card);
+					}
+					return 10 - get.value(card);
+				},
+				content: function () {
+					// player.line(target, 'green');
+					player.give(cards, target);
+					player.draw(3);
+				},
+				ai: {
+					order: function (skill, player) {
+						if (player.hp < player.maxHp && player.countCards('h') > 1) {
+							return 10;
+						}
+						return 4;
+					},
+					result: {
+						target: function (player, target) {
+							if (target.hasSkillTag('nogain')) return 0;
+							if (ui.selected.cards.length && ui.selected.cards[0].name == 'du') {
+								if (target.hasSkillTag('nodu')) return 0;
+								return -10;
+							}
+							if (target.hasJudge('lebu')) return 0;
+							var nh = target.countCards('h');
+							var np = player.countCards('h');
+							if (player.hp == player.maxHp || player.countCards('h') <= 1) {
+								if (nh >= np - 1 && np <= player.hp && !target.hasSkill('haoshi')) return 0;
+							}
+							return Math.max(1, 5 - nh);
+						}
+					},
+					effect: {
+						target: function (card, player, target) {
+							if (player == target && get.type(card) == 'equip') {
+								if (player.countCards('e', { subtype: get.subtype(card) })) {
+									if (game.hasPlayer(function (current) {
+										return current != player && get.attitude(player, current) > 0;
+									})) {
+										return 0;
+									}
+								}
+							}
+						}
+					},
+					threaten: 0.8
+				},
+			},
+			/* oldlianmeng: {
+				audio: 2,
+				usable: 1,
+				enable: 'phaseUse',
 				filter: function (event, player) {
 					return player.countCards('h') >= 2;
 				},
@@ -1861,22 +1958,24 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						player.draw(3);
 					}
 				},
-			},
+			}, */
 		},
 		dynamicTranslate: {
-			/*
-			nzry_longnu:function(player){
-				if(player.hasSkill('nzry_longnu_2')) return '转换技，锁定技，阴：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。<span class="legendtext">阳：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。</span>';
-				if(player.hasSkill('nzry_longnu_1')) return '转换技，锁定技，<span class="legendtext">阴：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。</span>阳：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。';
-				if(player.storage.nzry_longnu==true) return '转换技，锁定技，阴：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。<span class="bluetext">阳：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。</span>';
-				return '转换技，锁定技，<span class="bluetext">阴：出牌阶段开始时，你失去1点体力并摸一张牌，然后本阶段内你的红色手牌均视为火【杀】且无距离限制。</span>阳：出牌阶段开始时，你减1点体力上限并摸一张牌，然后本阶段内你的锦囊牌均视为雷【杀】且无使用次数限制。';
+			// 屈降
+			quxiang: function (player) {
+				if (player.storage.quxiang_rewrite) return '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你一张手牌。';
+				return '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。';
 			},
-			*/
+			// 才高
+			caigao: function (player) {
+				if (player.storage.caigao_rewrite) return '锁定技，当其他角色于回合外获得牌时，你获得一张梅花牌。';
+				return '锁定技，当其他角色于回合外获得牌时，你进行判定，你猜测此判定牌的颜色，猜中后你获得一张梅花牌。';
+			},
 		},
 		characterTitle: {
 			// g绿 b蓝 r红 p粉
 			cuishi: '#b捞德一评级:3.4',
-			liucong: '捞德一评级:1.0',
+			liucong: '#g捞德一评级:2.0',
 			hok_daji: '#b捞德一评级:3.8',
 			hok_lixin: '#r捞德一评级:4.3',
 			hok_makeboluo: '#b捞德一评级:3.9',
@@ -1911,11 +2010,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 李信
 			hok_lixin: '李信',
 			hok_wangming: '王命',
-			hok_wangming_info: '锁定技，游戏开始时，你获得4枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害后，你获得一枚「王」标记。',
+			hok_wangming_info: '锁定技，游戏开始时，你获得4枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害且你的「王」标记大于7，你获得一枚「王」标记。',
 			hok_dengshen: '登神',
-			hok_dengshen_info: '觉醒技，准备阶段，若你武将牌上的「王」数不小于5，则你弃置2枚「王」，获得技能[统狂]、[罪论]。',
+			hok_dengshen_info: '觉醒技，准备阶段，若你武将牌上的「王」数不小于5，则你获得技能[统狂]、[秉正]。',
 			hok_tongkuang: '统狂',
-			hok_tongkuang_info: '判定阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；弃牌阶段开始时，你可以弃置3枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][罪论]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
+			hok_tongkuang_info: '判定阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；弃牌阶段开始时，你可以弃置5枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][秉正]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
 			hok_tongkuang_renjie: '人杰',
 			hok_tongkuang_tongyu: '统御',
 			hok_tongkuang_kuangbao: '狂暴',
@@ -1932,13 +2031,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_taigua: '泰卦',
 			hok_taigua_info: '出牌阶段限两次，你对自己造成1点伤害，然后令一名角色回复1点体力。',
 			hok_minggua: '命卦',
-			hok_minggua_info: '锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
+			hok_minggua_info: '①当你死亡时，你可以选择一名体力上限大于等于你的其他角色获得〖命卦〗。\
+				②锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
 				1.大吉/大凶：受到伤害的角色死亡；<br/>\
 				2.中吉/中凶：伤害加一，且受到伤害的角色随机弃置一张牌；<br/>\
 				3.小吉/小凶：受到伤害的角色随机弃置一张牌；<br/>\
 				4.小凶/小吉：受到伤害的角色摸一张牌；<br/>\
 				5.中凶/中吉：受到伤害的角色将此伤害改为回复体力并摸一张牌；<br/>\
-				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌',
+				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌。<br/>\。',
 			hok_biangua: '变卦',
 			hok_biangua3: '变卦',
 			hok_biangua_info: '当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
@@ -1974,7 +2074,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			xiehan: '挟汉',
 			xiehan_info: '锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你的“残虐”标记不小于1，你失去1枚“残虐”，你增加一点体力上限。一名角色出牌阶段开始时，该角色选择一项：1.摸一张牌，视为使用了一张【酒】，你对其（包括自己）造成一点伤害；2.弃置一张牌。',
 			huidu: '毁都',
-			huidu_info: '觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少5点体力上限。',
+			huidu_info: '觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少4点体力上限。',
 			// 神鲁肃
 			shen_lusu: '神鲁肃',
 			diying: '帝迎',

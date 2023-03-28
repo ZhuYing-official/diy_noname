@@ -1,5 +1,5 @@
-window.noname_character_rank={
-	s:[
+window.noname_character_rank = {
+	s: [
 		'hs_malorne',
 		'hs_medivh',
 		'hs_sthrall',
@@ -19,7 +19,7 @@ window.noname_character_rank={
 		'sb_machao',
 		'dc_zhouxuān',
 	],
-	ap:[
+	ap: [
 		'hs_alakir',
 		'hs_ashamoer',
 		'hs_aya',
@@ -55,7 +55,7 @@ window.noname_character_rank={
 		'zhujianping',
 		'liuzhang',
 	],
-	a:[
+	a: [
 		'diy_zaozhirenjun',
 		'hs_alleria',
 		'hs_amala',
@@ -155,7 +155,7 @@ window.noname_character_rank={
 		'tw_niufudongxie',
 		'tw_shen_lvmeng',
 	],
-	am:[
+	am: [
 		'diy_caiwenji',
 		'diy_liuyan',
 		'diy_zhenji',
@@ -328,7 +328,7 @@ window.noname_character_rank={
 		'tw_liyàn',
 		'xuelingyun',
 	],
-	bp:[
+	bp: [
 		'chess_diaochan',
 		'chess_huangzhong',
 		'chess_sunshangxiang',
@@ -581,7 +581,7 @@ window.noname_character_rank={
 		'xia_tongyuan',
 		'xia_wangyue',
 	],
-	b:[
+	b: [
 		'diy_feishi',
 		'diy_liufu',
 		'diy_tianyu',
@@ -822,11 +822,8 @@ window.noname_character_rank={
 		'tw_yufuluo',
 		'tw_zongyu',
 		'xia_xushu',
-
-		// 捞德一
-		'liucong',
 	],
-	bm:[
+	bm: [
 		'diy_xizhenxihong',
 		'ns_nanhua_left',
 		'ns_nanhua_right',
@@ -1004,7 +1001,7 @@ window.noname_character_rank={
 		'tw_zhouchu',
 		'tw_zhugeguo',
 	],
-	c:[
+	c: [
 		'xiahoudun',
 		'zhaoyun',
 		'huanggai',
@@ -1057,7 +1054,7 @@ window.noname_character_rank={
 		'tw_niujin',
 		'tw_zhangnan',
 	],
-	d:[
+	d: [
 		'lvmeng',
 		'huaxiong',
 		'gongsunzan',
@@ -1087,8 +1084,8 @@ window.noname_character_rank={
 		'tw_xiahouen',
 		'tw_yl_luzhi',
 	],
-	rarity:{
-		legend:[
+	rarity: {
+		legend: [
 			'hs_neptulon',
 			'hs_sthrall',
 			'hs_malorne',
@@ -1194,7 +1191,7 @@ window.noname_character_rank={
 			'shen_dongzhuo',
 			'shen_lusu',
 		],
-		epic:[
+		epic: [
 			'hs_tyrande',
 			'hs_amala',
 			'hs_alextrasza',
@@ -1349,7 +1346,7 @@ window.noname_character_rank={
 			'hok_daji',
 			'hok_makeboluo',
 		],
-		rare:[
+		rare: [
 			'hs_selajin',
 			'hs_enzoth',
 			'hs_yashaji',
@@ -1721,8 +1718,12 @@ window.noname_character_rank={
 			'xia_wangyue',
 
 			// 捞德一
+			'liucong',
 		],
-		junk:[
+		common: [
+			// 捞德一
+		],
+		junk: [
 			'sunshao',
 			'ol_guohuai',
 			'gongsunzan',

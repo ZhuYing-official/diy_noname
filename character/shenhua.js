@@ -5117,8 +5117,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			benghuai:{
-				audio:2,
-				audioname:['zhugedan','re_dongzhuo','ol_dongzhuo'],
 				trigger:{player:'phaseJieshuBegin'},
 				forced:true,
 				check:function(){
