@@ -17,8 +17,8 @@ function removeRenjie(player) {
 	if (player.hasSkill('olqingyi')) {
 		player.removeSkill('olqingyi');
 	}
-	if (player.hasSkill('bingzheng')) {
-		player.removeSkill('bingzheng');
+	if (player.hasSkill('xinfu_zuilun')) {
+		player.removeSkill('xinfu_zuilun');
 	}
 };
 function removeTongyu(player) {
@@ -425,14 +425,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				juexingji: true,
 				skillAnimation: true,
 				animationColor: 'water',
-				derivation: ['hok_tongkuang', 'pozhu', 'olqingyi', 'bingzheng', 'reshuishi', 'lingce', 'dinghan', 'shencai', 'drlt_jieying', 'drlt_poxi'],
+				derivation: ['hok_tongkuang', 'pozhu', 'olqingyi', 'xinfu_zuilun', 'reshuishi', 'lingce', 'dinghan', 'shencai', 'drlt_jieying', 'drlt_poxi'],
 				filter: function (event, player) {
 					return player.countMark('hok_wangming') >= 5;
 				},
 				content: function () {
 					player.awakenSkill(event.name);
 					player.addSkill('hok_tongkuang');
-					player.addSkill('bingzheng');
+					player.addSkill('xinfu_zuilun');
 				},
 				ai: {
 					maixie: true,
@@ -485,15 +485,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						usable: 1,
 						content: function () {
-							event.lx = ['olqingyi', 'pozhu', 'bingzheng'];
+							event.lx = ['olqingyi', 'pozhu', 'xinfu_zuilun'];
 							if (player.hasSkill('pozhu')) {
 								event.lx.splice(event.lx.indexOf('pozhu'), 1)
 							}
 							if (player.hasSkill('olqingyi')) {
 								event.lx.splice(event.lx.indexOf('olqingyi'), 1)
 							}
-							if (player.hasSkill('bingzheng')) {
-								event.lx.splice(event.lx.indexOf('bingzheng'), 1)
+							if (player.hasSkill('xinfu_zuilun')) {
+								event.lx.splice(event.lx.indexOf('xinfu_zuilun'), 1)
 							}
 							'step 0'
 							player.chooseControl(event.lx).set('prompt', '选择获得一个技能');
@@ -2012,9 +2012,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_wangming: '王命',
 			hok_wangming_info: '锁定技，游戏开始时，你获得4枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害且你的「王」标记大于7，你获得一枚「王」标记。',
 			hok_dengshen: '登神',
-			hok_dengshen_info: '觉醒技，准备阶段，若你武将牌上的「王」数不小于5，则你获得技能[统狂]、[秉正]。',
+			hok_dengshen_info: '觉醒技，准备阶段，若你武将牌上的「王」数不小于5，则你获得技能[统狂]、[罪论]。',
 			hok_tongkuang: '统狂',
-			hok_tongkuang_info: '判定阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；弃牌阶段开始时，你可以弃置5枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][秉正]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
+			hok_tongkuang_info: '判定阶段，你选择[人杰]、[统御]、[狂暴]路线中的一个，失去其他路线的技能；弃牌阶段开始时，你可以弃置5枚「王」标记，获得该路线的一个技能。（人杰：[破竹][清议][罪论]；统御：[慧识][灵策][定汉]；狂暴：[神裁][劫营][魄袭]。）',
 			hok_tongkuang_renjie: '人杰',
 			hok_tongkuang_tongyu: '统御',
 			hok_tongkuang_kuangbao: '狂暴',

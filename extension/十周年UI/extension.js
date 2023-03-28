@@ -287,7 +287,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 										speed: skin.speed,	 	// number 播放速度
 										filpX: undefined,	 	// boolean 水平镜像
 										filpY: undefined,	 	// boolean 垂直翻转
-										opacity: undefined,	 	// 0~1		不透明度
+										// opacity: undefined,	 	// 0~1		不透明度
+										opacity: 1,	 	// 0~1		不透明度
 										x: skin.x,				// 相对于父节点坐标x，不填为居中
 										// (1) x: 10, 相当于 left: 10px；
 										// (2) x: [10, 0.5], 相当于 left: calc(50% + 10px)；
@@ -6235,18 +6236,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 						}
 					},
 
-						lib.skill._decadeUI_usecardBegin = {
-							trigger: { global: 'useCardBegin' },
-							forced: true,
-							popup: false,
-							priority: -100,
-							filter: function (event) {
-								return !ui.clear.delay && event.card.name != 'wuxie';
-							},
-							content: function () {
-								ui.clear.delay = 'usecard';
-							}
-						};
+					lib.skill._decadeUI_usecardBegin = {
+						trigger: { global: 'useCardBegin' },
+						forced: true,
+						popup: false,
+						priority: -100,
+						filter: function (event) {
+							return !ui.clear.delay && event.card.name != 'wuxie';
+						},
+						content: function () {
+							ui.clear.delay = 'usecard';
+						}
+					};
 
 					lib.skill._discard = {
 						trigger: { global: ['discardAfter', 'loseToDiscardpileAfter', 'loseAsyncAfter'] },
@@ -6922,6 +6923,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 						event.cards.add(event.card1);
 					};
 
+					// 观星
 					lib.element.content.chooseToGuanxing = function () {
 						"step 0"
 						if (player.isUnderControl()) {
