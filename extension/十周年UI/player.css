@@ -1295,3 +1295,14 @@
 	pointer-events: none;
 	z-index: 87;
 }
+.player>.hpp-mark {
+	position: absolute;
+	top: 108px;
+	left: -11px;
+	width: 22px;
+	height: 34px;
+	background-image: url('assets/image/mark_hpp.png');
+	background-size: 100% 100%;
+	pointer-events: none;
+	z-index: 87;
+}

@@ -340,11 +340,38 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								result.node.name.innerText = text;
 							}
 
+							var lao;
+							if (duicfg.showLaoMark && character) {
+								if (lib.characterPack.happykill) {
+									lao = lib.characterPack.happykill[character];
+								}
+								if (lao != null) {
+									lao = character.substr(0, 3);
+									if (lao == 'hpp') {
+										this.$hppMark = dui.element.create('hpp-mark', this);
+										this.appendChild(this.$hppMark);
+									}
+								}
+							}
+
+							var result = this._super.init.apply(this, arguments);
+							if (lao == '欢') {
+								var text = result.node.name.innerText;
+								if (text[1] == '\n')
+									text = text.substr(2);
+								else
+									text = text.substr(1);
+
+								result.node.name.innerText = text;
+							}
+
 							return result;
 						};
 						Player.uninit = function () {
 							if (this.$jieMark)
 								this.$jieMark.remove();
+							if (this.$laoMark)
+								this.$laoMark.remove();
 
 							this.stopDynamic();
 							this.doubleAvatar = false;
@@ -6236,18 +6263,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 						}
 					},
 
-					lib.skill._decadeUI_usecardBegin = {
-						trigger: { global: 'useCardBegin' },
-						forced: true,
-						popup: false,
-						priority: -100,
-						filter: function (event) {
-							return !ui.clear.delay && event.card.name != 'wuxie';
-						},
-						content: function () {
-							ui.clear.delay = 'usecard';
-						}
-					};
+						lib.skill._decadeUI_usecardBegin = {
+							trigger: { global: 'useCardBegin' },
+							forced: true,
+							popup: false,
+							priority: -100,
+							filter: function (event) {
+								return !ui.clear.delay && event.card.name != 'wuxie';
+							},
+							content: function () {
+								ui.clear.delay = 'usecard';
+							}
+						};
 
 					lib.skill._discard = {
 						trigger: { global: ['discardAfter', 'loseToDiscardpileAfter', 'loseAsyncAfter'] },
@@ -9998,6 +10025,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			},
 			showJieMark: {
 				name: '界标记显示',
+				init: true,
+			},
+			showLaoMark: {
+				name: '捞德一标记显示',
 				init: true,
 			},
 			cardAlternateNameVisible: {

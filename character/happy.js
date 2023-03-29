@@ -86,7 +86,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 神董卓
 			shen_dongzhuo: ['male', 'shen', 5, ['cannue', 'xiehan', 'huidu'], ['qun']],
 			// 神鲁肃
-			shen_lusu: ['male', 'shen', 4, ['diying', 'fusheng', 'chiyan', 'lianmeng'], ['wu']],
+			shen_lusu: ['male', 'shen', 3, ['diying', 'fusheng', 'chiyan', 'lianmeng'], ['wu']],
 		},
 		characterIntro: {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
@@ -1394,7 +1394,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			chengshi: {
 				audio: 'chengzhang',
-				trigger: { global: 'phaseJieshuEnd' },
+				trigger: { global: 'phaseUseEnd' },
 				forced: true,
 				unique: true,
 				juexingji: true,
@@ -2066,7 +2066,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			qibu: '七步',
 			qibu_info: '当你使用普通锦囊牌时，你的“七步”标记不超过7，获得标记“七步”。',
 			chengshi: '成诗',
-			chengshi_info: '觉醒技，一名角色回合结束时，当你的“七步”标记为7时，你回复1点体力并且获得“豆”标记，你可以选择一名其他角色获得相同的效果。',
+			chengshi_info: '觉醒技，一名角色出牌阶段结束时，当你的“七步”标记为7时，你回复1点体力并且获得“豆”标记，你可以选择一名其他角色获得相同的效果。',
 			// 神董卓
 			shen_dongzhuo: '神董卓',
 			cannue: '残虐',
