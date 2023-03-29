@@ -384,13 +384,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				forced: true,
 				filter: function (event) {
-					if (player.countMark('hok_wangming') >= 7) {
-						return false;
-					}
 					return (event.name != 'damage' && (event.name != 'phase' || game.phaseNumber == 0)) || event.num > 0;
 				},
 				content: function () {
-					player.addMark('hok_wangming', trigger.name == 'damage' ? 1 : 4);
+					if (player.countMark('hok_wangming') < 7) {
+						player.addMark('hok_wangming', trigger.name == 'damage' ? 1 : 4);
+					}
 					var list = [];
 					var zhu = get.zhu(player);
 					if (zhu && zhu != player && zhu.skills) {
