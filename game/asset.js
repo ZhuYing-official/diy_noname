@@ -5105,6 +5105,11 @@ window.noname_asset_list=[
 	'audio/skill/zyqiao1.mp3',
 	'audio/skill/zyqiao2.mp3',
 
+	'audio/skill/huchi1.mp3',
+	'audio/skill/huchi2.mp3',
+	'audio/skill/zhengbing1.mp3',
+	'audio/skill/zhengbing2.mp3',
+
 	'audio/voice/male/0.mp3',
 	'audio/voice/male/1.mp3',
 	'audio/voice/male/2.mp3',

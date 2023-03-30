@@ -1646,7 +1646,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				skillAnimation: true,
 				animationColor: 'metal',
 				filter: function (event, player) {
-					return player.countMark('cannue') >= 1;
+					return player.countMark('cannue') >= 6;
 				},
 				content: function () {
 					player.awakenSkill(event.name);
@@ -1922,42 +1922,107 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					threaten: 0.8
 				},
 			},
-			/* oldlianmeng: {
-				audio: 2,
-				usable: 1,
+
+			// others
+			zhengbing: {
+				audio: 1,
+				mod: {
+					ignoredHandcard: function (card, player) {
+						if (card.hasGaintag('zhengbing')) return true;
+					},
+					cardDiscardable: function (card, player, name) {
+						if (name == 'phaseDiscard' && card.hasGaintag('zhengbing')) return false;
+					},
+				},
+				group: 'zhengbing_mark',
 				enable: 'phaseUse',
 				filter: function (event, player) {
-					return player.countCards('h') >= 2;
+					return player.countCards('h', function (card) {
+						return card.hasGaintag('zhengbing');
+					});
+				},
+				filterCard: function (card) {
+					return card.hasGaintag('zhengbing');
+				},
+				check: function (card) {
+					return 7 - get.value(card);
+				},
+				prepare: function (cards, player) {
+					player.$throw(cards, 1000);
+					game.log(player, '将', cards, '置入了弃牌堆');
+				},
+				discard: false,
+				loseTo: 'discardPile',
+				visible: true,
+				delay: 0.5,
+				content: function () {
+					player.draw(player.countCards('h', function (card) {
+						return card.hasGaintag('zhengbing');
+					}) ? 1 : 2);
+				},
+				ai: {
+					order: 10,
+					result: { player: 1 },
+				},
+				subSkill: {
+					mark: {
+						charlotte: true,
+						trigger: { player: 'gainBegin' },
+						filter: function (event, player) {
+							return lib.translate[event.getParent(3).name] == '突袭';
+						},
+						direct: true,
+						firstDo: true,
+						content: function () {
+							trigger.gaintag.add('zhengbing');
+						},
+					},
+				},
+			},
+			huchi: {
+				group: ['hpp_huchi_miss', 'hpp_huchi_draw'],
+				audio: 1,
+				trigger: { player: 'phaseJieshuBegin' },
+				frequent: true,
+				prompt: '是否发动【虎痴】，将手牌摸至两张？',
+				filter: function (event, player) {
+					return player.countCards('h') < 2;
 				},
 				content: function () {
-					'step 0'
-					player.chooseCardTarget({
-						prompt: '请选择【联盟】的牌和目标',
-						prompt2: '将两张手牌交给一名其他角色，然后你摸三张牌',
-						selectCard: 2,
-						filterCard: true,
-						filterTarget: lib.filter.notMe,
-						ai1: function (card) {
-							if (get.tag(card, 'recover') && !game.hasPlayer(function (current) {
-								return get.attitude(current, player) > 0 && !current.hasSkillTag('nogain');
-							})) return 0;
-							return 1 / Math.max(0.1, get.value(card));
-						},
-						ai2: function (target) {
-							var player = _status.event.player, att = get.attitude(player, target);
-							if (target.hasSkillTag('nogain')) att /= 9;
-							return 4 + att;
-						},
-					});
-					'step 1'
-					if (result.bool) {
-						var target = result.targets[0];
-						player.line(target, 'green');
-						player.give(result.cards, target);
-						player.draw(3);
-					}
+					player.drawTo(2);
 				},
-			}, */
+				marktext: '痴',
+				intro: { name: '虎痴', name2: '痴', content: 'mark' },
+				subSkill: {
+					miss: {
+						shaRelated: true,
+						audio: 'hpp_huchi',
+						trigger: { player: 'shaMiss' },
+						forced: true,
+						locked: false,
+						content: function () {
+							player.addMark('hpp_huchi', 1);
+						},
+					},
+					draw: {
+						audio: 'hpp_huchi',
+						enable: 'phaseUse',
+						filter: function (event, player) {
+							return player.countMark('hpp_huchi');
+						},
+						usable: 1,
+						content: function () {
+							var num = player.countMark('hpp_huchi');
+							player.removeMark('hpp_huchi', num);
+							player.draw(num);
+						},
+						ai: {
+							order: 1,
+							result: { player: 1 },
+						},
+					},
+				},
+			},
 		},
 		dynamicTranslate: {
 			// 屈降

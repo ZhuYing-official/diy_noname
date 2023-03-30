@@ -3565,6 +3565,11 @@ window.noname_asset_list=[
 	'audio/skill/olxiuhao2.mp3',
 	'audio/skill/xianwei1.mp3',
 	'audio/skill/xianwei2.mp3',
+	
+	'audio/skill/huchi1.mp3',
+	'audio/skill/huchi2.mp3',
+	'audio/skill/zhengbing1.mp3',
+	'audio/skill/zhengbing2.mp3',
 
 	'audio/voice/male/0.mp3',
 	'audio/voice/male/1.mp3',
