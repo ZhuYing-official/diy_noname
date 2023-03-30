@@ -8,6 +8,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     rarity: {
                         //传说
                         legend: [
+                            'hpp_shen_luxun',
+                            'hpp_shen_zhangjiao',
+
                             'hpp_caocao',
                             'hpp_ganning',
                             'hpp_guanyu',
@@ -71,35 +74,36 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 biao_zhu: ['hpp_caocao', 'hpp_liubei', 'hpp_sunquan'],
                                 biao_hu: ['hpp_guanyu', 'hpp_zhangfei', 'hpp_zhaoyun', 'hpp_machao', 'hpp_huangzhong'],
                                 biao_meng: ['hpp_xuzhu', 'hpp_huanggai', 'hpp_xiahoudun', 'hpp_zhangliao', 'hpp_ganning'],
-                                biao_jiao: [],
-                                biao_wei: [],
-                                biao_mou: [],
-                                feng_xiao: [],
-                                feng_li: [],
-                                feng_zhi: [],
-                                feng_xian: [],
-                                lin_zhi: [],
-                                lin_man: [],
-                                lin_xiong: [],
-                                huo_zhong: [],
-                                huo_yi: [],
-                                huo_bi: [],
-                                shan_zhen: [],
-                                shan_si: [],
-                                shan_liang: [],
-                                shan_ce: [],
-                                shan_ji: [],
-                                ming_shu: [],
-                                ming_ru: [],
-                                ming_cao: [],
-                                ming_han: [],
-                                ming_qi: [],
-                                xian_sp: [],
-                                xian_jin: [],
-                                shen_wei: [],
-                                shen_shu: [],
-                                shen_wu: [],
-                                shen_qun: [],
+                                biao_jiao: ['hpp_daqiao', 'hpp_xiaoqiao', 'hpp_diaochan', 'hpp_sunshangxiang', 'hpp_zhenji'],
+                                biao_wei: ['hpp_huaxiong', 'hpp_liaohua', 'hpp_pangde', 'hpp_huatuo', 'hpp_lvbu'],
+                                biao_mou: ['hpp_lvmeng', 'hpp_simayi', 'hpp_guojia', 'hpp_zhugeliang', 'hpp_pangtong'],
+                                feng_xiao: ['hpp_caoren', 'hpp_guohuai', 'hpp_weiyan', 'hpp_xiahouyuan'],
+                                feng_li: ['hpp_liubiao', 'hpp_caifuren',],
+                                feng_zhi: ['hpp_sunce', 'hpp_zhoutai', 'hpp_zhouyu',],
+                                feng_xian: ['hpp_zhangjiao', 'hpp_yuji', 'hpp_zuoci'],
+                                lin_zhi: ['hpp_zhangsong', 'hpp_zhongyao', 'hpp_masu', 'hpp_huangyueying', 'hpp_luxun', 'hpp_lusu', 'hpp_jiaxu'],
+                                lin_man: ['hpp_shamoke', 'hpp_zhurong', 'hpp_menghuo',],
+                                lin_xiong: ['hpp_sunliang', 'hpp_sunjian', 'hpp_gongsunzan', 'hpp_dongzhuo', 'hpp_liuyan'],
+                                huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_wangping', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
+                                huo_yi: ['hpp_taishici', 'hpp_luji', 'hpp_lingtong', 'hpp_xusheng', 'hpp_gaoshun', 'hpp_zhuran', 'hpp_zhuzhi',],
+                                huo_bi: ['hpp_zhonghui', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
+                                shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xuhsi', 'hpp_dufuren', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
+                                shan_si: ['hpp_liushan', 'hpp_zhugezhan', 'hpp_gaunping', 'hpp_liufen', 'hpp_zhangxingcai', 'hpp_gaunyinpin', 'hpp_zhaoxiang'],
+                                shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
+                                shan_ce: ['hpp_wolongzhuge', 'hpp_xunyou', 'hpp_jianyong', 'hpp_buzhi', 'hpp_yangxiu'],
+                                shan_ji: ['hpp_lukang', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_luyusheng',],
+                                ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu'],
+                                ming_ru: ['hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xushu', 'hpp_liuzhang'],
+                                ming_cao: ['hpp_caopi', 'hpp_caozhi', 'hpp_caozhang', 'hpp_caocong', 'hpp_caozhen', 'hpp_caorui', 'hpp_caoxiu', 'hpp_caoang', 'hpp_caoying'],
+                                ming_han: ['hpp_haozhao', 'hpp_zhangxiu', 'hpp_madai', 'hpp_chenpu', 'hpp_handang', 'hpp_wuyi', 'hpp_xurong', 'hpp_lijue', 'hpp_chunyuqiong'],
+                                ming_qi: ['hpp_xizhicai', 'hpp_zhangliang', 'hpp_zhangbao', 'hpp_beimihu'],
+                                xian_sp: ['hpp_sp_jiangwei', 'hpp_sp_haungyueying', 'hpp_sp_taishici', 'hpp_sp_machao', 'hpp_sp_daqiao', 'hpp_sp_zhaoyun', 'hpp_sp_sunshangxiang', 'hpp_sp_caiwenji', 'hpp_sp_xiaoqiao', 'hpp_sp_diaochan'],
+                                xian_sp2: ['hpp_sp_pangde'],
+                                xian_jin: ['hpp_guansuo', 'hpp_baosanniang', 'hpp_liuzan', 'hpp_guozhao', 'hpp_panshu', 'hpp_lvlingqi', 'hpp_zhangchangpu', 'hpp_zhangqiying', 'hpp_puyuan', 'hpp_xushao'],
+                                shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia'],
+                                shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei'],
+                                shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce'],
+                                shen_qun: ['hpp_shen_lvbu', 'hpp_shen_huatuo', 'hpp_shen_zhenji', 'hpp_shen_zhangjiao'],
                             },
                         },
                         character: {
@@ -129,8 +133,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangliao: ['male', 'wei', 4, ['new_retuxi', 'hpp_zhengbing'], []],
                             // 欢乐赵云
                             hpp_zhaoyun: ['male', 'shu', 4, ['ollongdan', 'hpp_yajiao'], []],
+
+                            // 神陆逊
+                            hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
+                            // 神张角
+                            hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
                         },
                         characterIntro: {
+                            hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
+                            hpp_shen_zhangjiao: '乱世的开始，黄巾起义军首领，太平道创始人。张角早年信奉黄老学说，对在汉代十分流行的谶纬之学也深有研究，对民间医术 、巫术也很熟悉。',
                         },
                         characterReplace: {
                             caocao: ['hpp_caocao', 're_caocao', 'caocao'],
@@ -146,6 +157,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhangfei: ['hpp_zhangfei', 're_zhangfei', 'tw_zhangfei', 'xin_zhangfei', 'old_zhangfei', 'zhangfei'],
                             zhangliao: ['hpp_zhangliao', 're_zhangliao', 'zhangliao'],
                             zhaoyun: ['hpp_zhaoyun', 're_zhaoyun', 'old_zhaoyun', 'zhaoyun'],
+
+                            shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
+                            shen_zhangjiao: ['hpp_shen_zhangjiao', 'shen_zhangjiao'],
                         },
                         characterFilter: {
                         },
@@ -1306,6 +1320,293 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                             },
+
+                            // 神陆逊
+                            hpp_junlue: {
+                                audio: 2,
+                                //marktext:"军",
+                                intro: {
+                                    content: '当前有#个标记',
+                                },
+                                //mark:true,
+                                trigger: {
+                                    player: "damageAfter",
+                                    source: "damageSource",
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.addMark('hpp_junlue', trigger.num);
+                                },
+                            },
+                            hpp_cuike: {
+                                audio: 2,
+                                trigger: {
+                                    player: "phaseUseBegin",
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    if (player.countMark('hpp_junlue') % 2 == 1) {
+                                        player.chooseTarget('是否发动【摧克】，对一名角色造成一点伤害？').ai = function (target) {
+                                            return -get.attitude(player, target);
+                                        };
+                                    }
+                                    else {
+                                        player.chooseTarget('是否发动【摧克】，横置一名角色并弃置其区域内的一张牌？').ai = function (target) {
+                                            return -get.attitude(player, target);
+                                        };
+                                    }
+                                    'step 1'
+                                    if (result.bool) {
+                                        player.logSkill('hpp_cuike', result.targets);
+                                        if (player.countMark('hpp_junlue') % 2 == 1) {
+                                            result.targets[0].damage();
+                                        }
+                                        else {
+                                            result.targets[0].link(true);
+                                            player.discardPlayerCard(result.targets[0], 1, 'hej', true);
+                                        };
+                                    };
+                                    'step 2'
+                                    if (player.countMark('hpp_junlue') > 7) {
+                                        player.chooseBool().set('ai', function () {
+                                            return true;
+                                        }).set('prompt', '是否弃置所有“军略”标记并对所有其他角色造成一点伤害？');
+                                    } else {
+                                        event.finish();
+                                    };
+                                    'step 3'
+                                    if (result.bool) {
+                                        var players = game.players.slice(0).sortBySeat();
+                                        player.line(players);
+                                        player.removeMark('hpp_junlue', player.countMark('hpp_junlue'));
+                                        for (var i = 0; i < players.length; i++) {
+                                            if (players[i] != player) players[i].damage();
+                                        };
+                                    };
+                                },
+                            },
+                            hpp_zhanhuo: {
+                                audio: 2,
+                                limited: true,
+                                init: function (player) {
+                                    player.storage.hpp_zhanhuo = false;
+                                },
+                                intro: {
+                                    content: "limited",
+                                },
+                                unique: true,
+                                mark: true,
+                                skillAnimation: true,
+                                animationColor: 'metal',
+                                enable: 'phaseUse',
+                                filter: function (event, player) {
+                                    return !player.storage.hpp_zhanhuo && player.countMark('hpp_junlue') > 0;
+                                },
+                                check: function (event, player) {
+                                    var num = game.countPlayer(function (current) { return get.attitude(player, current) < 0 && current.isLinked() });
+                                    return player.storage.hpp_junlue >= num && num == game.countPlayer(function (current) { return get.attitude(player, current) < 0 });
+                                },
+                                filterTarget: function (card, player, target) {
+                                    return target.isLinked();
+                                },
+                                selectTarget: function () {
+                                    return [1, _status.event.player.countMark('hpp_junlue')];
+                                },
+                                multiline: true,
+                                multitarget: true,
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_zhanhuo');
+                                    player.storage.hpp_zhanhuo = true;
+                                    'step 1'
+                                    player.removeMark('hpp_junlue', player.countMark('hpp_junlue'));
+                                    for (var i = 0; i < targets.length; i++) {
+                                        targets[i].discard(targets[i].getCards('e'));
+                                    }
+                                    player.chooseTarget(true, '对一名目标角色造成1点火焰伤害', function (card, player, target) {
+                                        return _status.event.targets.contains(target);
+                                    }).set('targets', targets).ai = function () { return 1 };
+                                    'step 2'
+                                    if (result.bool) {
+                                        result.targets[0].damage('fire', 'nocard');
+                                    }
+                                },
+                                ai: {
+                                    order: 1,
+                                    fireAttack: true,
+                                    result: {
+                                        target: function (player, target) {
+                                            if (target.hasSkillTag('nofire')) return 0;
+                                            if (lib.config.mode == 'versus') return -1;
+                                            if (player.hasUnknown()) return 0;
+                                            return get.damageEffect(target, player) - target.countCards('e');
+                                        }
+                                    }
+                                }
+                            },
+
+                            // 神张角
+                            hpp_yizhao: {
+                                audio: 2,
+                                trigger: {
+                                    player: ['useCard', 'respond']
+                                },
+                                forced: true,
+                                filter: function (event, player) {
+                                    return typeof get.number(event.card) == 'number';
+                                },
+                                marktext: '黄',
+                                intro: {
+                                    name: '黄(异兆/肆军)',
+                                    name2: '黄',
+                                    content: 'mark',
+                                    markcount: function (storage, player) {
+                                        return storage.toString().slice(-2);
+                                    },
+                                },
+                                content: function () {
+                                    'step 0'
+                                    event.num = player.countMark('hpp_yizhao');
+                                    player.addMark('hpp_yizhao', get.number(trigger.card));
+                                    'step 1'
+                                    var num = Math.floor(num / 10) % 10, num2 = Math.floor(player.countMark('hpp_yizhao') / 10) % 10;
+                                    if (num != num2) {
+                                        var card = get.cardPile2(card => {
+                                            return get.number(card, false) == num2;
+                                        });
+                                        if (card) player.gain(card, 'gain2');
+                                    }
+                                },
+                                mod: {
+                                    aiOrder: function (player, card, num) {
+                                        if ((get.number(card) + player.countMark('hpp_yizhao')) % 10 > 10) return num + 10;
+                                    },
+                                },
+                                ai: {
+                                    threaten: 1.5,
+                                    effect: {
+                                        target: function (card, player, target, current) {
+                                            if (get.type(card) == 'equip' && !get.cardtag(card, 'gifts')) return [1, 0.1];
+                                        }
+                                    }
+                                }
+                            },
+                            hpp_sanshou: {
+                                audio: 2,
+                                trigger: { player: 'damageBegin4' },
+                                check: function (event, player) {
+                                    return get.damageEffect(player, event.source, event.source, event.nature) <= 0;
+                                },
+                                content: function () {
+                                    'step 0'
+                                    var cards = game.cardsGotoOrdering(get.cards(3)).cards;
+                                    event.cards = cards;
+                                    player.showCards(cards, get.translation(player) + '发动了【三首】');
+                                    'step 1'
+                                    var types = [];
+                                    types.addArray(game.getGlobalHistory('useCard').map(evt => get.type2(evt.card)));
+                                    if (cards.filter(card => !types.contains(get.type2(card))).length) {
+                                        trigger.cancel();
+                                    }
+                                    game.delayx();
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (card.name == 'shandian' || card.name == 'fulei') return [0, 0.1];
+                                            if (!get.tag(card, 'damage')) return;
+                                            var types = [], bool = 0;
+                                            types.addArray(game.getGlobalHistory('useCard').map(evt => get.type2(evt.card)));
+                                            if (!types.contains(get.type2(card))) bool = 1;
+                                            if (types.length < 2) return Math.min(1, 0.4 + (types.length + bool) * 0.2);
+                                        }
+                                    }
+                                },
+                            },
+                            hpp_sijun: {
+                                audio: 2,
+                                trigger: { player: 'phaseZhunbeiBegin' },
+                                filter: function (event, player) {
+                                    return player.countMark('hpp_yizhao') > ui.cardPile.childNodes.length;
+                                },
+                                check: () => true,
+                                content: function () {
+                                    'step 0'
+                                    player.removeMark('hpp_yizhao', player.countMark('hpp_yizhao'));
+                                    var cards = get.cards(ui.cardPile.childElementCount + 1);
+                                    for (var i = 0; i < cards.length; i++) {
+                                        ui.cardPile.insertBefore(cards[i], ui.cardPile.childNodes[get.rand(ui.cardPile.childElementCount)]);
+                                    }
+                                    game.updateRoundNumber();
+                                    'step 1'
+                                    var pile = Array.from(ui.cardPile.childNodes);
+                                    if (pile.length < 3) return;
+                                    var bool = false, max = Math.pow(2, Math.min(100, pile.length)), index;
+                                    for (var i = 0; i < max; i++) {
+                                        var num = 0;
+                                        index = i.toString(2);
+                                        while (index.length < pile.length) {
+                                            index = ('0' + index);
+                                        }
+                                        for (var k = 0; k < index.length; k++) {
+                                            if (index[k] == '1') num += get.number(pile[k]);
+                                            if (num > 36) break;
+                                        }
+                                        if (num == 36) {
+                                            bool = true;
+                                            break;
+                                        }
+                                    }
+                                    if (bool) {
+                                        var cards = [];
+                                        for (var k = 0; k < index.length; k++) {
+                                            if (index[k] == '1') cards.push(pile[k]);
+                                        }
+                                        player.gain(cards, 'gain2');
+                                    }
+                                }
+                            },
+                            hpp_tianjie: {
+                                audio: 2,
+                                trigger: { global: 'phaseEnd' },
+                                direct: true,
+                                filter: function (event, player) {
+                                    return player.hasSkill('hpp_tianjie_shuffled');
+                                },
+                                group: 'hpp_tianjie_effect',
+                                skillAnimation: true,
+                                animationColor: 'metal',
+                                content: function () {
+                                    'step 0'
+                                    player.chooseTarget(get.prompt('hpp_tianjie'), '选择至多三名其他角色，依次对这些角色造成X点雷电伤害（X为其手牌中【闪】的数量，至少为1）', [1, 3]).set('ai', target => {
+                                        var player = _status.event.player;
+                                        return get.damageEffect(target, player, player, 'thunder') * Math.sqrt(Math.max(1, target.countCards('h', 'shan')));
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        var targets = result.targets;
+                                        targets.sortBySeat();
+                                        player.logSkill('hpp_tianjie', targets);
+                                        for (var target of targets) {
+                                            var num = Math.max(1, target.countCards('h', 'shan'));
+                                            target.damage(num, 'thunder');
+                                        }
+                                    }
+                                },
+                                subSkill: {
+                                    effect: {
+                                        trigger: { global: 'washCard' },
+                                        forced: true,
+                                        silent: true,
+                                        charlotte: true,
+                                        content: function () {
+                                            player.addTempSkill('hpp_tianjie_shuffled');
+                                        },
+                                    },
+                                    shuffled: { charlotte: true },
+                                }
+                            },
                         },
                         dynamicTranslate: {
                         },
@@ -1324,6 +1625,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangfei: '#r捞德一评级:4.2',
                             hpp_zhangliao: '#r捞德一评级:4.2',
                             hpp_zhaoyun: '#r捞德一评级:4.0',
+                            hpp_shen_luxun: '#r捞德一评级:4.1',
+                            hpp_shen_zhangjiao: '#r捞德一评级4.5',
                         },
                         translate: {
                             hpp_caocao: '曹操',
@@ -1378,6 +1681,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yajiao: '涯角',
                             hpp_yajiao_info: '当你于回合外使用或打出手牌时，你可以展示牌堆顶的一张牌并将其交给一名角色；当你于自己回合内使用过【龙胆】，本回合结束阶段摸一张牌。',
 
+                            hpp_shen_luxun: '神陆逊',
+                            hpp_junlue: '军略',
+                            hpp_junlue_info: '锁定技，当你受到或造成1点伤害后，你获得一个“军略"标记。',
+                            hpp_cuike: '摧克',
+                            hpp_cuike_info: '出牌阶段开始时，若“军略”数量为奇数，你可以对一名角色造成1点伤害；若“军略”数量为偶数，你可以横置一名角色并弃置其区域里的—张牌。若“军略”数量超过7个，你可以移去全部“军略”标记并对所有其他角色造成1点伤害。',
+                            hpp_zhanhuo: '绽火',
+                            hpp_zhanhuo_info: '限定技，出牌阶段，你可以移去全部“军略”标记，令至多等量的已横置角色弃置所有装备区里的牌，然后对其中1名角色造成1点火焰伤害。',
+                            hpp_shen_zhangjiao: '神张角',
+                            hpp_yizhao: '异兆',
+                            hpp_yizhao_info: '锁定技，你使用或打出一张牌时，获得等于此牌点数的“黄”标记。每次“黄”的十位数因此变化时，你获得牌堆中一张与变化后十位数点数相同的牌。',
+                            hpp_sanshou: '三首',
+                            hpp_sanshou_info: '当你受到伤害时，你可以亮出牌堆顶三张牌，若包含本回合未使用过的类型，你防止此伤害。',
+                            hpp_sijun: '肆军',
+                            hpp_sijun_info: '准备阶段，若“黄”标记数量大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得点数之和为36的牌，并洗牌。',
+                            hpp_tianjie: '天劫',
+                            hpp_tianjie_info: '每个回合结束时，若本回合牌堆洗过牌，你可以选择至多3名其他角色，对这些角色分别造成X点雷电伤害（X为其手牌中【闪】的数量且至少为1）',
 
                             biao_zhu: '标·主',
                             biao_hu: '标·虎',

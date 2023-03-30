@@ -1204,6 +1204,8 @@ window.noname_character_rank = {
 			'hpp_zhangfei',
 			'hpp_zhangliao',
 			'hpp_zhaoyun',
+			'hpp_shen_luxun',
+			'hpp_shen_zhangjiao',
 		],
 		epic: [
 			'hs_tyrande',
