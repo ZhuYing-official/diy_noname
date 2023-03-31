@@ -2065,7 +2065,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			quxiang: '屈降',
 			quxiang_info: '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。',
 			quxiang_rewrite: '屈降·改',
-			quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你一张手牌。',
+			quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你1张手牌。',
 
 			// 妲己
 			hok_daji: '妲己',
