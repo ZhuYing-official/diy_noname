@@ -115,6 +115,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				trigger: {
 					player: 'phaseJieshu',
 				},
+				mod: {
+					maxHandcard: function (player, num) {
+						return (3 > player.hp) ? 3 : player.hp;
+					},
+				},
 				filter: function (event, player) {
 					let flag = true;
 					if (player.countCards('h', { suit: 'heart' }) === 0) {
@@ -165,9 +170,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 					aiUseful: function () {
 						return lib.skill.qingguo.mod.aiValue.apply(this, arguments);
-					},
-					maxHandcard: function (player, num) {
-						return (3 > player.hp) ? 3 : player.hp;
 					},
 				},
 				enable: ['chooseToRespond', 'chooseToUse'],
@@ -2053,9 +2055,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 崔氏
 			cuishi: '崔氏',
 			pianwan: '翩婉',
-			pianwan_info: '锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。你的手牌上限至少为3。',
+			pianwan_info: '锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
 			huayi: '华衣',
-			huayi_info: '觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。',
+			huayi_info: '觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
 			// 刘琮
 			liucong: '刘琮',
 			tunquan: '豚犬',
@@ -2087,7 +2089,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_zuolun: '左轮',
 			hok_zuolun_info: '锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
 			hok_qianglin: '枪林',
-			hok_qianglin_info: '出牌阶段限1次，你可以弃置2张手牌，视为对一名其他角色使用一张无距离限制且不计入出牌阶段使用次数的雷杀。若你因此【雷杀】令任意角色体力减少，则你摸X张牌（X为目标角色体力减少的数量）。',
+			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀，若以此法每次令任意角色受到伤害或流失体力，你模一张牌。',
 			hok_danyu: '弹雨',
 			hok_danyu_info: '出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// 明世隐
