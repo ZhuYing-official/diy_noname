@@ -175,9 +175,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             ganning: ['hpp_ganning', 're_ganning', 'ganning'],
                             guanyu: ['hpp_guanyu', 're_guanyu', 'guanyu'],
                             huanggai: ['hpp_huanggai', 're_huanggai', 'huanggai'],
-                            huangzhong: ['hpp_huangzhong', 're_huangzhong', 'huangzhong'],
+                            huangzhong:['hpp_huangzhong', 'ol_huangzhong','re_huangzhong','huangzhong'],
                             huaxiong: ['hpp_huaxiong', 're_huaxiong', 'old_huaxiong', 'huaxiong', 'ol_huaxiong'],
-                            liubei: ['hpp_liubei', 're_liubei', 'liubei'],
+                            liubei: ['hpp_liubei', 're_liubei', 'liubei','junk_liubei'],
                             lvbu: ['hpp_lvbu', 're_lvbu', 'lvbu'],
                             lvmeng: ['hpp_lvmeng', 're_lvmeng', 'lvmeng'],
                             machao: ['hpp_machao', 're_machao', 'machao'],
@@ -2130,164 +2130,164 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 神张角
-                            hpp_yizhao: {
-                                audio: 'yizhao',
-                                trigger: {
-                                    player: ['useCard', 'respond']
+                            hpp_yizhao:{
+                                audio:'yizhao',
+                                trigger:{
+                                    player:['useCard','respond']
                                 },
-                                forced: true,
-                                filter: function (event, player) {
-                                    return typeof get.number(event.card) == 'number';
+                                forced:true,
+                                filter:function(event,player){
+                                    return typeof get.number(event.card)=='number';
                                 },
-                                marktext: '黄',
-                                intro: {
-                                    name: '黄(异兆/肆军)',
-                                    name2: '黄',
-                                    content: 'mark',
-                                    markcount: function (storage, player) {
-                                        return storage.toString().slice(-2);
+                                marktext:'黄',
+                                intro:{
+                                    name:'黄(异兆/肆军)',
+                                    name2:'黄',
+                                    content:'mark',
+                                    markcount:function(storage,player){
+                                        return (storage||0).toString().slice(-2);
                                     },
                                 },
-                                content: function () {
+                                content:function(){
                                     'step 0'
-                                    event.num = player.countMark('hpp_yizhao');
-                                    player.addMark('hpp_yizhao', get.number(trigger.card));
+                                    event.num=player.countMark('hpp_yizhao');
+                                    player.addMark('hpp_yizhao',get.number(trigger.card));
                                     'step 1'
-                                    var num = Math.floor(num / 10) % 10, num2 = Math.floor(player.countMark('hpp_yizhao') / 10) % 10;
-                                    if (num != num2) {
-                                        var card = get.cardPile2(card => {
-                                            return get.number(card, false) == num2;
+                                    var num=Math.floor(num/10)%10,num2=Math.floor(player.countMark('hpp_yizhao')/10)%10;
+                                    if(num!=num2){
+                                        var card=get.cardPile2(card=>{
+                                            return get.number(card,false)==num2;
                                         });
-                                        if (card) player.gain(card, 'gain2');
+                                        if(card) player.gain(card,'gain2');
                                     }
                                 },
-                                mod: {
-                                    aiOrder: function (player, card, num) {
-                                        if ((get.number(card) + player.countMark('hpp_yizhao')) % 10 > 10) return num + 10;
+                                mod:{
+                                    aiOrder:function(player,card,num){
+                                        if(Math.floor((get.number(card)+player.countMark('hpp_yizhao')%10)/10)==1) return num+10;
                                     },
                                 },
-                                ai: {
-                                    threaten: 1.5,
-                                    effect: {
-                                        target: function (card, player, target, current) {
-                                            if (get.type(card) == 'equip' && !get.cardtag(card, 'gifts')) return [1, 0.1];
+                                ai:{
+                                    threaten:1.5,
+                                    effect:{
+                                        target:function(card,player,target,current){
+                                            if(get.type(card)=='equip'&&!get.cardtag(card,'gifts')) return [1,0.1];
                                         }
                                     }
                                 }
                             },
-                            hpp_sanshou: {
-                                audio: 'sanshou',
-                                trigger: { player: 'damageBegin4' },
-                                check: function (event, player) {
-                                    return get.damageEffect(player, event.source, event.source, event.nature) <= 0;
+                            hpp_sanshou:{
+                                audio:'sanshou',
+                                trigger:{player:'damageBegin4'},
+                                check:function(event,player){
+                                    return get.damageEffect(player,event.source,player,event.nature)<=0;
                                 },
-                                content: function () {
+                                content:function(){
                                     'step 0'
-                                    var cards = game.cardsGotoOrdering(get.cards(3)).cards;
-                                    event.cards = cards;
-                                    player.showCards(cards, get.translation(player) + '发动了【三首】');
+                                    var cards=game.cardsGotoOrdering(get.cards(3)).cards;
+                                    event.cards=cards;
+                                    player.showCards(cards,get.translation(player)+'发动了【三首】');
                                     'step 1'
-                                    var types = [];
-                                    types.addArray(game.getGlobalHistory('useCard').map(evt => get.type2(evt.card)));
-                                    if (cards.filter(card => !types.contains(get.type2(card))).length) {
+                                    var types=[];
+                                    types.addArray(game.getGlobalHistory('useCard').map(evt=>get.type2(evt.card)));
+                                    if(cards.filter(card=>!types.contains(get.type2(card))).length){
                                         trigger.cancel();
                                     }
                                     game.delayx();
                                 },
-                                ai: {
-                                    effect: {
-                                        target: function (card, player, target) {
-                                            if (card.name == 'shandian' || card.name == 'fulei') return [0, 0.1];
-                                            if (!get.tag(card, 'damage')) return;
-                                            var types = [], bool = 0;
-                                            types.addArray(game.getGlobalHistory('useCard').map(evt => get.type2(evt.card)));
-                                            if (!types.contains(get.type2(card))) bool = 1;
-                                            if (types.length < 2) return Math.min(1, 0.4 + (types.length + bool) * 0.2);
+                                ai:{
+                                    effect:{
+                                        target:function(card,player,target){
+                                            if(card.name=='shandian'||card.name=='fulei') return [0,0.1];
+                                            if(!get.tag(card,'damage')) return;
+                                            var types=[],bool=0;
+                                            types.addArray(game.getGlobalHistory('useCard').map(evt=>get.type2(evt.card)));
+                                            if(!types.contains(get.type2(card))) bool=1;
+                                            if(types.length<2) return Math.min(1,0.4+(types.length+bool)*0.2);
                                         }
                                     }
                                 },
                             },
-                            hpp_sijun: {
-                                audio: 'sijun',
-                                trigger: { player: 'phaseZhunbeiBegin' },
-                                filter: function (event, player) {
-                                    return player.countMark('hpp_yizhao') > ui.cardPile.childNodes.length;
+                            hpp_sijun:{
+                                audio:'sijun',
+                                trigger:{player:'phaseZhunbeiBegin'},
+                                filter:function(event,player){
+                                    return player.countMark('hpp_yizhao')>ui.cardPile.childNodes.length;
                                 },
-                                check: () => true,
-                                content: function () {
+                                check:()=>true,
+                                content:function(){
                                     'step 0'
-                                    player.removeMark('hpp_yizhao', player.countMark('hpp_yizhao'));
-                                    var cards = get.cards(ui.cardPile.childElementCount + 1);
-                                    for (var i = 0; i < cards.length; i++) {
-                                        ui.cardPile.insertBefore(cards[i], ui.cardPile.childNodes[get.rand(ui.cardPile.childElementCount)]);
+                                    player.removeMark('hpp_yizhao',player.countMark('hpp_yizhao'));
+                                    var cards=get.cards(ui.cardPile.childElementCount+1);
+                                    for(var i=0;i<cards.length;i++){
+                                        ui.cardPile.insertBefore(cards[i],ui.cardPile.childNodes[get.rand(ui.cardPile.childElementCount)]);
                                     }
                                     game.updateRoundNumber();
                                     'step 1'
-                                    var pile = Array.from(ui.cardPile.childNodes);
-                                    if (pile.length < 3) return;
-                                    var bool = false, max = Math.pow(2, Math.min(100, pile.length)), index;
-                                    for (var i = 0; i < max; i++) {
-                                        var num = 0;
-                                        index = i.toString(2);
-                                        while (index.length < pile.length) {
-                                            index = ('0' + index);
+                                    var pile=Array.from(ui.cardPile.childNodes);
+                                    if(pile.length<3) return;
+                                    var bool=false,max=Math.pow(2,Math.min(100,pile.length)),index;
+                                    for(var i=0;i<max;i++){
+                                        var num=0;
+                                        index=i.toString(2);
+                                        while(index.length<pile.length){
+                                            index=('0'+index);
                                         }
-                                        for (var k = 0; k < index.length; k++) {
-                                            if (index[k] == '1') num += get.number(pile[k]);
-                                            if (num > 36) break;
+                                        for(var k=0;k<index.length;k++){
+                                            if(index[k]=='1') num+=get.number(pile[k]);
+                                            if(num>36) break;
                                         }
-                                        if (num == 36) {
-                                            bool = true;
+                                        if(num==36){
+                                            bool=true;
                                             break;
                                         }
                                     }
-                                    if (bool) {
-                                        var cards = [];
-                                        for (var k = 0; k < index.length; k++) {
-                                            if (index[k] == '1') cards.push(pile[k]);
+                                    if(bool){
+                                        var cards=[];
+                                        for(var k=0;k<index.length;k++){
+                                            if(index[k]=='1') cards.push(pile[k]);
                                         }
-                                        player.gain(cards, 'gain2');
+                                        player.gain(cards,'gain2');
                                     }
                                 }
                             },
-                            hpp_tianjie: {
-                                audio: 'tianjie',
-                                trigger: { global: 'phaseEnd' },
-                                direct: true,
-                                filter: function (event, player) {
+                            hpp_tianjie:{
+                                audio:'tianjie',
+                                trigger:{global:'phaseEnd'},
+                                direct:true,
+                                filter:function(event,player){
                                     return player.hasSkill('hpp_tianjie_shuffled');
                                 },
-                                group: 'hpp_tianjie_effect',
-                                skillAnimation: true,
-                                animationColor: 'metal',
-                                content: function () {
+                                group:'hpp_tianjie_effect',
+                                skillAnimation:true,
+                                animationColor:'metal',
+                                content:function(){
                                     'step 0'
-                                    player.chooseTarget(get.prompt('hpp_tianjie'), '选择至多三名其他角色，依次对这些角色造成X点雷电伤害（X为其手牌中【闪】的数量，至少为1）', [1, 3]).set('ai', target => {
-                                        var player = _status.event.player;
-                                        return get.damageEffect(target, player, player, 'thunder') * Math.sqrt(Math.max(1, target.countCards('h', 'shan')));
+                                    player.chooseTarget(get.prompt('hpp_tianjie'),'选择至多三名其他角色，依次对这些角色造成X点雷电伤害（X为其手牌中【闪】的数量，至少为1）',[1,3]).set('ai',target=>{
+                                        var player=_status.event.player;
+                                        return get.damageEffect(target,player,player,'thunder')*Math.sqrt(Math.max(1,target.countCards('h','shan')));
                                     });
                                     'step 1'
-                                    if (result.bool) {
-                                        var targets = result.targets;
+                                    if(result.bool){
+                                        var targets=result.targets;
                                         targets.sortBySeat();
-                                        player.logSkill('hpp_tianjie', targets);
-                                        for (var target of targets) {
-                                            var num = Math.max(1, target.countCards('h', 'shan'));
-                                            target.damage(num, 'thunder');
+                                        player.logSkill('hpp_tianjie',targets);
+                                        for(var target of targets){
+                                            var num=Math.max(1,target.countCards('h','shan'));
+                                            target.damage(num,'thunder');
                                         }
                                     }
                                 },
-                                subSkill: {
-                                    effect: {
-                                        trigger: { global: 'washCard' },
-                                        forced: true,
-                                        silent: true,
-                                        charlotte: true,
-                                        content: function () {
+                                subSkill:{
+                                    effect:{
+                                        trigger:{global:'washCard'},
+                                        forced:true,
+                                        silent:true,
+                                        charlotte:true,
+                                        content:function(){
                                             player.addTempSkill('hpp_tianjie_shuffled');
                                         },
                                     },
-                                    shuffled: { charlotte: true },
+                                    shuffled:{charlotte:true},
                                 }
                             },
                         },
