@@ -354,7 +354,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								}
 							}
 
-							var result = this._super.init.apply(this, arguments);
 							if (lao == '欢') {
 								var text = result.node.name.innerText;
 								if (text[1] == '\n')
