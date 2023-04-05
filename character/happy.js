@@ -1926,7 +1926,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 
 			// others
-			zhengbing: {
+			hppzhengbing: {
 				audio: 1,
 				mod: {
 					ignoredHandcard: function (card, player) {
@@ -1981,7 +1981,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
-			huchi: {
+			hpphuchi: {
 				group: ['hpp_huchi_miss', 'hpp_huchi_draw'],
 				audio: 1,
 				trigger: { player: 'phaseJieshuBegin' },
@@ -2023,6 +2023,102 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							result: { player: 1 },
 						},
 					},
+				},
+			},
+			hppshendao: {
+				audio: 2,
+				trigger: { player: 'judge' },
+				direct: true,
+				content: function () {
+					'step 0'
+					var str = '你的' + (trigger.judgestr || '') + '判定牌为' + get.translation(trigger.player.judging[0]) + '，是否修改判定花色？';
+					player.chooseControl('spade', 'heart', 'diamond', 'club', 'cancel2').set('prompt', str).set('ai', function () {
+						var judging = _status.event.judging;
+						var trigger = _status.event.getTrigger();
+						var res1 = trigger.judge(judging);
+						var list = lib.suit.slice(0);
+						var attitude = get.attitude(player, trigger.player);
+						if (attitude == 0) return 0;
+						var getj = function (suit) {
+							return trigger.judge({
+								name: get.name(judging),
+								nature: get.nature(judging),
+								suit: suit,
+								number: get.number(judging),
+							})
+						};
+						list.sort(function (a, b) {
+							return (getj(b) - getj(a)) * get.sgn(attitude);
+						});
+						if ((getj(list[0]) - res1) * attitude > 0) return list[0];
+						return 'cancel2';
+					}).set('judging', trigger.player.judging[0]);
+					'step 1'
+					if (result.control != 'cancel2') {
+						player.logSkill('hpp_shendao');
+						player.popup(result.control + 2);
+						game.log(player, '将判定结果改为了', '#y' + get.translation(result.control + 2));
+						trigger.fixedResult = {
+							suit: result.control,
+							color: get.color({ suit: result.control }),
+						};
+					}
+				},
+				ai: {
+					rejudge: true,
+					tag: {
+						rejudge: 0.3,
+					},
+				},
+			},
+			hppxinsheng: {
+				audio: 2,
+				trigger: { player: 'damageEnd' },
+				frequent: true,
+				content: function () {
+					'step 0'
+					event.cards = get.cards(3);
+					game.cardsGotoOrdering(event.cards);
+					event.videoId = lib.status.videoId++;
+					game.broadcastAll(function (player, id, cards) {
+						var str;
+						if (player == game.me && !_status.auto) str = '新生：获得花色不同的牌各一张';
+						else str = '新生';
+						var dialog = ui.create.dialog(str, cards);
+						dialog.videoId = id;
+					}, player, event.videoId, event.cards);
+					event.time = get.utc();
+					game.addVideo('showCards', player, ['新生', get.cardsInfo(event.cards)]);
+					game.addVideo('delay', null, 2);
+					'step 1'
+					var next = player.chooseButton([0, 3], true);
+					next.set('dialog', event.videoId);
+					next.set('filterButton', function (button) {
+						for (var i = 0; i < ui.selected.buttons.length; i++) {
+							if (get.suit(ui.selected.buttons[i].link) == get.suit(button.link)) return false;
+						}
+						return true;
+					});
+					next.set('ai', function (button) {
+						return get.value(button.link, _status.event.player);
+					});
+					'step 2'
+					if (result.bool && result.links) event.cards2 = result.links;
+					else event.finish();
+					var time = 1000 - (get.utc() - event.time);
+					if (time > 0) game.delay(0, time);
+					'step 3'
+					game.broadcastAll('closeDialog', event.videoId);
+					var cards2 = event.cards2;
+					player.gain(cards2, 'gain2');
+					'step 4'
+					var card = get.cardPile(function (card) {
+						if (name == 'tao') return ['tao', 'zong'].contains(card.name);
+						if (name == 'jiu') return ['jiu', 'xionghuangjiu'].contains(card.name);
+						if (name == 'wuzhong') return ['wuzhong', 'zengbin', 'sadouchengbing', 'dongzhuxianji', 'tongzhougongji'].contains(card.name);
+						return card.name == name;
+					});
+					if (card) player.gain(card, 'gain2');
 				},
 			},
 		},

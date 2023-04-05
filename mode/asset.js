@@ -3566,10 +3566,14 @@ window.noname_asset_list=[
 	'audio/skill/xianwei1.mp3',
 	'audio/skill/xianwei2.mp3',
 	
-	'audio/skill/huchi1.mp3',
-	'audio/skill/huchi2.mp3',
-	'audio/skill/zhengbing1.mp3',
-	'audio/skill/zhengbing2.mp3',
+	'audio/skill/hpphuchi1.mp3',
+	'audio/skill/hpphuchi2.mp3',
+	'audio/skill/hppzhengbing1.mp3',
+	'audio/skill/hppzhengbing2.mp3',
+	'audio/skill/hppshendao1.mp3',
+	'audio/skill/hppshendao2.mp3',
+	'audio/skill/hppxinsheng1.mp3',
+	'audio/skill/hppxinsheng2.mp3',
 
 	'audio/voice/male/0.mp3',
 	'audio/voice/male/1.mp3',
