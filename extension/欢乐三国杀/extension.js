@@ -42,6 +42,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhenji',
                             'hpp_zhouyu',
                             'hpp_zuoci',
+                            'hpp_sp_pangtong',
                         ],
                         //史诗
                         epic: [
@@ -188,6 +189,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐左慈
                             hpp_zuoci: ['male', 'qun', 3, ['hpp_shendao', 'hpp_xinsheng'], ['die_audio']],
 
+                            // 欢乐SP庞统
+                            hpp_sp_pangtong: ['male', 'wu', 3, ['hpp_guolun', 'hpp_songsang', 'hpp_zhanji'], []],
+
                             // 神陆逊
                             hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
                             // 神张角
@@ -241,6 +245,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhenji: ['hpp_zhenji', 're_zhenji', 'zhenji'],
                             zhouyu: ['hpp_zhouyu', 're_zhouyu', 'zhouyu'],
                             zuoci: ['hpp_zuoci', 're_zuoci', 'zuoci'],
+                            // SP
+                            re_jsp_pangtong: ['hpp_sp_pangtong', 're_jsp_pangtong', 'sp_pangtong'],
                             // 神
                             shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
                             shen_zhangjiao: ['hpp_shen_zhangjiao', 'shen_zhangjiao'],
@@ -2910,6 +2916,88 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // SP庞统
+                            hpp_guolun: {
+                                audio: 'xinfu_guolun',
+                                enable: 'phaseUse',
+                                usable: 1,
+                                filter: function (event, player) {
+                                    return player.countCards('h');
+                                },
+                                filterTarget: function (card, player, target) {
+                                    return target != player && target.countCards('h');
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.choosePlayerCard(target, true, 'h');
+                                    'step 1'
+                                    event.cardt = result.cards[0];
+                                    target.showCards(event.cardt);
+                                    player.chooseCard('he').set('ai', function (card) {
+                                        var event = _status.event.getParent(), player = event.player;
+                                        var numt = get.number(event.cardt);
+                                        var att = get.attitude(player, target);
+                                        var value = get.value(event.cardt);
+                                        var num = get.number(card);
+                                        if (num < numt || att > 2) return value + 6 - get.value(card);
+                                        else if (num == numt) return value - get.value(card);
+                                        return -1;
+                                    });
+                                    'step 2'
+                                    if (!result.bool) event.finish();
+                                    else {
+                                        player.showCards(result.cards);
+                                        event.cardp = result.cards[0];
+                                    }
+                                    'step 3'
+                                    var nump = get.number(event.cardp, player);
+                                    var numt = get.number(event.cardt, target);
+                                    if (nump < numt) {
+                                        player.swapHandcards(target, [event.cardp], [event.cardt]);
+                                        player.draw(2);
+                                    }
+                                    else if (nump > numt) {
+                                        player.swapHandcards(target, [event.cardp], [event.cardt]);
+                                        target.draw();
+                                        player.recover();
+                                    }
+                                },
+                                ai: {
+                                    order: 8,
+                                    result: {
+                                        player: function (player, target) {
+                                            if (get.attitude(player, target) > 0) return 1.5;
+                                            return 0.5;
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_songsang: {
+                                audio: 'xinfu_songsang',
+                                trigger: { global: 'dieAfter' },
+                                content: function () {
+                                    player.gainMaxHp();
+                                    player.recover();
+                                },
+                                ai: {
+                                    threaten: 1.5
+                                }
+                            },
+                            hpp_zhanji: {
+                                audio: 'xinfu_zhanji',
+                                trigger: {
+                                    player: "gainAfter",
+                                },
+                                forced: true,
+                                filter: function (event, player) {
+                                    if (!player.isPhaseUsing()) return false;
+                                    return event.getParent().name == 'draw' && event.getParent(2).name != 'hpp_zhanji';
+                                },
+                                content: function () {
+                                    player.draw('nodelay');
+                                },
+                            },
+
                             // 神陆逊
                             hpp_junlue: {
                                 audio: 'nzry_junlve',
@@ -3329,6 +3417,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhenji: '#r捞德一评级:4.0',
                             hpp_zhouyu: '#r捞德一评级:4.0',
                             hpp_zuoci: '#r捞德一评级:4.0',
+                            // SP
+                            hpp_sp_pangtong: '#r捞德一评级:4.1',
                             // 神
                             hpp_shen_luxun: '#r捞德一评级:4.2',
                             hpp_shen_zhangjiao: '#r捞德一评级4.5',
@@ -3487,6 +3577,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xinsheng: '新生',
                             hpp_xinsheng_info: '当你受到伤害后，你可以亮出牌堆顶三张牌，然后获得其中花色不同的牌各一张。',
                             // SP
+                            hpp_sp_pangtong: 'SP庞统',
+                            hpp_guolun: '过论',
+                            hpp_guolun_info: '出牌阶段限一次，你可展示一名其他角色的一张手牌。然后你可选择你的一张牌。若其选择的牌点数小，你与其交换这两张牌，其摸一张牌，你回复1点体力；若你选择的牌点数小，你与其交互这两张牌，你摸两张牌。',
+                            hpp_songsang: '送丧',
+                            hpp_songsang_info: '当其他角色死亡时，你可加1点体力上限并回复1点体力。',
+                            hpp_zhanji: "展骥",
+                            hpp_zhanji_info: "锁定技，当你于出牌阶段内因摸牌且并非因发动此技能而得到牌时，你摸一张牌。",
                             // 神
                             hpp_shen_luxun: '神陆逊',
                             hpp_junlue: '军略',
