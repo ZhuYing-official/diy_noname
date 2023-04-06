@@ -44,6 +44,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhouyu',
                             'hpp_zuoci',
                             'hpp_sp_pangtong',
+                            'hpp_sp_zhaoyun',
                         ],
                         //史诗
                         epic: [
@@ -192,6 +193,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 欢乐SP庞统
                             hpp_sp_pangtong: ['male', 'wu', 3, ['hpp_guolun', 'hpp_songsang', 'hpp_zhanji'], []],
+                            // 欢乐SP赵云
+                            hpp_sp_zhaoyun: ['male', 'qun', 3, ['hpp_longdan', 'hpp_chongzhen'], []],
 
                             // 神曹操
                             hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['die_audio', 'wei']],
@@ -201,6 +204,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
                         },
                         characterIntro: {
+                            hpp_sp_pangtong: "庞统，字士元，襄阳（治今湖北襄阳）人。三国时刘备帐下谋士，官拜军师中郎将。才智与诸葛亮齐名，人称“凤雏”。在进围雒县时，统率众攻城，不幸被流矢击中去世，时年三十六岁。追赐统为关内侯，谥曰靖侯。庞统死后，葬于落凤庞统墓坡。",
                             hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
                             hpp_shen_zhangjiao: '乱世的开始，黄巾起义军首领，太平道创始人。张角早年信奉黄老学说，对在汉代十分流行的谶纬之学也深有研究，对民间医术 、巫术也很熟悉。',
@@ -251,6 +255,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zuoci: ['hpp_zuoci', 're_zuoci', 'zuoci'],
                             // SP
                             re_jsp_pangtong: ['hpp_sp_pangtong', 're_jsp_pangtong', 'sp_pangtong'],
+                            sp_zhaoyun: ['hpp_sp_zhaoyun', 'sp_zhaoyun', 'jsp_zhaoyun'],
                             // 神
                             shen_caocao: ['hpp_shen_caocao', 'shen_caocao'],
                             shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
@@ -3003,6 +3008,138 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // SP赵云
+                            hpp_longdan: {
+                                audio: 'longdan_sha',
+                                audioname: ['re_zhaoyun'],
+                                group: ['hpp_longdan_sha', 'hpp_longdan_shan', 'hpp_longdan_draw'],
+                                subSkill: {
+                                    draw: {
+                                        trigger: { player: ['useCard', 'respond'] },
+                                        forced: true,
+                                        popup: false,
+                                        filter: function (event, player) {
+                                            if (!get.zhu(player, 'shouyue')) return false;
+                                            return event.skill == 'hpp_longdan_sha' || event.skill == 'hpp_longdan_shan';
+                                        },
+                                        content: function () {
+                                            player.draw();
+                                            player.storage.fanghun2++;
+                                        }
+                                    },
+                                    sha: {
+                                        audio: 2,
+                                        audioname: ['re_zhaoyun'],
+                                        enable: ['chooseToUse', 'chooseToRespond'],
+                                        filterCard: { name: 'shan' },
+                                        viewAs: { name: 'sha' },
+                                        viewAsFilter: function (player) {
+                                            if (!player.countCards('hs', 'shan')) return false;
+                                        },
+                                        position: 'hs',
+                                        prompt: '将一张闪当杀使用或打出',
+                                        check: function () { return 1 },
+                                        ai: {
+                                            effect: {
+                                                target: function (card, player, target, current) {
+                                                    if (get.tag(card, 'respondSha') && current < 0) return 0.6
+                                                }
+                                            },
+                                            respondSha: true,
+                                            skillTagFilter: function (player) {
+                                                if (!player.countCards('hs', 'shan')) return false;
+                                            },
+                                            order: function () {
+                                                return get.order({ name: 'sha' }) + 0.1;
+                                            },
+                                            useful: -1,
+                                            value: -1
+                                        }
+                                    },
+                                    shan: {
+                                        audio: 'longdan_sha',
+                                        audioname: ['re_zhaoyun'],
+                                        enable: ['chooseToRespond', 'chooseToUse'],
+                                        filterCard: { name: 'sha' },
+                                        viewAs: { name: 'shan' },
+                                        prompt: '将一张杀当闪使用或打出',
+                                        check: function () { return 1 },
+                                        position: 'hs',
+                                        viewAsFilter: function (player) {
+                                            if (!player.countCards('hs', 'sha')) return false;
+                                        },
+                                        ai: {
+                                            respondShan: true,
+                                            skillTagFilter: function (player) {
+                                                if (!player.countCards('hs', 'sha')) return false;
+                                            },
+                                            effect: {
+                                                target: function (card, player, target, current) {
+                                                    if (get.tag(card, 'respondShan') && current < 0) return 0.6
+                                                }
+                                            },
+                                            order: 4,
+                                            useful: -1,
+                                            value: -1
+                                        }
+                                    }
+                                }
+                            },
+                            hpp_chongzhen: {
+                                group: ['hpp_chongzhen1', 'hpp_chongzhen2'],
+                                audio: 'chongzhen1',
+                                ai: {
+                                    combo: 'hpp_longdan',
+                                    mingzhi: false,
+                                    effect: {
+                                        target: function (card, player, target, current) {
+                                            if (get.tag(card, 'respondShan') || get.tag(card, 'respondSha')) {
+                                                if (get.attitude(target, player) <= 0) {
+                                                    if (current > 0) return;
+                                                    if (target.countCards('h') == 0) return 1.6;
+                                                    if (target.countCards('h') == 1) return 1.2;
+                                                    if (target.countCards('h') == 2) return [0.8, 0.2, 0, -0.2];
+                                                    return [0.4, 0.7, 0, -0.7];
+                                                }
+                                            }
+                                        },
+                                    },
+                                }
+                            },
+                            hpp_chongzhen1: {
+                                audio: 'chongzhen1',
+                                trigger: { player: 'useCard' },
+                                filter: function (event, player) {
+                                    if (event.skill != 'hpp_longdan_shan' && event.skill != 'hpp_longdan_sha' && event.skill != 'fanghun_shan'
+                                        && event.skill != 'fanghun_sha' && event.skill != 'hpp_longdan') return false;
+                                    var target = lib.skill.hpp_chongzhen1.logTarget(event, player);
+                                    return target && target.countGainableCards(player, 'h') > 0;
+                                },
+                                logTarget: function (event, player) {
+                                    if (event.card.name == 'sha') return event.targets[0];
+                                    return event.respondTo[0];
+                                },
+                                prompt2: '当你发动【龙胆】时，你可以获得对方的一张手牌。',
+                                content: function () {
+                                    var target = lib.skill.hpp_chongzhen1.logTarget(trigger, player);
+                                    player.gainPlayerCard(target, 'h', true);
+                                }
+                            },
+                            hpp_chongzhen2: {
+                                audio: 'chongzhen2',
+                                trigger: { player: 'respond' },
+                                filter: function (event, player) {
+                                    if (event.skill != 'hpp_longdan_shan' && event.skill != 'hpp_longdan_sha' &&
+                                        event.skill != 'fanghun_shan' && event.skill != 'fanghun_sha' && event.skill != 'hpp_longdan') return false;
+                                    return event.source && event.source.countGainableCards(player, 'h') > 0;
+                                },
+                                logTarget: 'source',
+                                prompt2: '当你发动【龙胆】时，你可以获得对方的一张手牌。',
+                                content: function () {
+                                    player.gainPlayerCard(trigger.source, 'h', true);
+                                }
+                            },
+
                             // 神曹操
                             hpp_guixin: {
                                 audio: 'guixin',
@@ -3476,24 +3613,24 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         characterTitle: {
                             // g绿 b蓝 r红 p粉
                             // C
-                            hpp_caocao: '#r捞德一评级:4.0',
-                            hpp_caoren: '#r捞德一评级:4.0',
+                            hpp_caocao: '#b捞德一评级:3.0',
+                            hpp_caoren: '#b捞德一评级:3.0',
                             // D
-                            hpp_daqiao: '#r捞德一评级:4.0',
+                            hpp_daqiao: '#b捞德一评级:3.3',
                             // G
                             hpp_ganning: '#r捞德一评级:4.1',
                             hpp_guanyu: '#r捞德一评级:4.1',
                             hpp_guohuai: '#r捞德一评级:4.1',
                             // H
-                            hpp_huanggai: '#r捞德一评级:4.3',
-                            hpp_huangzhong: '#r捞德一评级:4.0',
-                            hpp_huaxiong: '#r捞德一评级:4.0',
+                            hpp_huanggai: '#r捞德一评级:4.2',
+                            hpp_huangzhong: '#g捞德一评级:2.8',
+                            hpp_huaxiong: '#b捞德一评级:3.2',
                             // L
-                            hpp_liaohua: '#r捞德一评级:4.1',
-                            hpp_liubiao: '#r捞德一评级:4.0',
-                            hpp_liubei: '#r捞德一评级:4.1',
-                            hpp_lvbu: '#r捞德一评级:4.0',
-                            hpp_lvmeng: '#r捞德一评级:4.0',
+                            hpp_liaohua: '#b捞德一评级:3.1',
+                            hpp_liubiao: '#b捞德一评级:3.7',
+                            hpp_liubei: '#b捞德一评级:3.8',
+                            hpp_lvbu: '#g捞德一评级:2.0',
+                            hpp_lvmeng: '#b捞德一评级:3.2',
                             // M
                             hpp_machao: '#r捞德一评级:4.1',
                             // P
@@ -3503,23 +3640,24 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunce: '#r捞德一评级:4.0',
                             hpp_sunquan: '#r捞德一评级:4.3',
                             // W
-                            hpp_weiyan: '#r捞德一评级4.0',
+                            hpp_weiyan: '#g捞德一评级2.9',
                             // X
-                            hpp_xiahoudun: '#r捞德一评级4.0',
-                            hpp_xiaoqiao: '#r捞德一评级4.0',
-                            hpp_xuzhu: '#r捞德一评级4.0',
+                            hpp_xiahoudun: '#g捞德一评级2.3',
+                            hpp_xiaoqiao: '#g捞德一评级2.2',
+                            hpp_xuzhu: '#b捞德一评级3.3',
                             // Y
-                            hpp_yuji: '#r捞德一评级4.0',
+                            hpp_yuji: '#b捞德一评级3.7',
                             // Z
                             hpp_zhangfei: '#r捞德一评级:4.1',
-                            hpp_zhangjiao: '#r捞德一评级4.0',
+                            hpp_zhangjiao: '#b捞德一评级:3.4',
                             hpp_zhangliao: '#r捞德一评级:4.1',
-                            hpp_zhaoyun: '#r捞德一评级:4.0',
-                            hpp_zhenji: '#r捞德一评级:4.0',
-                            hpp_zhouyu: '#r捞德一评级:4.0',
-                            hpp_zuoci: '#r捞德一评级:4.0',
+                            hpp_zhaoyun: '#b捞德一评级:3.3',
+                            hpp_zhenji: '#g捞德一评级:3.0',
+                            hpp_zhouyu: '#b捞德一评级:3.0',
+                            hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
                             hpp_sp_pangtong: '#r捞德一评级:4.1',
+                            hpp_sp_zhaoyun: '#g捞德一评级:2.0',
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.2',
                             hpp_shen_luxun: '#r捞德一评级:4.2',
@@ -3686,6 +3824,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_songsang_info: '当其他角色死亡时，你可加1点体力上限并回复1点体力。',
                             hpp_zhanji: "展骥",
                             hpp_zhanji_info: "锁定技，当你于出牌阶段内因摸牌且并非因发动此技能而得到牌时，你摸一张牌。",
+                            hpp_sp_zhaoyun: 'SP赵云',
+                            hpp_longdan: '龙胆',
+                            hpp_longdan_info: '你可以将一张【杀】当【闪】、【闪】当【杀】使用或打出。',
+                            hpp_chongzhen: '冲阵',
+                            hpp_chongzhen1: '冲阵',
+                            hpp_chongzhen2: '冲阵',
+                            hpp_chongzhen_info: '当你发动〖龙胆〗时，你可以获得对方的一张手牌。',
                             // 神
                             hpp_shen_caocao: '神曹操',
                             hpp_guixin: '归心',
@@ -3737,6 +3882,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             ming_han: '名·悍',
                             ming_qi: '名·奇',
                             xian_sp: '限·SP',
+                            xian_sp2: '限·SP2',
                             xian_jin: '限·锦',
                             shen_wei: '神·魏',
                             shen_shu: '神·蜀',
