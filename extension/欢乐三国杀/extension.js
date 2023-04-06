@@ -8,6 +8,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                     rarity: {
                         //传说
                         legend: [
+                            'hpp_shen_caocao',
                             'hpp_shen_luxun',
                             'hpp_shen_zhangjiao',
 
@@ -192,12 +193,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐SP庞统
                             hpp_sp_pangtong: ['male', 'wu', 3, ['hpp_guolun', 'hpp_songsang', 'hpp_zhanji'], []],
 
+                            // 神曹操
+                            hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['die_audio', 'wei']],
                             // 神陆逊
                             hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
                             // 神张角
                             hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
                         },
                         characterIntro: {
+                            hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
                             hpp_shen_zhangjiao: '乱世的开始，黄巾起义军首领，太平道创始人。张角早年信奉黄老学说，对在汉代十分流行的谶纬之学也深有研究，对民间医术 、巫术也很熟悉。',
                         },
@@ -248,6 +252,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // SP
                             re_jsp_pangtong: ['hpp_sp_pangtong', 're_jsp_pangtong', 'sp_pangtong'],
                             // 神
+                            shen_caocao: ['hpp_shen_caocao', 'shen_caocao'],
                             shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
                             shen_zhangjiao: ['hpp_shen_zhangjiao', 'shen_zhangjiao'],
                         },
@@ -2998,6 +3003,102 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 神曹操
+                            hpp_guixin: {
+                                audio: 'guixin',
+                                trigger: { player: 'damageEnd' },
+                                check: function (event, player) {
+                                    if (player.isTurnedOver() || event.num > 1 || (game.countPlayer() - 1 < 5 && game.countPlayer(function (current) {
+                                        return get.attitude(player, current) <= 0 && current.countGainableCards(player, 'hej') > 0;
+                                    }) >= game.countPlayer(function (currentx) {
+                                        return get.attitude(player, currentx) > 0 && currentx.countGainableCards(player, 'hej') > 0;
+                                    }))) return true;
+                                    var num = game.countPlayer(function (current) {
+                                        if (current.countCards('he') && current != player && get.attitude(player, current) <= 0) return true;
+                                        if (current.countCards('j') && current != player && get.attitude(player, current) > 0) return true;
+                                    });
+                                    return num >= 2;
+                                },
+                                content: function () {
+                                    'step 0'
+                                    var targets = game.filterPlayer();
+                                    targets.remove(player);
+                                    targets.sort(lib.sort.seat);
+                                    event.targets = targets;
+                                    event.count = trigger.num;
+                                    'step 1'
+                                    event.count--;
+                                    event.num = 0;
+                                    event.numx = 0;
+                                    player.line(targets, 'green');
+                                    player.chooseControl('手牌区', '装备区', '判定区').set('ai', function () {
+                                        if (game.hasPlayer(function (current) {
+                                            return current.countCards('j') && current != player && get.attitude(player, current) > 0;
+                                        })) return 2;
+                                        return Math.floor(Math.random() * 3);
+                                    }).set('prompt', '请选择优先获得的区域');
+                                    'step 2'
+                                    event.range = {
+                                        手牌区: ['h', 'e', 'j'],
+                                        装备区: ['e', 'h', 'j'],
+                                        判定区: ['j', 'h', 'e'],
+                                    }[result.control || '手牌区'];
+                                    'step 3'
+                                    if (num < event.targets.length) {
+                                        var target = event.targets[num];
+                                        var range = event.range;
+                                        for (var i = 0; i < range.length; i++) {
+                                            var cards = target.getCards(range[i]);
+                                            if (cards.length) {
+                                                var card = cards.randomGet();
+                                                event.numx++;
+                                                player.gain(card, target, 'giveAuto', 'bySelf');
+                                                break;
+                                            }
+                                        }
+                                        event.num++;
+                                    }
+                                    'step 4'
+                                    if (num < event.targets.length) event.goto(3);
+                                    'step 5'
+                                    if (event.numx > 4 && !player.isTurnedOver()) player.turnOver();
+                                    'step 6'
+                                    if (event.count > 0) player.chooseBool(get.prompt2('new_guixin')).ai = function () {
+                                        return lib.skill.hpp_guixin.check({ num: event.count }, player);
+                                    };
+                                    else event.finish();
+                                    'step 7'
+                                    if (event.count && result.bool) event.goto(1);
+                                },
+                                ai: {
+                                    maixie: true,
+                                    maixie_hp: true,
+                                    threaten: function (player, target) {
+                                        if (target.hp == 1) return 2.5;
+                                        return 1;
+                                    },
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (get.tag(card, 'damage')) {
+                                                if (player.hasSkillTag('jueqing', false, target)) return [1, -2];
+                                                if (target.hp == 1) return 0.8;
+                                                if (target.isTurnedOver()) return [0, 3];
+                                                var num = game.countPlayer(function (current) {
+                                                    if (current.countCards('he') && current != player && get.attitude(player, current) <= 0) {
+                                                        return true;
+                                                    }
+                                                    if (current.countCards('j') && current != player && get.attitude(player, current) > 0) {
+                                                        return true;
+                                                    }
+                                                });
+                                                if (num > 2) return [0, 1];
+                                                if (num == 2) return [0.5, 1];
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+
                             // 神陆逊
                             hpp_junlue: {
                                 audio: 'nzry_junlve',
@@ -3420,6 +3521,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // SP
                             hpp_sp_pangtong: '#r捞德一评级:4.1',
                             // 神
+                            hpp_shen_caocao: '#r捞德一评级:4.2',
                             hpp_shen_luxun: '#r捞德一评级:4.2',
                             hpp_shen_zhangjiao: '#r捞德一评级4.5',
                         },
@@ -3585,6 +3687,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhanji: "展骥",
                             hpp_zhanji_info: "锁定技，当你于出牌阶段内因摸牌且并非因发动此技能而得到牌时，你摸一张牌。",
                             // 神
+                            hpp_shen_caocao: '神曹操',
+                            hpp_guixin: '归心',
+                            hpp_guixin_info: '当你受到1点伤害后，你可以随机获得每名其他角色区域里的一张牌，如果获得牌大于4张且你为正面，则翻面。',
                             hpp_shen_luxun: '神陆逊',
                             hpp_junlue: '军略',
                             hpp_junlue_info: '锁定技，当你受到或造成1点伤害后，你获得一个“军略"标记。',
