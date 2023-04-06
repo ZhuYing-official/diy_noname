@@ -118,7 +118,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ming_han: ['hpp_haozhao', 'hpp_zhangxiu', 'hpp_madai', 'hpp_chenpu', 'hpp_handang', 'hpp_wuyi', 'hpp_xurong', 'hpp_lijue', 'hpp_chunyuqiong'],
                                 ming_qi: ['hpp_xizhicai', 'hpp_zhangliang', 'hpp_zhangbao', 'hpp_beimihu'],
                                 xian_sp: ['hpp_sp_jiangwei', 'hpp_sp_haungyueying', 'hpp_sp_taishici', 'hpp_sp_machao', 'hpp_sp_daqiao', 'hpp_sp_zhaoyun', 'hpp_sp_sunshangxiang', 'hpp_sp_caiwenji', 'hpp_sp_xiaoqiao', 'hpp_sp_diaochan'],
-                                xian_sp2: ['hpp_sp_pangde'],
+                                xian_sp2: ['hpp_sp_pangtong', 'hpp_sp_pangde'],
                                 xian_jin: ['hpp_guansuo', 'hpp_baosanniang', 'hpp_liuzan', 'hpp_guozhao', 'hpp_panshu', 'hpp_lvlingqi', 'hpp_zhangchangpu', 'hpp_zhangqiying', 'hpp_puyuan', 'hpp_xushao'],
                                 shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia'],
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei'],
