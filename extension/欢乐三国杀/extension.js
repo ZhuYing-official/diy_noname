@@ -183,7 +183,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐张辽
                             hpp_zhangliao: ['male', 'wei', 4, ['new_retuxi', 'hpp_zhengbing'], []],
                             // 欢乐赵云
-                            hpp_zhaoyun: ['male', 'shu', 4, ['ollongdan', 'hpp_yajiao'], []],
+                            hpp_zhaoyun: ['male', 'shu', 4, ['hpp_longdan', 'hpp_yajiao'], []],
                             // 欢乐甄姬
                             hpp_zhenji: ['female', 'wei', 3, ['hpp_luoshen', 'qingguo'], []],
                             // 欢乐周瑜
@@ -2699,6 +2699,82 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 赵云
+                            hpp_longdan: {
+                                audio: 'longdan_sha',
+                                audioname: ['re_zhaoyun'],
+                                group: ['hpp_longdan_sha', 'hpp_longdan_shan', 'hpp_longdan_draw'],
+                                subSkill: {
+                                    draw: {
+                                        trigger: { player: ['useCard', 'respond'] },
+                                        forced: true,
+                                        popup: false,
+                                        filter: function (event, player) {
+                                            if (!get.zhu(player, 'shouyue')) return false;
+                                            return event.skill == 'hpp_longdan_sha' || event.skill == 'hpp_longdan_shan';
+                                        },
+                                        content: function () {
+                                            player.draw();
+                                            player.storage.fanghun2++;
+                                        }
+                                    },
+                                    sha: {
+                                        audio: 2,
+                                        audioname: ['re_zhaoyun'],
+                                        enable: ['chooseToUse', 'chooseToRespond'],
+                                        filterCard: { name: 'shan' },
+                                        viewAs: { name: 'sha' },
+                                        viewAsFilter: function (player) {
+                                            if (!player.countCards('hs', 'shan')) return false;
+                                        },
+                                        position: 'hs',
+                                        prompt: '将一张闪当杀使用或打出',
+                                        check: function () { return 1 },
+                                        ai: {
+                                            effect: {
+                                                target: function (card, player, target, current) {
+                                                    if (get.tag(card, 'respondSha') && current < 0) return 0.6
+                                                }
+                                            },
+                                            respondSha: true,
+                                            skillTagFilter: function (player) {
+                                                if (!player.countCards('hs', 'shan')) return false;
+                                            },
+                                            order: function () {
+                                                return get.order({ name: 'sha' }) + 0.1;
+                                            },
+                                            useful: -1,
+                                            value: -1
+                                        }
+                                    },
+                                    shan: {
+                                        audio: 'longdan_sha',
+                                        audioname: ['re_zhaoyun'],
+                                        enable: ['chooseToRespond', 'chooseToUse'],
+                                        filterCard: { name: 'sha' },
+                                        viewAs: { name: 'shan' },
+                                        prompt: '将一张杀当闪使用或打出',
+                                        check: function () { return 1 },
+                                        position: 'hs',
+                                        viewAsFilter: function (player) {
+                                            if (!player.countCards('hs', 'sha')) return false;
+                                        },
+                                        ai: {
+                                            respondShan: true,
+                                            skillTagFilter: function (player) {
+                                                if (!player.countCards('hs', 'sha')) return false;
+                                            },
+                                            effect: {
+                                                target: function (card, player, target, current) {
+                                                    if (get.tag(card, 'respondShan') && current < 0) return 0.6
+                                                }
+                                            },
+                                            order: 4,
+                                            useful: -1,
+                                            value: -1
+                                        }
+                                    }
+                                }
+                            },
                             hpp_yajiao: {
                                 group: 'hpp_yajiao_count',
                                 audio: 'reyajiao',
@@ -2756,9 +2832,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     draw: {
                                         audio: 'reyajiao',
                                         trigger: { player: 'phaseJieshuBegin' },
-                                        forced: true,
-                                        charlotte: true,
-                                        onremove: true,
+                                        // forced: true,
+                                        // charlotte: true,
+                                        // onremove: true,
+                                        frequent: true,
                                         content: function () {
                                             player.draw();
                                         },
@@ -3009,82 +3086,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // SP赵云
-                            hpp_longdan: {
-                                audio: 'longdan_sha',
-                                audioname: ['re_zhaoyun'],
-                                group: ['hpp_longdan_sha', 'hpp_longdan_shan', 'hpp_longdan_draw'],
-                                subSkill: {
-                                    draw: {
-                                        trigger: { player: ['useCard', 'respond'] },
-                                        forced: true,
-                                        popup: false,
-                                        filter: function (event, player) {
-                                            if (!get.zhu(player, 'shouyue')) return false;
-                                            return event.skill == 'hpp_longdan_sha' || event.skill == 'hpp_longdan_shan';
-                                        },
-                                        content: function () {
-                                            player.draw();
-                                            player.storage.fanghun2++;
-                                        }
-                                    },
-                                    sha: {
-                                        audio: 2,
-                                        audioname: ['re_zhaoyun'],
-                                        enable: ['chooseToUse', 'chooseToRespond'],
-                                        filterCard: { name: 'shan' },
-                                        viewAs: { name: 'sha' },
-                                        viewAsFilter: function (player) {
-                                            if (!player.countCards('hs', 'shan')) return false;
-                                        },
-                                        position: 'hs',
-                                        prompt: '将一张闪当杀使用或打出',
-                                        check: function () { return 1 },
-                                        ai: {
-                                            effect: {
-                                                target: function (card, player, target, current) {
-                                                    if (get.tag(card, 'respondSha') && current < 0) return 0.6
-                                                }
-                                            },
-                                            respondSha: true,
-                                            skillTagFilter: function (player) {
-                                                if (!player.countCards('hs', 'shan')) return false;
-                                            },
-                                            order: function () {
-                                                return get.order({ name: 'sha' }) + 0.1;
-                                            },
-                                            useful: -1,
-                                            value: -1
-                                        }
-                                    },
-                                    shan: {
-                                        audio: 'longdan_sha',
-                                        audioname: ['re_zhaoyun'],
-                                        enable: ['chooseToRespond', 'chooseToUse'],
-                                        filterCard: { name: 'sha' },
-                                        viewAs: { name: 'shan' },
-                                        prompt: '将一张杀当闪使用或打出',
-                                        check: function () { return 1 },
-                                        position: 'hs',
-                                        viewAsFilter: function (player) {
-                                            if (!player.countCards('hs', 'sha')) return false;
-                                        },
-                                        ai: {
-                                            respondShan: true,
-                                            skillTagFilter: function (player) {
-                                                if (!player.countCards('hs', 'sha')) return false;
-                                            },
-                                            effect: {
-                                                target: function (card, player, target, current) {
-                                                    if (get.tag(card, 'respondShan') && current < 0) return 0.6
-                                                }
-                                            },
-                                            order: 4,
-                                            useful: -1,
-                                            value: -1
-                                        }
-                                    }
-                                }
-                            },
                             hpp_chongzhen: {
                                 group: ['hpp_chongzhen1', 'hpp_chongzhen2'],
                                 audio: 'chongzhen1',
@@ -3618,7 +3619,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // D
                             hpp_daqiao: '#b捞德一评级:3.3',
                             // G
-                            hpp_ganning: '#r捞德一评级:4.1',
+                            hpp_ganning: '#b捞德一评级:3.8',
                             hpp_guanyu: '#r捞德一评级:4.1',
                             hpp_guohuai: '#r捞德一评级:4.1',
                             // H
@@ -3637,7 +3638,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_pangde: '#r捞德一评级:4.1',
                             // S
                             hpp_simayi: '#r捞德一评级:4.0',
-                            hpp_sunce: '#r捞德一评级:4.0',
+                            hpp_sunce: '#b捞德一评级:3.5',
                             hpp_sunquan: '#r捞德一评级:4.3',
                             // W
                             hpp_weiyan: '#g捞德一评级2.9',
@@ -3648,10 +3649,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // Y
                             hpp_yuji: '#b捞德一评级3.7',
                             // Z
-                            hpp_zhangfei: '#r捞德一评级:4.1',
+                            hpp_zhangfei: '#r捞德一评级:4.0',
                             hpp_zhangjiao: '#b捞德一评级:3.4',
-                            hpp_zhangliao: '#r捞德一评级:4.1',
-                            hpp_zhaoyun: '#b捞德一评级:3.3',
+                            hpp_zhangliao: '#b捞德一评级:3.9',
+                            hpp_zhaoyun: '#b捞德一评级:3.1',
                             hpp_zhenji: '#g捞德一评级:3.0',
                             hpp_zhouyu: '#b捞德一评级:3.0',
                             hpp_zuoci: '#b捞德一评级:3.4',
@@ -3801,6 +3802,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhengbing: '整兵',
                             hpp_zhengbing_info: '通过〖突袭〗获得的牌不计入手牌上限；且可以被重铸；最后一张突袭牌被重铸时再摸一张牌。',
                             hpp_zhaoyun: '赵云',
+                            hpp_longdan: '龙胆',
+                            hpp_longdan_info: '你可以将一张【杀】当【闪】、【闪】当【杀】使用或打出。',
                             hpp_yajiao: '涯角',
                             hpp_yajiao_info: '当你于回合外使用或打出手牌时，你可以展示牌堆顶的一张牌并将其交给一名角色；当你于自己回合内使用过【龙胆】，本回合结束阶段摸一张牌。',
                             hpp_zhenji: '甄姬',
@@ -3825,8 +3828,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhanji: "展骥",
                             hpp_zhanji_info: "锁定技，当你于出牌阶段内因摸牌且并非因发动此技能而得到牌时，你摸一张牌。",
                             hpp_sp_zhaoyun: 'SP赵云',
-                            hpp_longdan: '龙胆',
-                            hpp_longdan_info: '你可以将一张【杀】当【闪】、【闪】当【杀】使用或打出。',
                             hpp_chongzhen: '冲阵',
                             hpp_chongzhen1: '冲阵',
                             hpp_chongzhen2: '冲阵',
