@@ -1264,6 +1264,7 @@ window.noname_character_rank = {
 			'hpp_ganning',
 			'hpp_guanyu',
 			'hpp_guohuai',
+			'hpp_guojia',
 			'hpp_huanggai',
 			'hpp_huangzhong',
 			'hpp_huaxiong',

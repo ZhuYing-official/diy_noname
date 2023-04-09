@@ -19,6 +19,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_ganning',
                             'hpp_guanyu',
                             'hpp_guohuai',
+                            'hpp_guojia',
                             'hpp_huanggai',
                             'hpp_huangzhong',
                             'hpp_huaxiong',
@@ -143,6 +144,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guanyu: ['male', 'shu', 4, ['hpp_wusheng'], []],
                             // 欢乐郭淮
                             hpp_guohuai: ['male', 'wei', 4, ['hpp_jingce'], []],
+                            // 欢乐郭嘉
+                            hpp_guojia: ['male', 'wei', 3, ['hpp_tiandu', 'hpp_yiji'], []],
                             // 欢乐黄盖
                             hpp_huanggai: ['male', 'wu', 4, ['kurou', 'hpp_zhaxiang'], []],
                             // 欢乐黄忠
@@ -229,6 +232,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             ganning: ['hpp_ganning', 're_ganning', 'ganning'],
                             guanyu: ['hpp_guanyu', 're_guanyu', 'guanyu'],
                             guohuai: ['hpp_guohuai', 'guohuai', 'tw_guohuai', 're_guohuai', 'xin_guohuai', 'ol_guohuai'],
+                            guojia: ['hpp_guojia', 're_guojia', 'guojia'],
                             // H
                             huanggai: ['hpp_huanggai', 're_huanggai', 'huanggai'],
                             huangzhong: ['hpp_huangzhong', 'ol_huangzhong', 're_huangzhong', 'huangzhong'],
@@ -720,6 +724,128 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     });
                                     player.draw(Math.min(list.length + 1, 3));
                                 },
+                            },
+
+                            // 郭嘉
+                            hpp_tiandu: {
+                                audio: 'tiandu',
+                                trigger: { player: 'judgeEnd' },
+                                preHidden: true,
+                                frequent: function (event) {
+                                    if (event.result.card.name == 'du') return false;
+                                    return true;
+                                },
+                                check: function (event) {
+                                    if (event.result.card.name == 'du') return false;
+                                    return true;
+                                },
+                                filter: function (event, player) {
+                                    return get.position(event.result.card, true) == 'o';
+                                },
+                                content: function () {
+                                    player.gain(trigger.result.card, 'gain2');
+                                }
+                            },
+                            hpp_yiji: {
+                                audio: 'yiji',
+                                trigger: { player: 'damageEnd' },
+                                frequent: true,
+                                filter: function (event) {
+                                    return (event.num > 0)
+                                },
+                                content: function () {
+                                    'step 0'
+                                    event.count = trigger.num;
+                                    'step 1'
+                                    event.count--;
+                                    event.cards = game.cardsGotoOrdering(get.cards(2)).cards;
+                                    if (_status.connectMode) game.broadcastAll(function () { _status.noclearcountdown = true });
+                                    event.given_map = {};
+                                    'step 2'
+                                    if (event.cards.length > 1) {
+                                        player.chooseCardButton('遗计：请选择要分配的牌', true, event.cards, [1, event.cards.length]).set('ai', function (button) {
+                                            if (ui.selected.buttons.length == 0) return 1;
+                                            return 0;
+                                        });
+                                    }
+                                    else if (event.cards.length == 1) {
+                                        event._result = { links: event.cards.slice(0), bool: true };
+                                    }
+                                    else {
+                                        event.finish();
+                                    }
+                                    'step 3'
+                                    if (result.bool) {
+                                        event.cards.removeArray(result.links);
+                                        event.togive = result.links.slice(0);
+                                        player.chooseTarget('选择一名角色获得' + get.translation(result.links), true).set('ai', function (target) {
+                                            var att = get.attitude(_status.event.player, target);
+                                            if (_status.event.enemy) {
+                                                return -att;
+                                            }
+                                            else if (att > 0) {
+                                                return att / (1 + target.countCards('h'));
+                                            }
+                                            else {
+                                                return att / 100;
+                                            }
+                                        }).set('enemy', get.value(event.togive[0], player, 'raw') < 0);
+                                    }
+                                    'step 4'
+                                    if (result.targets.length) {
+                                        var id = result.targets[0].playerid, map = event.given_map;
+                                        if (!map[id]) map[id] = [];
+                                        map[id].addArray(event.togive);
+                                    }
+                                    if (cards.length > 0) event.goto(2);
+                                    'step 5'
+                                    if (_status.connectMode) {
+                                        game.broadcastAll(function () { delete _status.noclearcountdown; game.stopCountChoose() });
+                                    }
+                                    var list = [];
+                                    for (var i in event.given_map) {
+                                        var source = (_status.connectMode ? lib.playerOL : game.playerMap)[i];
+                                        player.line(source, 'green');
+                                        list.push([source, event.given_map[i]]);
+                                    }
+                                    game.loseAsync({
+                                        gain_list: list,
+                                        giver: player,
+                                        animate: 'draw',
+                                    }).setContent('gaincardMultiple');
+                                    if (event.count <= 0) event.finish();
+                                    'step 6'
+                                    player.chooseBool(get.prompt2(event.name)).set('frequentSkill', event.name);
+                                    'step 7'
+                                    if (result.bool) {
+                                        player.logSkill(event.name);
+                                        event.goto(1);
+                                    }
+                                },
+                                ai: {
+                                    maixie: true,
+                                    maixie_hp: true,
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (get.tag(card, 'damage')) {
+                                                if (player.hasSkillTag('jueqing', false, target)) return [1, -2];
+                                                if (!target.hasFriend()) return;
+                                                var num = 1;
+                                                if (get.attitude(player, target) > 0) {
+                                                    if (player.needsToDiscard()) {
+                                                        num = 0.7;
+                                                    }
+                                                    else {
+                                                        num = 0.5;
+                                                    }
+                                                }
+                                                if (target.hp >= 4) return [1, num * 2];
+                                                if (target.hp == 3) return [1, num * 1.5];
+                                                if (target.hp == 2) return [1, num * 0.5];
+                                            }
+                                        }
+                                    }
+                                }
                             },
 
                             // 黄盖
@@ -3904,6 +4030,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_ganning: '#b捞德一评级:3.8',
                             hpp_guanyu: '#r捞德一评级:4.1',
                             hpp_guohuai: '#r捞德一评级:4.1',
+                            hpp_guojia: '捞德一评级1.2',
                             // H
                             hpp_huanggai: '#r捞德一评级:4.2',
                             hpp_huangzhong: '#g捞德一评级:2.8',
@@ -3979,6 +4106,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guohuai: '郭淮',
                             hpp_jingce: '精策',
                             hpp_jingce_info: '结束阶段开始时，你可以摸X张牌（X为本回合你出牌的花色数+1，至多为3）。',
+                            hpp_guojia: '郭嘉',
+                            hpp_tiandu: '天妒',
+                            hpp_tiandu_info: '当你的判定牌生效后，你可以获得此牌。',
+                            hpp_yiji: '遗计',
+                            hpp_yiji_info: '当你受到1点伤害后，你可以观看牌堆顶的两张牌，然后交给任意角色。',
                             // H
                             hpp_huanggai: '黄盖',
                             hpp_zhaxiang: '诈降',
