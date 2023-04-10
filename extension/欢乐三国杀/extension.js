@@ -167,7 +167,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐刘备
                             hpp_liubei: ['male', 'shu', 4, ['hpp_rende', 'hpp_jijiang'], ['zhu']],
                             // 欢乐鲁肃
-                            hpp_lusu: ['male', 'wu', 3, ['hpp_hapshi', 'hpp_dimeng'], []],
+                            hpp_lusu: ['male', 'wu', 3, ['hpp_haoshi', 'hpp_dimeng'], []],
                             // 欢乐陆逊
                             hpp_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'lianying'], []],
                             // 欢乐吕布
@@ -752,8 +752,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 郭嘉
+                            tiandu_re_guojia: { audio: 2 },
+                            tiandu_xizhicai: { audio: 2 },
                             hpp_tiandu: {
                                 audio: 'tiandu',
+                                audioname2: {
+                                    hpp_guojia: 'tiandu_re_guojia',
+                                    WU_sunce: 'tiandu_xizhicai',
+                                },
                                 trigger: { player: 'judgeEnd' },
                                 preHidden: true,
                                 frequent: function (event) {
@@ -772,7 +778,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 }
                             },
                             hpp_yiji: {
-                                audio: 'yiji',
+                                audio: 'reyiji',
                                 trigger: { player: 'damageEnd' },
                                 frequent: true,
                                 filter: function (event) {
@@ -1593,8 +1599,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 鲁肃
-                            hpp_hapshi: {
-                                audio: 'haoshi',
+                            hpp_haoshi: {
+                                audio: 'olhaoshi',
                                 trigger: { player: 'phaseDrawBegin2' },
                                 filter: function (event, player) {
                                     return !event.numFixed;
@@ -1608,7 +1614,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 content: function () {
                                     trigger.num += 2;
-                                    player.addSkill('hpp_hapshi2');
+                                    player.addSkill('hpp_haoshi2');
                                 },
                                 ai: {
                                     noh: true,
@@ -1619,14 +1625,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                             },
-                            hpp_hapshi2: {
+                            hpp_haoshi2: {
                                 trigger: { player: 'phaseDrawEnd' },
                                 forced: true,
                                 popup: false,
                                 audio: false,
                                 content: function () {
                                     'step 0'
-                                    player.removeSkill('hpp_hapshi2');
+                                    player.removeSkill('hpp_haoshi2');
                                     if (player.countCards('h') <= 5) {
                                         event.finish();
                                         return;
@@ -1649,7 +1655,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_dimeng: {
-                                audio: 'dimeng',
+                                audio: 'oldimeng',
                                 enable: 'phaseUse',
                                 usable: 1,
                                 position: 'he',
@@ -4639,8 +4645,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jijiang: '激将',
                             hpp_jijiang_info: '主公技，其他蜀势力角色可以在你需要时代替你使用或打出【杀】。若以此法出杀，则你与其各摸一张牌。你的回合外，当其他蜀势力角色使用或打出【杀】时，其可令你摸一张牌，每回合限一张。',
                             hpp_lusu: '鲁肃',
-                            hpp_hapshi: '好施',
-                            hpp_hapshi_info: '摸牌阶段，你可以多摸两张牌，然后若你的手牌数大于5，则你将一半的手牌交给手牌最少的一名其他角色或弃置。',
+                            hpp_haoshi: '好施',
+                            hpp_haoshi_info: '摸牌阶段，你可以多摸两张牌，然后若你的手牌数大于5，则你将一半的手牌交给手牌最少的一名其他角色或弃置。',
                             hpp_dimeng: '缔盟',
                             hpp_dimeng_info: '出牌阶段限一次，你可以选择两名其他角色并弃置X张牌（X为这两名角色手牌数的差），然后令这两名角色交换手牌。',
                             hpp_luxun: '陆逊',
