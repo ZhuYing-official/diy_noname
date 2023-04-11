@@ -3627,7 +3627,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         }
                                     },
                                     sha: {
-                                        audio: 2,
+                                        audio: 'longdan_sha',
                                         audioname: ['re_zhaoyun'],
                                         enable: ['chooseToUse', 'chooseToRespond'],
                                         filterCard: { name: 'shan' },
