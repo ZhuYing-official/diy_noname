@@ -3917,8 +3917,16 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 周瑜
+                            reyingzi_re_sunce: { audio: 2 },
+                            reyingzi_re_heqi: { audio: 2 },
+                            reyingzi_gexuan: { audio: 2 },
                             hpp_yingzi: {
                                 audio: 'reyingzi',
+                                audioname2: {
+                                    hpp_sunce: 'reyingzi_re_sunce',
+                                    hpp_heqi: 'reyingzi_re_heqi',
+                                    hpp_gexuan: 'reyingzi_gexuan',
+                                },
                                 trigger: { player: 'phaseDrawBegin2' },
                                 forced: true,
                                 preHidden: true,
@@ -4903,7 +4911,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yuji: '#b捞德一评级3.7',
                             // Z
                             hpp_zhangfei: '#r捞德一评级:4.0',
-                            hpp_zhangjiao: '#b捞德一评级:3.4',
+                            hpp_zhangjiao: '#b捞德一评级:3.5',
                             hpp_zhangliao: '#b捞德一评级:3.9',
                             hpp_zhangsong: '#b捞德一评级:3.6',
                             hpp_zhaoyun: '#b捞德一评级:3.1',
