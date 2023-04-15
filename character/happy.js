@@ -321,13 +321,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					'step 0'
-					event.huhuoCards = player.getCards('h');
+					player.removeMark('hok_meixin', 3);
 					'step 1'
-					if (event.huhuoCards != undefined) {
-						player.discard(event.huhuoCards);
-						player.removeMark('hok_meixin', 3);
-					}
-					'step 2'
 					player.chooseTarget('为狐火减少一个目标', function (card, player, target) {
 						return player.inRange(target);
 					}).set('ai', function (target) {
@@ -336,7 +331,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 						return get.attitude(_status.event.player, target);
 					});
-					'step 3'
+					'step 2'
 					for (var i = 0; i < 3; i++) {
 						event.huhuoList = game.filterPlayer(function (target) {
 							return player.inRange(target) && !target.isDead() && target != player;
@@ -1810,7 +1805,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					effect: {
 						target: function (card, player, target) {
-							if (card && card.name == 'sha' && card.suit == 'heart') return 0;
+							if (card && card.name == 'sha' && card.suit == 'heart') return 'zerotarget';
 						},
 					}
 				},
@@ -2168,7 +2163,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_meixin: '魅心',
 			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
-			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记和所有手牌对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。',
+			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。',
 			// 李信
 			hok_lixin: '李信',
 			hok_wangming: '王命',
