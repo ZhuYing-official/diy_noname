@@ -3669,6 +3669,7 @@ window.noname_asset_list=[
 	'image/card/rewrite_renwang.png',
 	'image/card/rewrite_tengjia.png',
 	'image/card/rewrite_zhuge.png',
+	'image/card/group_jin.png',
 	'image/card/group_wei.png',
 	'image/card/group_shu.png',
 	'image/card/group_wu.png',

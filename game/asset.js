@@ -5344,6 +5344,7 @@ window.noname_asset_list = [
 	'image/card/gongshoujianbei.png',
 	'image/card/gouhunluo.png',
 	'image/card/group_key.png',
+	'image/card/group_jin.png',
 	'image/card/group_qun.png',
 	'image/card/group_shu.png',
 	'image/card/group_wei.png',
