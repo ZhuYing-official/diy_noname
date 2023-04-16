@@ -6963,74 +6963,76 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 					};
 
 					// 观星
-					lib.element.content.chooseToGuanxing = function () {
-						"step 0"
-						if (player.isUnderControl()) {
-							game.modeSwapPlayer(player);
-						}
+					if (!_status.connectMode) {
+						lib.element.content.chooseToGuanxing = function () {
+							"step 0"
+							if (player.isUnderControl()) {
+								game.modeSwapPlayer(player);
+							}
 
-						var cards = get.cards(num);
-						var guanxing = decadeUI.content.chooseGuanXing(player, cards, cards.length, null, cards.length);
-						if (this.getParent() && this.getParent().name && get.translation(this.getParent().name) != this.getParent().name) {
-							guanxing.caption = '【' + get.translation(this.getParent().name) + '】';
-						} else {
-							guanxing.caption = "请按顺序排列牌。";
-						}
-						game.broadcast(function (player, cards, callback) {
-							if (!window.decadeUI) return;
+							var cards = get.cards(num);
 							var guanxing = decadeUI.content.chooseGuanXing(player, cards, cards.length, null, cards.length);
-							guanxing.caption = '【观星】';
-							guanxing.callback = callback;
-						}, player, cards, guanxing.callback);
+							if (this.getParent() && this.getParent().name && get.translation(this.getParent().name) != this.getParent().name) {
+								guanxing.caption = '【' + get.translation(this.getParent().name) + '】';
+							} else {
+								guanxing.caption = "请按顺序排列牌。";
+							}
+							game.broadcast(function (player, cards, callback) {
+								if (!window.decadeUI) return;
+								var guanxing = decadeUI.content.chooseGuanXing(player, cards, cards.length, null, cards.length);
+								guanxing.caption = '【观星】';
+								guanxing.callback = callback;
+							}, player, cards, guanxing.callback);
 
-						event.switchToAuto = function () {
-							var cards = guanxing.cards[0].concat();
-							var cheats = [];
-							var judges = player.node.judges.childNodes;
+							event.switchToAuto = function () {
+								var cards = guanxing.cards[0].concat();
+								var cheats = [];
+								var judges = player.node.judges.childNodes;
 
-							if (judges.length) cheats = decadeUI.get.cheatJudgeCards(cards, judges, true);
-							if (cards.length) {
-								for (var i = 0; i >= 0 && i < cards.length; i++) {
-									if (get.value(cards[i], player) >= 5) {
-										cheats.push(cards[i]);
-										cards.splice(i, 1)
+								if (judges.length) cheats = decadeUI.get.cheatJudgeCards(cards, judges, true);
+								if (cards.length) {
+									for (var i = 0; i >= 0 && i < cards.length; i++) {
+										if (get.value(cards[i], player) >= 5) {
+											cheats.push(cards[i]);
+											cards.splice(i, 1)
+										}
 									}
+								}
+
+								var time = 500;
+								for (var i = 0; i < cheats.length; i++) {
+									setTimeout(function (card, index, finished) {
+										guanxing.move(card, index, 0);
+										if (finished) guanxing.finishTime(1000);
+									}, time, cheats[i], i, (i >= cheats.length - 1) && cards.length == 0);
+									time += 500;
+								}
+
+								for (var i = 0; i < cards.length; i++) {
+									setTimeout(function (card, index, finished) {
+										guanxing.move(card, index, 1);
+										if (finished) guanxing.finishTime(1000);
+									}, time, cards[i], i, (i >= cards.length - 1));
+									time += 500;
 								}
 							}
 
-							var time = 500;
-							for (var i = 0; i < cheats.length; i++) {
-								setTimeout(function (card, index, finished) {
-									guanxing.move(card, index, 0);
-									if (finished) guanxing.finishTime(1000);
-								}, time, cheats[i], i, (i >= cheats.length - 1) && cards.length == 0);
-								time += 500;
+							if (event.isOnline()) {
+								event.player.send(function () {
+									if (!window.decadeUI && decadeUI.eventDialog) _status.event.finish();
+								}, event.player);
+
+								event.player.wait();
+								decadeUI.game.wait();
+							} else if (!(typeof event.isMine == 'function' && event.isMine())) {
+								event.switchToAuto();
 							}
-
-							for (var i = 0; i < cards.length; i++) {
-								setTimeout(function (card, index, finished) {
-									guanxing.move(card, index, 1);
-									if (finished) guanxing.finishTime(1000);
-								}, time, cards[i], i, (i >= cards.length - 1));
-								time += 500;
-							}
-						}
-
-						if (event.isOnline()) {
-							event.player.send(function () {
-								if (!window.decadeUI && decadeUI.eventDialog) _status.event.finish();
-							}, event.player);
-
-							event.player.wait();
-							decadeUI.game.wait();
-						} else if (!(typeof event.isMine == 'function' && event.isMine())) {
-							event.switchToAuto();
-						}
-						"step 1"
-						player.popup(get.cnNumber(event.num1) + '上' + get.cnNumber(event.num2) + '下');
-						game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) + '张牌置于牌堆底');
-						game.updateRoundNumber()
-					};
+							"step 1"
+							player.popup(get.cnNumber(event.num1) + '上' + get.cnNumber(event.num2) + '下');
+							game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) + '张牌置于牌堆底');
+							game.updateRoundNumber()
+						};
+					}
 
 					lib.element.player.setIdentity = function (identity) {
 						if (!identity) identity = this.identity;
