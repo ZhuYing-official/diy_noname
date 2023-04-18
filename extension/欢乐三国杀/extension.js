@@ -2411,6 +2411,20 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.addSkillLog('hpp_yinghun');
                                     player.awakenSkill('hpp_hunzi');
                                 },
+                                ai:{
+                                    threaten:function(player,target){
+                                        if(target.hp==1) return 2;
+                                        return 0.5;
+                                    },
+                                    maixie:true,
+                                    effect:{
+                                        target:function(card,player,target){
+                                            if(!target.hasFriend()) return;
+                                            if(get.tag(card,'damage')==1&&target.hp==2&&!target.isTurnedOver()&&
+                                            _status.currentPhase!=target&&get.distance(_status.currentPhase,target,'absolute')<=3) return [0.5,1];
+                                        }
+                                    }
+                                }
                             },
                             hpp_zhiba: {
                                 unique: true,
