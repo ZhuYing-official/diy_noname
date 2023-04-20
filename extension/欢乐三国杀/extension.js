@@ -270,7 +270,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
                         },
                         characterIntro: {
-                            hpp_zhangzhaozhanghong:'张昭，字子布，彭城人，三国时期吴国重臣，善丹青。拜辅吴将军，班亚三司，改封娄侯。年八十一卒，谥曰文侯。张纮，字子纲，广陵人。东吴谋士，和张昭一起合称“二张”。孙策平定江东时亲自登门邀请，张纮遂出仕为官。张纮后来建议孙权迁都秣陵，孙权正在准备时张纮病逝，其年六十岁。孙权为之流涕。',
+                            hpp_zhangzhaozhanghong: '张昭，字子布，彭城人，三国时期吴国重臣，善丹青。拜辅吴将军，班亚三司，改封娄侯。年八十一卒，谥曰文侯。<br/>张纮，字子纲，广陵人。东吴谋士，和张昭一起合称“二张”。孙策平定江东时亲自登门邀请，张纮遂出仕为官。张纮后来建议孙权迁都秣陵，孙权正在准备时张纮病逝，其年六十岁。孙权为之流涕。',
                             hpp_sp_pangtong: "庞统，字士元，襄阳（治今湖北襄阳）人。三国时刘备帐下谋士，官拜军师中郎将。才智与诸葛亮齐名，人称“凤雏”。在进围雒县时，统率众攻城，不幸被流矢击中去世，时年三十六岁。追赐统为关内侯，谥曰靖侯。庞统死后，葬于落凤庞统墓坡。",
                             hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
@@ -3035,7 +3035,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     'step 0'
                                     trigger.player.chooseBool('是否对' + get.translation(player) + '发动【救援】？', '改为令其回复1点体力，然后你摸一张牌').set('ai', function () {
                                         var evt = _status.event;
-                                        return get.attitude(evt.player, evt.getParent().player) > 0;
+                                        if (get.attitude(evt.player, evt.getParent().player) > 0) {
+                                            if ((evt.getParent().player.hp > 2 && evt.player.hp < evt.getParent().player.hp) || (!evt.getParent().player.isDamaged() && evt.player.isDamaged())) {
+                                                return false;
+                                            }
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
                                     });
                                     'step 1'
                                     if (result.bool) {
