@@ -721,11 +721,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.addSkill('hok_minggua2');
 				},
 				ai: {
-					order: get.order({ name: 'wanjian' }) - 1,
+					order: 2,
 					result: {
 						target: function (player, target) {
-							if (target.hp == 1) return 5;
-							return 1;
+							if (target.hp == 1 && get.zhu(player) != player) return 5;
+							if (target.hp < player.hp) return 5;
+							if (player == target && player.countCards('h') > player.hp && player.hp != 1) return 5;
+							return 0;
 						}
 					},
 					threaten: 1,
@@ -923,7 +925,18 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 0'
 					player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
 						return target.maxHp >= player.maxHp;
-					}).set('forceDie', true).set('ai', (target) => get.attitude(_status.event.player, target));
+					}).set('forceDie', true).set('ai', function (target) {
+						var goodGua = !gua1 + !gua2 + !gua3;
+						var badGua = !gua4 + !gua5 + !gua6;
+						if (get.attitude(_status.event.player, target) > 0) {
+							if (goodGua > badGua) {
+								return 5;
+							} else {
+								return 0;
+							}
+						}
+						return 2;
+					});
 					'step 1'
 					if (result.bool) {
 						var target = result.targets[0];
@@ -958,41 +971,58 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			hok_biangua3: {
 				audio: 2,
+				usable: 1,
 				enable: 'phaseUse',
 				filter: function (event, player) {
 					let tar = game.filterPlayer(function (target) {
 						return target.hasSkill('hok_biangua');
 					})[0];
 					if (tar) {
-						return tar.countMark('hok_biangua2') > 7;
+						return tar.countMark('hok_biangua2') > 7 && guaList.length > 0;
 					}
 					return false;
 				},
 				content: function () {
 					'step 0'
-					if (gua1) {
+					if (gua1 && guaList.indexOf('大吉') >= 0) {
 						guaList.splice(guaList.indexOf('大吉'), 1);
-					} else if (gua2) {
+					}
+					if (gua2 && guaList.indexOf('中吉') >= 0) {
 						guaList.splice(guaList.indexOf('中吉'), 1);
-					} else if (gua3) {
+					}
+					if (gua3 && guaList.indexOf('小吉') >= 0) {
 						guaList.splice(guaList.indexOf('小吉'), 1);
-					} else if (gua4) {
+					}
+					if (gua4 && guaList.indexOf('小凶') >= 0) {
 						guaList.splice(guaList.indexOf('小凶'), 1);
-					} else if (gua5) {
+					}
+					if (gua5 && guaList.indexOf('中凶') >= 0) {
 						guaList.splice(guaList.indexOf('中凶'), 1);
-					} else if (gua6) {
+					}
+					if (gua6 && guaList.indexOf('大凶') >= 0) {
 						guaList.splice(guaList.indexOf('大凶'), 1);
 					} else {
 						return;
 					}
 
 					'step 1'
-					let target = game.filterPlayer(function (target) {
+					event.guaTarget = game.filterPlayer(function (target) {
 						return target.hasSkill('hok_biangua');
 					})[0];
-					player.chooseControl(guaList, 'cancel2').set('ai', function (target) {
-						let r = Math.random() * guaList.length;
-						return guaList[Math.floor(r)];
+					player.chooseControl(guaList, 'cancel2').set('ai', function (event, player) {
+						var goodGua = !gua1 + !gua2 + !gua3;
+						var badGua = !gua4 + !gua5 + !gua6;
+						if (get.attitude(_status.event.player, event.guaTarget) <= 0) {
+							if (goodGua == 0) {
+								return '取消';
+							}
+							return guaList[0];
+						} else {
+							if (badGua == 0) {
+								return '取消';
+							}
+							return guaList[guaList.length - 1];
+						}
 					});
 					'step 2'
 					switch (result.control) {
@@ -1016,8 +1046,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							break;
 						default:
 					}
-					var str = get.translation(player) + '选择了：' + result.control;
-					event.dialog = ui.create.dialog(str);
+					result.control = result.control == 'cancel2' ? '取消' : result.control;
+					var str = get.translation(player) + '选择了：#y' + result.control;
+					// event.dialog = ui.create.dialog(str);
+					player.popup(result.control);
 					game.log(str);
 					if (!player.hasSkill('hok_biangua')) {
 						game.filterPlayer(function (target) {
@@ -1028,7 +1060,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 					'step 3'
 					game.delay(1);
-					event.dialog.close();
+					// event.dialog.close();
 				},
 				ai: {
 					order: function () {
@@ -2198,7 +2230,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌。',
 			hok_biangua: '变卦',
 			hok_biangua3: '变卦',
-			hok_biangua_info: '当你发动命卦后，获得1个“卦”标记；出牌阶段当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
+			hok_biangua_info: '当你发动命卦后，获得1个“卦”标记。出牌阶段限一次，当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
 			// 孙悟空
 			hok_sunwukong: '孙悟空',
 			hok_qitian: '齐天',
