@@ -757,8 +757,8 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 					game.me.chooseButtonOL(list, function (player, result) {
 						if (game.online || player == game.me) {
 							player.init(result.links[0]);
-							player.hp++;
-							player.maxHp++;
+							// player.hp++;
+							// player.maxHp++;
 							player.update();
 						}
 					});
@@ -804,6 +804,12 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 							player.init(result.links[0]);
 						}
 					});
+					game.rZhu.maxHp++;
+					game.rZhu.hp++;
+					game.rZhu.update();
+					game.bZhu.maxHp++;
+					game.bZhu.hp++;
+					game.bZhu.update();
 					"step 6"
 					for (var i in result) {
 						if (result[i] == 'ai' || !result[i] || !result[i].links) {
