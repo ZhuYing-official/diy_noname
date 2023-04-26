@@ -1279,6 +1279,7 @@ window.noname_character_rank = {
 			'hpp_lingtong',
 			'hpp_liubiao',
 			'hpp_liubei',
+			'hpp_liuxie',
 			'hpp_liuyan',
 			'hpp_luji',
 			'hpp_lusu',

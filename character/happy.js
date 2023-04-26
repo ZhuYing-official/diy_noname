@@ -605,17 +605,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					'step 0'
-					player.chooseToDiscard(true, 1, 'h', '弃置一张杀，视为对该角色使用两张【雷杀】。', { name: 'sha' });
+					player.chooseToDiscard(true, 1, 'h', '弃置一张杀，视为对该角色使用两张【雷杀】（喝酒状态下影响第二张杀）。', { name: 'sha' });
 					player.addSkill('hok_qianglin_draw');
 					'step 1'
 					// player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, '视为使用两张【雷杀】');
+					trigger.card.nature = 'thunder';
+					trigger.card.color = 'none';
 					for (target of trigger.targets) {
-						player.useCard({ name: 'sha', nature: 'thunder' }, target);
 						player.useCard({ name: 'sha', nature: 'thunder' }, target);
 					}
 					'step 2'
 					// 'step 3'
-					trigger.cancel();
 					player.removeSkill('hok_qianglin_draw');
 				},
 				subSkill: {
@@ -2163,15 +2163,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		},
 		characterTitle: {
 			// g绿 b蓝 r红 p粉
-			cuishi: '#b捞德一评级:3.4',
+			cuishi: '#g捞德一评级:2.4',
 			liucong: '#g捞德一评级:2.0',
-			hok_daji: '#b捞德一评级:3.6',
-			hok_lixin: '#r捞德一评级:4.2',
-			hok_makeboluo: '#b捞德一评级:3.8',
-			hok_mingshiyin: '#r耀世圣手评级:4.1',
-			hok_sunwukong: '#r捞德一评级:4.1',
+			hok_daji: '#b捞德一评级:3.3',
+			hok_lixin: '#r捞德一评级:4.0',
+			hok_makeboluo: '#b捞德一评级:3.7',
+			hok_mingshiyin: '#r耀世圣手评级:4.0',
+			hok_sunwukong: '#b捞德一评级:3.8',
 			shen_caozhi: '#r捞德一评级:4.2',
-			shen_dongzhuo: '#r捞德一评级:4.2',
+			shen_dongzhuo: '#r捞德一评级:4.0',
 			shen_lusu: '#r捞德一评级:4.3',
 		},
 		translate: {
@@ -2212,7 +2212,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_zuolun: '左轮',
 			hok_zuolun_info: '锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
 			hok_qianglin: '枪林',
-			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀，若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
+			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀（喝酒状态下影响第二张杀），若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
 			hok_danyu: '弹雨',
 			hok_danyu_info: '出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// 明世隐
