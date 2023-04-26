@@ -65,6 +65,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhangzhaozhanghong',
                             'hpp_zhaoyun',
                             'hpp_zhenji',
+                            'hpp_zhonghui',
                             'hpp_zhongyao',
                             'hpp_zhouyu',
                             'hpp_zhugeliang',
@@ -137,7 +138,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_wangping', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
                                 huo_yi: ['hpp_taishici', 'hpp_luji', 'hpp_lingtong', 'hpp_xusheng', 'hpp_gaoshun', 'hpp_zhuran', 'hpp_zhuhuan', 'hpp_zhuzhi',],
                                 huo_bi: ['hpp_zhonghui', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
-                                shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xuhsi', 'hpp_dufuren', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
+                                shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xuhsi', 'hpp_dufuren', 'hpp_xiahoulingnv', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
                                 shan_si: ['hpp_liushan', 'hpp_zhugezhan', 'hpp_gaunping', 'hpp_liufen', 'hpp_zhangxingcai', 'hpp_gaunyinpin', 'hpp_zhaoxiang'],
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
                                 shan_ce: ['hpp_wolongzhuge', 'hpp_xunyou', 'hpp_jianyong', 'hpp_buzhi', 'hpp_yangxiu'],
@@ -261,6 +262,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhaoyun: ['male', 'shu', 4, ['hpp_longdan', 'hpp_yajiao'], []],
                             // 欢乐甄姬
                             hpp_zhenji: ['female', 'wei', 3, ['hpp_luoshen', 'qingguo'], []],
+                            // 欢乐钟会
+                            hpp_zhonghui: ['male', 'wei', 3, ['hpp_quanji', 'hpp_paiyi'], []],
                             // 欢乐钟繇
                             hpp_zhongyao: ['male', 'wei', 3, ['hpp_huomo', 'hpp_zuoding'], []],
                             // 欢乐周瑜
@@ -367,6 +370,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhangzhang: ['re_zhangzhaozhanghong', 're_zhangzhang', 'zhangzhang'],
                             zhaoyun: ['hpp_zhaoyun', 're_zhaoyun', 'old_zhaoyun', 'zhaoyun'],
                             zhenji: ['hpp_zhenji', 're_zhenji', 'zhenji'],
+                            zhonghui: ['hpp_zhonghui', 're_zhonghui', 'xin_zhonghui', 'zhonghui', 'old_zhonghui'],
                             zhongyao: ['hpp_zhongyao', 'zhongyao'],
                             zhouyu: ['hpp_zhouyu', 're_zhouyu', 'zhouyu'],
                             zhugeliang: ['hpp_zhugeliang', 're_zhugeliang', 'zhugeliang'],
@@ -4995,6 +4999,125 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 钟会
+                            hpp_quanji: {
+                                group: 'hpp_quanji_phase',
+                                audio: 'requanji',
+                                trigger: { player: 'damageEnd' },
+                                filter: function (event, player) {
+                                    return event.num > 0;
+                                },
+                                frequent: true,
+                                prompt2: '摸两张牌',
+                                content: function () {
+                                    'step 0'
+                                    event.count = trigger.num;
+                                    'step 1'
+                                    event.count--;
+                                    player.draw(2);
+                                    'step 2'
+                                    if (event.count > 0) player.chooseBool(get.prompt('hpp_quanji'), '摸两张牌').set('frequentSkill', 'hpp_quanji');
+                                    else event.finish();
+                                    'step 3'
+                                    if (result.bool) {
+                                        player.logSkill('hpp_quanji');
+                                        event.goto(1);
+                                    }
+                                },
+                                onremove: function (player, skill) {
+                                    var cards = player.getExpansions('quanji');
+                                    if (cards.length) player.loseToDiscardpile(cards);
+                                },
+                                mod: {
+                                    maxHandcard: function (player, num) {
+                                        return num + Math.min(5, player.getExpansions('quanji').length);
+                                    },
+                                },
+                                subSkill: {
+                                    phase: {
+                                        audio: 'requanji',
+                                        enable: 'phaseUse',
+                                        filter: function (event, player) {
+                                            return player.countCards('h');
+                                        },
+                                        prompt: '将任意张手牌置于武将牌上',
+                                        selectCard: [1, Infinity],
+                                        filterCard: true,
+                                        delay: 0,
+                                        discard: false,
+                                        lose: false,
+                                        delay: false,
+                                        check: function (card) {
+                                            var player = _status.event.player, num = player.needsToDiscard();
+                                            if (!player.getExpansions('quanji').length || num - ui.selected.cards.length - Math.min(5, player.getExpansions('quanji').length + ui.selected.cards.length) > 0) return 5 - get.value(card);
+                                            return -1;
+                                        },
+                                        content: function () {
+                                            player.addToExpansion(cards, player, 'give').gaintag.add('quanji');
+                                        },
+                                        ai: {
+                                            order: 5,
+                                            result: { player: 1 },
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_paiyi: {
+                                enable: 'phaseUse',
+                                usable: 1,
+                                audio: 'xinpaiyi',
+                                audioname: ['re_zhonghui'],
+                                filter: function (event, player) {
+                                    return player.getExpansions('quanji').length > 0;
+                                },
+                                chooseButton: {
+                                    dialog: function (event, player) {
+                                        return ui.create.dialog('排异', player.getExpansions('quanji'), 'hidden')
+                                    },
+                                    backup: function (links, player) {
+                                        return {
+                                            audio: 'xinpaiyi',
+                                            audioname: ['re_zhonghui'],
+                                            filterTarget: true,
+                                            filterCard: function () { return false },
+                                            selectCard: -1,
+                                            card: links[0],
+                                            delay: false,
+                                            content: lib.skill.hpp_paiyi.contentx,
+                                            ai: {
+                                                order: 10,
+                                                result: {
+                                                    target: function (player, target) {
+                                                        if (player != target) return 0;
+                                                        if (player.hasSkill('requanji') || (player.countCards('h') + 2 <= player.hp + player.getExpansions('quanji').length)) return 1;
+                                                        return 0;
+                                                    }
+                                                },
+                                            },
+                                        }
+                                    },
+                                    prompt: function () { return '请选择〖排异〗的目标' },
+                                },
+                                contentx: function () {
+                                    "step 0"
+                                    var card = lib.skill.hpp_paiyi_backup.card;
+                                    player.loseToDiscardpile(card);
+                                    "step 1"
+                                    target.draw(2);
+                                    "step 2"
+                                    if (target.countCards('h') > player.countCards('h')) {
+                                        target.damage();
+                                    }
+                                },
+                                ai: {
+                                    order: 1,
+                                    combo: 'quanji',
+                                    result: {
+                                        player: 1,
+                                    }
+                                }
+                            },
+
                             // 钟繇
                             hpp_huomo: {
                                 audio: 'huomo',
@@ -6467,7 +6590,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_ganning: '#b捞德一评级:3.8',
                             hpp_gaoshun: '#b捞德一评级:3.6',
                             hpp_gongsunzan: '#b捞德一评级:3.8',
-                            hpp_guanyu: '#r捞德一评级:4.1',
+                            hpp_guanyu: '#b捞德一评级:3.8',
                             hpp_guohuai: '#r捞德一评级:4.1',
                             hpp_guojia: '捞德一评级1.2',
                             // H
@@ -6521,12 +6644,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangzhaozhanghong: '#g捞德一评级:2.6',
                             hpp_zhaoyun: '#b捞德一评级:3.1',
                             hpp_zhenji: '#b捞德一评级:3.0',
+                            hpp_zhonghui: '#b捞德一评级:3.0',
                             hpp_zhongyao: '#b捞德一评级:3.0',
-                            hpp_zhouyu: '#b捞德一评级:3.0',
+                            hpp_zhouyu: '#b捞德一评级:3.2',
                             hpp_zhugeliang: '#b捞德一评级:3.3',
-                            hpp_zhuhuan: '#b捞德一评级:3.0',
-                            hpp_zhuran: '#b捞德一评级:3.0',
-                            hpp_zhuzhi: '#b捞德一评级:3.0',
+                            hpp_zhuhuan: '#b捞德一评级:3.5',
+                            hpp_zhuran: '#b捞德一评级:3.5',
+                            hpp_zhuzhi: '#b捞德一评级:3.5',
                             hpp_zumao: '#r捞德一评级:4.1',
                             hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
@@ -6793,6 +6917,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhenji: '甄姬',
                             hpp_luoshen: '洛神',
                             hpp_luoshen_info: '准备阶段，你可以进行判定，若结果为黑色，你获得此牌，然后你可以重复此流程；红色，获得此牌，然后结束此流程。',
+                            hpp_zhonghui: '钟会',
+                            hpp_quanji: '权计',
+                            hpp_quanji_info: '当你受到1点伤害后，你可以摸两张牌；你的出牌阶段，可以将任意张手牌置于武将牌上，称为“权”；你的手牌上限+X（X为“权”的数量且最大为5）。',
+                            hpp_paiyi: '排异',
+                            hpp_paiyi_backup: '排异',
+                            hpp_paiyi_info: '出牌阶段限一次，你可以移去1张“权”，令1名角色摸2张牌。若获得牌的角色手牌比你多，则你对其造成1点伤害。',
                             hpp_zhongyao: '钟繇',
                             hpp_huomo: '活墨',
                             hpp_huomo_info: '当你需要使用基本牌时，你可以将一张不为基本牌的黑色牌置于牌堆顶。若如此做，你视为使用此基本牌，每回合限两次。',
