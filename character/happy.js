@@ -294,7 +294,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				viewAs: { name: 'lebu' },
 				prompt: '将一张红色手牌当乐不思蜀使用',
 				onuse: function (result, player) {
-					if (player.countMark('hok_meixin') < 3) {
+					if (player.countMark('hok_meixin') < 4) {
 						player.addMark('hok_meixin', 1);
 					}
 				},
@@ -323,7 +323,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 0'
 					player.removeMark('hok_meixin', 3);
 					'step 1'
-					player.chooseTarget('为狐火减少一个目标', function (card, player, target) {
+					player.chooseTarget('为狐火减少1~3个目标', [1, 3], function (card, player, target) {
 						return player.inRange(target);
 					}).set('ai', function (target) {
 						if (target == player || !player.inRange(target)) {
@@ -332,13 +332,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return get.attitude(_status.event.player, target);
 					});
 					'step 2'
-					for (var i = 0; i < 3; i++) {
-						event.huhuoList = game.filterPlayer(function (target) {
-							return player.inRange(target) && !target.isDead() && target != player;
-						});
-						if (result.bool) {
-							event.huhuoList.splice(event.huhuoList.indexOf(result.targets[0]), 1);
+					event.huhuoList = game.filterPlayer(function (target) {
+						return player.inRange(target) && !target.isDead() && target != player;
+					});
+					event.huhuoDamage = (event.huhuoList.length > 6 ? 5 : 3);
+					if (result.bool) {
+						for (var i = 0; i < result.targets.length; i++) {
+							// event.huhuoList.splice(event.huhuoList.indexOf(result.targets[0]), 1);
+							event.huhuoList.splice(event.huhuoList.indexOf(result.targets[i]), 1);
+							game.log(result.targets[i], '--', event.huhuoList);
 						}
+					}
+					'step 3'
+					for (var i = 0; i < event.huhuoDamage; i++) {
 						huhuoTarget = event.huhuoList.randomGet();
 						player.line(huhuoTarget, 'fire');
 						huhuoTarget.damage('fire');
@@ -358,15 +364,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							return 0;
 						}
 					},
-					effect: {
-						target: function (card, player, target) {
-							if (player == target && (get.subtype(card) == 'equip1' || get.subtype(card) == 'equip4')) {
-								if (get.equipValue(card) < 5) return 0;
-							}
-							if (!target.isEmpty(1)) return;
-							return 1;
-						}
-					}
+					// effect: {
+					// 	target: function (card, player, target) {
+					// 		if (player == target && (get.subtype(card) == 'equip1' || get.subtype(card) == 'equip4')) {
+					// 			if (get.equipValue(card) < 5) return 0;
+					// 		}
+					// 		if (!target.isEmpty(1)) return;
+					// 		return 1;
+					// 	}
+					// }
 				},
 			},
 			// 李信
@@ -2165,7 +2171,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// g绿 b蓝 r红 p粉
 			cuishi: '#g捞德一评级:2.4',
 			liucong: '#g捞德一评级:2.0',
-			hok_daji: '#b捞德一评级:3.3',
+			hok_daji: '#b捞德一评级:3.6',
 			hok_lixin: '#r捞德一评级:4.0',
 			hok_makeboluo: '#b捞德一评级:3.7',
 			hok_mingshiyin: '#r耀世圣手评级:4.0',
@@ -2193,9 +2199,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 妲己
 			hok_daji: '妲己',
 			hok_meixin: '魅心',
-			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于3，你获得1枚“魅心”标记。',
+			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于4，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
-			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害，你可以减少其中一个目标。',
+			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害(如果目标大于6改为5点火焰伤害)，你可以减少其中1~3个目标。',
 			// 李信
 			hok_lixin: '李信',
 			hok_wangming: '王命',

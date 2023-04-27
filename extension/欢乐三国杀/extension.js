@@ -59,7 +59,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_xiaoqiao',
                             'hpp_xusheng',
                             'hpp_xunyu',
+                            'hpp_xuyou',
                             'hpp_xuzhu',
+                            'hpp_yanliangwenchou',
+                            'hpp_yuanshao',
+                            'hpp_yuanshu',
                             'hpp_yuji',
                             'hpp_zhangfei',
                             'hpp_zhangjiao',
@@ -144,7 +148,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xuhsi', 'hpp_dufuren', 'hpp_xiahoulingnv', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
                                 shan_si: ['hpp_liushan', 'hpp_zhugezhan', 'hpp_gaunping', 'hpp_liufen', 'hpp_zhangxingcai', 'hpp_gaunyinpin', 'hpp_zhaoxiang'],
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
-                                shan_ce: ['hpp_wolongzhuge', 'hpp_xunyou', 'hpp_jianyong', 'hpp_buzhi', 'hpp_yangxiu'],
+                                shan_ce: ['hpp_wolongzhuge', 'hpp_xunyou', 'hpp_jianyong', 'hpp_buzhi', 'hpp_yanjun', 'hpp_yangxiu'],
                                 shan_ji: ['hpp_lukang', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng',],
                                 ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu'],
                                 ming_ru: ['hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xushu', 'hpp_liuzhang'],
@@ -253,8 +257,16 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xunyu: ['male', 'wei', 3, ['hpp_quhu', 'hpp_jieming'], []],
                             // 欢乐徐盛
                             hpp_xusheng: ['male', 'wu', 4, ['hpp_pojun'], []],
+                            // 欢乐许攸
+                            hpp_xuyou: ['male', 'qun', 3, ['hpp_chenglve', 'nzry_shicai', 'nzry_cunmu'], []],
                             // 欢乐许诸
                             hpp_xuzhu: ['male', 'wei', 4, ['hpp_luoyi', 'hpp_huchi'], []],
+                            // 欢乐颜良文丑
+                            hpp_yanliangwenchou: ['male', 'qun', 4, ['minishuangxiong'], []],
+                            // 欢乐袁绍
+                            hpp_yuanshao: ['male', 'qun', 4, ['miniluanji', 'minixueyi'], ['zhu']],
+                            // 欢乐袁术
+                            hpp_yuanshu: ['male', 'qun', 4, ['yongsi', 'hpp_weidi'], []],
                             // 欢乐于吉
                             hpp_yuji: ['male', 'qun', 4, ['hpp_guhuo'], []],
                             // 欢乐张飞
@@ -306,6 +318,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         },
                         characterIntro: {
                             hpp_zhangzhaozhanghong: '张昭，字子布，彭城人，三国时期吴国重臣，善丹青。拜辅吴将军，班亚三司，改封娄侯。年八十一卒，谥曰文侯。<br/>张纮，字子纲，广陵人。东吴谋士，和张昭一起合称“二张”。孙策平定江东时亲自登门邀请，张纮遂出仕为官。张纮后来建议孙权迁都秣陵，孙权正在准备时张纮病逝，其年六十岁。孙权为之流涕。',
+                            hpp_yanliangwenchou: '东汉末年河北袁绍部下武将，素有威名。颜良与文丑一起作为袁绍军队的勇将而闻名。建安四年（199），袁绍以颜良、文丑为将，率精卒十万，准备攻许都；次年，兵进黎阳，遣颜良攻白马。终均亡于关羽刀下。',
                             hpp_sp_pangtong: "庞统，字士元，襄阳（治今湖北襄阳）人。三国时刘备帐下谋士，官拜军师中郎将。才智与诸葛亮齐名，人称“凤雏”。在进围雒县时，统率众攻城，不幸被流矢击中去世，时年三十六岁。追赐统为关内侯，谥曰靖侯。庞统死后，葬于落凤庞统墓坡。",
                             hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
@@ -372,8 +385,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             xiaoqiao: ['hpp_xiaoqiao', 'ol_xiaoqiao', 're_xiaoqiao', 'xiaoqiao'],
                             xusheng: ['hpp_xusheng', 'xin_xusheng', 're_xusheng', 'xusheng', 'old_xusheng'],
                             xunyu: ['hpp_xunyu', 'ol_xunyu', 're_xunyu', 'xunyu'],
+                            xuyou: ['hpp_xuyou', 'sp_xuyou', 'xuyou'],
                             xuzhu: ['hpp_xuzhu', 're_xuzhu', 'xuzhu'],
                             // Y
+                            yanwen: ['hpp_yanliangwenchou', 're_yanwen', 'yanwen'],
+                            re_yuanshao: ['hpp_yuanshao', 'ol_yuanshao', 're_yuanshao', 'xin_yuanshao'],
+                            yuanshu: ['hpp_yuanshu', 'yl_yuanshu', 'yuanshu', 're_yuanshu', 'old_yuanshu', 'ol_yuanshu'],
                             yuji: ['hpp_yuji', 'xin_yuji', 're_yuji', 'yuji'],
                             // Z
                             zhangfei: ['hpp_zhangfei', 're_zhangfei', 'tw_zhangfei', 'xin_zhangfei', 'old_zhangfei', 'zhangfei'],
@@ -4424,6 +4441,61 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 许攸
+                            hpp_chenglve: {
+                                enable: 'phaseUse',
+                                usable: 1,
+                                audio: 'nzry_chenglve',
+                                content: function () {
+                                    'step 0'
+                                    player.draw();
+                                    player.chooseToDiscard('h', true);
+                                    'step 1'
+                                    if (result.bool) {
+                                        player.addTempSkill('hpp_chenglve_use');
+                                        player.storage.hpp_chenglve_use.push(get.suit(result.cards[0], player));
+                                        player.storage.hpp_chenglve_use.sort(function (a, b) {
+                                            return lib.suit.indexOf(b) - lib.suit.indexOf(a);
+                                        });
+                                        if (game.HasExtension('十周年UI')) {
+                                            game.broadcastAll(function (player) {
+                                                var str = '成略';
+                                                for (var suit of player.getStorage('hpp_chenglve_use')) str += get.translation(suit);
+                                                if (player.marks.hpp_chenglve_use) player.marks.hpp_chenglve_use.firstChild.innerHTML = str;
+                                            }, player);
+                                        }
+                                    }
+                                },
+                                ai: {
+                                    order: 10,
+                                    result: { player: 1 },
+                                },
+                                subSkill: {
+                                    use: {
+                                        init: function (player) {
+                                            if (!player.storage.hpp_chenglve_use) player.storage.hpp_chenglve_use = [];
+                                        },
+                                        charlotte: true,
+                                        onremove: true,
+                                        mark: true,
+                                        intro: {
+                                            markcount: () => undefined,
+                                            content: '使用$花色的牌无距离和次数限制',
+                                        },
+                                        mod: {
+                                            cardUsable: function (card, player) {
+                                                var suits = player.storage.hpp_chenglve_use;
+                                                if (suits.contains(get.suit(card))) return Infinity;
+                                            },
+                                            targetInRange: function (card, player) {
+                                                var suits = player.storage.hpp_chenglve_use;
+                                                if (suits.contains(get.suit(card))) return true;
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+
                             // 许诸
                             hpp_luoyi: {
                                 audio: 'reluoyi',
@@ -4499,6 +4571,64 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             result: { player: 1 },
                                         },
                                     },
+                                },
+                            },
+
+                            // 袁术
+                            hpp_weidi: {
+                                audio: 'weidi',
+                                preHidden: true,
+                                trigger: { player: 'phaseDiscardEnd' },
+                                filter: function (event, player) {
+                                    var cards = [];
+                                    game.getGlobalHistory('cardMove', function (evt) {
+                                        if (evt.name == 'cardsDiscard' && evt.getParent('phaseDiscard') == event) cards.addArray(evt.cards.filterInD('d'));
+                                    });
+                                    game.countPlayer2(function (current) {
+                                        current.getHistory('lose', function (evt) {
+                                            if (evt.type != 'discard' || evt.getParent('phaseDiscard') != event) return;
+                                            cards.addArray(evt.cards.filterInD('d'));
+                                        })
+                                    });
+                                    return cards.length;
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    var cards = [];
+                                    game.getGlobalHistory('cardMove', function (evt) {
+                                        if (evt.name == 'cardsDiscard' && evt.getParent('phaseDiscard') == trigger) cards.addArray(evt.cards.filterInD('d'));
+                                    });
+                                    game.countPlayer2(function (current) {
+                                        current.getHistory('lose', function (evt) {
+                                            if (evt.type != 'discard' || evt.getParent('phaseDiscard') != trigger) return;
+                                            cards.addArray(evt.cards.filterInD('d'));
+                                        })
+                                    });
+                                    player.chooseCardButton(cards, '伪帝：是否将一张牌交给一名其他角色？').set('ai', function (button) {
+                                        var player = _status.event.player;
+                                        if (game.hasPlayer(function (current) {
+                                            return current != player && get.attitude(player, current) > 0;
+                                        })) return get.value(button.link);
+                                        return 0;
+                                    }).set('cards', cards).set('filterButton', function (button) {
+                                        return _status.event.cards.contains(button.link);
+                                    }).setHiddenSkill('hpp_weidi');
+                                    'step 1'
+                                    if (result.bool) {
+                                        event.card = result.links[0];
+                                        player.chooseTarget('将' + get.translation(event.card) + '交给一名其他角色', lib.filter.notMe, true).set('ai', function (target) {
+                                            var player = _status.event.player;
+                                            return get.attitude(player, target) * get.value(event.card, target) * (target.hasSkillTag('nogain') ? 0.1 : 1);
+                                        });
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    if (result.bool) {
+                                        var target = result.targets[0];
+                                        player.logSkill('hpp_weidi', target);
+                                        target.gain(card, 'gain2');
+                                    }
                                 },
                             },
 
@@ -6877,8 +7007,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xiaoqiao: '#g捞德一评级2.2',
                             hpp_xunyu: '#b捞德一评级3.2',
                             hpp_xusheng: '#g捞德一评级2.5',
+                            hpp_xuyou: '#b捞德一评级3.3',
                             hpp_xuzhu: '#g捞德一评级2.8',
                             // Y
+                            hpp_yuanshu: '#g捞德一评级2.1',
                             hpp_yuji: '#b捞德一评级3.1',
                             // Z
                             hpp_zhangfei: '#b捞德一评级:3.6',
@@ -7134,12 +7266,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_pojun: '破军',
                             hpp_pojun2: '破军',
                             hpp_pojun_info: '当你使用【杀】指定目标后，你可以将其的至多X张牌（X为其体力值）移出游戏直到回合结束：若其中有装备牌，弃置其中一张；若其中有【闪】，你摸一张牌。',
+                            hpp_xuyou: '许攸',
+                            hpp_chenglve: '成略',
+                            hpp_chenglve_info: '出牌阶段限一次，你可以摸一张牌，然后弃置一张手牌。若如此做，直到本回合结束，你使用与弃置牌相同花色的牌无距离和次数限制。',
                             hpp_xuzhu: '许诸',
                             hpp_luoyi: '裸衣',
                             hpp_luoyi_info: '摸牌阶段，你可以少摸一张牌，然后本回合你使用【杀】或【决斗】造成的伤害+1。',
                             hpp_huchi: '虎痴',
                             hpp_huchi_info: '回合结束时，若你的手牌数小于2，则摸至2张；且当你对目标出杀被闪时，你获得一枚“痴”。出牌阶段限一次，可以弃置所有“痴”，摸同等数量的牌。',
                             // Y
+                            hpp_yuanshu: '袁术',
+                            hpp_weidi: '伪帝',
+                            hpp_weidi_info: '弃牌阶段结束时，你可以选择一张弃置的牌交给一名其他角色。',
                             hpp_yuji: '于吉',
                             hpp_guhuo: '蛊惑',
                             hpp_guhuo_info: '你使用的【杀】或伤害锦囊牌结算后，若没有造成伤害，则将此牌移出游戏，你摸一张牌，并在回合结束后将此牌归还；若造成伤害，你摸一张牌，每回合限一次。',
