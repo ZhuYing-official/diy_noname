@@ -1330,6 +1330,7 @@ window.noname_character_rank = {
 			'hpp_sp_zhaoyun',
 			'hpp_shen_caocao',
 			'hpp_shen_luxun',
+			'hpp_shen_lvmeng',
 			'hpp_shen_zhaoyun',
 			'hpp_shen_zhangjiao',
 		],

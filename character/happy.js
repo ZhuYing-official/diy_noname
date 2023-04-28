@@ -932,14 +932,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
 						return target.maxHp >= player.maxHp;
 					}).set('forceDie', true).set('ai', function (target) {
-						var goodGua = !gua1 + !gua2 + !gua3;
-						var badGua = !gua4 + !gua5 + !gua6;
-						if (get.attitude(_status.event.player, target) > 0) {
-							if (goodGua > badGua) {
-								return 5;
-							} else {
-								return 0;
-							}
+						var goodGua = (gua1 ? 0 : 1) + (gua2 ? 0 : 1) + (gua3 ? 0 : 1);
+						var badGua = (gua4 ? 0 : 1) + (gua5 ? 0 : 1) + (gua6 ? 0 : 1);
+						if (get.attitude(_status.event.player, target) > 0 && goodGua > badGua) {
+							return 5;
+						}
+						if (get.attitude(_status.event.player, target) <= 0 && goodGua > badGua) {
+							return 0;
+						}
+						if (get.attitude(_status.event.player, target) > 0 && goodGua <= badGua) {
+							return 0;
 						}
 						return 2;
 					});

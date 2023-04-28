@@ -10,6 +10,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         legend: [
                             'hpp_shen_caocao',
                             'hpp_shen_luxun',
+                            'hpp_shen_lvmeng',
                             'hpp_shen_zhaoyun',
                             'hpp_shen_zhangjiao',
 
@@ -308,11 +309,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_zhaoyun: ['male', 'qun', 3, ['hpp_longdan', 'hpp_chongzhen'], []],
 
                             // 神曹操
-                            hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['die_audio', 'wei']],
+                            hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['wei']],
                             // 神陆逊
                             hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
+                            // 神吕蒙
+                            hpp_shen_lvmeng: ['male', 'shen', 3, ['hpp_shelie', 'hpp_gongxin'], ['wu']],
                             // 神赵云
-                            hpp_shen_zhaoyun: ['male', 'shen', 2, ['hpp_juejing', 'hpp_longhun'], ['die_audio', 'shu']],
+                            hpp_shen_zhaoyun: ['male', 'shen', 2, ['hpp_juejing', 'hpp_longhun'], ['shu']],
                             // 神张角
                             hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
                         },
@@ -320,6 +323,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangzhaozhanghong: '张昭，字子布，彭城人，三国时期吴国重臣，善丹青。拜辅吴将军，班亚三司，改封娄侯。年八十一卒，谥曰文侯。<br/>张纮，字子纲，广陵人。东吴谋士，和张昭一起合称“二张”。孙策平定江东时亲自登门邀请，张纮遂出仕为官。张纮后来建议孙权迁都秣陵，孙权正在准备时张纮病逝，其年六十岁。孙权为之流涕。',
                             hpp_yanliangwenchou: '东汉末年河北袁绍部下武将，素有威名。颜良与文丑一起作为袁绍军队的勇将而闻名。建安四年（199），袁绍以颜良、文丑为将，率精卒十万，准备攻许都；次年，兵进黎阳，遣颜良攻白马。终均亡于关羽刀下。',
                             hpp_sp_pangtong: "庞统，字士元，襄阳（治今湖北襄阳）人。三国时刘备帐下谋士，官拜军师中郎将。才智与诸葛亮齐名，人称“凤雏”。在进围雒县时，统率众攻城，不幸被流矢击中去世，时年三十六岁。追赐统为关内侯，谥曰靖侯。庞统死后，葬于落凤庞统墓坡。",
+                            hpp_sp_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
                             hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
                             hpp_shen_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
@@ -415,6 +419,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神
                             shen_caocao: ['hpp_shen_caocao', 'shen_caocao'],
                             shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
+                            shen_lvmeng: ['hpp_shen_lvmeng', 'tw_shen_lvmeng', 'shen_lvmeng'],
                             shen_zhaoyun: ['hpp_shen_zhaoyun', 'shen_zhaoyun', 'boss_zhaoyun'],
                             shen_zhangjiao: ['hpp_shen_zhangjiao', 'shen_zhangjiao'],
                         },
@@ -6798,13 +6803,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 神吕蒙
+                            hpp_shelie: {
+                                audio: 'shelie',
+                                inherit: 'shelie',
+                                forced: true,
+                            },
+                            gongxin_re_lvmeng: { audio: 2 },
                             hpp_gongxin: {
                                 audio: 'gongxin',
                                 audioname2: { hpp_lvmeng: 'gongxin_re_lvmeng' },
                                 trigger: { player: 'useCardToPlayered', target: 'useCardToTargeted' },
                                 filter: function (event, player) {
-                                    if (event.targets.length != 1) return false;
-                                    if (event.player == event.target && event.player != player) return false;
+                                    if (event.player == event.target || event.targets.length != 1) return false;
                                     return (player == event.player ? event.target : event.player).countCards('h');
                                 },
                                 logTarget: function (event, player) {
@@ -7287,6 +7297,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.3',
                             hpp_shen_luxun: '#r捞德一评级:4.2',
+                            hpp_shen_lvmeng: '#r捞德一评级:4.2',
                             hpp_shen_zhaoyun: '#r捞德一评级:4.3',
                             hpp_shen_zhangjiao: '#r捞德一评级4.6',
                         },
@@ -7641,8 +7652,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhanhuo: '绽火',
                             hpp_zhanhuo_info: '限定技，出牌阶段，你可以移去全部“军略”标记，令至多等量的已横置角色弃置所有装备区里的牌，然后对其中1名角色造成1点火焰伤害。',
                             hpp_shen_lvmeng: '神吕蒙',
+                            hpp_shelie: '涉猎',
+                            hpp_shelie_info: '锁定技，摸牌阶段，改为亮出牌堆顶的五张牌，然后获得其中每种花色的牌各一张。',
                             hpp_gongxin: '攻心',
-                            hpp_gongxin_info: '当你使用牌指定唯一目标或成为其他角色使用牌的唯一目标后，你可观看目标角色的手牌，然后你可以展示其中一张红色牌，获得此牌或将此牌置于牌堆顶（每回合限触发一次）。',
+                            hpp_gongxin_info: '当你使用牌指定唯一目标或成为其他角色使用牌的唯一目标后，你可以观看目标角色的手牌，然后你可以展示其中一张红色牌，获得此牌或将此牌置于牌堆顶（每回合限触发一次）。',
                             hpp_shen_zhaoyun: '神赵云',
                             hpp_juejing: '绝境',
                             hpp_juejing_info: '锁定技，你的手牌上限+3；当你进入或脱离濒死状态时，你摸一张牌。',
