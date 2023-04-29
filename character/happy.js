@@ -1961,59 +1961,76 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 
 			// others
-			hppzhengbing: {
-				audio: 1,
-				mod: {
-					ignoredHandcard: function (card, player) {
-						if (card.hasGaintag('zhengbing')) return true;
-					},
-					cardDiscardable: function (card, player, name) {
-						if (name == 'phaseDiscard' && card.hasGaintag('zhengbing')) return false;
-					},
-				},
-				group: 'zhengbing_mark',
+			hppxingwu: {
+				audio: 2,
 				enable: 'phaseUse',
+				usable: 1,
 				filter: function (event, player) {
-					return player.countCards('h', function (card) {
-						return card.hasGaintag('zhengbing');
-					});
+					return player.countCards('h');
 				},
-				filterCard: function (card) {
-					return card.hasGaintag('zhengbing');
-				},
+				filterCard: true,
+				filterTarget: lib.filter.notMe,
 				check: function (card) {
-					return 7 - get.value(card);
+					return 8 - get.value(card);
 				},
-				prepare: function (cards, player) {
-					player.$throw(cards, 1000);
-					game.log(player, '将', cards, '置入了弃牌堆');
+				contentBefore: function () {
+					_status.event.player = player;
+					_status.event.trigger('useXingWu');
 				},
-				discard: false,
-				loseTo: 'discardPile',
-				visible: true,
-				delay: 0.5,
 				content: function () {
-					player.draw(player.countCards('h', function (card) {
-						return card.hasGaintag('zhengbing');
-					}) ? 1 : 2);
+					'step 0'
+					player.turnOver();
+					if (target.countCards('e')) player.discardPlayerCard(target, 'e', true);
+					'step 1'
+					var num = 2;
+					if (target.sex == 'female') num = 1;
+					target.damage(num);
 				},
 				ai: {
-					order: 10,
-					result: { player: 1 },
-				},
-				subSkill: {
-					mark: {
-						charlotte: true,
-						trigger: { player: 'gainBegin' },
-						filter: function (event, player) {
-							return lib.translate[event.getParent(3).name] == '突袭';
-						},
-						direct: true,
-						firstDo: true,
-						content: function () {
-							trigger.gaintag.add('zhengbing');
+					damage: 2,
+					order: 9,
+					result: {
+						target: function (player, target) {
+							if (get.attitude(player, target) > 0) return 0;
+							return get.damageEffect(target, player);
 						},
 					},
+				},
+			},
+			hppluoyan: {
+				audio: 1,
+				derivation: ['hpp_tianxiang', 'hpp_hongyan'],
+				trigger: { player: 'hpp_xingwuAfter' },
+				forced: true,
+				content: function () {
+					for (var i of lib.skill.hpp_luoyan.derivation) player.addTempSkill(i, { player: 'phaseUseBegin' });
+				},
+			},
+			hpphuimou: {
+				audio: 2,
+				trigger: { player: ['useCard', 'respond', 'hpp_tianxiangEnd'] },
+				filter: function (event, player) {
+					if (!game.hasPlayer(function (current) {
+						return current.isTurnedOver();
+					})) return false;
+					if (event.card) return !player.isPhaseUsing() && get.suit(event.card) == 'heart';
+					return true;
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					player.chooseTarget(get.prompt('hpp_huimou'), '令一名背面朝上的角色翻至正面', function (card, player, target) {
+						return target.isTurnedOver();
+					}).set('ai', function (target) {
+						var player = _status.event.player;
+						return get.attitude(player, target) - 3;
+					});
+					'step 1'
+					if (result.bool) {
+						var target = result.targets[0];
+						player.logSkill('hpp_huimou', target);
+						if (target.isTurnedOver()) target.turnOver();
+					}
 				},
 			},
 			hpphuchi: {
@@ -2154,6 +2171,61 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return card.name == name;
 					});
 					if (card) player.gain(card, 'gain2');
+				},
+			},
+			hppzhengbing: {
+				audio: 1,
+				mod: {
+					ignoredHandcard: function (card, player) {
+						if (card.hasGaintag('zhengbing')) return true;
+					},
+					cardDiscardable: function (card, player, name) {
+						if (name == 'phaseDiscard' && card.hasGaintag('zhengbing')) return false;
+					},
+				},
+				group: 'zhengbing_mark',
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					return player.countCards('h', function (card) {
+						return card.hasGaintag('zhengbing');
+					});
+				},
+				filterCard: function (card) {
+					return card.hasGaintag('zhengbing');
+				},
+				check: function (card) {
+					return 7 - get.value(card);
+				},
+				prepare: function (cards, player) {
+					player.$throw(cards, 1000);
+					game.log(player, '将', cards, '置入了弃牌堆');
+				},
+				discard: false,
+				loseTo: 'discardPile',
+				visible: true,
+				delay: 0.5,
+				content: function () {
+					player.draw(player.countCards('h', function (card) {
+						return card.hasGaintag('zhengbing');
+					}) ? 1 : 2);
+				},
+				ai: {
+					order: 10,
+					result: { player: 1 },
+				},
+				subSkill: {
+					mark: {
+						charlotte: true,
+						trigger: { player: 'gainBegin' },
+						filter: function (event, player) {
+							return lib.translate[event.getParent(3).name] == '突袭';
+						},
+						direct: true,
+						firstDo: true,
+						content: function () {
+							trigger.gaintag.add('zhengbing');
+						},
+					},
 				},
 			},
 		},
