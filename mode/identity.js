@@ -1444,13 +1444,35 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 						else {
 							list3.push(i);
 						}
+					};
+					var getZhuList = function () {
+						var limit_zhu = get.config('limit_zhu');
+						if (!limit_zhu || limit_zhu == 'off') return list2.slice(0).sort(lib.sort.character);
+						if (limit_zhu != 'group') {
+							var num = (parseInt(limit_zhu) || 6);
+							return list2.randomGets(num).sort(lib.sort.character);
+						}
+						var getGroup = function (name) {
+							if (lib.characterReplace[name]) return lib.character[lib.characterReplace[name][0]][1];
+							return lib.character[name][1];
+						}
+						var list2x = list2.slice(0);
+						list2x.randomSort();
+						for (var i = 0; i < list2x.length; i++) {
+							for (var j = i + 1; j < list2x.length; j++) {
+								if (getGroup(list2x[i]) == getGroup(list2x[j])) {
+									list2x.splice(j--, 1);
+								}
+							}
+						}
+						list2x.sort(lib.sort.character);
+						return list2x;
 					}
-					list2.sort(lib.sort.character);
 					event.list.randomSort();
 					_status.characterlist = list4.slice(0).randomSort();
 					list3.randomSort();
 					if (_status.brawl && _status.brawl.chooseCharacterFilter) {
-						_status.brawl.chooseCharacterFilter(event.list, list2, list3);
+						_status.brawl.chooseCharacterFilter(event.list, getZhuList(), list3);
 					}
 					var num = get.config('choice_' + game.me.identity);
 					if (event.zhongmode) {
@@ -1460,7 +1482,7 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 						}
 					}
 					if (game.zhu != game.me) {
-						event.ai(game.zhu, event.list, list2)
+						event.ai(game.zhu, event.list, getZhuList())
 						event.list.remove(get.sourceCharacter(game.zhu.name1));
 						event.list.remove(get.sourceCharacter(game.zhu.name2));
 						if (_status.brawl && _status.brawl.chooseCharacter) {
@@ -1475,13 +1497,13 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 					}
 					else {
 						if (_status.brawl && _status.brawl.chooseCharacter) {
-							list = _status.brawl.chooseCharacter(list2, list3, num);
+							list = _status.brawl.chooseCharacter(getZhuList(), list3, num);
 							if (list === false) {
 								if (event.zhongmode) {
 									list = list3.slice(0, 6);
 								}
 								else {
-									list = list2.concat(list3.slice(0, num));
+									list = getZhuList().concat(list3.slice(0, num));
 								}
 							}
 							else if (list === 'nozhu') {
@@ -1493,7 +1515,7 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 								list = list3.slice(0, 8);
 							}
 							else {
-								list = list2.concat(list3.slice(0, num));
+								list = getZhuList().concat(list3.slice(0, num));
 							}
 						}
 					}
@@ -1555,16 +1577,16 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 								}
 							}
 							else {
-								list2.sort(lib.sort.character);
+								getZhuList().sort(lib.sort.character);
 								list3.randomSort();
 								if (_status.brawl && _status.brawl.chooseCharacter) {
-									list = _status.brawl.chooseCharacter(list2, list3, num);
+									list = _status.brawl.chooseCharacter(getZhuList(), list3, num);
 									if (list === false) {
 										if (event.zhongmode) {
 											list = list3.slice(0, 6);
 										}
 										else {
-											list = list2.concat(list3.slice(0, num));
+											list = getZhuList().concat(list3.slice(0, num));
 										}
 									}
 									else if (list === 'nozhu') {
@@ -1577,7 +1599,7 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 										list = list3.slice(0, 6);
 									}
 									else {
-										list = list2.concat(list3.slice(0, num));
+										list = getZhuList().concat(list3.slice(0, num));
 									}
 								}
 							}
@@ -1912,8 +1934,30 @@ game.import('mode', function (lib, game, ui, get, ai, _status) {
 						list = event.list.randomGets(8);
 					}
 					else {
-						list2.sort(lib.sort.character);
-						list = list2.concat(list3.randomGets(5));
+						var getZhuList = function (list2) {
+							var limit_zhu = lib.configOL.limit_zhu;
+							if (!limit_zhu || limit_zhu == 'off') return list2.slice(0).sort(lib.sort.character);
+							if (limit_zhu != 'group') {
+								var num = (parseInt(limit_zhu) || 6);
+								return list2.randomGets(num).sort(lib.sort.character);
+							}
+							var getGroup = function (name) {
+								if (lib.characterReplace[name]) return lib.character[lib.characterReplace[name][0]][1];
+								return lib.character[name][1];
+							}
+							var list2x = list2.slice(0);
+							list2x.randomSort();
+							for (var i = 0; i < list2x.length; i++) {
+								for (var j = i + 1; j < list2x.length; j++) {
+									if (getGroup(list2x[i]) == getGroup(list2x[j])) {
+										list2x.splice(j--, 1);
+									}
+								}
+							}
+							list2x.sort(lib.sort.character);
+							return list2x;
+						}
+						list = getZhuList(list2).concat(list3.randomGets(5));
 					}
 					var next = game.zhu.chooseButton(true);
 					next.set('selectButton', (lib.configOL.double_character ? 2 : 1));
