@@ -71,6 +71,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			cuishi: ['female', 'wei', 3, ['reluoshen', 'pianwan', 'huayi']],
 			// 刘琮
 			liucong: ['male', 'qun', 3, ['decadezongshi', 'tunquan', 'rexianzhou', 'quxiang']],
+
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
 			// 李信
@@ -81,6 +82,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_mingshiyin: ['male', 'shu', 4, ['hok_taigua', 'hok_minggua', 'hok_minggua2', 'hok_biangua']],
 			// 孙悟空
 			hok_sunwukong: ['male', 'shen', 4, ['hok_qitian', 'hok_shengbang', 'hok_houmao', 'hok_naogong'], ['qun']],
+			// 武则天
+			hok_wuzetian: ['female', 'qun', 3, ['hok_dihui', 'hok_diwei', 'hok_shaduo', 'hok_nvdi'], ['zhu']],
+
 			// 神曹植
 			shen_caozhi: ['male', 'shen', 3, ['caigao', 'badou', 'qibu', 'chengshi'], ['wei']],
 			// 神董卓
@@ -340,7 +344,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						for (var i = 0; i < result.targets.length; i++) {
 							// event.huhuoList.splice(event.huhuoList.indexOf(result.targets[0]), 1);
 							event.huhuoList.splice(event.huhuoList.indexOf(result.targets[i]), 1);
-							game.log(result.targets[i], '--', event.huhuoList);
 						}
 					}
 					'step 3'
@@ -393,26 +396,28 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					if (player.countMark('hok_wangming') < 7) {
 						player.addMark('hok_wangming', trigger.name == 'damage' ? 1 : 4);
 					}
-					var list = [];
-					var zhu = get.zhu(player);
-					if (zhu && zhu != player && zhu.skills) {
-						for (var i = 0; i < zhu.skills.length; i++) {
-							if (lib.skill[zhu.skills[i]] && lib.skill[zhu.skills[i]].zhuSkill) {
-								list.push(zhu.skills[i]);
+					if (trigger.name != 'damage') {
+						var list = [];
+						var zhu = get.zhu(player);
+						if (zhu && zhu != player && zhu.skills) {
+							for (var i = 0; i < zhu.skills.length; i++) {
+								if (lib.skill[zhu.skills[i]] && lib.skill[zhu.skills[i]].zhuSkill) {
+									list.push(zhu.skills[i]);
+								}
 							}
 						}
+						player.addAdditionalSkill('weidi', list);
+						player.storage.zhuSkill_weidi = list;
+						game.broadcastAll(function (list) {
+							game.expandSkills(list);
+							for (var i of list) {
+								var info = lib.skill[i];
+								if (!info) continue;
+								if (!info.audioname2) info.audioname2 = {};
+								info.audioname2.yuanshu = 'weidi';
+							}
+						}, list);
 					}
-					player.addAdditionalSkill('weidi', list);
-					player.storage.zhuSkill_weidi = list;
-					game.broadcastAll(function (list) {
-						game.expandSkills(list);
-						for (var i of list) {
-							var info = lib.skill[i];
-							if (!info) continue;
-							if (!info.audioname2) info.audioname2 = {};
-							info.audioname2.yuanshu = 'weidi';
-						}
-					}, list);
 				},
 				intro: {
 					name: '王命',
@@ -1281,6 +1286,145 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				}
 			},
+			// 武则天
+			hok_dihui: {
+				unique: true,
+				mark: true,
+				marktext: '曌',
+				intro: {
+					name: '曌',
+					content: 'mark',
+				},
+				forced: true,
+				trigger: { player: ['phaseUseBegin', 'hok_dihui_shaAfter', 'hok_diweiAfter', 'hok_shaduoAfter', 'useCardAfter'] },
+				content: function () {
+					if (player.countMark('hok_dihui') >= 2) {
+						player.removeMark('hok_dihui', 2);
+						player.addTempSkill('hok_dihui_strengthen', 'phaseUseAfter');
+					}
+					else if (!player.hasSkill('hok_dihui_sha')) {
+						player.addTempSkill('hok_dihui_sha', 'phaseUseAfter');
+					};
+				},
+				subSkill: {
+					sha: {
+						usable: 1,
+						enable: 'phaseUse',
+						// filterTarget: true,
+						filterCard: true,
+						selectCard: 1,
+						viewAs: { name: 'sha', isCard: true },
+						onuse: function (result, player) {
+							player.addMark('hok_dihui', 1);
+						},
+					},
+					strengthen: {
+						enable: 'phaseUse',
+						filterTarget: true,
+						group: 'hok_dihui_hanbing',
+						content: function () {
+							'step 0'
+							player.useCard({ name: 'sha', isCard: true }, target, false);
+							'step 1'
+							player.removeSkill('hok_dihui_strengthen');
+						}
+					},
+					hanbing: {
+						trigger: { source: 'damageBegin2' },
+						forced: true,
+						filter: function (event) {
+							return event.card.name == 'sha';
+						},
+						content: function () {
+							if (trigger.player.countDiscardableCards(trigger.player, 'he')) {
+								var cards = trigger.player.getCards('he', (card) => lib.filter.cardDiscardable(card, trigger.player, 'hok_dihui_strengthen'));
+								if (cards.length) trigger.player.discard(cards.randomGet());
+							}
+						}
+					}
+				}
+			},
+			hok_diwei: {
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: function (card, player, target) {
+					return target == player.next || target == player.previous;
+				},
+				filterCard: true,
+				selectCard: 1,
+				filter: function (event, player) {
+					return player.countCards('h') > 0 && game.countPlayer(function (current) {
+						return current.isAlive();
+					}) > 2;
+				},
+				content: function () {
+					player.discard(cards);
+					var targetSwap = target.next == player ? target.previous : target.next;
+					game.broadcastAll(function (target1, target2) {
+						game.swapSeat(target1, target2);
+					}, target, targetSwap);
+					player.addMark('hok_dihui', 1);
+				},
+			},
+			hok_shaduo: {
+				enable: 'phaseUse',
+				skillAnimation: true,
+				animationColor: 'metal',
+				limited: true,
+				content: function () {
+					'step 0'
+					player.awakenSkill('hok_shaduo');
+					player.addTempSkill('hok_shaduo_hanbing');
+					player.addMark('hok_dihui', 1);
+					'step 1'
+					var targets = game.filterPlayer(function (current) {
+						return current.isAlive() && current != player;
+					})
+					player.useCard({ name: 'sha', isCard: true }, targets, false);
+					'step 2'
+					player.removeSkill('hok_shaduo_hanbing');
+				},
+				subSkill: {
+					hanbing: {
+						trigger: { source: 'damageBegin2' },
+						forced: true,
+						filter: function (event) {
+							return event.card.name == 'sha';
+						},
+						content: function () {
+							if (trigger.player.countDiscardableCards(trigger.player, 'he')) {
+								var cards = trigger.player.getCards('he', (card) => lib.filter.cardDiscardable(card, trigger.player, 'hok_dihui_strengthen'));
+								if (cards.length) trigger.player.discard(cards.randomGet());
+								if (cards.length) trigger.player.discard(cards.randomGet());
+							}
+						}
+					}
+				}
+			},
+			hok_nvdi: {
+				trigger: { player: 'phaseJieshuBegin' },
+				zhuSkill: true,
+				frequent: true,
+				filter: function (event, player) {
+					if (!player.hasZhuSkill('hok_nvdi')) return false;
+					if (player.getHistory('skipped').contains('phaseUse')) return true;
+					var history = player.getHistory('useCard').concat(player.getHistory('respond'));
+					for (var i = 0; i < history.length; i++) {
+						if ((history[i].card.name == 'sha' || get.type(history[i].card) == 'trick') && history[i].isPhaseUsing()) {
+							return false;
+						}
+					}
+					return true;
+				},
+				content: function () {
+					var num = game.countPlayer(function (current) {
+						return current.group == 'qun';
+					});
+					if (num) {
+						player.draw(num);
+					}
+				},
+			},
 
 			// 神曹植
 			caigao: {
@@ -1620,7 +1764,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					player.removeMark('cannue', 1);
-					player.syncStorage('cannue');
+					// player.syncStorage('cannue');
 					player.gainMaxHp();
 					player.draw();
 					// player.recover();
@@ -2321,6 +2465,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，随机获得一张杀/雷杀/火杀。',
 			hok_naogong: '闹宫',
 			hok_naogong_info: '限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
+			// 武则天
+			hok_wuzetian: '武则天',
+			hok_dihui: '帝辉',
+			hok_dihui_info: '出牌阶段限1次，你选择1张手牌视为使用【杀】，你获得1个标记“曌”。当你的“曌”为2时，移去两个“曌”标记，强化你的帝辉并可以使用1次直到回合结束。',
+			hok_dihui_sha_info: '你选择1张手牌视为使用【杀】，你获得1个标记“曌”。',
+			hok_dihui_strengthen: '帝辉·强化',
+			hok_dihui_strengthen_info: '出牌阶段限1次，你选择1名角色，视为对其使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置1张牌。',
+			hok_diwei: '帝威',
+			hok_diwei_info: '出牌阶段限1次，你选择弃置1张手牌然后选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置，你获得1个标记“曌”。',
+			hok_shaduo: '杀夺',
+			hok_shaduo_info: '限定技，出牌阶段，你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置2张牌。',
+			hok_nvdi: '女帝',
+			hok_nvdi_info: '主公技，结束阶段，若你未于出牌阶段内使用或打出过【杀】和锦囊牌，你可以摸X张牌（X为场上存活的群势力角色数）。',
 
 			// 神曹植
 			shen_caozhi: '神曹植',

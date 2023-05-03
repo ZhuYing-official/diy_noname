@@ -784,7 +784,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.chooseToDiscard('he', get.prompt('hpp_qiangxi', trigger.player), '弃置一张装备牌并令此伤害+1', function (card) {
                                         return get.type(card) == 'equip';
                                     }).set('goon', get.damageEffect(trigger.player, player, player) > 0).set('ai', function (card) {
-                                        if (_status.event.goon) return 12 - get.value(card);
+                                        if (_status.event.goon && trigger.player.getEquip(2) != 'baiyin') return 12 - get.value(card);
                                         return 0;
                                     }).logSkill = ['hpp_qiangxi', trigger.player];
                                     'step 1'
@@ -4829,8 +4829,42 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                                 group: 'hpp_xueyi_draw',
+                                subSkill: {
+                                    draw: {
+                                        audio: 'xueyi',
+                                        enable: 'chooseToUse',
+                                        filter: function (event, player) {
+                                            if (!player.hasZhuSkill('hpp_xueyi') || !player.hasMark('hpp_xueyi')) return false;
+                                            if (event.type == 'dying') {
+                                                if (player != event.dying) return false;
+                                                return true;
+                                            }
+                                            else if (event.parent.name == 'phaseUse') {
+                                                return true;
+                                            }
+                                            return false;
+                                        },
+                                        content: function () {
+                                            player.removeMark('hpp_xueyi', 1);
+                                            player.recover();
+                                            player.draw();
+                                        },
+                                        ai: {
+                                            order: 7,
+                                            save: true,
+                                            skillTagFilter: function (player, tag, target) {
+                                                if (player != target || !player.hasZhuSkill('hpp_xueyi') || !player.hasMark('hpp_xueyi')) return false;
+                                            },
+                                            result: {
+                                                player: function (player) {
+                                                    return player.isDamaged() ? 1 : -1;
+                                                },
+                                            },
+                                        },
+                                    }
+                                },
                             },
-                            hpp_xueyi_draw: {
+                            /*hpp_xueyi_draw: {
                                 audio: 'xueyi',
                                 enable: 'chooseToUse',
                                 filter: function (event, player) {
@@ -4840,6 +4874,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         return true;
                                     }
                                     else if (event.parent.name == 'phaseUse') {
+                                        game.log('phaseUse***')
                                         return true;
                                     }
                                     return false;
@@ -4861,7 +4896,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         },
                                     },
                                 },
-                            },
+                            },*/
 
                             // 袁术
                             hpp_weidi: {
