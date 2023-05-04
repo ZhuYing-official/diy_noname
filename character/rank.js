@@ -1260,6 +1260,7 @@ window.noname_character_rank = {
 			// 欢乐三国杀
 			'hpp_caocao',
 			'hpp_caoren',
+			'hpp_chendao',
 			'hpp_daqiao',
 			'hpp_dianwei',
 			'hpp_dongyun',
@@ -1310,6 +1311,7 @@ window.noname_character_rank = {
 			'hpp_xuyou',
 			'hpp_xuzhu',
 			'hpp_yanliangwenchou',
+			'hpp_yanyan',
 			'hpp_yuanshao',
 			'hpp_yuanshu',
 			'hpp_yuji',

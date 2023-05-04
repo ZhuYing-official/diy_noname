@@ -16,6 +16,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             'hpp_caocao',
                             'hpp_caoren',
+                            'hpp_chendao',
                             'hpp_daqiao',
                             'hpp_dianwei',
                             'hpp_dongyun',
@@ -66,6 +67,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_xuyou',
                             'hpp_xuzhu',
                             'hpp_yanliangwenchou',
+                            'hpp_yanyan',
                             'hpp_yuanshao',
                             'hpp_yuanshu',
                             'hpp_yuji',
@@ -150,7 +152,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 lin_zhi: ['hpp_zhangsong', 'hpp_zhongyao', 'hpp_masu', 'hpp_huangyueying', 'hpp_luxun', 'hpp_lusu', 'hpp_jiaxu'],
                                 lin_man: ['hpp_huaman', 'hpp_shamoke', 'hpp_zhurong', 'hpp_menghuo',],
                                 lin_xiong: ['hpp_sunliang', 'hpp_sunjian', 'hpp_gongsunzan', 'hpp_dongzhuo', 'hpp_liuyan'],
-                                huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_yanliang', 'hpp_wangping', 'hpp_chendao', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
+                                huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_yanyan', 'hpp_wangping', 'hpp_chendao', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
                                 huo_yi: ['hpp_taishici', 'hpp_luji', 'hpp_lingtong', 'hpp_xusheng', 'hpp_gaoshun', 'hpp_zhuran', 'hpp_zhuhuan', 'hpp_zhuzhi',],
                                 huo_bi: ['hpp_zhonghui', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
                                 shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xuhsi', 'hpp_dufuren', 'hpp_xiahoulingnv', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
@@ -177,6 +179,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caocao: ["male", "wei", 4, ["hpp_jianxiong", "hpp_hujia"], ['zhu']],
                             // 欢乐曹仁
                             hpp_caoren: ['male', 'wei', 4, ['hpp_jushou', 'xinjiewei'], []],
+                            // 欢乐陈到
+                            hpp_chendao: ['male', 'shu', 4, ['miniwanglie'], []],
                             // 欢乐大乔
                             hpp_daqiao: ['female', 'wu', 3, ['hpp_wanrong', 'hpp_guose', 'hpp_liuli'], []],
                             // 欢乐典韦
@@ -277,6 +281,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xuzhu: ['male', 'wei', 4, ['hpp_luoyi', 'hpp_huchi'], []],
                             // 欢乐颜良文丑
                             hpp_yanliangwenchou: ['male', 'qun', 4, ['hpp_shuangxiong'], []],
+                            // 欢乐严颜
+                            hpp_yanyan: ['male', 'shu', 4, ['minijuzhan'], []],
                             // 欢乐袁绍
                             hpp_yuanshao: ['male', 'qun', 4, ['hpp_luanji', 'hpp_xueyi'], ['zhu']],
                             // 欢乐袁术
@@ -358,6 +364,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // C
                             caocao: ['hpp_caocao', 're_caocao', 'caocao'],
                             caoren: ['hpp_caoren', 'caoren', 'new_caoren', 'old_caoren'],
+                            chendao: ['hpp_chendao', 'chendao', 'old_chendao', 'ns_chendao'],
                             // D
                             daqiao: ['hpp_daqiao', 're_daqiao', 'daqiao'],
                             dianwei: ['hpp_dianwei', 'ol_dianwei', 're_dianwei', 'dianwei'],
@@ -421,6 +428,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             xuzhu: ['hpp_xuzhu', 're_xuzhu', 'xuzhu'],
                             // Y
                             yanwen: ['hpp_yanliangwenchou', 're_yanwen', 'yanwen'],
+                            yanyan: ['hpp_yanyan', 'yanyan'],
                             re_yuanshao: ['hpp_yuanshao', 'ol_yuanshao', 're_yuanshao', 'xin_yuanshao'],
                             yuanshu: ['hpp_yuanshu', 'yl_yuanshu', 'yuanshu', 're_yuanshu', 'old_yuanshu', 'ol_yuanshu'],
                             yuji: ['hpp_yuji', 'xin_yuji', 're_yuji', 'yuji'],
@@ -616,6 +624,97 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             if (card.name == 'guiyoujie') return [0, 1];
                                         },
                                     },
+                                },
+                            },
+
+                            // 陈到
+                            miniwanglie: {
+                                mod: {
+                                    targetInRange: function (card, player, target, now) {
+                                        if (player.isPhaseUsing()) return true;
+                                    },
+                                },
+                                audio: 'drlt_wanglie',
+                                trigger: { player: 'useCard' },
+                                filter: function (event, player) {
+                                    return player.isPhaseUsing() && (event.card.name == 'sha' || get.type(event.card) == 'trick');
+                                },
+                                preHidden: true,
+                                check: function (event, player) {
+                                    if (['wuzhong', 'kaihua', 'dongzhuxianji'].contains(event.card.name)) return false;
+                                    player._wanglie_temp = true;
+                                    var eff = 0;
+                                    for (var i of event.targets) {
+                                        eff += get.effect(i, event.card, player, player);
+                                    }
+                                    delete player._wanglie_temp;
+                                    if (eff < 0) return true;
+                                    if (!player.countCards('h', function (card) {
+                                        return player.hasValueTarget(card, null, true);
+                                    })) return true;
+                                    if (get.tag(event.card, 'damage') && !player.needsToDiscard() && !player.countCards('h', function (card) {
+                                        return get.tag(card, 'damage') && player.hasValueTarget(card, null, true);
+                                    })) return true;
+                                    return false;
+                                },
+                                prompt2: function (event) {
+                                    return '令' + get.translation(event.card) + '不能被响应，回合结束时摸等同于此牌造成的伤害数的牌，然后本回合不能再使用牌';
+                                },
+                                locked: false,
+                                content: function () {
+                                    trigger.nowuxie = true;
+                                    trigger.directHit.addArray(game.players);
+                                    player.addTempSkill('miniwanglie2');
+                                    trigger.card.miniwanglie = true;
+                                },
+                                ai: {
+                                    pretao: true,
+                                    directHit_ai: true,
+                                    skillTagFilter: function (player, tag, arg) {
+                                        if (tag == 'pretao') return true;
+                                        if (player._wanglie_temp) return false;
+                                        player._wanglie_temp = true;
+                                        var bool = function () {
+                                            if (['wuzhong', 'kaihua', 'dongzhuxianji'].contains(arg.card.name)) return false;
+                                            if (get.attitude(player, arg.target) > 0 || !player.isPhaseUsing()) return false;
+                                            var cards = player.getCards('h', function (card) {
+                                                return card != arg.card && (!arg.card.cards || !arg.card.cards.contains(card));
+                                            });
+                                            var sha = player.getCardUsable('sha');
+                                            if (arg.card.name == 'sha') sha--;
+                                            cards = cards.filter(function (card) {
+                                                if (card.name == 'sha' && sha <= 0) return false;
+                                                return player.hasValueTarget(card, null, true);
+                                            });
+                                            if (!cards.length) return true;
+                                            if (!get.tag(arg.card, 'damage')) return false;
+                                            if (!player.needsToDiscard() && !cards.filter(function (card) {
+                                                return get.tag(card, 'damage');
+                                            }).length) return true;
+                                            return false;
+                                        }();
+                                        delete player._wanglie_temp;
+                                        return bool;
+                                    },
+                                },
+                            },
+                            miniwanglie2: {
+                                charlotte: true,
+                                group: 'drlt_wanglie2',
+                                getNum: function (player) {
+                                    var num = 0;
+                                    player.getHistory('sourceDamage', function (evt) {
+                                        if (evt.card && evt.card.miniwanglie) num += evt.num;
+                                    });
+                                    return num;
+                                },
+                                trigger: { player: 'phaseEnd' },
+                                filter: function (event, player) {
+                                    return lib.skill.miniwanglie2.getNum(player) > 0;
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.draw(lib.skill.miniwanglie2.getNum(player));
                                 },
                             },
 
@@ -4820,6 +4919,75 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 严颜
+                            minijuzhan: {
+                                group: 'minijuzhan_gain',
+                                audio: 'nzry_juzhan_1',
+                                trigger: { target: 'useCardToTargeted' },
+                                prompt2: '当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。',
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha';
+                                },
+                                logTarget: 'player',
+                                content: function () {
+                                    'step 0'
+                                    game.asyncDraw([player, trigger.player]);
+                                    trigger.player.addTempSkill('minijuzhan_use1');
+                                    trigger.player.storage.minijuzhan_use1.push(player);
+                                    'step 1'
+                                    game.delayx();
+                                },
+                                subSkill: {
+                                    gain: {
+                                        audio: 'nzry_juzhan_1',
+                                        trigger: { player: 'useCardToPlayered' },
+                                        prompt2: '当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合内不能再对其使用红色【杀】',
+                                        filter: function (event, player) {
+                                            return event.card.name == 'sha' && event.target.countGainableCards(player, 'he');
+                                        },
+                                        check: function (event, player) {
+                                            return get.effect(event.target, { name: 'guohe_copy2' }, player, player) > 0;
+                                        },
+                                        logTarget: 'target',
+                                        content: function () {
+                                            player.gainPlayerCard(trigger.target, 'he', true);
+                                            player.addTempSkill('minijuzhan_use2');
+                                            player.storage.minijuzhan_use2.push(trigger.target);
+                                        },
+                                    },
+                                    use1: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        init: function (player) {
+                                            if (!player.storage.minijuzhan_use1) player.storage.minijuzhan_use1 = [];
+                                        },
+                                        mark: true,
+                                        marktext: '拒',
+                                        intro: { content: '不能对$使用牌' },
+                                        mod: {
+                                            playerEnabled: function (card, player, target) {
+                                                if (player.storage.minijuzhan_use1.contains(target)) return false;
+                                            },
+                                        },
+                                    },
+                                    use2: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        init: function (player) {
+                                            if (!player.storage.minijuzhan_use2) player.storage.minijuzhan_use2 = [];
+                                        },
+                                        mark: true,
+                                        marktext: '战',
+                                        intro: { content: '不能对$使用红色【杀】' },
+                                        mod: {
+                                            playerEnabled: function (card, player, target) {
+                                                if (player.storage.minijuzhan_use2.contains(target) && get.name(card) == 'sha' && get.color(card) == 'red') return false;
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+
                             // 袁绍
                             hpp_luanji: {
                                 audio: 'reluanji',
@@ -7687,7 +7855,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // M
                             hpp_machao: '#b捞德一评级:3.7',
                             hpp_masu: '#r捞德一评级4.0',
-                            hpp_menghuo: '#g捞德一评级2.7',
+                            hpp_menghuo: '#g捞德一评级2.4',
                             // P
                             hpp_panfeng: '#b捞德一评级:3.7',
                             hpp_pangde: '#b捞德一评级:3.7',
