@@ -88,9 +88,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zumao',
                             'hpp_zuoci',
                             'hpp_sp_daqiao',
+                            'hpp_sp_jiangwei',
                             'hpp_sp_machao',
                             'hpp_sp_pangde',
                             'hpp_sp_pangtong',
+                            'hpp_sp_taishici',
                             'hpp_sp_xiaoqiao',
                             'hpp_sp_zhaoyun',
                         ],
@@ -324,12 +326,16 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 欢乐SP大乔
                             hpp_sp_daqiao: ['female', 'wu', 3, ['hpp_yanxiao', 'hpp_guose', 'hpp_anxian'], []],
+                            // 欢乐SP姜维
+                            hpp_sp_jiangwei: ['male', 'wei', 4, ['hpp_kunfen', 'hpp_fengliang'], []],
                             // 欢乐SP马超
                             hpp_sp_machao: ['male', 'qun', 4, ['hpp_zhuiji', 'hpp_shichou'], []],
                             // 欢乐SP庞德
                             hpp_sp_pangde: ['male', 'wei', 4, ['hpp_juesi', 'hpp_yuma'], []],
                             // 欢乐SP庞统
                             hpp_sp_pangtong: ['male', 'wu', 3, ['hpp_guolun', 'hpp_songsang', 'hpp_zhanji'], []],
+                            // 欢乐SP太史慈
+                            hpp_sp_taishici: ['male', 'qun', 4, ['hpp_jixu'], []],
                             // 欢乐SP小乔
                             hpp_sp_xiaoqiao: ['female', 'wu', 3, ['hpp_xingwu', 'hpp_luoyan', 'hpp_huimou'], []],
                             // 欢乐SP赵云
@@ -350,9 +356,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangzhaozhanghong: '张昭，字子布，彭城人，三国时期吴国重臣，善丹青。拜辅吴将军，班亚三司，改封娄侯。年八十一卒，谥曰文侯。<br/>张纮，字子纲，广陵人。东吴谋士，和张昭一起合称“二张”。孙策平定江东时亲自登门邀请，张纮遂出仕为官。张纮后来建议孙权迁都秣陵，孙权正在准备时张纮病逝，其年六十岁。孙权为之流涕。',
                             hpp_yanliangwenchou: '东汉末年河北袁绍部下武将，素有威名。颜良与文丑一起作为袁绍军队的勇将而闻名。建安四年（199），袁绍以颜良、文丑为将，率精卒十万，准备攻许都；次年，兵进黎阳，遣颜良攻白马。终均亡于关羽刀下。',
                             hpp_sp_daqiao: '庐江皖县人，为乔公长女，孙策之妻，小乔之姊。与小乔并称为“江东二乔”，容貌国色流离。',
+                            hpp_sp_jiangwei: '字伯约，天水冀人。三国时期蜀汉著名将领、军事统帅。原为曹魏天水郡的中郎将，后降蜀汉，官至凉州刺史、大将军。诸葛亮去世后继承诸葛亮的遗志，继续率领蜀汉军队北伐曹魏，与曹魏名将陈泰、郭淮、邓艾等多次交手。',
                             hpp_sp_machao: '字孟起，扶风茂陵人。面如冠玉，目如流星，虎体猿臂，彪腹狼腰，声雄力猛。因衣着讲究，举止非凡，故人称“锦马超”。麾铁骑，捻金枪。',
                             hpp_sp_pangde: '字令明，东汉末年雍州南安郡狟道县（今甘肃天水市武山县四门镇）人。曹操部下重要将领。官至立义将军，拜关门亭侯。谥曰壮侯。有一子庞会。',
                             hpp_sp_pangtong: "庞统，字士元，襄阳（治今湖北襄阳）人。三国时刘备帐下谋士，官拜军师中郎将。才智与诸葛亮齐名，人称“凤雏”。在进围雒县时，统率众攻城，不幸被流矢击中去世，时年三十六岁。追赐统为关内侯，谥曰靖侯。庞统死后，葬于落凤庞统墓坡。",
+                            hpp_sp_taishici: '太史慈，字子义，东莱黄县（今山东龙口东黄城集）人。东汉末年武将，守言应诺，恪遵信义，始终如一，弭息诽论。官至建昌都尉。弓马熟练，箭法精良。原为刘繇部下，后被孙策收降，于赤壁之战前病逝，死时才四十一岁。',
                             hpp_sp_xiaoqiao: '庐江皖县人也。父桥国老德尊于时。小乔国色流离，资貌绝伦。建安三年，周瑜协策攻皖，拔之。娶小乔为妻。后人谓英雄美女，天作之合。',
                             hpp_sp_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
                             hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
@@ -451,9 +459,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zuoci: ['hpp_zuoci', 're_zuoci', 'zuoci'],
                             // SP
                             sp_daqiao: ['hpp_sp_daqiao', 'sp_daqiao'],
+                            sp_jiangwei: ['hpp_sp_jiangwei', 'sp_jiangwei'],
                             sp_machao: ['hpp_sp_machao', 'sp_machao', 'old_machao'],
                             sp_pangde: ['hpp_sp_pangde', 'sp_pangde'],
                             re_jsp_pangtong: ['hpp_sp_pangtong', 're_jsp_pangtong', 'sp_pangtong'],
+                            sp_taishici: ['hpp_sp_taishici', 're_sp_taishici', 'sp_taishici'],
                             sp_zhaoyun: ['hpp_sp_zhaoyun', 'sp_zhaoyun', 'jsp_zhaoyun'],
                             // 神
                             shen_caocao: ['hpp_shen_caocao', 'shen_caocao'],
@@ -6929,6 +6939,46 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // SP姜维
+                            hpp_kunfen: {
+                                audio: 'kunfen',
+                                trigger: { player: 'phaseJieshuBegin' },
+                                check: function (event, player) {
+                                    if (player.hp > 3) return true;
+                                    if (player.hp == 3 && player.countCards('h') < 3) return true;
+                                    if (player.hp == 2 && player.countCards('h') == 0) return true;
+                                    return false;
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.loseHp();
+                                    'step 1'
+                                    player.draw(2);
+                                    'step 2'
+                                    player.chooseUseTarget('huogong', false);
+                                },
+                            },
+                            hpp_fengliang: {
+                                unique: true,
+                                derivation: 'hpp_tiaoxin',
+                                audio: 'fengliang',
+                                trigger: { player: 'dying' },
+                                juexingji: true,
+                                forced: true,
+                                skillAnimation: true,
+                                animationColor: 'thunder',
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_fengliang');
+                                    'step 1'
+                                    player.loseMaxHp();
+                                    'step 2'
+                                    if (player.hp < 3) player.recover(3 - player.hp);
+                                    'step 3'
+                                    player.addSkillLog('hpp_tiaoxin');
+                                },
+                            },
+
                             // SP马超
                             hpp_zhuiji: {
                                 mod: {
@@ -7154,6 +7204,91 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 content: function () {
                                     player.draw('nodelay');
+                                },
+                            },
+
+                            // SP太史慈
+                            hpp_jixu: {
+                                audio: 'xinfu_jixu',
+                                enable: 'phaseUse',
+                                // filter: function (event, player) {
+                                //     return player.countCards('h');
+                                // },
+                                filterTarget: lib.filter.notMe,
+                                selectTarget: [1, 4],
+                                usable: 1,
+                                multitarget: true,
+                                multiline: true,
+                                content: function () {
+                                    'step 0'
+                                    targets.sortBySeat();
+                                    event.num = 0;
+                                    'step 1'
+                                    if (!event.caicuolist) event.caicuolist = [];
+                                    targets[event.num].chooseBool('是否押杀？').ai = function (event, player) {
+                                        var evt = _status.event.getParent();
+                                        if (get.attitude(targets[event.num], evt.player) > 0) return evt.player.countCards('h', 'sha') ? false : true;
+                                        return Math.random() < 0.5;
+                                    };
+                                    'step 2'
+                                    var target = targets[event.num];
+                                    var num1 = result.bool ? 1 : -1;
+                                    var num2 = player.countCards('h', 'sha') ? 1 : -1;
+                                    if (num1 != num2) {
+                                        event.caicuolist.push(target);
+                                        target.chat('猜错');
+                                        game.log(target, '猜', '#y错', '了');
+                                    }
+                                    else {
+                                        target.chat('猜对');
+                                        game.log(target, '猜', '#g对', '了');
+                                    }
+                                    event.num++;
+                                    game.delay();
+                                    if (event.num < targets.length) event.goto(1);
+                                    'step 3'
+                                    if (event.caicuolist.length) {
+                                        for (var i of event.caicuolist) {
+                                            player.discardPlayerCard(i, 'he', true);
+                                            player.useCard({ name: 'sha', isCard: true }, i, false);
+                                        }
+                                    }
+                                    var num = targets.length - event.caicuolist.length + 1;
+                                    player.addTempSkill('hpp_jixu_hand');
+                                    // player.draw(num);
+                                    var cards = [];
+                                    while (cards.length < num) {
+                                        var card = get.discardPile(function (card) {
+                                            return !cards.contains(card);
+                                        });
+                                        if (card) cards.push(card);
+                                        else break;
+                                    }
+                                    if (cards.length) player.gain(cards, 'gain2');
+                                    player.addMark('hpp_jixu_hand', num, false);
+                                },
+                                ai: {
+                                    order: function () {
+                                        return get.order({ name: 'sha' }) + 0.6;
+                                    },
+                                    result: {
+                                        target: function (player, target) {
+                                            return get.effect(target, { name: 'guohe_copy2' }, player, target);
+                                        },
+                                    },
+                                    expose: 0.25,
+                                },
+                                subSkill: {
+                                    hand: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        mod: {
+                                            maxHandcard: function (player, num) {
+                                                return num + player.countMark('hpp_jixu_hand');
+                                            },
+                                        },
+                                        intro: { content: '手牌上限+#' },
+                                    },
                                 },
                             },
 
@@ -7906,9 +8041,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
                             hpp_sp_daqiao: '#r捞德一评级:4.2',
+                            hpp_sp_jiangwei: '#b捞德一评级:3.5',
                             hpp_sp_machao: '#b捞德一评级:3.7',
-                            hpp_sp_pangde: '#b捞德一评级:3.3',
+                            hpp_sp_pangde: '#b捞德一评级:3.2',
                             hpp_sp_pangtong: '#b捞德一评级:3.8',
+                            hpp_sp_taishici: '#r捞德一评级:4.2',
                             hpp_sp_xiaoqiao: '#b捞德一评级:3.8',
                             hpp_sp_zhaoyun: '#g捞德一评级:2.2',
                             // 神
@@ -8272,6 +8409,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yanxiao_info: '出牌阶段，你可以将一张方块牌置于一名角色的判定区内。判定区内有“言笑”牌的角色下个判定阶段开始时，获得其判定区里的所有牌，并进行一次判定，若为红色，其摸一张牌。若为黑色，本回合出杀次数+1。',
                             hpp_anxian: '安娴',
                             hpp_anxian_info: '每当你使用【杀】指定目标时，你可以令其弃置一张手牌；当你成为【杀】的目标时，你可以弃置一张手牌使之无效，然后该【杀】的使用者摸一张牌，若你弃置的是方块牌，则视为对【杀】的来源使用一张【杀】（此杀不能触发安娴）。',
+                            hpp_sp_jiangwei: 'SP姜维',
+                            hpp_kunfen: '困奋',
+                            hpp_kunfen_info: '结束阶段，你可以失去1点体力，然后摸两张牌，并可以视为对一名角色使用【火攻】。',
+                            hpp_fengliang: '逢亮',
+                            hpp_fengliang_info: '觉醒技，当你进入濒死状态时，你减1点体力上限并恢复体力值至3点，然后获得“挑衅”。',
                             hpp_sp_machao: 'SP马超',
                             hpp_zhuiji: '追击',
                             hpp_zhuiji_info: '锁定技，你计算与体力值小于等于你的角色的距离视为1，体力值大于等于你的角色无法响应你的【杀】。',
@@ -8289,6 +8431,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_songsang_info: '当其他角色死亡时，你可加1点体力上限并回复1点体力。',
                             hpp_zhanji: "展骥",
                             hpp_zhanji_info: "锁定技，当你于出牌阶段内因摸牌且并非因发动此技能而得到牌时，你摸一张牌。",
+                            hpp_sp_taishici: 'SP太史慈',
+                            hpp_jixu: '击虚',
+                            hpp_jixu_info: '出牌阶段限一次，你可令至多四名其他角色各猜测你的手牌区里是否有【杀】。猜错的角色，你弃置其一张牌，然后视为对其使用一张杀；你获得X张牌，且本回合手牌上限+X（X为猜对的角色数+1）。',
                             hpp_sp_xiaoqiao: 'SP小乔',
                             hpp_xingwu: '星舞',
                             hpp_xingwu_info: '出牌阶段限一次，你可以翻面并弃置一张手牌，然后弃置一名其他角色装备区里的一张牌，并对其造成2点伤害（若为女性角色则改为1点伤害）。',
