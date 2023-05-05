@@ -180,7 +180,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐曹仁
                             hpp_caoren: ['male', 'wei', 4, ['hpp_jushou', 'xinjiewei'], []],
                             // 欢乐陈到
-                            hpp_chendao: ['male', 'shu', 4, ['miniwanglie'], []],
+                            hpp_chendao: ['male', 'shu', 4, ['hpp_wanglie'], []],
                             // 欢乐大乔
                             hpp_daqiao: ['female', 'wu', 3, ['hpp_wanrong', 'hpp_guose', 'hpp_liuli'], []],
                             // 欢乐典韦
@@ -282,7 +282,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐颜良文丑
                             hpp_yanliangwenchou: ['male', 'qun', 4, ['hpp_shuangxiong'], []],
                             // 欢乐严颜
-                            hpp_yanyan: ['male', 'shu', 4, ['minijuzhan'], []],
+                            hpp_yanyan: ['male', 'shu', 4, ['hpp_juzhan'], []],
                             // 欢乐袁绍
                             hpp_yuanshao: ['male', 'qun', 4, ['hpp_luanji', 'hpp_xueyi'], ['zhu']],
                             // 欢乐袁术
@@ -628,7 +628,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 陈到
-                            miniwanglie: {
+                            hpp_wanglie: {
                                 mod: {
                                     targetInRange: function (card, player, target, now) {
                                         if (player.isPhaseUsing()) return true;
@@ -664,8 +664,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 content: function () {
                                     trigger.nowuxie = true;
                                     trigger.directHit.addArray(game.players);
-                                    player.addTempSkill('miniwanglie2');
-                                    trigger.card.miniwanglie = true;
+                                    player.addTempSkill('hpp_wanglie2');
+                                    trigger.card.hpp_wanglie = true;
                                 },
                                 ai: {
                                     pretao: true,
@@ -698,23 +698,23 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                             },
-                            miniwanglie2: {
+                            hpp_wanglie2: {
                                 charlotte: true,
                                 group: 'drlt_wanglie2',
                                 getNum: function (player) {
                                     var num = 0;
                                     player.getHistory('sourceDamage', function (evt) {
-                                        if (evt.card && evt.card.miniwanglie) num += evt.num;
+                                        if (evt.card && evt.card.hpp_wanglie) num += evt.num;
                                     });
                                     return num;
                                 },
                                 trigger: { player: 'phaseEnd' },
                                 filter: function (event, player) {
-                                    return lib.skill.miniwanglie2.getNum(player) > 0;
+                                    return lib.skill.hpp_wanglie2.getNum(player) > 0;
                                 },
                                 forced: true,
                                 content: function () {
-                                    player.draw(lib.skill.miniwanglie2.getNum(player));
+                                    player.draw(lib.skill.hpp_wanglie2.getNum(player));
                                 },
                             },
 
@@ -4920,8 +4920,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 严颜
-                            minijuzhan: {
-                                group: 'minijuzhan_gain',
+                            hpp_juzhan: {
+                                group: 'hpp_juzhan_gain',
                                 audio: 'nzry_juzhan_1',
                                 trigger: { target: 'useCardToTargeted' },
                                 prompt2: '当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合内不能再对你使用牌。',
@@ -4932,8 +4932,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 content: function () {
                                     'step 0'
                                     game.asyncDraw([player, trigger.player]);
-                                    trigger.player.addTempSkill('minijuzhan_use1');
-                                    trigger.player.storage.minijuzhan_use1.push(player);
+                                    trigger.player.addTempSkill('hpp_juzhan_use1');
+                                    trigger.player.storage.hpp_juzhan_use1.push(player);
                                     'step 1'
                                     game.delayx();
                                 },
@@ -4951,22 +4951,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         logTarget: 'target',
                                         content: function () {
                                             player.gainPlayerCard(trigger.target, 'he', true);
-                                            player.addTempSkill('minijuzhan_use2');
-                                            player.storage.minijuzhan_use2.push(trigger.target);
+                                            player.addTempSkill('hpp_juzhan_use2');
+                                            player.storage.hpp_juzhan_use2.push(trigger.target);
                                         },
                                     },
                                     use1: {
                                         charlotte: true,
                                         onremove: true,
                                         init: function (player) {
-                                            if (!player.storage.minijuzhan_use1) player.storage.minijuzhan_use1 = [];
+                                            if (!player.storage.hpp_juzhan_use1) player.storage.hpp_juzhan_use1 = [];
                                         },
                                         mark: true,
                                         marktext: '拒',
                                         intro: { content: '不能对$使用牌' },
                                         mod: {
                                             playerEnabled: function (card, player, target) {
-                                                if (player.storage.minijuzhan_use1.contains(target)) return false;
+                                                if (player.storage.hpp_juzhan_use1.contains(target)) return false;
                                             },
                                         },
                                     },
@@ -4974,14 +4974,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         charlotte: true,
                                         onremove: true,
                                         init: function (player) {
-                                            if (!player.storage.minijuzhan_use2) player.storage.minijuzhan_use2 = [];
+                                            if (!player.storage.hpp_juzhan_use2) player.storage.hpp_juzhan_use2 = [];
                                         },
                                         mark: true,
                                         marktext: '战',
                                         intro: { content: '不能对$使用红色【杀】' },
                                         mod: {
                                             playerEnabled: function (card, player, target) {
-                                                if (player.storage.minijuzhan_use2.contains(target) && get.name(card) == 'sha' && get.color(card) == 'red') return false;
+                                                if (player.storage.hpp_juzhan_use2.contains(target) && get.name(card) == 'sha' && get.color(card) == 'red') return false;
                                             },
                                         },
                                     },
@@ -7854,14 +7854,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_lvmeng: '#b捞德一评级:3.2',
                             // M
                             hpp_machao: '#b捞德一评级:3.7',
-                            hpp_masu: '#r捞德一评级4.0',
+                            hpp_masu: '#b捞德一评级3.9',
                             hpp_menghuo: '#g捞德一评级2.4',
                             // P
                             hpp_panfeng: '#b捞德一评级:3.7',
                             hpp_pangde: '#b捞德一评级:3.7',
                             hpp_pangtong: '#g捞德一评级:2.4',
                             // Q
-                            hpp_quyi: '#r捞德一评级:4.1',
+                            hpp_quyi: '#r捞德一评级:4.0',
                             // S
                             hpp_shamoke: '#r捞德一评级:3.3',
                             hpp_simayi: '#r捞德一评级:4.2',
@@ -7883,6 +7883,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xuzhu: '#g捞德一评级2.8',
                             // Y
                             hpp_yanliangwenchou: '#g捞德一评级2.6',
+                            hpp_yanyan: '#b捞德一评级3.6',
                             hpp_yuanshao: '#b捞德一评级3.8',
                             hpp_yuanshu: '#g捞德一评级2.1',
                             hpp_yuji: '#b捞德一评级3.1',
@@ -7900,7 +7901,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhugeliang: '#b捞德一评级:3.2',
                             hpp_zhuhuan: '#b捞德一评级:3.5',
                             hpp_zhuran: '#b捞德一评级:3.7',
-                            hpp_zhuzhi: '#b捞德一评级:3.5',
+                            hpp_zhuzhi: '#b捞德一评级:3.6',
                             hpp_zumao: '#b捞德一评级:3.8',
                             hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
@@ -7937,6 +7938,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caoren: '曹仁',
                             hpp_jushou: '据守',
                             hpp_jushou_info: '结束阶段，你可以翻面，若如此做，你摸四张牌，然后你可以使用一张装备牌。',
+                            hpp_chendao: '陈到',
+                            hpp_wanglie: '往烈',
+                            hpp_wanglie_info: '出牌阶段，你使用的牌无距离限制。当你于出牌阶段内使用一张牌时，你可令此牌不能被响应，回合结束时，你摸X张牌，X为此牌造成的伤害数，若如此做，本回合你不能再使用牌。',
                             // D
                             hpp_daqiao: '大乔',
                             hpp_wanrong: '婉容',
@@ -8173,6 +8177,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yanliangwenchou: '颜良文丑',
                             hpp_shuangxiong: '双雄',
                             hpp_shuangxiong_info: '摸牌阶段，你可以改为展示牌堆顶的三张牌，你获得其中相同颜色的牌，然后本回合你可以将与此牌颜色不同的一张手牌当【决斗】使用。每回合限3次；当你因“双雄”受到伤害后，你可以获得此次【决斗】中其他角色打出的【杀】。',
+                            hpp_yanyan: '严颜',
+                            hpp_juzhan: '拒战',
+                            hpp_juzhan_info: '当你成为其他角色【杀】的目标后，你可以与其各摸一张牌，然后其本回合不能再对你使用牌；当你使用【杀】指定一名角色为目标后，你可以获得其一张牌，然后你本回合不能再对其使用红色【杀】。',
                             hpp_yuanshao: '袁绍',
                             hpp_luanji: '乱击',
                             hpp_luanji_info: '你可以将两张手牌当【万箭齐发】使用（不能使用本回合此前发动该技能时已用过的花色）；若没有角色受到你使用的【万箭齐发】的伤害，你摸等同于此【万箭齐发】指定目标数量的牌。',

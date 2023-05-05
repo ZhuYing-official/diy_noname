@@ -34096,6 +34096,9 @@
 						if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * 1.5;
 					}
 					td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
+					if (num.toFixed(1) == laodeyiMvp) {
+						td.innerHTML = `<b style='color:red'>MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
+					}
 					tr.appendChild(td);
 
 					table.appendChild(tr);
