@@ -1317,16 +1317,33 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						onuse: function (result, player) {
 							player.addMark('hok_dihui', 1);
 						},
+						check: function (card) {
+							return 6 - get.value(card);
+						},
+						ai: {
+							order: function () {
+								return get.order({ name: 'sha' }) + 0.1;
+							},
+							order: 6,
+						}
 					},
 					strengthen: {
 						enable: 'phaseUse',
-						filterTarget: true,
 						group: 'hok_dihui_hanbing',
+						filterTarget: true,
 						content: function () {
 							'step 0'
 							player.useCard({ name: 'sha', isCard: true }, target, false);
 							'step 1'
 							player.removeSkill('hok_dihui_strengthen');
+						},
+						ai: {
+							order: 4,
+							result: {
+								target: function (player, target) {
+									return -1;
+								},
+							},
 						}
 					},
 					hanbing: {
@@ -1365,6 +1382,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}, target, targetSwap);
 					player.addMark('hok_dihui', 1);
 				},
+				check: function (card) {
+					return (5 - get.value(card)) && _status.event.player.countCards('h') > 2;
+				},
+				ai: {
+					order: function () {
+						return get.order({ name: 'tao' }) - 0.3;
+					},
+					result: {
+						player: 1
+					},
+				}
 			},
 			hok_shaduo: {
 				enable: 'phaseUse',
@@ -1384,6 +1412,38 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 2'
 					player.removeSkill('hok_shaduo_hanbing');
 				},
+				ai: {
+					order: 1,
+					result: {
+						player: function (player) {
+							var targets = game.filterPlayer(function (current) {
+								return player.canUse('wanjian', current);
+							});
+							var num = 0;
+							for (var i = 0; i < targets.length; i++) {
+								var eff = get.sgn(get.effect(targets[i], { name: 'wanjian' }, player, player));
+								if (targets[i].hp == 1) {
+									eff *= 1.5;
+								}
+								num += eff;
+								if (get.attitude(player, targets[1]) <= 0) {
+									num += targets[1].countCards('hs') > 2 ? -0.5 : 1;
+								} else {
+									num += targets[1].countCards('hs') > 2 ? 0.5 : -1;
+								}
+							}
+							if (!player.needsToDiscard(-1)) {
+								if (targets.length >= 7) {
+									if (num < 2) return 0;
+								}
+								else if (targets.length >= 5) {
+									if (num < 1.5) return 0;
+								}
+							}
+							return num;
+						}
+					}
+				},
 				subSkill: {
 					hanbing: {
 						trigger: { source: 'damageBegin2' },
@@ -1397,7 +1457,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								if (cards.length) trigger.player.discard(cards.randomGet());
 								if (cards.length) trigger.player.discard(cards.randomGet());
 							}
-						}
+						},
 					}
 				}
 			},

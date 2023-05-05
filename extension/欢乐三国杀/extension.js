@@ -3219,61 +3219,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
-                            // 麴义
-                            hpp_fuqi: {
-                                audio: 'fuqi',
-                                forced: true,
-                                group: 'hpp_fuqi_tieji',
-                                trigger: { player: 'useCard' },
-                                filter: function (event, player) {
-                                    return event.card && (get.type(event.card) == 'trick' || get.type(event.card) == 'basic' && !['shan', 'tao', 'jiu', 'du'].contains(event.card.name)) && game.hasPlayer(function (current) {
-                                        return current != player && get.distance(current, player) <= 2;
-                                    });
-                                },
-                                content: function () {
-                                    var targets = game.filterPlayer(function (current) {
-                                        return current != player && get.distance(current, player) <= 2;
-                                    });
-                                    for (var target of targets) target.popup('无法响应');
-                                    trigger.directHit.addArray(targets);
-                                },
-                                ai: {
-                                    ignoreSkill: true,
-                                    directHit_ai: true,
-                                    skillTagFilter: function (player, tag, arg) {
-                                        if (tag == 'directHit_ai') return get.distance(arg.target, player) <= 2;
-                                        if (!arg || arg.isLink || !arg.card || !get.tag(arg.card, 'damage')) return false;
-                                        if (!arg.skill || !lib.skill[arg.skill] || lib.skill[arg.skill].charlotte || get.is.locked(arg.skill) || !arg.target.getSkills(true, false).contains(arg.skill)) return false;
-                                    },
-                                },
-                                subSkill: {
-                                    tieji: {
-                                        audio: 'fuqi',
-                                        trigger: { source: 'damageSource' },
-                                        filter: function (event, player) {
-                                            return event.player != player && event.player.isAlive();
-                                        },
-                                        forced: true,
-                                        logTarget: 'player',
-                                        content: function () {
-                                            trigger.player.addTempSkill('fengyin');
-                                        },
-                                    },
-                                },
-                            },
-                            hpp_jiaozi: {
-                                audio: 'jiaozi',
-                                trigger: { source: 'damageBegin1' },
-                                filter: function (event, player) {
-                                    return player.isMaxHandcard();
-                                },
-                                forced: true,
-                                content: function () {
-                                    trigger.num++;
-                                },
-                                ai: { presha: true },
-                            },
-
                             // 庞德
                             hpp_jianchu: {
                                 shaRelated: true,
@@ -3397,6 +3342,61 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 intro: {
                                     content: 'limited'
                                 }
+                            },
+
+                            // 麴义
+                            hpp_fuqi: {
+                                audio: 'fuqi',
+                                forced: true,
+                                group: 'hpp_fuqi_tieji',
+                                trigger: { player: 'useCard' },
+                                filter: function (event, player) {
+                                    return event.card && (get.type(event.card) == 'trick' || get.type(event.card) == 'basic' && !['shan', 'tao', 'jiu', 'du'].contains(event.card.name)) && game.hasPlayer(function (current) {
+                                        return current != player && get.distance(current, player) <= 2;
+                                    });
+                                },
+                                content: function () {
+                                    var targets = game.filterPlayer(function (current) {
+                                        return current != player && get.distance(current, player) <= 2;
+                                    });
+                                    for (var target of targets) target.popup('无法响应');
+                                    trigger.directHit.addArray(targets);
+                                },
+                                ai: {
+                                    ignoreSkill: true,
+                                    directHit_ai: true,
+                                    skillTagFilter: function (player, tag, arg) {
+                                        if (tag == 'directHit_ai') return get.distance(arg.target, player) <= 2;
+                                        if (!arg || arg.isLink || !arg.card || !get.tag(arg.card, 'damage')) return false;
+                                        if (!arg.skill || !lib.skill[arg.skill] || lib.skill[arg.skill].charlotte || get.is.locked(arg.skill) || !arg.target.getSkills(true, false).contains(arg.skill)) return false;
+                                    },
+                                },
+                                subSkill: {
+                                    tieji: {
+                                        audio: 'fuqi',
+                                        trigger: { source: 'damageSource' },
+                                        filter: function (event, player) {
+                                            return event.player != player && event.player.isAlive();
+                                        },
+                                        forced: true,
+                                        logTarget: 'player',
+                                        content: function () {
+                                            trigger.player.addTempSkill('fengyin');
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_jiaozi: {
+                                audio: 'jiaozi',
+                                trigger: { source: 'damageBegin1' },
+                                filter: function (event, player) {
+                                    return player.isMaxHandcard();
+                                },
+                                forced: true,
+                                content: function () {
+                                    trigger.num++;
+                                },
+                                ai: { presha: true },
                             },
 
                             // 沙摩柯
