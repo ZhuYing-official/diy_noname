@@ -98,6 +98,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_maliang:['male','shu',3,['zishu','xinyingyuan']],
 			junk_liubei:['male','shu',4,['junkrende','jijiang'],['zhu']],
 			junk_huangyueying:['female','shu',3,['junkjizhi','junkqicai']],
+			junk_lidian:['male','wei',3,['xunxun','junkwangxi']],
+			junk_duanwei:['male','qun',4,['junklangmie']],
 		},
 		characterFilter:{
 			ns_duangui:function(mode){
@@ -117,7 +119,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				diy_xushi:["diy_feishi","diy_hanlong","diy_liufu","diy_liuyan","diy_liuzan","diy_tianyu","diy_xizhenxihong","diy_yangyi","diy_zaozhirenjun"],
 				diy_default:["diy_yuji","diy_caiwenji","diy_lukang","diy_zhenji"],
 				diy_noname:['noname'],
-				diy_trashbin:['old_jiakui','ol_guohuai','junk_zhangrang','old_bulianshi','junk_sunquan','ol_maliang','junk_liubei','junk_huangyueying'],
+				diy_trashbin:['old_jiakui','ol_guohuai','junk_zhangrang','old_bulianshi','junk_sunquan','ol_maliang','junk_liubei','junk_huangyueying','junk_lidian'],
 			},
 		},
 		characterIntro:{
@@ -11493,6 +11495,138 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			
+			//削弱版段煨
+			junklangmie:{
+				audio:'langmie',
+				trigger:{global:'phaseJieshuBegin'},
+				direct:true,
+				filter:function(event,player){
+					if(player==event.player||player.countCards('he')==0) return false;
+					var num=0;
+					if(event.player.hasHistory('sourceDamage',function(evt){
+						num+=evt.num;
+						return num>=2;
+					})) return true;
+					var map={};
+					return event.player.hasHistory('useCard',function(i){
+						var name=get.type2(i.card,false);
+						if(!map[name]){
+							map[name]=true;
+							return false;
+						}
+						return true;
+					});
+				},
+				content:function(){
+					'step 0'
+					var list=[],num=0,target=trigger.player;
+					event.target=target;
+					event.choices=[];
+					var map={};
+					if(target.hasHistory('useCard',function(i){
+						var name=get.type2(i.card,false);
+						if(!map[name]){
+							map[name]=true;
+							return false;
+						}
+						return true;
+					})){
+						list.push('弃置一张牌，然后摸两张牌');
+						event.choices.push('draw');
+					}
+					if(target.hasHistory('sourceDamage',function(evt){
+						num+=evt.num;
+						return num>=2;
+					})){
+						list.push('弃置一张牌，对'+get.translation(target)+'造成1点伤害');
+						event.choices.push('damage');
+					}
+					player.chooseControl('cancel2').set('choiceList',list).set('ai',function(){
+						var player=_status.event.player;
+						var choices=_status.event.getParent().choices.slice(0);
+						choices.push('cancel');
+						choicex=choices.slice(0);
+						var getx=function(a){
+							switch(a){
+								case 'draw':return get.effect(player,{name:'wuzhong'},player,player);
+								case 'damage':return get.damageEffect(_status.event.getParent().target,player,player);
+								default:return 0;
+							}
+						}
+						choices.sort(function(a,b){
+							return getx(b)-getx(a);
+						});
+						return choicex.indexOf(choices[0]);
+					}).set('prompt',get.prompt('junklangmie',target));
+					'step 1'
+					if(result.control=='cancel2') event.finish();
+					else{
+						event.choice=event.choices[result.index];
+						player.chooseToDiscard('he').set('ai',card=>(7-get.value(card))).logSkill=(event.choice=='draw'?'junklangmie':['junklangmie',target]);
+					}
+					'step 2'
+					if(result.bool){
+						if(event.choice=='draw') player.draw(2);
+						else target.damage();
+					}
+				},
+			},
+			//李典光速通渠传说
+			junkwangxi:{
+				audio:'wangxi',
+				trigger:{player:'damageEnd',source:'damageSource'},
+				filter:function(event){
+					if(event._notrigger.contains(event.player)) return false;
+					return event.num&&event.source&&event.player&&
+					event.player.isAlive()&&event.source.isAlive()&&event.source!=event.player;
+				},
+				check:function(event,player){
+					if(player.isPhaseUsing()) return true;
+					if(event.player==player) return get.attitude(player,event.source)>-5;
+					return get.attitude(player,event.player)>-5;
+				},
+				logTarget:function(event,player){
+					if(event.player==player) return event.source;
+					return event.player;
+				},
+				preHidden:true,
+				content:function(){
+					'step 0'
+					event.count=trigger.num;
+					event.target=lib.skill.junkwangxi.logTarget(trigger,player);
+					'step 1'
+					player.draw(2).gaintag=['junkwangxi_tag'];
+					event.count--;
+					'step 2'
+					var cards=player.getCards('he',(card)=>card.hasGaintag('junkwangxi_tag'));
+					if(cards.length>0&&target.isAlive()){
+						if(cards.length==1) event._result={bool:true,cards:cards};
+						else player.chooseCard('he','忘隙：交给'+get.translation(target)+'一张牌',true,function(card){
+							return card.hasGaintag('junkwangxi_tag');
+						});
+					}
+					else event.goto(4);
+					'step 3'
+					if(result.bool){
+						player.give(result.cards,target);
+					}
+					'step 4'
+					player.removeGaintag('junkwangxi_tag');
+					if(event.count&&target.isAlive()){
+						player.chooseBool(get.prompt2('junkwangxi',target));
+					}
+					else event.finish();
+					'step 5'
+					if(result.bool){
+						player.logSkill('junkwangxi',target);
+						event.goto(1);
+					}
+				},
+				ai:{
+					maixie:true,
+					maixie_hp:true
+				}
+			},
 			//2013标准包双蜀黑
 			junkjizhi:{
 				audio:'jizhi',
@@ -17724,6 +17858,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			junkjizhi_info:'当你使用非转化的普通锦囊牌时，你可以展示牌堆顶的一张牌A。若A不为基本牌，则你获得A。否则你选择一项：⒈将A置入弃牌堆。⒉将一张手牌置于牌堆顶，然后获得A。',
 			junkqicai:'奇才',
 			junkqicai_info:'锁定技。①你使用锦囊牌无距离限制。②你装备区内的非坐骑牌不能被其他角色弃置。',
+			junkwangxi:'忘隙',
+			junkwangxi_info:'当你对其他角色造成1点伤害后，或受到其他角色造成的1点伤害后，你可以摸两张牌，然后交给其其中一张牌。',
+			junkwangxi_tag:'invisible',
+			junklangmie:'狼灭',
+			junklangmie_info:'其他角色的结束阶段开始时，你可以选择一项：⒈若其本回合内使用过某种类型的牌超过一张，则你弃置一张牌并摸两张牌。⒉若其本回合累计造成过的伤害大于1，则你弃置一张牌，然后对其造成1点伤害。',
 			ol_guohuai_ab:'郭淮',
 			old_jiakui:'通渠贾逵',
 			ol_guohuai:'三血郭淮',
@@ -17732,6 +17871,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			old_bulianshi:'削弱步练师',
 			ol_maliang:'削弱马良',
 			ol_maliang_ab:'马良',
+			junk_lidian:'削弱李典',
+			junk_lidian_ab:'李典',
+			junk_duanwei:'削弱段煨',
+			junk_duanwei_ab:'段煨',
 			
 			diy_tieba:'吧友设计',
 			diy_xushi:'玩点论杀·虚实篇',

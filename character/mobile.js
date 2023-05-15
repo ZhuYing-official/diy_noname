@@ -15,7 +15,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				mobile_shijiyan:['sp_cuiyan','sp_zhangchangpu','sp_jiangwan','sp_jiangqing','sp_lvfan','sp_huangfusong','sp_zhujun','liuba'],
 				mobile_sunben:["re_sunben"],
 				mobile_standard:["xin_xiahoudun","xin_zhangfei"],
-				mobile_shenhua:["re_pangtong","re_guanqiujian","xin_yuanshao","re_liushan","re_dongzhuo","re_sp_zhugeliang","re_sunjian","re_dengai","re_jiangwei","re_zhurong","re_caiwenji","re_xunyu","re_dianwei","xin_zhoutai"],
+				mobile_shenhua:["re_pangtong","re_guanqiujian","xin_yuanshao","re_liushan","re_dongzhuo","re_sp_zhugeliang","re_sunjian","re_dengai","re_jiangwei","re_zhurong","re_caiwenji","re_xunyu","re_dianwei","xin_zhoutai","re_yanwen"],
 				mobile_yijiang1:["re_xusheng","re_lingtong","ol_yujin","re_wuguotai","re_gaoshun",'re_caozhi'],
 				mobile_yijiang2:["xin_liaohua","xin_caozhang","re_liubiao","re_handang","xin_chengpu","xin_gongsunzan","re_zhonghui","re_bulianshi"],
 				mobile_yijiang3:["re_liru","xin_jianyong","xin_zhuran","xin_guohuai","xin_panzhangmazhong","xin_fuhuanghou","re_yufan"],
@@ -26,6 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		character:{
+			re_yanwen:["male","qun",4,["reshuangxiong"]],
 			xin_zhoutai:['male','wu',4,['buqu','new_fenji']],
 			re_caozhi:['male','wei',3,['reluoying','rejiushi','chengzhang']],
 			yj_weiyan:['male','qun',5,['mbguli','mbaosi']],
@@ -1305,8 +1306,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						filter:function(event,player){
 							return player.getStorage('sbbenxi_effect3').contains(event.card)&&game.hasPlayer2(current=>{
 								return current.hasHistory('damage',evt=>{
-								return event.card==evt.card;
-							});
+									return event.card==evt.card;
+								});
 							});
 						},
 						content:function(){
@@ -5955,7 +5956,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'dying'},
 				forced:true,
 				filter:function(event,player){
-					return _status.renku.length>4;
+					return _status.renku.length>3;
 				},
 				logTarget:'player',
 				content:function(){
@@ -11918,6 +11919,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var chara=[];
 					var skills=[];
 					for(var i of _status.characterlist){
+						if(i=='key_yuri') continue;
 						var character=lib.character[i];
 						if(character&&character[3]){
 							for(var j of character[3]){
@@ -15705,7 +15707,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						list.remove(player.storage.xinfu_qianchong[i]);
 					}
 					if(list.length>1){
-					player.chooseControl(list).set('ai',function(){
+						player.chooseControl(list).set('ai',function(){
 							return list[0];
 						}).set('prompt',get.prompt('xinfu_qianchong')).set('prompt2',get.translation('xinfu_qianchong_info'));
 					}
@@ -16418,7 +16420,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player){
 					if(!player.storage.yizan&&player.countCards('hes')<2) return false;
                     if(!player.hasCard(function(card){
-							return get.type(card)=='basic';
+                        return get.type(card)=='basic';
                     },'hs')) return false;
                     for(var name of lib.inpile){
                         if(get.type(name)!='basic') continue;
@@ -16428,7 +16430,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 if(event.filterCard({name:'sha',nature:nature},player,event)) return true;
                             }
                         }
-					}
+                    }
 					return false;
 				},
 				chooseButton:{
@@ -16438,13 +16440,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             if(get.type(name)!='basic') continue;
                             if(event.filterCard({name:name},player,event)){
                                 list.push(['基本','',name]);
-						}
+                            }
                             if(name=='sha'){
                                 for(var nature of lib.inpile_nature){
                                     if(event.filterCard({name:name,nature:nature},player,event)) list.push(['基本','','sha',nature]);
-						}
-						}
-						}
+                                }
+                            }
+                        }
 						return ui.create.dialog('翊赞',[list,'vcard'],'hidden');
 					},
 					check:function(button){
@@ -18227,7 +18229,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			duoji:'夺冀',
 			duoji_info:'限定技，出牌阶段，你可弃置两张手牌并选择一名装备区有牌的其他角色。你获得其装备区里的所有牌。',
 			re_handang:'手杀韩当',
-			luotong:'骆统',
+			luotong:'手杀骆统',
 			qinzheng:'勤政',
 			qinzheng_info:'锁定技，当你使用或打出牌时，若你本局游戏内使用或打出过的牌数和：为3的倍数，你从牌堆中获得一张【杀】或【闪】；为5的倍数，你从牌堆中获得一张【桃】或【酒】；为8的倍数，你从牌堆中获得一张【决斗】或【无中生有】（可获得对应的衍生替换牌）。',
 			sp_duyu:'手杀杜预',
@@ -18452,7 +18454,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yuanqing:'渊清',
 			yuanqing_info:'锁定技，出牌阶段结束时，你随机将弃牌堆中你本阶段使用过的牌类型的各一张牌置于仁库中。', 
 			shuchen:'疏陈',
-			shuchen_info:'锁定技，当有角色进入濒死状态时，若仁库中的牌数大于四，则你获得仁库中的所有牌，然后其回复1点体力。',
+			shuchen_info:'锁定技，当有角色进入濒死状态时，若仁库中的牌数大于三，则你获得仁库中的所有牌，然后其回复1点体力。',
 			rechuhai:'除害',
 			rechuhai_info:'使命技。①出牌阶段限一次，你可以摸一张牌，然后和一名其他角色拼点。若你赢，则你观看其手牌，并从牌堆/弃牌堆中获得其手牌中包含的类型的牌各一张，且当你于此阶段内对其造成伤害后，你将牌堆/弃牌堆中的一张装备牌置于你的一个空置装备栏内。②当你因发动〖除害①〗而展示拼点牌时，你令此牌的点数+X（X=(4-你装备区的牌数)）。③使命：当有装备牌进入你的装备区后，若你的装备区内有至少三张牌，则你将体力值回复至上限，失去〖乡害〗并获得〖彰名〗。④失败：当你因发动〖除害①〗发起的拼点没赢时，若你的最终点数不大于6，则你触发使命失败分支。',
 			zhangming:'彰名',
@@ -18710,6 +18712,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mbaosi:'骜肆',
 			mbaosi_info:'锁定技。当你于出牌阶段对一名攻击范围内的角色造成伤害后，你于此阶段对其使用牌无次数限制。',
 			xin_zhoutai:'手杀周泰',
+			re_yanwen:"手杀颜良文丑",
 			
 			mobile_standard:'手杀异构·标准包',
 			mobile_shenhua:'手杀异构·神话再临',

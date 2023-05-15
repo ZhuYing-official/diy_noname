@@ -322,7 +322,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						filter:function(event,player){
 							return game.hasPlayer(function(current){
 								var evt=event.getl(current);
-							return evt&&(evt.xs.length>0||evt.ss.length>0);
+								return evt&&(evt.xs.length>0||evt.ss.length>0);
 							});
 						},
 						usable:1,
@@ -4226,7 +4226,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(list.length){
 							dialog.addSmall([list,'character']);
 						}
-							for(var i=0;i<dialog.buttons.length;i++){
+						for(var i=0;i<dialog.buttons.length;i++){	
 							if(!player.isUnderControl(true)){
 								if(!content.shown.contains(dialog.buttons[i].link)){
 									dialog.buttons[i].node.group.remove();
@@ -4241,10 +4241,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							}
 							if(dialog.buttons[i].link==player.storage.huashen.current){
 								dialog.buttons[i].classList.add('glow2');
-						}
+							}
 						}
 						var skill=player.storage.huashen.current2;
-							if(skill){
+						if(skill){
 							dialog.add('<div><div class="skill">【'+get.translation(lib.translate[skill+'_ab']||get.translation(skill).slice(0,2))+'】</div>'+
 							'<div>'+get.skillInfoTranslation(skill,player)+'</div></div>');
 						}
@@ -4256,22 +4256,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(_status.connectMode) var list=get.charactersOL();
 						else{
 							var list=[];
-					for(var i in lib.character){
-						if(lib.filter.characterDisabled2(i)||lib.filter.characterDisabled(i)) continue;
+							for(var i in lib.character){
+								if(lib.filter.characterDisabled2(i)||lib.filter.characterDisabled(i)) continue;
 								list.push(i);
 							}
-							}
+						}
 						game.countPlayer(function(current){
 							list.remove(current.name);
 							list.remove(current.name1);
 							list.remove(current.name2);
 							if(current.storage.huashen&&current.storage.huashen.owned){
 								for(var i in current.storage.huashen.owned) list.removeArray(current.storage.huashen.owned[i]);
-						}
+							}
 							if(current.storage.rehuashen&&current.storage.rehuashen.character) list.removeArray(current.storage.rehuashen.character)
 						});
 						_status.characterlist=list;
-						}
+					}
 					_status.characterlist.randomSort();
 					var bool=false;
 					for(var i=0;i<_status.characterlist.length;i++){
@@ -4281,12 +4281,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						for(var j=0;j<skills.length;j++){
 							var info=lib.skill[skills[j]];
 							if(info.charlotte||(info.unique&&!info.gainable)||info.juexingji||info.limited||info.zhuSkill||info.hiddenSkill||info.dutySkill) skills.splice(j--,1);
-					}
+						}
 						if(skills.length){
 							player.storage.huashen.owned[name]=skills;
 							_status.characterlist.remove(name);
 							return name;
-					}
+						}
 					}
 				},
 				addHuashens:function(player,num){
@@ -4294,7 +4294,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<num;i++){
 						var name=lib.skill.huashen.addHuashen(player);
 						if(name) list.push(name);
-				}
+					}
 					if(list.length){
 						game.log(player,'获得了',get.cnNumber(list.length)+'张','#g化身')
 						lib.skill.rehuashen.drawCharacter(player,list);
@@ -4337,7 +4337,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.syncStorage('huashen');
 						player.markSkill('huashen');
 						event.logged=true;
-						}
+					}
 					var cards=[];
 					var skills=[];
 					for(var i in player.storage.huashen.owned){
@@ -4358,8 +4358,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						for(var i in player.storage.huashen.owned){
 							if(player.storage.huashen.owned[i].contains(skill)){
 								character=i; break;
+							}
 						}
-					}
 						event._result={
 							bool:true,
 							skill:skill,
@@ -4380,7 +4380,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						for(var i=0;i<event.dialog.buttons.length;i++){
 							event.dialog.buttons[i].classList.add('pointerdiv');
 							event.dialog.buttons[i].classList.add('selectable');
-							}
+						}
 						event.dialog.open();
 						event.custom.replace.button=function(button){
 							if(!event.dialog.contains(button.parentNode)) return;
@@ -4390,7 +4390,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								button.classList.remove('selectedx');
 								if(event.control){
 									event.control.replacex(['cancel2']);
-							}
+								}
 							}
 							else{
 								if(event.button){
@@ -4398,20 +4398,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								}
 								button.classList.add('selectedx');
 								event.button=button;
-								if(event.control){
+								if(event.control&&button.link){
 									event.control.replacex(player.storage.huashen.owned[button.link]);
+								}
 							}
-										}
 							game.check();
-									}
+						}
 						event.custom.replace.window=function(){
 							if(event.button){
 								event.button.classList.remove('selectedx');
 								event.button=null;
 							}
 							event.control.replacex(['cancel2']);
-								}
-
+						}
+						
 						event.switchToAuto=function(){
 							var cards=[];
 							var skills=[];
@@ -4429,33 +4429,33 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							for(var i in player.storage.huashen.owned){
 								if(player.storage.huashen.owned[i].contains(skill)){
 									character=i; break;
-						}
-						}
+								}
+							}
 							event._result={
 								bool:true,
 								skill:skill,
 								character:character
-					};
+							};
 							if(event.dialog) event.dialog.close();
 							if(event.control) event.control.close();
 						}
 						var controls=[];
-							event.control=ui.create.control();
+						event.control=ui.create.control();
 						event.control.replacex=function(){
 							var args=Array.from(arguments)[0];
 							if(args.contains('cancel2')&&forced){
 								args.remove('cancel2');
 								this.style.opacity='';
-						}
+							}
 							args.push(function(link){
 								var result=event._result;
 								if(link=='cancel2') result.bool=false;
-						else{
+								else{
 									if(!event.button) return;
 									result.bool=true;
 									result.skill=link;
 									result.character=event.button.link;
-						}
+								}
 								event.dialog.close();
 								event.control.close();
 								game.resume();
@@ -4465,23 +4465,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						if(!forced){
 							controls.push('cancel2');
-									event.control.style.opacity=1;
-								}
+							event.control.style.opacity=1;
+						}
 						event.control.replacex(controls);
 						game.pause();
 						game.countChoose();
 					};
 					if(event.isMine()){
 						chooseButton(player,cards,event.triggername=='huashen');
-								}
+					}
 					else if(event.isOnline()){
 						event.player.send(chooseButton,event.player,cards,event.triggername=='huashen');
 						event.player.wait();
 						game.pause();
-									}
-									else{
+					}
+					else{
 						switchToAuto();
-									}
+					}
 					'step 1'
 					var map=event.result||result;
 					if(map.bool){
@@ -4504,13 +4504,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 										mark.setBackground(character,'character');
 										if(mark.firstChild){
 											mark.firstChild.remove();
-								}
+										}
 										setTimeout(function(){
 											mark.style.transition='';
 											mark.show();
 										},50);
 									},200);
-							}
+								}
 							},character,player);
 						}
 						player.storage.huashen.current2=skill;
@@ -6923,24 +6923,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				onremove:function(player,skill){
 					var cards=player.getExpansions(skill);
 					if(cards.length){
-						delete player.nodying;
+						//delete player.nodying;
 						player.loseToDiscardpile(cards);
 						if(player.hp<=0) player.dying({});
 					}
 				},
 				process:function(player){
-					delete player.nodying;
+					//delete player.nodying;
 					var nums=[];
 					var cards=player.getExpansions('gzbuqu');
 					for(var i=0;i<cards.length;i++){
 						if(nums.contains(get.number(cards[i]))){
-							return;
+							return false;
 						}
 						else{
 							nums.push(get.number(cards[i]));
 						}
 					}
-					player.nodying=true;
+					return true;
+					//player.nodying=true;
 				},
 				subSkill:{
 					recover:{
@@ -6973,7 +6974,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.loseToDiscardpile(cards);
 							if(event.count) event.goto(1);
 							'step 3'
-							lib.skill.gzbuqu.process(player);
+							if(lib.skill.gzbuqu.process(player)){
+								if(player.isDying()){
+									var evt=event,histories=[evt];
+									while(true){
+										evt=event.getParent('dying');
+										if(!evt||evt.name!='dying'||histories.contains(evt)) break;
+										histories.push(evt);
+										if(evt.player==player) evt.nodying=true;
+									}
+								}
+							}
 						}
 					}
 				},
@@ -6984,7 +6995,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					player.showCards(get.translation(player)+'的不屈牌',player.getExpansions('gzbuqu'));
 					'step 2'
-					lib.skill.gzbuqu.process(player);
+					if(lib.skill.gzbuqu.process(player)){
+						var evt=trigger.getParent();
+						if(evt.name=='damage'||evt.name=='loseHp') evt.nodying=true;
+					}
 				},
 				ai:{
 					mingzhi:true
@@ -7403,7 +7417,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(i=='sha'){
 							for(var j of lib.inpile_nature){
 								if(event.filterCard({name:i,nature:j},player,event)) return true;
-					}
+							}
 						}
 					}
 					return false;
@@ -7439,7 +7453,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(card.name==cardx.name){
 									if(card.name!='sha') return true;
 									return get.nature(card)==get.nature(cardx);
-						}
+								}
 								return false;
 							},'hs')){
 								if(get.value(card,player,'raw')<6) return Math.sqrt(val)*(0.25+Math.random()/1.5);
@@ -7538,21 +7552,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.targets=game.filterPlayer(function(current){
 						return current!=player&&!current.hasSkill('chanyuan');
 					}).sortBySeat(_status.currentPhase);
-					
+
 					game.broadcastAll(function(card,player){
-					_status.guhuoNode=card.copy('thrown');
-					if(lib.config.cardback_style!='default'){
-						_status.guhuoNode.style.transitionProperty='none';
-						ui.refresh(_status.guhuoNode);
-						_status.guhuoNode.classList.add('infohidden');
-						ui.refresh(_status.guhuoNode);
-						_status.guhuoNode.style.transitionProperty='';
-					}
-					else{
-						_status.guhuoNode.classList.add('infohidden');
-					}
-					_status.guhuoNode.style.transform='perspective(600px) rotateY(180deg) translateX(0)';
-					player.$throwordered2(_status.guhuoNode);
+						_status.guhuoNode=card.copy('thrown');
+						if(lib.config.cardback_style!='default'){
+							_status.guhuoNode.style.transitionProperty='none';
+							ui.refresh(_status.guhuoNode);
+							_status.guhuoNode.classList.add('infohidden');
+							ui.refresh(_status.guhuoNode);
+							_status.guhuoNode.style.transitionProperty='';
+						}
+						else{
+							_status.guhuoNode.classList.add('infohidden');
+						}
+						_status.guhuoNode.style.transform='perspective(600px) rotateY(180deg) translateX(0)';
+						player.$throwordered2(_status.guhuoNode);
 					},trigger.cards[0],player);
 					event.onEnd01=function(){
 						_status.guhuoNode.removeEventListener('webkitTransitionEnd',_status.event.onEnd01);
@@ -7596,7 +7610,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return Math.pow((get.value(card,evt.player,'raw')-4)/(eff==0?5:10),2);
 						}
 						return Math.random();
-						});
+					});
 					'step 2'
 					if(result.links[0][2]=='reguhuo_betray'){
 						target.addExpose(0.2);
@@ -7706,7 +7720,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			taishici:['re_taishici','taishici'],
 			re_yuanshao:['ol_yuanshao','re_yuanshao','xin_yuanshao'],
 			pangde:['ol_pangde','re_pangde','pangde'],
-			yanwen:['re_yanwen','yanwen'],
+			yanwen:['ol_yanwen','re_yanwen','yanwen'],
 			caopi:['caopi','re_caopi','ps_caopi'],
 			xuhuang:['ol_xuhuang','re_xuhuang','xuhuang'],
 			menghuo:['re_menghuo','menghuo'],

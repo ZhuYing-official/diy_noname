@@ -616,13 +616,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					'step 0'
-					player.chooseToDiscard(true, 1, 'h', '弃置一张杀，视为对该角色使用两张【雷杀】（喝酒状态下影响第二张杀）。', { name: 'sha' });
+					player.chooseToDiscard(true, 1, 'h', '弃置一张杀，视为对该角色使用两张【雷杀】（不可以触发酒）。', { name: 'sha' });
 					player.addSkill('hok_qianglin_draw');
 					'step 1'
+					trigger.cancel();
 					// player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, '视为使用两张【雷杀】');
-					trigger.card.nature = 'thunder';
-					trigger.card.color = 'none';
 					for (target of trigger.targets) {
+						player.useCard({ name: 'sha', nature: 'thunder' }, target);
 						player.useCard({ name: 'sha', nature: 'thunder' }, target);
 					}
 					'step 2'
@@ -635,7 +635,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							global: ['damageEnd', 'loseHpEnd'],
 						},
 						forced: true,
-						usabel: 1,
+						// usable: 1,
 						content: function () {
 							player.draw();
 						},
@@ -1117,11 +1117,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.chooseToDiscard('hes').set('goon', get.damageEffect(trigger.player, player, player) > 0)
 						.set('ai', function (card) {
 							if (player.countCards('hs') > player.hp) {
-								if (_status.event.goon) return 12 - get.value(card);
+								if (_status.event.goon) return 9 - get.value(card);
 							}
 							if (player.getStat('skill').hok_naogong != undefined) {
 								if (player.getStat('skill').hok_naogong == 1 && player.countCards('hs') > 1) {
-									return 12 - get.value(card);
+									return 9 - get.value(card);
 								}
 							}
 							return 0;
@@ -1235,10 +1235,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					expose: 0.2,
 					result: {
 						player: function (player) {
-							if (player.getEquip(1).name == 'zhuge') {
+							if (player.getEquip(1).name != undefined && player.getEquip(1).name == 'zhuge') {
 								return 0;
 							}
-							if (player.hp < 2) return 1;
 							var qitianTrick = (player.countCards('hs', { type: 'basic' }) - player.countCards('hs', { name: 'sha' })
 								- player.countCards('hs', { name: 'shan' })
 								- player.countCards('hs', { name: 'tao' })
@@ -1247,8 +1246,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								// + player.countCards('hs', { name: 'sha', nature: 'thunder' })
 								// + player.countCards('hs', { name: 'sha', nature: 'ice' })
 								+ qitianTrick;
+							if (player.hp < 2 && natureSha >= 1) return 1;
 							if (game.hasPlayer(function (current) {
-								return (player.countCards('hs') >= 4 && natureSha >= 2
+								return (player.countCards('hs') >= 3 && natureSha >= 2
 									&& get.effect(current, { name: 'sha' }, player, player) > 0);
 							})) {
 								return 1;
@@ -2448,14 +2448,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterTitle: {
 			// g绿 b蓝 r红 p粉
 			cuishi: '#g捞德一评级:2.4',
-			liucong: '#g捞德一评级:2.0',
+			liucong: '#g捞德一评级:2.1',
 			hok_daji: '#b捞德一评级:3.6',
 			hok_lixin: '#r捞德一评级:4.0',
 			hok_makeboluo: '#b捞德一评级:3.7',
 			hok_mingshiyin: '#r耀世圣手评级:4.0',
-			hok_sunwukong: '#b捞德一评级:3.8',
+			hok_sunwukong: '#b捞德一评级:3.7',
+			hok_wuzetian: '#r捞德一评级:4.0',
 			shen_caozhi: '#r捞德一评级:4.2',
-			shen_dongzhuo: '#r捞德一评级:4.0',
+			shen_dongzhuo: '#r捞德一评级:4.1',
 			shen_lusu: '#r捞德一评级:4.3',
 		},
 		translate: {
@@ -2496,7 +2497,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_zuolun: '左轮',
 			hok_zuolun_info: '锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
 			hok_qianglin: '枪林',
-			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀（喝酒状态下影响第二张杀），若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
+			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀（不可以触发酒），若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
 			hok_danyu: '弹雨',
 			hok_danyu_info: '出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// 明世隐
@@ -2533,9 +2534,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_dihui_strengthen: '帝辉·强化',
 			hok_dihui_strengthen_info: '出牌阶段限1次，你选择1名角色，视为对其使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置1张牌。',
 			hok_diwei: '帝威',
-			hok_diwei_info: '出牌阶段限1次，你选择弃置1张手牌然后选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置，你获得1个标记“曌”。',
+			hok_diwei_info: '出牌阶段限1次，你获得1个标记“曌”，你选择弃置1张手牌然后选择一项：1名与你座位相邻的角色，令其与同方向下一个角色交换位置；直到你的下个回合，其他角色计算与你的距离时+1。',
 			hok_shaduo: '杀夺',
-			hok_shaduo_info: '限定技，出牌阶段，你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置2张牌。',
+			hok_shaduo_info: '限定技，出牌阶段，你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置1张牌。',
 			hok_nvdi: '女帝',
 			hok_nvdi_info: '主公技，结束阶段，若你未于出牌阶段内使用或打出过【杀】和锦囊牌，你可以摸X张牌（X为场上存活的群势力角色数）。',
 

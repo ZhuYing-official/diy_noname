@@ -435,7 +435,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					var cards=[];
-					for(var card of ui.cardPile.childNodes){
+					for(var i=0;i<ui.cardPile.childNodes.length;i++){
+						var card=ui.cardPile.childNodes[i];
 						if(card.name!='sha') cards.push(card);
 						if(cards.length>=5) break;
 					}
@@ -976,7 +977,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						forced:true,
 						charlotte:true,
 						filter:function(event,player){
-							return player.getStorage('sangu_effect').length>0;
+							return event.cards.length>0&&player.getStorage('sangu_effect').length>0;
 						},
 						content:function(){
 							if(!trigger.card.storage) trigger.card.storage={};
@@ -1283,17 +1284,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			lkzhongzhuang:{
 				audio:2,
-				trigger:{source:'damageBegin1'},
+				trigger:{source:['damageBegin1','damageBegin4']},
 				forced:true,
-				filter:function(event,player){
+				filter:function(event,player,name){
 					if(!event.card||event.card.name!='sha'||event.getParent().type!='card') return false;
 					var range=player.getAttackRange();
-					if(range>3) return true;
+					if(name=='damageBegin1') return range>3;
 					return range<3&&event.num>1;
 				},
 				content:function(){
-					var range=player.getAttackRange();
-					if(range>3) trigger.num++;
+					if(event.triggername=='damageBegin1') trigger.num++;
 					else trigger.num=1;
 				},
 				global:'lkzhongzhuang_ai',

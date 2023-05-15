@@ -26,7 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sb_zhangfei:['male','shu',4,['sbpaoxiao','sbxieji']],
 			sb_zhaoyun:['male','shu',4,['sblongdan','sbjizhu']],
 			sb_liubei:['male','shu',4,['sbrende','sbzhangwu','sbjijiang'],['zhu']],
-			sb_jiangwei:['male','shu',4,['sbtiaoxin','sbzhiji']],
+			sb_jiangwei:['male','shu','4/4/1',['sbtiaoxin','sbzhiji']],
 			sb_fazheng:['male','shu',3,['sbxuanhuo','sbenyuan']],
 			sb_chengong:['male','qun',3,['sbmingce','sbzhichi'],['unseen']],
 			sb_diaochan:['female','qun',3,['sblijian','sbbiyue'],['unseen']],
@@ -655,7 +655,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return lib.filter.filterCard.apply(this,arguments);
 					},'挑衅：对'+get.translation(player)+'使用一张杀，或交给其一张牌').set('targetRequired',true).set('complexSelect',true).set('filterTarget',function(card,player,target){
 						if(target!=_status.event.sourcex&&!ui.selected.targets.contains(_status.event.sourcex)) return false;
-						return lib.filter.filterTarget.apply(this,arguments);
+						return lib.filter.targetEnabled.apply(this,arguments);
 					}).set('sourcex',player);
 					'step 1'
 					if(!result.bool&&target.countCards('he')>0){
@@ -735,7 +735,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.awakenSkill('sbzhiji');
 					player.loseMaxHp();
 					'step 1'
-					player.chooseTarget('志继：是否令任意名角色获得“北伐”标记？',[1,Infinity]).set('ai',target=>-get.attitude(player,target));
+					player.chooseTarget('志继：令至少一名角色获得“北伐”标记',true,[1,Infinity]).set('ai',target=>-get.attitude(player,target));
 					'step 2'
 					if(result.bool){
 						player.line(result.targets,'fire');
@@ -965,6 +965,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						content:function(){
 							player.addTempSkill('sbrende_given','phaseUseAfter');
 							player.markAuto('sbrende_given',[target]);
+							player.markAuto('sbrende_givenx',[target]);
 							player.give(cards,target);
 							var num=Math.min(lib.skill.sbrende.maxNum-player.countMark('sbrende'),cards.length);
 							if(num>0) player.addMark('sbrende',num);
@@ -1001,15 +1002,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						content:function(){
 							var num=Math.min(lib.skill.sbrende.maxNum-player.countMark('sbrende'),2);
 							if(num>0) player.addMark('sbrende',num);
-					}
+						}
+					},
 				},
-			},
 			},
 			sbzhangwu:{
 				audio:2,
 				enable:'phaseUse',
 				skillAnimation:'epic',
-				animationColor:'legend',
+				animationColor:'orange',
 				limited:true,
 				filter:function(event,player){
 					if(game.roundNumber<=1) return false;
@@ -1018,14 +1019,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filterTarget:function(card,player,target){
 					if(target==player) return false;
-					return game.hasPlayer2(current=>{
-						return current.hasAllHistory('useSkill',evt=>{
-							if(evt.skill!='sbrende_give') return false;
-							var targets=evt.targets;
-							if(targets.contains(target)) return true;
-							return false;
-						});
-					})
+					return player.getStorage('sbrende_givenx').contains(target);
 				},
 				selectTarget:-1,
 				multiline:true,
@@ -3205,8 +3199,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.loseHp();
 					}
 					'step 1'
-						player.changeHujia(2,null,true);
-						player.addTempSkill('sbkeji_losehp','phaseUseAfter');
+					player.changeHujia(2,null,true);
+					player.addTempSkill('sbkeji_losehp','phaseUseAfter');
 				},
 				mod:{
 					maxHandcard:function(player,num){
@@ -3575,10 +3569,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player){
 					return event.card.name=='sha'&&player.countMark('splveying')>1;
 				},
-				logTarget:'targets',
 				content:function(){
+					'step 0'
 					player.removeMark('splveying',2);
-					for(var i of trigger.targets) player.discardPlayerCard(i,true,'he');
+					player.draw();
+					'step 1'
+					player.chooseUseTarget('guohe');
 				},
 				marktext:'椎',
 				intro:{
@@ -3794,7 +3790,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			spxianchou_info:'当你受到有来源的伤害后，你可选择一名不为伤害来源的其他角色。该角色可以弃置一张牌，然后视为对伤害来源使用一张【杀】（无距离限制）。若其因此【杀】造成了伤害，则其摸一张牌，你回复1点体力。',
 			liucheng:'刘赪',
 			splveying:'掠影',
-			splveying_info:'锁定技。①每回合限两次，当你使用【杀】指定目标后，你获得一个“椎”。②当你使用的【杀】结算结束后，若你的“椎”数大于1，则你弃置两个“椎”，然后弃置所有目标角色的各一张手牌。',
+			splveying_info:'锁定技。①每回合限两次，当你使用【杀】指定目标后，你获得一个“椎”。②当你使用的【杀】结算结束后，若你的“椎”数大于1，则你弃置两个“椎”并摸一张牌，然后可以视为使用一张【过河拆桥】。',
 			spyingwu:'莺舞',
 			spyingwu_info:'若你拥有〖掠影〗，则：①每回合限两次，当你使用非伤害类普通锦囊牌指定目标后，你获得一个“椎”。②当你使用的非伤害类普通锦囊牌结算结束后，若你的“椎”数大于1，则你弃置两个“椎”并摸一张牌，然后可以视为使用一张【杀】。',
 			sb_huangzhong:'谋黄忠',
@@ -3900,9 +3896,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbjijiang_info:'主公技。出牌阶段结束时，你可以选择一名体力值不小于你的其他蜀势力角色A和一名在A攻击范围内的角色B。A选择一项：1.视为对B使用一张【杀】；2.下一个出牌阶段开始前，跳过此阶段。',
 			sb_jiangwei:'谋姜维',
 			sbtiaoxin:'挑衅',
-			sbtiaoxin_info:'蓄力技（4/4）。①出牌阶段限一次。你可以选择至多X名角色（X为你的蓄力值），令这些角色选择一项：1.对你使用一张【杀】；2.交给你一张牌。然后你消耗等同于你选择的目标数的蓄力值。②当你于弃牌阶段弃置牌后，你获得等量蓄力值。',
+			sbtiaoxin_info:'蓄力技（4/4）。①出牌阶段限一次。你可以选择至多X名角色（X为你的蓄力值），令这些角色选择一项：1.对你使用一张【杀】（无距离限制）；2.交给你一张牌。然后你消耗等同于你选择的目标数的蓄力值。②当你于弃牌阶段弃置牌后，你获得等量蓄力值。',
 			sbzhiji:'志继',
-			sbzhiji_info:'觉醒技。准备阶段，若你因〖挑衅①〗消耗过至少4点蓄力值，你减1点体力上限，令任意名角色获得“北伐”标记并获得如下效果直到你的下回合开始：其使用牌只能指定你或其为目标。',
+			sbzhiji_info:'觉醒技。准备阶段，若你因〖挑衅①〗消耗过至少4点蓄力值，你减1点体力上限，令至少一名角色获得“北伐”标记并获得如下效果直到你的下回合开始：其使用牌只能指定你或其为目标。',
 			sb_fazheng:'谋法正',
 			sbxuanhuo:'眩惑',
 			sbxuanhuo_info:'①出牌阶段限一次。你可以将一张牌交给一名没有“眩”标记的其他角色，然后令其获得“眩”标记。②当有“眩”的其他角色于摸牌阶段外获得牌后，若你以此法于其本次获得“眩”的期间内获得其的牌数小于5，你随机获得其一张手牌。',
