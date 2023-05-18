@@ -100,6 +100,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_makeboluo: '马可波罗，中古时期的威尼斯商人。其父亲和叔叔，都曾到东方经商，而他本人，则在元世祖忽必烈的时代，来到中国。他穿越沙漠和帕米尔高原，经河西走廊来到元大都，游历了许多城市，据说还见过忽必烈，接受过元朝的官职。回到威尼斯之后，因带回的东方珍宝而成为巨富。后来参与威尼斯与热那亚的战争中被俘，在狱中，向同牢的作家口述了他的东方见闻，遂成著名的《马可波罗游记》。《马可波罗游记》极大地开拓了欧洲人的东方视野，丰富了他们关于东方的想象，激起了欧洲人向往东方的雄心。但也有人质疑游记的真实性，比如游记没有提到著名的长城，不过，作为一个口述游记，记录长城作用几乎完全消失的元代的事情，缺失长城也是可以理解的。',
 			hok_mingshiyin: '明算万物的卦象，摄人心魂的牡丹，风度翩翩的举止……这位突然出现在长安、被尊称牡丹方士的男人仿佛是"神秘"二字的代名词。没有人知道他从何而来，但他对未来的精准预测令人惊叹，甚至连女帝都深信不疑。而面对那位治安官的冷眼与戒备，方士本人仅以一笑付之，深藏心中执念：那座古老巍峨的长城，和其脚下长眠的友人。',
 			hok_sunwukong: '孙悟空生性桀骜，厌恶被管辖和拘束，更憎恶那些虚伪神灵铐在魔种身上的枷锁。黑暗的时代里，他俨然成为反抗的领袖，带领魔种们为自由奋起。起义以失败告终，神灵以绝对的力量击溃了乌合之众，将他封印在某座山脚……然而他的意志没有熄灭，某位路过的僧侣帮助孙悟空冲破束缚重生，齐天大圣的名号再度威震八方。',
+			hok_wuzetian: '武曌[zhào]（624年－705年12月16日），即武则天，并州文水（今山西省文水县）人。唐朝至武周时期政治家，武周开国君主（690年－705年在位），也是中国历史上唯一的正统女皇帝、即位年龄最大（67岁）及寿命最长的皇帝之一（82岁）。',
 			shen_caozhi: '字子建，沛国谯人，三国曹魏著名文学家，建安文学代表人物。魏武帝曹操之子，魏文帝曹丕之弟，生前曾为陈王，去世后谥号“思”，因此又称陈思王。南朝宋文学家谢灵运更有“天下才有一石，曹子建独占八斗”的评价。王士祯尝论汉魏以来二千年间诗家堪称“仙才”者，曹植、李白、苏轼三人耳。',
 			shen_dongzhuo: '字仲颖，陇西临洮人。东汉末年少帝、献帝时权臣，西凉军阀。官至太师、郿侯。其为人残忍嗜杀，倒行逆施，招致群雄联合讨伐，但联合军在董卓迁都长安不久后瓦解。后被其亲信吕布所杀。',
 		},
@@ -687,7 +688,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					order: function () {
 						return get.order({ name: 'sha' }) + 0.1;
-						return 9;
 					},
 					expose: 0.2,
 					threaten: 2,
@@ -1297,6 +1297,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				forced: true,
 				trigger: { player: ['phaseUseBegin', 'hok_dihui_shaAfter', 'hok_diweiAfter', 'hok_shaduoAfter', 'useCardAfter'] },
+				derivation: ['hok_dihui_strengthen'],
 				content: function () {
 					if (player.countMark('hok_dihui') >= 2) {
 						player.removeMark('hok_dihui', 2);
@@ -1361,6 +1362,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				}
 			},
+			/* old
 			hok_diwei: {
 				usable: 1,
 				enable: 'phaseUse',
@@ -1394,11 +1396,67 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				}
 			},
+			*/
+			hok_diwei: {
+				derivation: ['feiying'],
+				usable: 1,
+				enable: 'phaseUse',
+				filterCard: true,
+				selectCard: 1,
+				content: function () {
+					'step 0'
+					player.chooseControl('选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置', '直到你的下个回合，你获得技能“飞影”').set('ai', function (event, player) {
+						return '直到你的下个回合，你获得技能“飞影”';
+					});
+					'step 1'
+					player.discard(cards);
+					switch (result.control) {
+						case '选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置':
+							break;
+						case '直到你的下个回合，你获得技能“飞影”':
+							player.addTempSkill('feiying');
+							event.goto(4);
+							break;
+						default:
+					}
+					'step 2'
+					player.chooseTarget('选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置', function (card, player, target) {
+						return target == player.next || target == player.previous;
+					}).set('ai', function (target) {
+						if (target == player) {
+							return false;
+						}
+						return get.attitude(_status.event.player, target);
+					});
+					'step 3'
+					var target = result.targets[0];
+					var targetSwap = target.next == player ? target.previous : target.next;
+					game.broadcastAll(function (target1, target2) {
+						game.swapSeat(target1, target2);
+					}, target, targetSwap);
+					'step 4'
+					player.addMark('hok_dihui', 1);
+				},
+				check: function (card) {
+					return (5 - get.value(card)) && _status.event.player.countCards('h') > 2;
+				},
+				ai: {
+					order: function () {
+						return get.order({ name: 'tao' }) - 0.3;
+					},
+					result: {
+						player: 1
+					},
+				}
+			},
 			hok_shaduo: {
 				enable: 'phaseUse',
 				skillAnimation: true,
 				animationColor: 'metal',
 				limited: true,
+				filter: function (event, player) {
+					return game.roundNumber >= 4;
+				},
 				content: function () {
 					'step 0'
 					player.awakenSkill('hok_shaduo');
@@ -2534,9 +2592,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_dihui_strengthen: '帝辉·强化',
 			hok_dihui_strengthen_info: '出牌阶段限1次，你选择1名角色，视为对其使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置1张牌。',
 			hok_diwei: '帝威',
-			hok_diwei_info: '出牌阶段限1次，你获得1个标记“曌”，你选择弃置1张手牌然后选择一项：1名与你座位相邻的角色，令其与同方向下一个角色交换位置；直到你的下个回合，其他角色计算与你的距离时+1。',
+			hok_diwei_info: '出牌阶段限1次，你获得1个标记“曌”，你选择弃置1张手牌然后选择一项：选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置；直到你的下个回合，你获得技能“飞影”。',
 			hok_shaduo: '杀夺',
-			hok_shaduo_info: '限定技，出牌阶段，你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置1张牌。',
+			hok_shaduo_info: '限定技，出牌阶段，若游戏轮数大于等于4你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置2张牌。',
 			hok_nvdi: '女帝',
 			hok_nvdi_info: '主公技，结束阶段，若你未于出牌阶段内使用或打出过【杀】和锦囊牌，你可以摸X张牌（X为场上存活的群势力角色数）。',
 

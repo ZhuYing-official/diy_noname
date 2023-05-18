@@ -905,7 +905,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.chooseToDiscard('he', get.prompt('hpp_qiangxi', trigger.player), '弃置一张装备牌并令此伤害+1', function (card) {
                                         return get.type(card) == 'equip';
                                     }).set('goon', get.damageEffect(trigger.player, player, player) > 0).set('ai', function (card) {
-                                        if (_status.event.goon && trigger.player.getEquip(2) != undefined && trigger.player.getEquip(2) != 'baiyin') return 12 - get.value(card);
+                                        if (trigger.player.getEquip(2) != undefined && trigger.player.getEquip(2) == 'baiyin') {
+                                            return 0;
+                                        }
+                                        if (_status.event.goon) return 12 - get.value(card);
                                         return 0;
                                     }).logSkill = ['hpp_qiangxi', trigger.player];
                                     'step 1'
@@ -2529,7 +2532,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jijiang: {
                                 unique: true,
                                 audio: 'jijiang1',
-                                group: ['hpp_jijiang1','hpp_jijiang_draw'],
+                                group: ['hpp_jijiang1', 'hpp_jijiang_draw'],
                                 zhuSkill: true,
                                 filter: function (event, player) {
                                     if (!player.hasZhuSkill('hpp_jijiang') || !game.hasPlayer(function (current) {
