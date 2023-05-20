@@ -1235,7 +1235,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					expose: 0.2,
 					result: {
 						player: function (player) {
-							if (player.getEquip(1).name != undefined && player.getEquip(1).name == 'zhuge') {
+							if (player.getEquip(1) != undefined && player.getEquip(1).name == 'zhuge') {
 								return 0;
 							}
 							var qitianTrick = (player.countCards('hs', { type: 'basic' }) - player.countCards('hs', { name: 'sha' })
@@ -1247,9 +1247,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								// + player.countCards('hs', { name: 'sha', nature: 'ice' })
 								+ qitianTrick;
 							if (player.hp < 2 && natureSha >= 1) return 1;
-							if (game.hasPlayer(function (current) {
-								return (player.countCards('hs') >= 3 && natureSha >= 2
-									&& get.effect(current, { name: 'sha' }, player, player) > 0);
+							if (player.countCards('hs') >= 3 && natureSha >= 2 && game.hasPlayer(function (current) {
+								return get.effect(current, { name: 'sha' }, player, player) > 0;
 							})) {
 								return 1;
 							}
