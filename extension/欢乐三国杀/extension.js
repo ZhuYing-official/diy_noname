@@ -1796,7 +1796,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 关羽
                             hpp_wusheng: {
-                                frequent: true,
+                                forced: true,
                                 audio: 'wusheng',
                                 group: 'hpp_wusheng_damage',
                                 audioname2: { hpp_guansuo: 'wusheng_guansuo' },
@@ -5449,7 +5449,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         player.logSkill('hpp_wengua', target);
                                         player.addTempSkill('hpp_wengua3', 'phaseUseAfter');
                                         event.card = cards[0];
-                                        player.showCards(cards,'问卦的牌');
+                                        player.showCards(cards, '问卦的牌');
                                         game.delay();
                                         if (target != player) player.give(cards, target);
                                         if (get.type2(event.card) == 'trick') {
@@ -6155,6 +6155,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 张春华
                             hpp_jueqing: {
                                 trigger: { source: 'damageBefore' },
+                                forced: true,
                                 audio: 'jueqing',
                                 check: function () { return false; },
                                 content: function () {
