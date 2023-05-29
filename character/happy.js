@@ -1101,6 +1101,43 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						if (card.name == 'sha' && (card.nature == 'fire' || card.nature == 'thunder')) return true;
 					},
 				},
+				group: 'hok_qitian_shan',
+				subSkill: {
+					shan: {
+						enable: ['chooseToRespond', 'chooseToUse'],
+						filterCard: function (card) {
+							return ((lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay') && get.color(card) == 'red')
+								|| (card.name == 'sha', card.nature == 'fire');
+						},
+						viewAs: { name: 'shan' },
+						viewAsFilter: function (player) {
+							if (!player.countCards('h', { suit: 'heart' }) && !player.countCards('h', { suit: 'diamond' })
+								&& !player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' })
+								&& !player.countCards('h', { name: 'sha', nature: 'fire' })) {
+								return false;
+							}
+						},
+						position: 'h',
+						prompt: '将一张火杀当闪使用或打出',
+						check: function () { return 1 },
+						ai: {
+							order: 3,
+							respondShan: true,
+							skillTagFilter: function (player) {
+								if (!player.countCards('h', { suit: 'heart' }) && !player.countCards('h', { suit: 'diamond' })
+									&& !player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' })
+									&& !player.countCards('h', { name: 'sha', nature: 'fire' })) {
+									return false;
+								}
+							},
+							effect: {
+								target: function (card, player, target, current) {
+									if (get.tag(card, 'respondShan') && current < 0) return 0.6
+								}
+							}
+						}
+					}
+				}
 			},
 			hok_shengbang: {
 				audio: 2,
@@ -1143,6 +1180,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 2'
 					if (player.storage.shengbangJudge) {
 						trigger.num *= 2;
+					} else {
+						player.draw();
 					}
 				},
 			},
@@ -2576,9 +2615,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 孙悟空
 			hok_sunwukong: '孙悟空',
 			hok_qitian: '齐天',
-			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌视为火杀，黑色锦囊牌视为雷杀。',
+			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌视为【火杀】，黑色锦囊牌视为【雷杀】，你的【火杀】可以当做【闪】。',
 			hok_shengbang: '圣棒',
-			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2',
+			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2；若为黑色，你摸一张牌。',
 			hok_houmao: '猴毛',
 			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，随机获得一张杀/雷杀/火杀。',
 			hok_naogong: '闹宫',

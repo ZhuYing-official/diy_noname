@@ -33940,7 +33940,7 @@
 			var damageValue = 1.1;
 			var damagedValue = 0.5;
 			var gainValue = 0.1;
-			var useValue = 0.25;
+			var useValue = 0.4;
 			var killValue = 1.7;
 			if (game.players.length) {
 				for (i = 0; i < game.players.length; i++) {

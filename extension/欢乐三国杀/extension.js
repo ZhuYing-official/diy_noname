@@ -8569,7 +8569,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 audio: 'ol_shenfen',
                                 enable: 'phaseUse',
                                 filter: function (event, player) {
-                                    return player.hp > 3;
+                                    return player.hp >= 3;
                                 },
                                 skillAnimation: true,
                                 animationColor: 'metal',
