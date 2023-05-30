@@ -500,7 +500,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhugeliang: ['hpp_zhugeliang', 're_zhugeliang', 'zhugeliang'],
                             zhuhuan: ['hpp_zhuhuan', 're_zhuhuan', 'xin_zhuhuan', 'zhuhuan', 'old_zhuhuan'],
                             zhuran: ['hpp_zhuran', 're_zhuran', 'xin_zhuran', 'zhuran', 'old_zhuran'],
-                            zhuzhi: ['hpp_zhuhzi', 'zhuzhi', 'xin_zhuzhi', 'old_zhuzhi'],
+                            zhuzhi: ['hpp_zhuhzi', 're_zhuzhi', 'zhuzhi', 'xin_zhuzhi', 'old_zhuzhi'],
                             zumao: ['hpp_zumao', 'zumao', 'tw_zumao'],
                             zuoci: ['hpp_zuoci', 're_zuoci', 'zuoci'],
                             // SP
@@ -909,28 +909,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     order: 9,
                                 },
                             },
-                            /*hpp_guose: {
-                                audio: 'reguose',
-                                frequent: true,
-                                trigger: { player: ['useCard', 'loseAfter'] },
-                                filter: function (event, player) {
-                                    if (event.name != 'lose') {
-                                        return get.suit(event.card) == 'diamond';
-                                    }
-                                    if (event.type != 'discard') {
-                                        return false;
-                                    }
-                                    for (var card of event.cards2) {
-                                        if (get.suit(card) == 'diamond') {
-                                            return true;
-                                        }
-                                    }
-                                    return false;
-                                },
-                                content: function () {
-                                    player.draw();
-                                },
-                            },*/
                             hpp_guose: {
                                 audio: 'reguose',
                                 trigger: { player: 'loseEnd' },
@@ -6555,16 +6533,20 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 filter: function (event, player) {
                                     return event.player != player;
                                 },
-                                logTarget: 'player',
                                 check: function (event, player) {
-                                    if (get.attitude(player, event.player) < 3) return false;
-                                    if (event.player.getStat('damage')) return true;
-                                    if (player.maxHp - player.hp >= 2) return false;
+                                    /*
+                                    if(get.attitude(player,event.player)<3) return false;
+                                    if(event.player.getStat('damage')) return true;
+                                    if(player.maxHp-player.hp>=2) return false;
                                     return true;
+                                    */
+                                    return get.attitude(player, event.player) > 0;
                                 },
+                                logTarget: 'player',
                                 content: function () {
                                     'step 0'
                                     player.draw(2);
+                                    player.addTempSkill('hpp_xiantu2', 'phaseUseAfter');
                                     'step 1'
                                     player.chooseCard(2, 'he', true, '交给' + get.translation(trigger.player) + '两张牌').set('ai', function (card) {
                                         if (ui.selected.cards.length && card.name == ui.selected.cards[0].name) return -1;
@@ -6574,23 +6556,25 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     });
                                     'step 2'
                                     trigger.player.gain(result.cards, player, 'giveAuto');
-                                    var evt = _status.event.getParent('phaseUse');
-                                    if (evt && evt.name == 'phaseUse' && !evt.hpp_xiantu) {
-                                        var next = game.createEvent('hpp_xiantu_clear');
-                                        _status.event.next.remove(next);
-                                        evt.after.push(next);
-                                        evt.hpp_xiantu = true;
-                                        next.player = player;
-                                        next.target = trigger.player;
-                                        next.setContent(function () {
-                                            if (player.isAlive() && !target.getStat('damage')) {
-                                                player.logSkill('xiantu2');
-                                                player.loseHp();
-                                            }
-                                        });
-                                    }
                                 },
-                                ai: { expose: 0.3 },
+                                ai: {
+                                    expose: 0.3,
+                                    threaten: 3,
+                                },
+                            },
+                            hpp_xiantu2: {
+                                charlotte: true,
+                                audio: 'xiantu2',
+                                trigger: { global: 'phaseUseEnd' },
+                                filter: function (event, player) {
+                                    return !event.player.getHistory('sourceDamage', function (evt) {
+                                        return evt.getParent(4) == event;
+                                    }).length;
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.loseHp();
+                                },
                             },
 
                             // 张昭张纮
@@ -9080,6 +9064,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jushou_info: '结束阶段，你可以翻面，若如此做，你摸四张牌，然后你可以使用一张装备牌。',
                             hpp_chendao: '陈到',
                             hpp_wanglie: '往烈',
+                            hpp_wanglie2: '往烈',
                             hpp_wanglie_info: '出牌阶段，你使用的牌无距离限制。当你于出牌阶段内使用一张牌时，你可令此牌不能被响应，回合结束时，你摸X张牌，X为此牌造成的伤害数，若如此做，本回合你不能再使用牌。',
                             // D
                             hpp_daqiao: '大乔',

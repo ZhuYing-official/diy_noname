@@ -260,6 +260,7 @@ window.noname_character_rank = {
 		'lvdai',
 		'zhoufang',
 		'zhuzhi',
+		're_zhuzhi',
 		'guohuai',
 		'caorui',
 		'liuyu',
@@ -385,6 +386,7 @@ window.noname_character_rank = {
 		'yj_sufei',
 		'dc_ruiji',
 		'yuantanyuanxiyuanshang',
+		'yanghong',
 	],
 	bp: [
 		'chess_diaochan',
@@ -658,6 +660,7 @@ window.noname_character_rank = {
 		'xia_dianwei',
 		'xia_zhaoe',
 		'zhangkai',
+		'sunhong',
 	],
 	b: [
 		'diy_feishi',
@@ -1157,6 +1160,8 @@ window.noname_character_rank = {
 		'old_gaoshun',
 		'old_huanghao',
 		'old_liubiao',
+		'luoxian',
+		'ol_huban',
 	],
 	d: [
 		'lvmeng',
@@ -1195,6 +1200,7 @@ window.noname_character_rank = {
 		'tengfanglan',
 		'junk_lidian',
 		'junk_duanwei',
+		'std_panfeng',
 	],
 	rarity: {
 		legend: [
@@ -1967,6 +1973,8 @@ window.noname_character_rank = {
 			'zhangkai',
 			'wangguan',
 			'ol_yanwen',
+			'yanghong',
+			're_zhuzhi',
 
 			// 捞德一
 			'liucong',
@@ -2015,6 +2023,7 @@ window.noname_character_rank = {
 			'junk_lidian',
 			'junk_duanwei',
 			'zerong',
+			'std_panfeng',
 
 			// 捞德一
 		],

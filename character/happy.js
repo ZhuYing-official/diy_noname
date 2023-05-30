@@ -1180,6 +1180,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 2'
 					if (player.storage.shengbangJudge) {
 						trigger.num *= 2;
+						if (trigger.num >= 3) {
+							trigger.num = 3;
+						}
 					} else {
 						player.draw();
 					}
@@ -2617,7 +2620,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_qitian: '齐天',
 			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌视为【火杀】，黑色锦囊牌视为【雷杀】，你的【火杀】可以当做【闪】。',
 			hok_shengbang: '圣棒',
-			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2；若为黑色，你摸一张牌。',
+			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2（最大为3）；若为黑色，你摸一张牌。',
 			hok_houmao: '猴毛',
 			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，随机获得一张杀/雷杀/火杀。',
 			hok_naogong: '闹宫',
