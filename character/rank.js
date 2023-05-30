@@ -1317,6 +1317,7 @@ window.noname_character_rank = {
 			'hpp_bulianshi',
 			'hpp_caiwenji',
 			'hpp_caocao',
+			'hpp_caochong',
 			'hpp_caoren',
 			'hpp_chendao',
 			'hpp_daqiao',

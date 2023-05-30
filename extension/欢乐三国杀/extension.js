@@ -18,6 +18,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_bulianshi',
                             'hpp_caiwenji',
                             'hpp_caocao',
+                            'hpp_caochong',
                             'hpp_caoren',
                             'hpp_chendao',
                             'hpp_daqiao',
@@ -175,7 +176,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 shan_ji: ['hpp_lukang', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng',],
                                 ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu'],
                                 ming_ru: ['hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xushu', 'hpp_liuzhang'],
-                                ming_cao: ['hpp_caopi', 'hpp_caozhi', 'hpp_caozhang', 'hpp_caocong', 'hpp_caozhen', 'hpp_caorui', 'hpp_caoxiu', 'hpp_caoang', 'hpp_caoying'],
+                                ming_cao: ['hpp_caopi', 'hpp_caozhi', 'hpp_caozhang', 'hpp_caochong', 'hpp_caozhen', 'hpp_caorui', 'hpp_caoxiu', 'hpp_caoang', 'hpp_caoying'],
                                 ming_han: ['hpp_haozhao', 'hpp_zhangxiu', 'hpp_madai', 'hpp_chenpu', 'hpp_handang', 'hpp_wuyi', 'hpp_xurong', 'hpp_lijue', 'hpp_zhangji', 'hpp_chunyuqiong'],
                                 ming_qi: ['hpp_xizhicai', 'hpp_zhangliang', 'hpp_zhangbao', 'hpp_beimihu'],
                                 xian_sp: ['hpp_sp_jiangwei', 'hpp_sp_haungyueying', 'hpp_sp_taishici', 'hpp_sp_machao', 'hpp_sp_daqiao', 'hpp_sp_zhaoyun', 'hpp_sp_sunshangxiang', 'hpp_sp_caiwenji', 'hpp_sp_xiaoqiao', 'hpp_sp_diaochan'],
@@ -194,6 +195,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caiwenji: ['female', 'qun', 3, ['hpp_beige', 'duanchang'], []],
                             // 欢乐曹操
                             hpp_caocao: ["male", "wei", 4, ["hpp_jianxiong", "hpp_hujia"], ['zhu']],
+                            // 欢乐曹冲
+                            hpp_caochong: ['male', 'wei', 3, ['hpp_chengxiang', 'renxin'], []],
                             // 欢乐曹仁
                             hpp_caoren: ['male', 'wei', 4, ['hpp_jushou', 'xinjiewei'], []],
                             // 欢乐陈到
@@ -408,6 +411,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // C
                             caiwenji: ['hpp_caiwenji', 'ol_caiwenji', 're_caiwenji', 'caiwenji'],
                             caocao: ['hpp_caocao', 're_caocao', 'caocao'],
+                            caochong: ['hpp_caochong', 'caochong', 'old_caochong'],
                             caoren: ['hpp_caoren', 'caoren', 'new_caoren', 'old_caoren'],
                             chendao: ['hpp_chendao', 'chendao', 'old_chendao', 'ns_chendao'],
                             // D
@@ -755,6 +759,82 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         },
                                     },
                                 },
+                            },
+
+                            // 曹冲
+                            hpp_chengxiang: {
+                                trigger: { player: 'damageEnd' },
+                                forced: true,
+                                audio: 'chengxiang',
+                                content: function () {
+                                    "step 0"
+                                    event.cards = get.cards(4);
+                                    game.cardsGotoOrdering(event.cards);
+                                    event.videoId = lib.status.videoId++;
+                                    game.broadcastAll(function (player, id, cards, num) {
+                                        var str;
+                                        if (player == game.me && !_status.auto) {
+                                            str = '称象：选择任意张点数不大于' + num + '的牌';
+                                        }
+                                        else {
+                                            str = '称象';
+                                        }
+                                        var dialog = ui.create.dialog(str, cards);
+                                        dialog.videoId = id;
+                                    }, player, event.videoId, event.cards, event.name == 'hpp_chengxiang' ? 13 : 12);
+                                    event.time = get.utc();
+                                    game.addVideo('showCards', player, ['称象', get.cardsInfo(event.cards)]);
+                                    game.addVideo('delay', null, 2);
+                                    "step 1"
+                                    var next = player.chooseButton([0, 4]);
+                                    next.set('dialog', event.videoId);
+                                    next.set('filterButton', function (button) {
+                                        var num = 0
+                                        for (var i = 0; i < ui.selected.buttons.length; i++) {
+                                            num += get.number(ui.selected.buttons[i].link);
+                                        }
+                                        return (num + get.number(button.link) <= _status.event.maxNum);
+                                    });
+                                    next.set('maxNum', event.name == 'hpp_chengxiang' ? 13 : 12);
+                                    next.set('ai', function (button) {
+                                        return get.value(button.link, _status.event.player);
+                                    });
+                                    "step 2"
+                                    if (result.bool && result.links) {
+                                        var cards2 = [];
+                                        for (var i = 0; i < result.links.length; i++) {
+                                            cards2.push(result.links[i]);
+                                            cards.remove(result.links[i]);
+                                        }
+                                        event.cards2 = cards2;
+                                    }
+                                    else {
+                                        event.finish();
+                                    }
+                                    var time = 1000 - (get.utc() - event.time);
+                                    if (time > 0) {
+                                        game.delay(0, time);
+                                    }
+                                    "step 3"
+                                    game.broadcastAll('closeDialog', event.videoId);
+                                    var cards2 = event.cards2;
+                                    player.gain(cards2, 'log', 'gain2');
+                                },
+                                ai: {
+                                    maixie: true,
+                                    maixie_hp: true,
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (get.tag(card, 'damage')) {
+                                                if (player.hasSkillTag('jueqing', false, target)) return [1, -2];
+                                                if (!target.hasFriend()) return;
+                                                if (target.hp >= 4) return [1, 2];
+                                                if (target.hp == 3) return [1, 1.5];
+                                                if (target.hp == 2) return [1, 0.5];
+                                            }
+                                        }
+                                    }
+                                }
                             },
 
                             // 曹仁
@@ -8923,6 +9003,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // C
                             hpp_caiwenji: '#b捞德一评级:3.7',
                             hpp_caocao: '#b捞德一评级:3.0',
+                            hpp_caochong: '#g捞德一评级:2.6',
                             hpp_caoren: '#g捞德一评级:2.8',
                             hpp_chendao: '#b捞德一评级:3.4',
                             // D
@@ -9059,6 +9140,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jianxiong_info: '当你受到1点伤害时，你可以摸一张牌，并获得对你造成伤害的牌；或摸两张牌。',
                             hpp_hujia: '护驾',
                             hpp_hujia_info: '主公技，其他魏势力角色可以替你使用或打出【闪】。其他魏势力角色若以此法使用或打出【闪】时，可令你摸一张牌，每回合限一张。',
+                            hpp_caochong: '曹冲',
+                            hpp_chengxiang: '称象',
+                            hpp_chengxiang_info: '锁定技，当你受到伤害后，你可以亮出牌堆顶的四张牌。然后获得其中任意张点数之和小于等于13的牌。',
                             hpp_caoren: '曹仁',
                             hpp_jushou: '据守',
                             hpp_jushou_info: '结束阶段，你可以翻面，若如此做，你摸四张牌，然后你可以使用一张装备牌。',
