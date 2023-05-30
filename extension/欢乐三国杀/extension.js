@@ -6262,7 +6262,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                                 audio: 'releiji',
-                                trigger: { player: ['useCard'] },
+                                trigger: { player: ['useCard', 'respond'] },
                                 filter: function (event, player) {
                                     return event.card.name == 'shan' || event.card.name == 'shandian';
                                 },
