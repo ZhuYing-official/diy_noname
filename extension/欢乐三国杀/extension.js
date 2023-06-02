@@ -442,7 +442,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神曹操
                             hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['wei']],
                             // 神郭嘉
-                            hpp_shen_guojia: ['male', 'shen', 3, ['reshuishi', 'minigjtianyi', 'minihuishi'], ['wei']],
+                            hpp_shen_guojia: ['male', 'shen', 3, ['reshuishi', 'hpp_gjtianyi', 'hpp_huishi'], ['wei']],
                             // 神陆逊
                             hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
                             // 神吕布
@@ -10583,7 +10583,165 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 神郭嘉
-                            
+                            hpp_gjtianyi: {
+                                audio: 'stianyi',
+                                derivation: 'hpp_zuoxing',
+                                trigger: { player: 'phaseZhunbeiBegin' },
+                                forced: true,
+                                juexingji: true,
+                                skillAnimation: true,
+                                animationColor: 'gray',
+                                filter: function (event, player) {
+                                    return !game.hasPlayer(function (current) {
+                                        return !current.getAllHistory('damage').length;
+                                    });
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_gjtianyi');
+                                    player.gainMaxHp(2);
+                                    player.recover();
+                                    'step 1'
+                                    player.chooseTarget(true, '令一名角色获得技能【佐幸】').set('ai', function (target) {
+                                        return get.attitude(_status.event.player, target);
+                                    });
+                                    'step 2'
+                                    if (result.bool) {
+                                        var target = result.targets[0];
+                                        player.line(target, 'green');
+                                        target.storage.hpp_zuoxing = player;
+                                        target.addSkillLog('hpp_zuoxing');
+                                    }
+                                },
+                            },
+                            hpp_zuoxing: {
+                                group: 'hpp_zuoxing_use',
+                                audio: 'zuoxing',
+                                enable: 'phaseUse',
+                                usable: 1,
+                                filter: function (event, player) {
+                                    if (!player.hasSkill('hpp_zuoxing_2')) return false;
+                                    for (var i of lib.inpile) {
+                                        if (get.type(i) == 'trick' && event.filterCard({ name: i, isCard: true }, player, event)) return true;
+                                    }
+                                    return false;
+                                },
+                                chooseButton: {
+                                    dialog: function (event, player) {
+                                        var list = [];
+                                        for (var i of lib.inpile) {
+                                            if (get.type(i) == 'trick' && event.filterCard({ name: i, isCard: true }, player, event)) list.push(['锦囊', '', i]);
+                                        }
+                                        return ui.create.dialog('佐幸', [list, 'vcard']);
+                                    },
+                                    check: function (button) {
+                                        return _status.event.player.getUseValue({ name: button.link[2], isCard: true });
+                                    },
+                                    backup: function (links, player) {
+                                        return {
+                                            audio: 'zuoxing',
+                                            viewAs: {
+                                                name: links[0][2],
+                                                isCard: true,
+                                            },
+                                            filterCard: () => false,
+                                            selectCard: -1,
+                                            popname: true,
+                                        }
+                                    },
+                                    prompt: function (links, player) {
+                                        return '请选择' + get.translation(links[0][2]) + '的目标';
+                                    },
+                                },
+                                ai: { order: 1, result: { player: 1 } },
+                                subSkill: {
+                                    '2': { charlotte: true },
+                                    use: {
+                                        audio: 'zuoxing',
+                                        trigger: { player: 'phaseUseBegin' },
+                                        filter: function (event, player) {
+                                            var target = player.storage.hpp_zuoxing;
+                                            // return player.hasSkill('hpp_zuoxing') && target && target.isAlive() && target.maxHp > 1;
+                                            return player.name1 == 'hpp_shen_guojia' && target && target.isAlive() && target.maxHp > 1;
+                                        },
+                                        check: function (event, player) {
+                                            var target = player.storage.hpp_zuoxing;
+                                            if (get.attitude(player, target) <= 0) return true;
+                                            return target.maxHp > 3 && !player.hasJudge('lebu');
+                                        },
+                                        prompt: function (event, player) {
+                                            return get.prompt('hpp_zuoxing') + '（令' + get.translation(player.storage.hpp_zuoxing) + '减少1点体力上限，' + get.translation(player.storage.hpp_zuoxing) + '当前体力上限：' + player.storage.hpp_zuoxing.maxHp + '）';
+                                        },
+                                        prompt2: () => lib.translate.hpp_zuoxing_info,
+                                        content: function () {
+                                            player.line(player.storage.hpp_zuoxing, 'fire');
+                                            player.storage.hpp_zuoxing.loseMaxHp();
+                                            player.addTempSkill('hpp_zuoxing_2');
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_huishi: {
+                                audio: 'sghuishi',
+                                enable: 'phaseUse',
+                                limited: true,
+                                skillAnimation: true,
+                                animationColor: 'water',
+                                filterTarget: true,
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_huishi');
+                                    var list = target.getSkills(null, false, false).filter(function (skill) {
+                                        if (target.awakenedSkills.contains(skill)) return false;
+                                        var info = lib.skill[skill];
+                                        return info && info.juexingji;
+                                    });
+                                    if (list.length && player.maxHp >= game.players.length) {
+                                        // for (var skill of list) {
+                                        //     target.logSkill(skill);
+                                        //     var next = game.createEvent('hpp_huishi_juexing');
+                                        //     next.player = target;
+                                        //     next.setContent(lib.skill[skill].content);
+                                        // }
+                                        if (list.length == 1) {
+                                            event._result = { control: list[0] };
+                                        }
+                                        else {
+                                            player.chooseControl(list).set('prompt', '选择一个觉醒技，令' + get.translation(target) + '可无视条件发动该技能');
+                                        }
+                                    }
+                                    if (!list.length && player.maxHp > 2) {
+                                        target.draw(4);
+                                        event.goto(2);
+                                    }
+                                    'step 1'
+                                    var skill = result.control;
+                                    target.logSkill(skill);
+                                    var next = game.createEvent('hpp_huishi_juexing');
+                                    next.player = target;
+                                    next.setContent(lib.skill[skill].content);
+                                    'step 2'
+                                    player.loseMaxHp(2);
+
+                                },
+                                ai: {
+                                    order: 0.1,
+                                    expose: 0.2,
+                                    result: {
+                                        target: function (player, target) {
+                                            if (player.maxHp < 5) return 0;
+                                            var list = target.getSkills(null, false, false).filter(function (skill) {
+                                                var info = lib.skill[skill];
+                                                return info && info.juexingji;
+                                            });
+                                            if (list.length && player.maxHp >= game.players.length) return 10 * list.length;
+                                            if (target.hasJudge('lebu') || target.hasSkillTag('nogain')) return 0;
+                                            if (!list.length && player.maxHp >= 3) return 4;
+                                            return 0;
+                                        },
+                                    },
+                                },
+                            },
 
                             // 神陆逊
                             hpp_junlue: {
@@ -11260,6 +11418,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_zhaoyun: '#g捞德一评级:2.3',
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.2',
+                            hpp_shen_guojia: '#r捞德一评级:4.0',
                             hpp_shen_luxun: '#r捞德一评级:4.0',
                             hpp_shen_lvbu: '#r捞德一评级:4.0',
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
@@ -11797,6 +11956,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_caocao: '神曹操',
                             hpp_guixin: '归心',
                             hpp_guixin_info: '当你受到1点伤害后，你可以随机获得每名其他角色区域里的一张牌，如果获得牌大于4张且你为正面，则翻面。',
+                            hpp_shen_guojia: '神郭嘉',
+                            hpp_gjtianyi: '天翊',
+                            hpp_gjtianyi_info: '觉醒技，准备阶段，若全场角色在本局游戏中均受到过伤害，你加2点体力上限，回复1点体力，然后令一名角色获得“佐幸”。',
+                            hpp_zuoxing: '佐幸',
+                            hpp_zuoxing_info: '出牌阶段开始时，若神郭嘉存活且体力上限大于1，你可令神郭嘉减1点体力上限。然后你可以视为使用一张普通锦囊牌。',
+                            hpp_huishi: '辉逝',
+                            hpp_huishi_info: '限定技，出牌阶段，你可以选择一名角色。若其：有未触发的觉醒技，且你的体力上限不小于X（X为全场存活角色数），则你选择其中一个觉醒技，然后该角色视为满足觉醒条件；没有未触发的觉醒技，且你的体力上限大于2，则其摸四张牌。若如此做，你减2点体力上限。',
                             hpp_shen_luxun: '神陆逊',
                             hpp_junlue: '军略',
                             hpp_junlue_info: '锁定技，当你受到或造成1点伤害后，你获得一个“军略"标记。',
