@@ -9,6 +9,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         //传说
                         legend: [
                             'hpp_shen_caocao',
+                            'hpp_shen_guojia',
                             'hpp_shen_luxun',
                             'hpp_shen_lvbu',
                             'hpp_shen_lvmeng',
@@ -23,6 +24,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_chendao',
                             'hpp_daqiao',
                             'hpp_dianwei',
+                            'hpp_dongbai',
                             'hpp_dongyun',
                             'hpp_dongzhuo',
                             'hpp_dufuren',
@@ -71,6 +73,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_sunhao',
                             'hpp_sunjian',
                             'hpp_sunliang',
+                            'hpp_sunluban',
+                            'hpp_sunluyu',
                             'hpp_sunquan',
                             'hpp_sunshangxiang',
                             'hpp_taishici',
@@ -225,6 +229,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_daqiao: ['female', 'wu', 3, ['hpp_wanrong', 'hpp_guose', 'hpp_liuli'], []],
                             // 欢乐典韦
                             hpp_dianwei: ['male', 'wei', 4, ['hpp_qiangxi'], []],
+                            // 欢乐董白
+                            hpp_dongbai: ['female', 'qun', 3, ['hpp_lianzhu', 'hpp_xiahui'], []],
                             // 欢乐董允
                             hpp_dongyun: ['male', 'shu', 3, ['hpp_bingzheng', 'sheyan'], []],
                             // 欢乐董卓
@@ -321,6 +327,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunjian: ['male', 'wu', 4, ['hpp_yinghun', 'hpp_wulie'], []],
                             // 欢乐孙亮
                             hpp_sunliang: ['male', 'wu', 3, ['hpp_kuizhu', 'hpp_chezheng', 'hpp_lijun'], ['zhu']],
+                            // 欢乐孙鲁班
+                            hpp_sunluban: ['female', 'wu', 3, ['hpp_zenhui', 'hpp_jiaojin'], []],
+                            // 欢乐孙鲁育
+                            hpp_sunluyu: ['female', 'wu', 3, ['hpp_meibu', 'remumu'], []],
                             // 欢乐孙权
                             hpp_sunquan: ['male', 'wu', 4, ['hpp_zhiheng', 'hpp_jiuyuan'], ['zhu']],
                             // 欢乐孙尚香
@@ -431,6 +441,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 神曹操
                             hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['wei']],
+                            // 神郭嘉
+                            hpp_shen_guojia: ['male', 'shen', 3, ['reshuishi', 'minigjtianyi', 'minihuishi'], ['wei']],
                             // 神陆逊
                             hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
                             // 神吕布
@@ -456,6 +468,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_xiaoqiao: '庐江皖县人也。父桥国老德尊于时。小乔国色流离，资貌绝伦。建安三年，周瑜协策攻皖，拔之。娶小乔为妻。后人谓英雄美女，天作之合。',
                             hpp_sp_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
                             hpp_shen_caocao: '魏武帝曹操，字孟德，小名阿瞒、吉利，沛国谯人。精兵法，善诗歌，乃治世之能臣，乱世之奸雄也。',
+                            hpp_shen_guojia: '字奉孝，颍川阳翟人，官至军师祭酒。惜天妒英才，英年早逝。有诗云：“良计环环不遗策，每临制变满座惊”。',
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
                             hpp_shen_lvbu: '字奉先，五原郡九原县人。三国第一猛将，曾独力战刘关张三人，其武力世之无双。时人语曰：“人中有吕布，马中有赤兔。”',
                             hpp_shen_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
@@ -473,6 +486,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // D
                             daqiao: ['hpp_daqiao', 're_daqiao', 'daqiao'],
                             dianwei: ['hpp_dianwei', 'ol_dianwei', 're_dianwei', 'dianwei'],
+                            dongbai: ['hpp_dongbai', 're_dongbai', 'dongbai', 'jsrg_dongbai'],
                             dongyun: ['hpp_dongyun', 'dongyun'],
                             dongzhuo: ['hpp_dongzhuo', 'ol_dongzhuo', 'sp_dongzhuo', 're_dongzhuo', 'dongzhuo'],
                             dufuren: ['hpp_dufuren', 'dufuren'],
@@ -531,6 +545,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             sunhao: ['hpp_sunhao', 'sunhao'],
                             sunjian: ['hpp_sunjian', 'ol_sunjian', 're_sunjian', 'sunjian'],
                             sunliang: ['hpp_sunliang', 'sunliang'],
+                            sunluban: ['hpp_sunluban', 're_sunluban', 'xin_sunluban', 'sunluban'],
+                            sunluyu: ['hpp_sunluyu', 'sunluyu', 're_sunluyu'],
                             sunquan: ['hpp_sunquan', 're_sunquan', 'sunquan'],
                             sunshangxiang: ['hpp_sunshangxian', 're_sunshangxiang', 'sunshangxiang'],
                             // T
@@ -591,6 +607,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             sp_zhaoyun: ['hpp_sp_zhaoyun', 'sp_zhaoyun', 'jsp_zhaoyun'],
                             // 神
                             shen_caocao: ['hpp_shen_caocao', 'shen_caocao'],
+                            shen_guojia: ['hpp_shen_guojia', 'shen_guojia'],
                             shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
                             shen_lvbu: ['hpp_shen_lvbu', 'shen_lvbu'],
                             shen_lvmeng: ['hpp_shen_lvmeng', 'tw_shen_lvmeng', 'shen_lvmeng'],
@@ -1226,6 +1243,130 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         },
                                     },
                                     off: { charlotte: true },
+                                },
+                            },
+
+                            // 董白
+                            hpp_lianzhu: {
+                                audio: 'lianzhu',
+                                enable: 'phaseUse',
+                                filter: function (event, player) {
+                                    return player.countCards('he');
+                                },
+                                filterTarget: lib.filter.notMe,
+                                filterCard: true,
+                                check: function (card) {
+                                    var num = get.value(card);
+                                    if (get.color(card) == 'black') {
+                                        if (num >= 6) return 0;
+                                        return 9 - num;
+                                    }
+                                    else return 7 - num;
+                                },
+                                usable: 1,
+                                discard: false,
+                                lose: false,
+                                delay: false,
+                                position: 'he',
+                                content: function () {
+                                    'step 0'
+                                    player.give(cards, target);
+                                    'step 1'
+                                    if (get.color(cards[0], player) == 'red') {
+                                        player.chooseDrawRecover(2, true);
+                                        event.finish();
+                                    }
+                                    else {
+                                        target.chooseToDiscard('he', 2, '弃置两张牌，或令' + get.translation(player) + '摸两张牌').set('ai', function (card) {
+                                            if (!_status.event.goon) return -get.value(card);
+                                            return 6 - get.value(card);
+                                        }).set('goon', get.attitude(target, player) <= 0);
+                                    }
+                                    'step 2'
+                                    if (!result.bool) player.draw(2);
+                                },
+                                ai: {
+                                    order: 3,
+                                    expose: 0.2,
+                                    result: {
+                                        target: function (player, target) {
+                                            if (ui.selected.cards.length && get.color(ui.selected.cards[0]) == 'red') {
+                                                var att = get.attitude(player, target);
+                                                return 2 + get.sgn(att) + att / 114514;
+                                            }
+                                            return -1;
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_xiahui: {
+                                audio: 'xiahui',
+                                mod: {
+                                    ignoredHandcard: function (card, player) {
+                                        if (get.color(card, player) == 'black') return true;
+                                    },
+                                    cardDiscardable: function (card, player, name) {
+                                        if (name == 'phaseDiscard' && get.color(card, player) == 'black') return false;
+                                    },
+                                },
+                                trigger: { global: 'phaseEnd' },
+                                forced: true,
+                                logTarget: 'player',
+                                filter: function (event, player) {
+                                    var target = event.player;
+                                    return target != player && target.getHistory('lose', function (evt) {
+                                        for (var i in evt.gaintag_map) {
+                                            if (evt.gaintag_map[i].contains('hpp_xiahui')) return true;
+                                        }
+                                    }).length;
+                                },
+                                content: function () {
+                                    trigger.player.loseHp();
+                                },
+                                group: 'hpp_xiahui_gain',
+                                subSkill: {
+                                    gain: {
+                                        trigger: { global: 'gainEnd' },
+                                        forced: true,
+                                        popup: false,
+                                        filter: function (event, player) {
+                                            if (player == event.player) return false;
+                                            var evt = event.getl(player);
+                                            return evt && evt.cards2 && evt.cards2.filter(function (card) {
+                                                return get.color(card, player) == 'black';
+                                            }).length > 0;
+                                        },
+                                        content: function () {
+                                            trigger.player.addSkill('hpp_xiahui_block');
+                                            var cards = trigger.getl(player).cards2.filter(function (card) {
+                                                return get.color(card, player) == 'black';
+                                            });
+                                            trigger.player.addGaintag(cards, 'hpp_xiahui');
+                                        },
+                                    },
+                                    block: {
+                                        mod: {
+                                            cardEnabled2: function (card) {
+                                                if (get.itemtype(card) == 'card' && card.hasGaintag('hpp_xiahui')) return false;
+                                            },
+                                            cardDiscardable: function (card) {
+                                                if (card.hasGaintag('hpp_xiahui')) return false;
+                                            },
+                                        },
+                                        charlotte: true,
+                                        forced: true,
+                                        popup: false,
+                                        trigger: { player: 'changeHp' },
+                                        filter: function (event, player) {
+                                            return event.num < 0;
+                                        },
+                                        content: function () {
+                                            player.removeSkill('hpp_xiahui_block');
+                                        },
+                                        onremove: function (player) {
+                                            player.removeGaintag('hpp_xiahui');
+                                        },
+                                    },
                                 },
                             },
 
@@ -5132,6 +5273,102 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     }
                                 },
                                 subSkill: { used: { charlotte: true } },
+                            },
+
+                            // 孙鲁班
+                            hpp_zenhui: {
+                                audio: 'chanhui',
+                                usable: 1,
+                                trigger: { player: 'useCardToPlayer' },
+                                filter: function (event, player) {
+                                    if (_status.currentPhase != player) return false;
+                                    if (event.targets.length > 1) return false;
+                                    var card = event.card;
+                                    if (card.name == 'sha' || get.type(card) == 'trick') return true;
+                                    return false;
+                                },
+                                check: function (event, player) {
+                                    return get.attitude(player, event.target) < 0;
+                                },
+                                logTarget: 'target',
+                                content: function () {
+                                    'step 0'
+                                    trigger.target.chooseCard('he', '谮毁：交给' + get.translation(player) + '一张牌，或失去1点体力').set('ai', function (card) {
+                                        return 7 - get.value(card);
+                                    });
+                                    'step 1'
+                                    if (result.bool) player.gain(result.cards, trigger.target, 'giveAuto');
+                                    else trigger.target.loseHp();
+                                },
+                            },
+                            hpp_jiaojin: {
+                                audio: 'jiaojin',
+                                trigger: { target: 'useCardToTargeted' },
+                                filter: function (event, player) {
+                                    return (event.card.name == 'sha' || get.type(event.card) == 'trick');
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    var next = player.chooseToDiscard('h', '骄矜：是否弃置一张手牌令' + get.translation(trigger.card) + '对你无效？');
+                                    next.set('ai', function (card) {
+                                        if (_status.event.goon2) {
+                                            return 3 + _status.event.val - get.value(card);
+                                        }
+                                        return 0;
+                                    });
+                                    next.set('val', get.value(trigger.cards.filterInD()));
+                                    next.set('goon2', get.effect(player, trigger.card, trigger.player, player) < 0)
+                                    next.logSkill = ['hpp_jiaojin', trigger.player];
+                                    'step 1'
+                                    if (result.bool) trigger.excluded.push(player);
+                                },
+                            },
+
+                            // 孙鲁育
+                            hpp_meibu: {
+                                audio: 'meibu',
+                                trigger: { global: 'phaseUseBegin' },
+                                filter: function (event, player) {
+                                    return event.player != player && event.player.isAlive() && player.countCards('he');
+                                },
+                                direct: true,
+                                derivation: 'rezhixi',
+                                checkx: function (event, player) {
+                                    if (get.attitude(player, event.player) >= 0) return false;
+                                    return event.player.countCards('h') > event.player.hp;
+                                },
+                                content: function () {
+                                    'step 0'
+                                    var check = lib.skill.new_meibu.checkx(trigger, player);
+                                    player.chooseToDiscard(get.prompt2('hpp_meibu', trigger.player), 'he').set('ai', function (card) {
+                                        if (_status.event.check) return 6 - get.value(card);
+                                        return 0;
+                                    }).set('check', check).set('logSkill', ['hpp_meibu', trigger.player]);
+                                    'step 1'
+                                    if (result.bool) {
+                                        var target = trigger.player;
+                                        player.line(target, 'green');
+                                        player.addTempSkill('hpp_meibu_gain');
+                                        target.addTempSkill('rezhixi');
+                                    }
+                                },
+                                ai: { expose: 0.2 },
+                                subSkill: {
+                                    gain: {
+                                        trigger: { global: 'loseAfter' },
+                                        forced: true,
+                                        charlotte: true,
+                                        popup: false,
+                                        onremove: true,
+                                        filter: function (event, player) {
+                                            return event.getParent(3).name == 'rezhixi' && get.position(event.cards[0]) == 'd';
+                                        },
+                                        content: function () {
+                                            player.gain(trigger.cards[0], 'gain2');
+                                        },
+                                    },
+                                },
                             },
 
                             // 孙权
@@ -10345,6 +10582,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 神郭嘉
+                            
+
                             // 神陆逊
                             hpp_junlue: {
                                 audio: 'nzry_junlve',
@@ -10899,6 +11139,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // D
                             hpp_daqiao: '#b捞德一评级:3.5',
                             hpp_dianwei: '#b捞德一评级:3.1',
+                            hpp_dongbai: '#b捞德一评级:3.5',
                             hpp_dongyun: '#g捞德一评级:2.3',
                             hpp_dongzhuo: '#g捞德一评级:2.7',
                             hpp_dufuren: '#b捞德一评级:3.3',
@@ -10956,6 +11197,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunhao: '#b捞德一评级:3.8',
                             hpp_sunjian: '#b捞德一评级:3.8',
                             hpp_sunliang: '#b捞德一评级:3.6',
+                            hpp_sunluban: '#b捞德一评级:3.5',
+                            hpp_sunluyu: '#b捞德一评级:3.7',
                             hpp_sunquan: '#b捞德一评级:3.9',
                             hpp_sunshangxiang: '#b捞德一评级:3.5',
                             // T
@@ -11070,6 +11313,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_dianwei: '典韦',
                             hpp_qiangxi: '强袭',
                             hpp_qiangxi_info: '出牌阶段，你可以失去1点体力，并摸1张牌，然后对攻击范围的一名其他角色造成1点伤害（每名角色限一次）；每当其他角色受到伤害时，你可以弃置一张装备牌，然后本次伤害值+1。',
+                            hpp_dongbai: '董白',
+                            hpp_lianzhu: '连诛',
+                            hpp_lianzhu_info: '出牌阶段限一次，你可以展示并交给一名其他角色一张牌，若此牌为红色，你选择一项：1、你摸两张牌；2、你回复1点体力；若此牌为黑色，其选择一项：1.你摸两张牌；2.弃置两张牌。',
+                            hpp_xiahui: '黠慧',
+                            hpp_xiahui_info: '锁定技，你的黑色牌不占用手牌上限；其他角色获得你的黑色牌时，这些牌标记为“黠慧”，其不能使用、打出、弃置“黠慧”牌，其体力值减少时，“黠慧”标记消失；其他角色的回合结束时，若其本回合失去过“黠慧”牌，其失去1点体力。',
                             hpp_dongyun: '董允',
                             hpp_bingzheng: '秉正',
                             hpp_bingzheng_info: '出牌阶段结束时，你可以令一名角色弃置一张手牌或摸一张牌。然后若其手牌数等于体力值，你摸一张牌，且可以交给该角色一张牌。',
@@ -11292,6 +11540,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_chezheng_info: '锁定技，你的出牌阶段内，攻击范围内不包含你的角色不能成为你【杀】的目标。出牌阶段结束时，你摸与这些角色数相同的牌且至少为2。',
                             hpp_lijun: '立军',
                             hpp_lijun_info: '主公技，每个出牌阶段限一次，其他吴势力角色于其出牌阶段使用【杀】结算结束后，你摸一张牌，然后你可以令其摸一张牌。',
+                            hpp_sunluban: '孙鲁班',
+                            hpp_zenhui: '谮毁',
+                            hpp_zenhui_info: '出牌阶段限一次，当你使用【杀】或普通锦囊牌指定唯一目标时，你可令其选择一项：1.交给你一张牌；2.失去1点体力。',
+                            hpp_jiaojin: '骄矜',
+                            hpp_jiaojin_info: '当你成为【杀】或普通锦囊牌的目标后，你可以弃置一张手牌，然后此牌对你无效。',
+                            hpp_sunluyu: '孙鲁育',
+                            hpp_meibu: '魅步',
+                            hpp_meibu_info: '其他角色的出牌阶段开始时，你可以弃置一张牌，令该角色于本回合内拥有“止息”。你获得其因“止息”弃置的牌。',
                             hpp_sunquan: '孙权',
                             hpp_zhiheng: '制衡',
                             hpp_zhiheng_info: '出牌阶段限一次，你可以弃置任意张牌，然后摸等量的牌。若你以此法弃置了所有的手牌，则额外摸一张牌；若你以此法获得的牌不包含延时锦牌，则本同合此技能使用次数+1；若你本回合第二次以此法获得的牌全是基本牌，则本回合此技能使用次数再+1。',

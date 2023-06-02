@@ -68,7 +68,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		},
 		character: {
 			// 崔氏
-			cuishi: ['female', 'wei', 3, ['reluoshen', 'pianwan', 'huayi']],
+			cuishi: ['female', 'wei', 3, ['reluoshen', 'pianwan', 'huashang']],
 			// 刘琮
 			liucong: ['male', 'qun', 3, ['decadezongshi', 'tunquan', 'rexianzhou', 'quxiang']],
 
@@ -114,7 +114,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		},
 		skill: {
 			// 崔氏
-			huayi: {
+			huashang: {
 				forced: true,
 				audio: 2,
 				trigger: {
@@ -2563,8 +2563,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			cuishi: '崔氏',
 			pianwan: '翩婉',
 			pianwan_info: '锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
-			huayi: '华衣',
-			huayi_info: '觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
+			huashang: '华裳',
+			huashang_info: '觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
 			// 刘琮
 			liucong: '刘琮',
 			tunquan: '豚犬',
