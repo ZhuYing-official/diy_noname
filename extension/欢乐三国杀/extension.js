@@ -127,6 +127,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_sp_taishici',
                             'hpp_sp_xiaoqiao',
                             'hpp_sp_zhaoyun',
+
+                            'hpp_sunwukong',
                         ],
                         //史诗
                         epic: [
@@ -210,6 +212,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei'],
                                 shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce', 'shen_daxiaoqiao'],
                                 shen_qun: ['hpp_shen_lvbu', 'hpp_shen_huatuo', 'hpp_shen_zhenji', 'hpp_shen_zhangjiao', 'shen_diaochan'],
+                                doudizhu: ['hpp_sunwukong'],
                             },
                         },
                         character: {
@@ -453,6 +456,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhaoyun: ['male', 'shen', 2, ['hpp_juejing', 'hpp_longhun'], ['shu']],
                             // 神张角
                             hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
+
+                            // 孙悟空
+                            hpp_sunwukong: ['male', 'qun', 4, ['hpp_72bian', 'hpp_ruyi', 'hpp_qitian'], []],
                         },
                         characterIntro: {
                             hpp_zhangzhaozhanghong: '张昭，字子布，彭城人，三国时期吴国重臣，善丹青。拜辅吴将军，班亚三司，改封娄侯。年八十一卒，谥曰文侯。<br/>张纮，字子纲，广陵人。东吴谋士，和张昭一起合称“二张”。孙策平定江东时亲自登门邀请，张纮遂出仕为官。张纮后来建议孙权迁都秣陵，孙权正在准备时张纮病逝，其年六十岁。孙权为之流涕。',
@@ -473,6 +479,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_lvbu: '字奉先，五原郡九原县人。三国第一猛将，曾独力战刘关张三人，其武力世之无双。时人语曰：“人中有吕布，马中有赤兔。”',
                             hpp_shen_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
                             hpp_shen_zhangjiao: '乱世的开始，黄巾起义军首领，太平道创始人。张角早年信奉黄老学说，对在汉代十分流行的谶纬之学也深有研究，对民间医术 、巫术也很熟悉。',
+                            hpp_sunwukong: '狗卡桌游《自在西游》联动角色',
                         },
                         characterReplace: {
                             // B
@@ -643,6 +650,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_lingren_equip: {
                                 image: 'ext:欢乐三国杀/image/card/lingren_equip.png',
                                 fullimage: true,
+                            },
+                            hpp_ruyijingubang: {
+                                derivation: 'hpp_sunwukong',
+                                type: 'equip',
+                                subtype: 'equip1',
+                                ai: { basic: { equipValue: 4399 } },
+                                skills: ['hpp_ruyijingubang', 'hpp_ruyijingubang2'],
                             },
                         },
                         skill: {
@@ -11281,6 +11295,234 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     shuffled: { charlotte: true },
                                 }
                             },
+
+                            // 孙悟空
+                            hpp_72bian: {
+                                onChooseToUse: function (event) {
+                                    if (event.type == 'phase' && !game.online) {
+                                        var evtx = event.getParent('phaseUse');
+                                        var list = ['basic', 'trick', 'equip'], player = event.player;
+                                        player.getHistory('lose', function (evt) {
+                                            if (evt.getParent(2).name == 'hpp_72bian_backup') list.remove(get.type2(evt.cards2[0]));
+                                        });
+                                        event.set('hpp_72bian_type', list);
+                                    }
+                                },
+                                nobracket: true,
+                                enable: 'phaseUse',
+                                filter: function (event, player) {
+                                    return player.countCards('he', function (card) {
+                                        return event['hpp_72bian_type'].contains(get.type2(card));
+                                    });
+                                },
+                                chooseButton: {
+                                    dialog: function (event, player) {
+                                        return ui.create.dialog('###72变###' + lib.translate['hpp_72bian_info']);
+                                    },
+                                    chooseControl: function (event, player) {
+                                        var list = event['hpp_72bian_type'].slice(0);
+                                        list.push('cancel2');
+                                        return list.filter(function (control) {
+                                            if (control == 'cancel2') return true;
+                                            return player.countCards('he', function (card) {
+                                                return get.type2(card) == control;
+                                            });
+                                        });
+                                    },
+                                    check: function (event, player) {
+                                        var map = {};
+                                        player.getCards('he').forEach(function (card) {
+                                            var type = get.type2(card);
+                                            if (!map[type]) map[type] = 0;
+                                            map[type]++;
+                                        });
+                                        var list = Object.keys(map).sort((a, b) => map[b] - map[a]);
+                                        return list[0];
+                                    },
+                                    backup: function (result, player) {
+                                        return {
+                                            type: result.control,
+                                            discard: false,
+                                            delay: 0,
+                                            content: function () {
+                                                var cards = player.getCards('he', function (card) {
+                                                    return get.type2(card) == lib.skill['hpp_72bian_backup'].type;
+                                                });
+                                                player.loseToDiscardpile(cards);
+                                                var list = ['basic', 'trick', 'equip'], cardx = [];
+                                                var type = list[(list.indexOf(get.type2(cards[0])) + 1) % 3];
+                                                for (var i = 0; i < cards.length; i++) {
+                                                    var card = get.cardPile2(function (card) {
+                                                        return get.type2(card) == type && !cardx.contains(card);
+                                                    });
+                                                    if (card) cardx.push(card);
+                                                    else break;
+                                                }
+                                                if (cardx.length) player.gain(cardx, 'gain2');
+                                            },
+                                        }
+                                    },
+                                },
+                                ai: {
+                                    order: 1,
+                                    result: { player: 1 },
+                                },
+                            },
+                            hpp_ruyi: {
+                                locked: true,
+                                derivation: 'hpp_ruyijingubang',
+                                group: ['hpp_ruyijingubang', 'hpp_ruyijingubang2'],
+                                ai: {
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (player == target && get.type(card) == 'equip' && get.subtype(card) == 'equip1') {
+                                                if (target.getEquip(1)) return;
+                                                return 0;
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_ruyijingubang: {
+                                init: function (player) {
+                                    if (!player.storage.hpp_ruyijingubang) player.storage.hpp_ruyijingubang = 1;
+                                },
+                                onremove: true,
+                                mod: {
+                                    attackRange: function (player, num) {
+                                        if ((player.getEquip(1) && !player.getEquip('hpp_ruyijingubang')) || player.isDisabled(1)) return;
+                                        if (_status.hpp_ruyiCheck) return num + _status.hpp_ruyiCheck - 1;
+                                        return num + player.storage.hpp_ruyijingubang - 1;
+                                    },
+                                },
+                                equipSkill: true,
+                                trigger: { player: 'phaseBegin' },
+                                filter: function (event, player) {
+                                    if (player.isDisabled(1)) return false;
+                                    return !player.getEquip(1) || player.getEquip('hpp_ruyijingubang');
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseControl('1', '2', '3', '4', 'cancel2').set('prompt', get.prompt2('hpp_ruyijingubang')).set('choiceList', [
+                                        '将“金箍棒”攻击范围调整为1 → 你使用【杀】不计入次数限制',
+                                        '将“金箍棒”攻击范围调整为2 → 你于回合内使用的第一张【杀】造成的伤害+1',
+                                        '将“金箍棒”攻击范围调整为3 → 你使用【杀】无法被响应',
+                                        '将“金箍棒”攻击范围调整为4 → 你使用【杀】可以额外指定一个目标'
+                                    ]).set('ai', function () {
+                                        var player = _status.event.player;
+                                        if (!player.hasSha()) return '4';
+                                        for (var i = 0; i <= 3; i++) {
+                                            _status.hpp_ruyiCheck = [2, 1, 3, 4][i];
+                                            if (game.hasPlayer(function (current) {
+                                                return player.canUse({ name: 'sha' }, current) && get.effect(current, { name: 'sha' }, player, player) > 0;
+                                            })) {
+                                                delete _status.hpp_ruyiCheck;
+                                                return i + 1;
+                                            }
+                                        }
+                                        if (_status.hpp_ruyiCheck) delete _status.hpp_ruyiCheck;
+                                        return '4';
+                                    });
+                                    'step 1'
+                                    if (result.control != 'cancel2') {
+                                        var num = parseInt(result.control), card = player.getEquip('hpp_ruyijingubang');
+                                        player.logSkill('hpp_ruyijingubang');
+                                        player.storage.hpp_ruyijingubang = num;
+                                        player.popup(num);
+                                        game.log(player, '将', '#g' + (card ? get.translation(card) : '如意金箍棒'), '的攻击范围调整为', '#y' + num);
+                                    }
+                                },
+                            },
+                            hpp_ruyijingubang2: {
+                                mod: {
+                                    selectTarget: function (card, player, range) {
+                                        if ((player.getEquip(1) && !player.getEquip('hpp_ruyijingubang')) || player.isDisabled(1)) return;
+                                        var num = player.storage.hpp_ruyijingubang;
+                                        if (card.name == 'sha' && range[1] != -1 && num == 4) range[1]++;
+                                    },
+                                },
+                                equipSkill: true,
+                                trigger: { player: 'useCard' },
+                                filter: function (event, player) {
+                                    var num = player.storage.hpp_ruyijingubang;
+                                    if (event.card.name != 'sha' || player.isDisabled(1)) return false;
+                                    if (player.getEquip(1) && !player.getEquip('hpp_ruyijingubang')) return false;
+                                    if (num == 2) return player.getHistory('useCard', function (evt) {
+                                        return evt.card.name == 'sha';
+                                    }).indexOf(event) == 0 && _status.currentPhase && player == _status.currentPhase;
+                                    return num != 4;
+                                },
+                                forced: true,
+                                locked: false,
+                                content: function () {
+                                    var num = player.storage.hpp_ruyijingubang;
+                                    switch (num) {
+                                        case 1:
+                                            trigger.addCount = false;
+                                            if (player.stat[player.stat.length - 1].card.sha > 0) player.stat[player.stat.length - 1].card.sha--;
+                                            game.log(trigger.card, '不计入次数');
+                                            break;
+                                        case 2:
+                                            trigger.baseDamage++;
+                                            game.log(trigger.card, '造成的伤害+1');
+                                            break;
+                                        case 3:
+                                            trigger.directHit.addArray(game.players);
+                                            game.log(trigger.card, '不可被响应');
+                                            break;
+                                    }
+                                },
+                                ai: {
+                                    directHit_ai: true,
+                                    skillTagFilter: function (player, tag, arg) {
+                                        if (player.isDisabled(1) || (player.getEquip(1) && !player.getEquip('hpp_ruyijingubang'))) return false;
+                                        return arg.card.name == 'sha' && ((_status.hpp_ruyiCheck && _status.hpp_ruyiCheck == 3) || player.storage.hpp_ruyijingubang == 3);
+                                    },
+                                },
+                            },
+                            hpp_qitian: {
+                                unique: true,
+                                derivation: ['hpp_huoyan', 'hpp_jindouyun'],
+                                trigger: { player: ['changeHp', 'enterGame'], global: 'phaseBefore' },
+                                filter: function (event, player) {
+                                    if (player.hp != 1) return false;
+                                    return event.name != 'phase' || game.phaseNumber == 0;
+                                },
+                                juexingji: true,
+                                forced: true,
+                                skillAnimation: true,
+                                animationColor: 'fire',
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_qitian');
+                                    player.loseMaxHp();
+                                    'step 1'
+                                    player.addSkillLog('hpp_huoyan');
+                                    player.addSkillLog('hpp_jindouyun');
+                                },
+                            },
+                            hpp_huoyan: {
+                                locked: true,
+                                ai: {
+                                    viewHandcard: true,
+                                    skillTagFilter: function (player, arg, target) {
+                                        return target != player && !_status.auto;
+                                    },
+                                },
+                            },
+                            hpp_jindouyun: {
+                                nobracket: true,
+                                locked: true,
+                                mod: {
+                                    globalFrom: function (from, to, distance) {
+                                        return distance - 1;
+                                    },
+                                    globalTo: function (from, to, distance) {
+                                        return distance + 1;
+                                    },
+                                },
+                            },
                         },
                         dynamicTranslate: {
                         },
@@ -11423,7 +11665,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_lvbu: '#r捞德一评级:4.0',
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
                             hpp_shen_zhaoyun: '#r捞德一评级:4.3',
-                            hpp_shen_zhangjiao: '#r捞德一评级4.7',
+                            hpp_shen_zhangjiao: '#r捞德一评级:4.7',
+                            // 斗地主
+                            hpp_sunwukong: '#r地主专属' + '<br/>' + '捞德一评级:4.2',
                         },
                         translate: {
                             phaseZhunber: '准备阶段',
@@ -11994,6 +12238,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sijun_info: '准备阶段，若“黄”标记数量大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得点数之和为36的牌，并洗牌。',
                             hpp_tianjie: '天劫',
                             hpp_tianjie_info: '每个回合结束时，若本回合牌堆洗过牌，你可以选择至多3名其他角色，对这些角色分别造成X点雷电伤害（X为其手牌中【闪】的数量且至少为1）',
+                            // 斗地主
+                            hpp_sunwukong: '孙悟空',
+                            hpp_72bian: '72变',
+                            hpp_72bian_backup: '72变',
+                            hpp_72bian_info: '每回合每种类型限一次，出牌阶段，你可以将你的所有基本牌/锦囊牌/装备牌置入弃牌堆，然后从牌堆中获得等量的锦囊牌/装备牌/基本牌。',
+                            hpp_ruyi: '如意',
+                            hpp_ruyi_info: '锁定技，若你未装备武器且你的武器栏未被废除，你视为装备【如意金箍棒】。',
+                            hpp_ruyijingubang: '如意金箍棒',
+                            hpp_ruyijingubang2: '如意金箍棒',
+                            hpp_ruyijingubang_info: '回合开始时，你可以将【如意金箍棒】的攻击范围调整至1，2，3，4之间的任意值。当【如意金箍棒】的攻击范围为：1，你使用【杀】不计入次数限制；2，你于回合内使用的第一张【杀】造成的伤害+1；3，你使用【杀】无法被响应；4，你使用【杀】可以额外选择一个目标。',
+                            hpp_qitian: '齐天',
+                            hpp_qitian_info: '觉醒技，当你的体力值为1时，你减1点体力上限，然后获得技能〖火眼〗和〖筋斗云〗。',
+                            hpp_huoyan: '火眼',
+                            hpp_huoyan_info: '锁定技，其他角色的手牌始终对你可见。',
+                            hpp_jindouyun: '筋斗云',
+                            hpp_jindouyun_info: '锁定技，你计算与其他角色的距离-1；其他角色计算与你的距离+1。',
 
                             biao_zhu: '标·主',
                             biao_hu: '标·虎',
@@ -12028,6 +12288,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             shen_shu: '神·蜀',
                             shen_wu: '神·吴',
                             shen_qun: '神·群',
+                            doudizhu: '斗地主限定',
                         },
                     };
                     if (lib.device || lib.node) {

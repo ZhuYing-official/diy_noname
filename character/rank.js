@@ -1432,6 +1432,8 @@ window.noname_character_rank = {
 			'hpp_shen_lvmeng',
 			'hpp_shen_zhaoyun',
 			'hpp_shen_zhangjiao',
+
+			'hpp_sunwukong',
 		],
 		epic: [
 			'pal_yueqi',
