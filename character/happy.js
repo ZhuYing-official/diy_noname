@@ -1,6 +1,6 @@
 'use strict';
 //-------------------------------------------------------
-//明世隐
+//SP明世隐
 let guaList = ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'];
 let gua1 = false;
 let gua2 = false;
@@ -9,7 +9,7 @@ let gua4 = false;
 let gua5 = false;
 let gua6 = false;
 
-//李信
+//SP李信
 function removeRenjie(player) {
 	if (player.hasSkill('pozhu')) {
 		player.removeSkill('pozhu');
@@ -62,7 +62,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterSort: {
 			happy: {
 				correction_history: ['cuishi', 'liucong'],
-				honor_of_kings: ['hok_daji', 'hok_lixin', 'hok_makeboluo', 'hok_mingshiyin', 'hok_sunwukong'],
+				honor_of_kings: ['hok_daji', 'hok_sp_lixin', 'hok_makeboluo', 'hok_sp_mingshiyin', 'hok_sunwukong'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
 			},
 		},
@@ -74,12 +74,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
-			// 李信
-			hok_lixin: ['male', 'shen', 4, ['hok_wangming', 'hok_dengshen',], ['qun']],
+			// SP李信
+			hok_sp_lixin: ['male', 'shen', 4, ['hok_wangming', 'hok_dengshen',], ['qun']],
 			// 马可波罗
 			hok_makeboluo: ['male', 'qun', 3, ['hok_zuolun', 'hok_qianglin', 'hok_danyu']],
-			// 明世隐
-			hok_mingshiyin: ['male', 'shu', 4, ['hok_taigua', 'hok_minggua', 'hok_minggua2', 'hok_biangua']],
+			// SP明世隐
+			hok_sp_mingshiyin: ['male', 'shu', 4, ['hok_taigua', 'hok_minggua', 'hok_minggua2', 'hok_biangua']],
 			// 孙悟空
 			hok_sunwukong: ['male', 'shen', 4, ['hok_qitian', 'hok_shengbang', 'hok_houmao', 'hok_naogong'], ['qun']],
 			// 武则天
@@ -96,9 +96,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
 			liucong: '刘琮（？-？），山阳高平（今山东微山两城乡）人。东汉末年荆州牧刘表次子，刘琦之弟。刘表死后继承刘表官爵，当曹操大军南下之时，他在蔡瑁等人的劝说之下举荆州而降，被曹操封为青州刺史，后迁谏议大夫，爵封列侯。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
-			hok_lixin: '李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
+			hok_sp_lixin: 'SP李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
 			hok_makeboluo: '马可波罗，中古时期的威尼斯商人。其父亲和叔叔，都曾到东方经商，而他本人，则在元世祖忽必烈的时代，来到中国。他穿越沙漠和帕米尔高原，经河西走廊来到元大都，游历了许多城市，据说还见过忽必烈，接受过元朝的官职。回到威尼斯之后，因带回的东方珍宝而成为巨富。后来参与威尼斯与热那亚的战争中被俘，在狱中，向同牢的作家口述了他的东方见闻，遂成著名的《马可波罗游记》。《马可波罗游记》极大地开拓了欧洲人的东方视野，丰富了他们关于东方的想象，激起了欧洲人向往东方的雄心。但也有人质疑游记的真实性，比如游记没有提到著名的长城，不过，作为一个口述游记，记录长城作用几乎完全消失的元代的事情，缺失长城也是可以理解的。',
-			hok_mingshiyin: '明算万物的卦象，摄人心魂的牡丹，风度翩翩的举止……这位突然出现在长安、被尊称牡丹方士的男人仿佛是"神秘"二字的代名词。没有人知道他从何而来，但他对未来的精准预测令人惊叹，甚至连女帝都深信不疑。而面对那位治安官的冷眼与戒备，方士本人仅以一笑付之，深藏心中执念：那座古老巍峨的长城，和其脚下长眠的友人。',
+			hok_sp_mingshiyin: '明算万物的卦象，摄人心魂的牡丹，风度翩翩的举止……这位突然出现在长安、被尊称牡丹方士的男人仿佛是"神秘"二字的代名词。没有人知道他从何而来，但他对未来的精准预测令人惊叹，甚至连女帝都深信不疑。而面对那位治安官的冷眼与戒备，方士本人仅以一笑付之，深藏心中执念：那座古老巍峨的长城，和其脚下长眠的友人。',
 			hok_sunwukong: '孙悟空生性桀骜，厌恶被管辖和拘束，更憎恶那些虚伪神灵铐在魔种身上的枷锁。黑暗的时代里，他俨然成为反抗的领袖，带领魔种们为自由奋起。起义以失败告终，神灵以绝对的力量击溃了乌合之众，将他封印在某座山脚……然而他的意志没有熄灭，某位路过的僧侣帮助孙悟空冲破束缚重生，齐天大圣的名号再度威震八方。',
 			hok_wuzetian: '武曌[zhào]（624年－705年12月16日），即武则天，并州文水（今山西省文水县）人。唐朝至武周时期政治家，武周开国君主（690年－705年在位），也是中国历史上唯一的正统女皇帝、即位年龄最大（67岁）及寿命最长的皇帝之一（82岁）。',
 			shen_caozhi: '字子建，沛国谯人，三国曹魏著名文学家，建安文学代表人物。魏武帝曹操之子，魏文帝曹丕之弟，生前曾为陈王，去世后谥号“思”，因此又称陈思王。南朝宋文学家谢灵运更有“天下才有一石，曹子建独占八斗”的评价。王士祯尝论汉魏以来二千年间诗家堪称“仙才”者，曹植、李白、苏轼三人耳。',
@@ -379,7 +379,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					// }
 				},
 			},
-			// 李信
+			// SP李信
 			hok_wangming: {
 				audio: 2,
 				marktext: '王',
@@ -711,7 +711,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
-			// 明世隐
+			// SP明世隐
 			hok_taigua: {
 				audio: 2,
 				enable: 'phaseUse',
@@ -1199,7 +1199,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					if (typeof player.storage.hok_houmao2 == 'number') {
 						return player.hp < player.storage.hok_houmao2;
 					}
-					return false;
+					return player.countCards('j') > 0;
 				},
 				check: function (event, player) {
 					if (player.hp <= 1) return true;
@@ -1208,6 +1208,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				content: function () {
 					player.awakenSkill('hok_houmao');
 					player.recover(player.storage.hok_houmao2 - player.hp);
+					player.discard(player.getCards('j'));
 					var card = get.cardPile(function (card) {
 						switch (Math.floor(Math.random() * 5)) {
 							case 0: case 2: return get.name(card, 'leisha') == 'leisha';
@@ -2544,9 +2545,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			cuishi: '#g捞德一评级:2.4',
 			liucong: '#g捞德一评级:2.1',
 			hok_daji: '#b捞德一评级:3.6',
-			hok_lixin: '#r捞德一评级:4.0',
+			hok_sp_lixin: '#r捞德一评级:4.0',
 			hok_makeboluo: '#b捞德一评级:3.7',
-			hok_mingshiyin: '#r耀世圣手评级:4.0',
+			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 			hok_sunwukong: '#b捞德一评级:3.7',
 			hok_wuzetian: '#r捞德一评级:4.0',
 			shen_caozhi: '#r捞德一评级:4.2',
@@ -2575,8 +2576,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于4，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
 			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害(如果目标大于6改为5点火焰伤害)，你可以减少其中1~3个目标。',
-			// 李信
-			hok_lixin: '李信',
+			// SP李信
+			hok_sp_lixin: 'SP李信',
 			hok_wangming: '王命',
 			hok_wangming_info: '锁定技，游戏开始时，你获得4枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害且你的「王」标记大于7，你获得一枚「王」标记。',
 			hok_dengshen: '登神',
@@ -2594,8 +2595,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀（不可以触发酒），若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
 			hok_danyu: '弹雨',
 			hok_danyu_info: '出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
-			// 明世隐
-			hok_mingshiyin: '明世隐',
+			// SP明世隐
+			hok_sp_mingshiyin: 'SP明世隐',
 			hok_taigua: '泰卦',
 			hok_taigua_info: '出牌阶段限两次，你对自己造成1点伤害，然后令一名角色回复1点体力。',
 			hok_minggua: '命卦',
@@ -2617,7 +2618,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_shengbang: '圣棒',
 			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2（最大为3）；若为黑色，你摸一张牌。',
 			hok_houmao: '猴毛',
-			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，随机获得一张杀/雷杀/火杀。',
+			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，弃置你判定区的牌，随机获得一张杀/雷杀/火杀。',
 			hok_naogong: '闹宫',
 			hok_naogong_info: '限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
 			// 武则天
