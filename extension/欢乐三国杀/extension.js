@@ -3932,6 +3932,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     var card = get.cardPile2(function (card) {
                                         return card.name == result.links[0][2] && (get.nature(card) == result.links[0][3] || !result.links[0][3]);
                                     });
+                                    if (!card) {
+                                        card = get.discardPile(function (card) {
+                                            return card.name == result.links[0][2] && (get.nature(card) == result.links[0][3] || !result.links[0][3]);
+                                        });
+                                    }
                                     if (card) player.gain(card, 'gain2');
                                     else {
                                         player.chat('杯具');
@@ -11572,7 +11577,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_liuxie: '#b捞德一评级:3.2',
                             hpp_liuyan: '#b捞德一评级:3.7',
                             hpp_luji: '#g捞德一评级2.1',
-                            hpp_lukang: '#b捞德一评级3.8',
+                            hpp_lukang: '#r捞德一评级4.0',
                             hpp_lusu: '#g捞德一评级2.4',
                             hpp_luxun: '捞德一评级1.4',
                             hpp_luyusheng: '#b捞德一评级3.8',
@@ -11639,7 +11644,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhongyao: '#g捞德一评级:2.7',
                             hpp_zhouyu: '#b捞德一评级:3.2',
                             hpp_zhugeguo: '#b捞德一评级:3.4',
-                            hpp_zhugeke: '#b捞德一评级:3.5',
+                            hpp_zhugeke: '#b捞德一评级:3.6',
                             hpp_zhugeliang: '#b捞德一评级:3.2',
                             hpp_zhugezhan: '#g捞德一评级:2.6',
                             hpp_zhuhuan: '#b捞德一评级:3.5',

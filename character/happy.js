@@ -1153,13 +1153,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.storage.shengbangJudge = false;
 					player.chooseToDiscard('hes').set('goon', get.damageEffect(trigger.player, player, player) > 0)
 						.set('ai', function (card) {
-							if (player.countCards('hs') > player.hp) {
-								if (_status.event.goon) return 9 - get.value(card);
-							}
-							if (player.getStat('skill').hok_naogong != undefined) {
-								if (player.getStat('skill').hok_naogong == 1 && player.countCards('hs') > 1) {
-									return 9 - get.value(card);
-								}
+							if (player.getStat('skill').hok_naogong == 1 && player.countCards('hs') > 1) {
+								return 9 - get.value(card);
 							}
 							return 0;
 						});
