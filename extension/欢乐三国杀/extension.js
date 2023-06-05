@@ -1284,6 +1284,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 position: 'he',
                                 content: function () {
                                     'step 0'
+                                    player.showCards(cards, '连珠展示的牌');
+                                    game.delay();
                                     player.give(cards, target);
                                     'step 1'
                                     if (get.color(cards[0], player) == 'red') {

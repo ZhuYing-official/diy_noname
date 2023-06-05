@@ -34096,9 +34096,9 @@
 			var laodeyiNum = 0;
 			var laodeyiMvp = 0;
 			var damageValue = 1.1;
-			var damagedValue = 0.5;
+			var damagedValue = 0.45;
 			var gainValue = 0.1;
-			var useValue = 0.4;
+			var useValue = 0.45;
 			var killValue = 1.7;
 			if (game.players.length) {
 				for (i = 0; i < game.players.length; i++) {
