@@ -15,6 +15,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_shen_lvmeng',
                             'hpp_shen_zhaoyun',
                             'hpp_shen_zhangjiao',
+                            'hpp_shen_zhugeliang',
 
                             'hpp_bulianshi',
                             'hpp_caiwenji',
@@ -459,6 +460,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhaoyun: ['male', 'shen', 2, ['hpp_juejing', 'hpp_longhun'], ['shu']],
                             // 神张角
                             hpp_shen_zhangjiao: ['male', 'shen', 3, ['hpp_yizhao', 'hpp_sanshou', 'hpp_sijun', 'hpp_tianjie'], ['qun']],
+                            // 神诸葛亮
+                            hpp_shen_zhugeliang: ['male', 'shen', 3, ['hpp_qixing', 'hpp_kuangfeng', 'hpp_dawu'], ['shu']],
 
                             // 孙悟空
                             hpp_sunwukong: ['male', 'qun', 4, ['hpp_72bian', 'hpp_ruyi', 'hpp_qitian'], []],
@@ -482,6 +485,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_lvbu: '字奉先，五原郡九原县人。三国第一猛将，曾独力战刘关张三人，其武力世之无双。时人语曰：“人中有吕布，马中有赤兔。”',
                             hpp_shen_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
                             hpp_shen_zhangjiao: '乱世的开始，黄巾起义军首领，太平道创始人。张角早年信奉黄老学说，对在汉代十分流行的谶纬之学也深有研究，对民间医术 、巫术也很熟悉。',
+                            hpp_shen_zhugeliang: '字孔明、号卧龙，汉族，琅琊阳都人，三国时期蜀汉丞相、杰出的政治家、军事家、发明家、文学家。在世时被封为武乡侯，死后追谥忠武侯，后来东晋政权推崇诸葛亮军事才能，特追封他为武兴王。诸葛亮为匡扶蜀汉政权，呕心沥血、鞠躬尽瘁、死而后已。其代表作有《前出师表》、《后出师表》、《诫子书》等。曾发明木牛流马等，并改造连弩，可一弩十矢俱发。于234年在宝鸡五丈原逝世。',
                             hpp_sunwukong: '狗卡桌游《自在西游》联动角色',
                         },
                         characterReplace: {
@@ -624,6 +628,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             shen_lvmeng: ['hpp_shen_lvmeng', 'tw_shen_lvmeng', 'shen_lvmeng'],
                             shen_zhaoyun: ['hpp_shen_zhaoyun', 'shen_zhaoyun', 'boss_zhaoyun'],
                             shen_zhangjiao: ['hpp_shen_zhangjiao', 'shen_zhangjiao'],
+                            shen_zhugeliang: ['hpp_shen_zhugelaing', 'shen_zhugeliang'],
                         },
                         characterFilter: {
                         },
@@ -11376,6 +11381,178 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 }
                             },
 
+                            // 神诸葛亮
+                            hpp_qixing: {
+                                unique: true,
+                                audio: 'qixing',
+                                trigger: { global: 'phaseBefore', player: 'enterGame' },
+                                filter: function (event, player) {
+                                    return event.name != 'phase' || game.phaseNumber == 0;
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.markAuto('hpp_qixing', game.cardsGotoSpecial(get.cards(7)).cards);
+                                },
+                                mark: true,
+                                intro: {
+                                    onunmark: function (storage, player) {
+                                        if (storage && storage.length) {
+                                            player.$throw(storage, 1000);
+                                            game.cardsDiscard(storage);
+                                            game.log(storage, '被置入了弃牌堆');
+                                            storage.length = 0;
+                                        }
+                                    },
+                                    mark: function (dialog, content, player) {
+                                        if (content && content.length) {
+                                            if (player == game.me || player.isUnderControl()) {
+                                                dialog.addAuto(content);
+                                            }
+                                            else {
+                                                return '共有' + get.cnNumber(content.length) + '张星';
+                                            }
+                                        }
+                                    },
+                                    content: function (content, player) {
+                                        if (content && content.length) {
+                                            if (player == game.me || player.isUnderControl()) {
+                                                return get.translation(content);
+                                            }
+                                            return '共有' + get.cnNumber(content.length) + '张星';
+                                        }
+                                    }
+                                },
+                                group: 'hpp_qixing_draw',
+                                subSkill: {
+                                    draw: {
+                                        trigger: { player: 'phaseDrawEnd' },
+                                        filter: function (event, player) {
+                                            return player.storage.hpp_qixing && player.storage.hpp_qixing.length;
+                                        },
+                                        direct: true,
+                                        content: function () {
+                                            'step 0'
+                                            var cards = player.getStorage('hpp_qixing');
+                                            if (!cards.length || !player.countCards('h')) {
+                                                event.finish();
+                                                return;
+                                            }
+                                            var next = player.chooseToMove('七星：是否交换“星”和手牌？');
+                                            next.set('list', [
+                                                [get.translation(player) + '（你）的星', cards],
+                                                ['手牌区', player.getCards('h')],
+                                            ]);
+                                            next.set('filterMove', function (from, to) {
+                                                return typeof to != 'number';
+                                            });
+                                            next.set('processAI', function (list) {
+                                                var player = _status.event.player, cards = list[0][1].concat(list[1][1]).sort(function (a, b) {
+                                                    return get.value(a) - get.value(b);
+                                                }), cards2 = cards.splice(0, player.storage.hpp_qixing.length);
+                                                return [cards2, cards];
+                                            });
+                                            'step 1'
+                                            if (result.bool) {
+                                                var pushs = result.moved[0], gains = result.moved[1];
+                                                pushs.removeArray(player.storage.hpp_qixing);
+                                                gains.removeArray(player.getCards('h'));
+                                                if (!pushs.length || pushs.length != gains.length) return;
+                                                player.logSkill('hpp_qixing');
+                                                player.lose(pushs, ui.special, 'toStorage');
+                                                game.log(player, '将', pushs, '作为“星”置于武将牌上');
+                                                player.gain(gains, 'gain2', 'log', 'fromStorage');
+                                                player.storage.hpp_qixing.addArray(pushs);
+                                                player.storage.hpp_qixing.removeArray(gains);
+                                                player.markSkill('hpp_qixing');
+                                            }
+                                        }
+                                    },
+                                },
+                            },
+                            hpp_kuangfeng: {
+                                audio: 'kuangfeng',
+                                trigger: { player: 'phaseUseEnd' },
+                                filter: function (event, player) {
+                                    return player.storage.hpp_qixing && player.storage.hpp_qixing.length;
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseTarget([1, Math.min(game.players.length, player.getStorage('hpp_qixing').length)], get.prompt2('hpp_kuangfeng')).set('ai', function (target) {
+                                        var player = _status.event.player;
+                                        var eff = get.damageEffect(target, player, player);
+                                        if (target.hp == 1 || !ui.selected.targets.length) return eff;
+                                        return 0;
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        event.targets = result.targets.sortBySeat();
+                                        player.chooseButton(['请选择要移去的“星”', player.getStorage('hpp_qixing')], true, result.targets.length).set('ai', function (button) {
+                                            return -get.value(button.link);
+                                        });
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    var cards = result.links;
+                                    player.logSkill('hpp_kuangfeng', targets);
+                                    player.$throw(cards, 2000);
+                                    player.unmarkAuto('hpp_qixing', cards);
+                                    game.cardsDiscard(cards);
+                                    for (var i of targets) i.damage();
+                                },
+                            },
+                            hpp_dawu: {
+                                audio: 'dawu',
+                                trigger: { player: 'phaseJieshuBegin' },
+                                filter: function (event, player) {
+                                    return player.storage.hpp_qixing && player.storage.hpp_qixing.length;
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseButton([get.prompt('hpp_dawu'), player.getStorage('hpp_qixing')]).set('ai', function (button) {
+                                        return 1 / Math.max(0.01, get.value(button.link));
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        var cards = result.links;
+                                        player.logSkill('hpp_dawu');
+                                        player.$throw(cards, 2000);
+                                        player.unmarkAuto('hpp_qixing', cards);
+                                        game.cardsDiscard(cards);
+                                        player.addTempSkill('hpp_dawu_damage', { player: 'phaseBegin' });
+                                    }
+                                },
+                                subSkill: {
+                                    damage: {
+                                        charlotte: true,
+                                        mark: true,
+                                        intro: { content: '受到的非属性伤害-1' },
+                                        trigger: { player: 'damageBegin3' },
+                                        filter: function (event) {
+                                            return event.num > 0 && !event.nature;
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            trigger.num--;
+                                        },
+                                        ai: {
+                                            effect: {
+                                                target: function (card, player, target) {
+                                                    if (player.hasSkillTag('jueqing', false, target)) return;
+                                                    if (get.nature(card)) return;
+                                                    var num = get.tag(card, 'damage');
+                                                    if (num) {
+                                                        if (num > 1) return 0.5;
+                                                        return 0;
+                                                    }
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+
                             // 孙悟空
                             hpp_72bian: {
                                 onChooseToUse: function (event) {
@@ -11649,7 +11826,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_liubiao: '#b捞德一评级:3.5',
                             hpp_liubei: '#b捞德一评级:3.8',
                             hpp_liufeng: '#b捞德一评级:3.5',
-                            hpp_liushan: '#g捞德一评级2.6',
+                            hpp_liushan: '#g捞德一评级2.8',
                             hpp_liuxie: '#b捞德一评级:3.2',
                             hpp_liuyan: '#b捞德一评级:3.7',
                             hpp_luji: '#g捞德一评级2.1',
@@ -11664,7 +11841,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_machao: '#b捞德一评级:3.7',
                             hpp_masu: '#b捞德一评级3.8',
                             hpp_mayunlu: '#b捞德一评级3.5',
-                            hpp_menghuo: '#g捞德一评级2.6',
+                            hpp_menghuo: '#g捞德一评级2.7',
                             // P
                             hpp_panfeng: '#b捞德一评级:3.7',
                             hpp_pangde: '#b捞德一评级:3.7',
@@ -11747,6 +11924,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
                             hpp_shen_zhaoyun: '#r捞德一评级:4.3',
                             hpp_shen_zhangjiao: '#r捞德一评级:4.7',
+                            hpp_shen_zhugeliang: '#r捞德一评级:4.0',
                             // 斗地主
                             hpp_sunwukong: '#r地主专属' + '<br/>' + '捞德一评级:4.2',
                         },
@@ -12324,6 +12502,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sijun_info: '准备阶段，若“黄”标记数量大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得点数之和为36的牌，并洗牌。',
                             hpp_tianjie: '天劫',
                             hpp_tianjie_info: '每个回合结束时，若本回合牌堆洗过牌，你可以选择至多3名其他角色，对这些角色分别造成X点雷电伤害（X为其手牌中【闪】的数量且至少为1）',
+                            hpp_shen_zhugeliang:'神诸葛亮',
+                            hpp_qixing: '七星',
+                            hpp_qixing_info: '游戏开始时你多摸七张牌，置于武将牌上，称为“星”。你的每个摸牌阶段结束时，可以用任意张手牌交换等量的“星”。',
+                            hpp_kuangfeng: '狂风',
+                            hpp_kuangfeng_info: '出牌阶段结束时，你可以移去任意张“星”对等量的角色各造成1点伤害。',
+                            hpp_dawu: '大雾',
+                            hpp_dawu_info: '结束阶段，你可以移去一张“星”，然后直到你的下回合开始，你受到非属性伤害-1。',
                             // 斗地主
                             hpp_sunwukong: '孙悟空',
                             hpp_72bian: '72变',
