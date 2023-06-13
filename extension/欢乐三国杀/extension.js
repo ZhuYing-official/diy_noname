@@ -24,6 +24,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_chendao',
                             'hpp_daqiao',
                             'hpp_dianwei',
+                            'hpp_diaochan',
                             'hpp_dongbai',
                             'hpp_dongyun',
                             'hpp_dongzhuo',
@@ -186,19 +187,19 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 feng_li: ['hpp_liubiao', 'hpp_caifuren',],
                                 feng_zhi: ['hpp_sunce', 'hpp_zhoutai', 'hpp_zhouyu',],
                                 feng_xian: ['hpp_zhangjiao', 'hpp_yuji', 'hpp_zuoci'],
-                                lin_zhi: ['hpp_zhangsong', 'hpp_zhongyao', 'hpp_masu', 'hpp_huangyueying', 'hpp_luxun', 'hpp_lusu', 'hpp_jiaxu'],
+                                lin_zhi: ['hpp_wangji', 'hpp_zhangsong', 'hpp_zhongyao', 'hpp_masu', 'hpp_huangyueying', 'hpp_luxun', 'hpp_lusu', 'hpp_jiaxu'],
                                 lin_man: ['hpp_huaman', 'hpp_shamoke', 'hpp_zhurong', 'hpp_menghuo',],
                                 lin_xiong: ['hpp_sunliang', 'hpp_sunjian', 'hpp_gongsunzan', 'hpp_dongzhuo', 'hpp_liuyan'],
                                 huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_yanyan', 'hpp_wangping', 'hpp_chendao', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
                                 huo_yi: ['hpp_taishici', 'hpp_luji', 'hpp_lingtong', 'hpp_xusheng', 'hpp_gaoshun', 'hpp_zhuran', 'hpp_zhuhuan', 'hpp_zhuzhi',],
                                 huo_bi: ['hpp_zhonghui', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
                                 huo_yong: ['hpp_xiahoujie'],
-                                shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xushi', 'hpp_dufuren', 'hpp_xiahoulingnv', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
+                                shan_zhen: ['hpp_fuhuanghou', 'hpp_mayunlu', 'hpp_xushi', 'hpp_dufuren', 'hpp_xiahoulingnv', 'hpp_wangrong', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
                                 shan_si: ['hpp_liushan', 'hpp_zhugezhan', 'hpp_guanping', 'hpp_liufeng', 'hpp_zhangxingcai', 'hpp_guanyinping', 'hpp_zhaoxiang'],
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
                                 shan_ce: ['hpp_wolongzhuge', 'hpp_xunyou', 'hpp_jianyong', 'hpp_buzhi', 'hpp_yanjun', 'hpp_yangxiu'],
-                                shan_ji: ['hpp_lukang', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng',],
-                                ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu'],
+                                shan_ji: ['hpp_lukang', 'hpp_liuchen', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng',],
+                                ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu', 'hpp_wanniangongzhu'],
                                 ming_ru: ['hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xushu', 'hpp_liuzhang'],
                                 ming_cao: ['hpp_caopi', 'hpp_caozhi', 'hpp_caozhang', 'hpp_caochong', 'hpp_caozhen', 'hpp_caorui', 'hpp_caoxiu', 'hpp_caoang', 'hpp_caoying'],
                                 ming_han: ['hpp_haozhao', 'hpp_zhangxiu', 'hpp_madai', 'hpp_chenpu', 'hpp_handang', 'hpp_wuyi', 'hpp_xurong', 'hpp_lijue', 'hpp_zhangji', 'hpp_chunyuqiong'],
@@ -207,7 +208,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 xian_sp: ['hpp_sp_jiangwei', 'hpp_sp_haungyueying', 'hpp_sp_taishici', 'hpp_sp_machao', 'hpp_sp_daqiao', 'hpp_sp_zhaoyun', 'hpp_sp_sunshangxiang', 'hpp_sp_caiwenji', 'hpp_sp_xiaoqiao', 'hpp_sp_diaochan'],
                                 xian_sp2: ['hpp_sp_pangtong', 'hpp_sp_pangde'],
                                 xian_jin: ['hpp_guansuo', 'hpp_baosanniang', 'hpp_wenyang', 'hpp_liuzan', 'hpp_guozhao', 'hpp_fanyufeng', 'hpp_panshu', 'hpp_lvlingqi', 'hpp_zhangchangpu', 'hpp_zhangqiying', 'hpp_puyuan', 'hpp_xushao'],
-                                xian_xiu: ['hpp_zhouyi', 'hpp_fengyu'],
+                                xian_xiu: ['hpp_zhouyi', 'hpp_fengyu', 'hpp_tenggongzhu'],
                                 shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia'],
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei'],
                                 shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce', 'shen_daxiaoqiao'],
@@ -232,6 +233,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_daqiao: ['female', 'wu', 3, ['hpp_wanrong', 'hpp_guose', 'hpp_liuli'], []],
                             // 欢乐典韦
                             hpp_dianwei: ['male', 'wei', 4, ['hpp_qiangxi'], []],
+                            // 欢乐貂蝉
+                            hpp_diaochan: ['female', 'qun', 3, ['hpp_lijian', 'hpp_biyue'], []],
                             // 欢乐董白
                             hpp_dongbai: ['female', 'qun', 3, ['hpp_lianzhu', 'hpp_xiahui'], []],
                             // 欢乐董允
@@ -493,6 +496,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // D
                             daqiao: ['hpp_daqiao', 're_daqiao', 'daqiao'],
                             dianwei: ['hpp_dianwei', 'ol_dianwei', 're_dianwei', 'dianwei'],
+                            diaochan: ['hpp_diaochan', 're_diaochan', 'diaochan'],
                             dongbai: ['hpp_dongbai', 're_dongbai', 'dongbai', 'jsrg_dongbai'],
                             dongyun: ['hpp_dongyun', 'dongyun'],
                             dongzhuo: ['hpp_dongzhuo', 'ol_dongzhuo', 'sp_dongzhuo', 're_dongzhuo', 'dongzhuo'],
@@ -1257,6 +1261,75 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         },
                                     },
                                     off: { charlotte: true },
+                                },
+                            },
+
+                            // 貂蝉
+                            hpp_lijian: {
+                                onChooseToUse: function (event) {
+                                    if (event.type == 'phase' && !game.online) {
+                                        var evtx = event.getParent('phaseUse');
+                                        var list = [], player = event.player;
+                                        for (var target of game.filterPlayer2()) {
+                                            if (target.getHistory('damage', function (evt) {
+                                                return evt.card && evt.card.name == 'juedou' && evt.getParent(3).name == 'hpp_lijian' && evt.getParent(3).player == player;
+                                            }).length) list.push(target);
+                                        }
+                                        event.set('hpp_lijian_targets', list);
+                                    }
+                                },
+                                audio: 'lijian',
+                                enable: 'phaseUse',
+                                filter: function (event, player) {
+                                    return game.hasPlayer(function (target) {
+                                        if (_status.event.hpp_lijian_targets.contains(target)) return false;
+                                        return game.hasPlayer(function (current) {
+                                            if (_status.event.hpp_lijian_targets.contains(current)) return false;
+                                            return current != target && current.canUse({ name: 'juedou' }, target);
+                                        });
+                                    });
+                                },
+                                filterTarget: function (card, player, target) {
+                                    if (_status.event.hpp_lijian_targets.contains(target)) return false;
+                                    if (ui.selected.targets.length) return target.canUse({ name: 'juedou' }, ui.selected.targets[0]);
+                                    return game.hasPlayer(function (current) {
+                                        return current.canUse({ name: 'juedou' }, target);
+                                    });
+                                },
+                                selectTarget: 2,
+                                targetprompt: ['先出杀', '后出杀'],
+                                multitarget: true,
+                                filterCard: true,
+                                check: function (card) {
+                                    return 10 - get.value(card);
+                                },
+                                position: 'he',
+                                usable: 2,
+                                content: function () {
+                                    targets[1].useCard({ name: 'juedou', isCard: true }, 'nowuxie', targets[0], 'noai').animate = false;
+                                    game.delay(0.5);
+                                },
+                                ai: {
+                                    order: 8,
+                                    expose: 0.4,
+                                    threaten: 4.8,
+                                    result: {
+                                        target: function (player, target) {
+                                            if (!ui.selected.targets.length) return -3;
+                                            return get.effect(target, { name: 'juedou' }, ui.selected.targets[0], target);
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_biyue: {
+                                audio: 'biyue',
+                                trigger: { player: 'phaseJieshuBegin' },
+                                forced: true,
+                                locked: false,
+                                content: function () {
+                                    player.draw(1 + player.getHistory('useSkill', function (evt) {
+                                        return evt.skill == 'hpp_lijian';
+                                    }).length);
                                 },
                             },
 
@@ -11546,6 +11619,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // D
                             hpp_daqiao: '#b捞德一评级:3.5',
                             hpp_dianwei: '#b捞德一评级:3.1',
+                            hpp_diaochan: '#b捞德一评级:3.5',
                             hpp_dongbai: '#b捞德一评级:3.5',
                             hpp_dongyun: '#g捞德一评级:2.3',
                             hpp_dongzhuo: '#g捞德一评级:2.7',
@@ -11723,6 +11797,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_dianwei: '典韦',
                             hpp_qiangxi: '强袭',
                             hpp_qiangxi_info: '出牌阶段，你可以失去1点体力，并摸1张牌，然后对攻击范围的一名其他角色造成1点伤害（每名角色限一次）；每当其他角色受到伤害时，你可以弃置一张装备牌，然后本次伤害值+1。',
+                            hpp_diaochan: '貂蝉',
+                            hpp_lijian: '离间',
+                            hpp_lijian_info: '出牌阶段限两次，你可以弃置1张牌并选择两名角色，然后令其中一名角色视为对另一名角色使用一张【决斗】（不可被【无懈可击】响应），因该【决斗】失败的角色本回合无法再成为“离间”的目标。',
+                            hpp_biyue: '闭月',
+                            hpp_biyue_info: '结束阶段开始时，你摸X张牌（X为本回合你发动“离间”的次数+1）。',
                             hpp_dongbai: '董白',
                             hpp_lianzhu: '连诛',
                             hpp_lianzhu_info: '出牌阶段限一次，你可以展示并交给一名其他角色一张牌，若此牌为红色，你选择一项：1、你摸两张牌；2、你回复1点体力；若此牌为黑色，其选择一项：1.你摸两张牌；2.弃置两张牌。',

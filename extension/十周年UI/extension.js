@@ -432,6 +432,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
 							this.skipList = [];
 							this.skills = this.skills.contains('cangji_yozuru') ? ['cangji_yozuru'] : [];
+							this.invisibleSkills = [];
 							this.initedSkills = [];
 							this.additionalSkills = {};
 							this.disabledSkills = {};
@@ -607,7 +608,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 							}
 
 							if (player == game.me) {
-								dui.layoutHandDraws(cards.reverse());
+								if (cards && cards.length) dui.layoutHandDraws(cards.reverse());
 								dui.queueNextFrameTick(dui.layoutHand, dui);
 							}
 
@@ -1544,7 +1545,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								event.dialog = undefined;
 								return;
 							}
-							var skills = player.getSkills(true);
+							var skills = player.getSkills('invisible').concat(lib.skill.global);
 							game.expandSkills(skills);
 							for (var i = 0; i < skills.length; i++) {
 								var info = lib.skill[skills[i]];
@@ -1626,8 +1627,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								var ok = game.check();
 								if (ok) {
 									ui.click.ok();
-								} else if (ai.basic.chooseCard(event.ai1 || event.ai)) {
-									if (ai.basic.chooseTarget(event.ai2) && (!event.filterOk || event.filterOk())) {
+								} else if (ai.basic.chooseCard(event.ai1 || event.ai) || forced) {
+									if ((ai.basic.chooseTarget(event.ai2) || forced) && (!event.filterOk || event.filterOk())) {
 										ui.click.ok();
 										event._aiexcludeclear = true;
 									} else {
@@ -1779,7 +1780,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 							if (game.modeSwapPlayer && !_status.auto && player.isUnderControl() && !lib.filter.wuxieSwap(event)) {
 								game.modeSwapPlayer(player);
 							}
-							var skills = player.getSkills(true);
+							var skills = player.getSkills('invisible').concat(lib.skill.global);
 							game.expandSkills(skills);
 							for (var i = 0; i < skills.length; i++) {
 								var info = lib.skill[skills[i]];
@@ -1898,8 +1899,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								var ok = game.check();
 								if (ok) {
 									ui.click.ok();
-								} else if (ai.basic.chooseCard(event.ai1)) {
-									if (ai.basic.chooseTarget(event.ai2) && (!event.filterOk || event.filterOk())) {
+								} else if (ai.basic.chooseCard(event.ai1) || forced) {
+									if ((ai.basic.chooseTarget(event.ai2) || forced) && (!event.filterOk || event.filterOk())) {
 										ui.click.ok();
 										event._aiexcludeclear = true;
 									} else {
@@ -2199,13 +2200,17 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 									var owner = get.owner(i, 'judge');
 									if (owner && (owner != player || get.position(i) != 'h')) {
 										var id = owner.playerid;
-										if (!map[id]) map[id] = [];
-										map[id].push(i);
+										if (!map[id]) map[id] = [[], [], []];
+										map[id][0].push(i);
+										var position = get.position(i);
+										if (position == 'h') map[id][1].push(i);
+										else map[id][2].push(i);
 									} else if (!event.updatePile && get.position(i) == 'c') event.updatePile = true;
 								}
+								event.losing_map = map;
 								for (var i in map) {
 									var owner = (_status.connectMode ? lib.playerOL : game.playerMap)[i];
-									var next = owner.lose(map[i], ui.special).set('type', 'gain').set('forceDie', true).set('getlx', false);
+									var next = owner.lose(map[i][0], ui.special).set('type', 'gain').set('forceDie', true).set('getlx', false);
 									if (event.visible == true)
 										next.visible = true;
 
@@ -2302,31 +2307,34 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								game.pause();
 								gainTo(cards);
 								player.$gain2(cards);
-							} else if (event.source && (event.animate == 'give' || event.animate == 'giveAuto')) {
+							} else if (event.animate == 'give' || event.animate == 'giveAuto') {
 								game.pause();
 								gainTo(cards);
-								var evtmap = event.relatedLose;
+								var evtmap = event.losing_map;
 								if (event.animate == 'give') {
-									if (evtmap && evtmap.cards && evtmap.cards.length > 0) event.source.$give(evtmap.cards, player);
-									else event.source.$give(cards, player);
-								} else {
-									var c;
-									var hs = [];
-									var ots = [];
-									hs.duiMod = ots.duiMod = event.source;
-									if (evtmap && evtmap.hs && evtmap.cards) {
-										for (var i = 0; i < cards.length; i++) {
-											c = cards[i];
-											if (evtmap.hs.contains(c)) hs.push(c);
-											else if (evtmap.cards.contains(c)) ots.push(c);
-										}
+									for (var i in evtmap) {
+										var source = (_status.connectMode ? lib.playerOL : game.playerMap)[i];
+										source.$give(evtmap[i][0], player)
 									}
-
-									if (hs.length)
-										event.source.$giveAuto(hs, player);
-									if (ots.length)
-										event.source.$give(ots, player);
+								} else {
+									for (var i in evtmap) {
+										var source = (_status.connectMode ? lib.playerOL : game.playerMap)[i];
+										if (evtmap[i][1].length) source.$giveAuto(evtmap[i][1], player);
+										if (evtmap[i][2].length) source.$give(evtmap[i][2], player);
+									}
 								}
+							} else if (typeof event.animate == 'function') {
+								var time = event.animate(event);
+								game.pause();
+								setTimeout(function () {
+									addv();
+									player.node.handcards1.insertBefore(frag1, player.node.handcards1.firstChild);
+									player.node.handcards2.insertBefore(frag2, player.node.handcards2.firstChild);
+									player.update();
+									if (player == game.me) ui.updatehl();
+									broadcast();
+									game.resume();
+								}, get.delayx(time, time));
 							} else {
 								gainTo(cards, true);
 								event.finish();
@@ -2883,7 +2891,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								}
 								"step 2"
 								if (result.bool) {
-									if (trigger.player.hp <= 0 && !trigger.player.nodying && trigger.player.isAlive() && !trigger.player.isOut() && !trigger.player.removed) event.goto(0);
+									var player = trigger.player;
+									if (player.hp <= 0 && !trigger.nodying && !player.nodying && player.isAlive() && !player.isOut() && !player.removed) event.goto(0);
 									else trigger.untrigger();
 								} else {
 									for (var i = 0; i < 20; i++) {
@@ -3959,7 +3968,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 												id: id
 											});
 											player.marks[id]._name = target;
-											player.marks[id].style.backgroundSize += " !important";
+											player.marks[id].style.backgroundSize = "cover !important";
 											game.addVideo('markCharacter', player, {
 												name: name,
 												content: content,
@@ -5197,7 +5206,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								if (get.mode() == 'guozhan' && player.hasSkillTag('nomingzhi', false, null, true)) {
 									skills2 = player.getSkills(false, true, false);
 								} else {
-									skills2 = player.getSkills(true, true, false);
+									skills2 = player.getSkills('invisible', true, false);
 								}
 								skills2 = game.filterSkills(skills2.concat(lib.skill.global), player, player.getSkills('e').concat(lib.skill.global));
 								event._skillChoice = [];
@@ -5211,7 +5220,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 									else if (typeof info.enable == 'string') enable = (info.enable == event.name);
 
 									if (enable) {
-										if (!game.expandSkills(player.getSkills().concat(lib.skill.global)).contains(skills2[i]) && (info.noHidden || get.mode() != 'guozhan' || player.hasSkillTag('nomingzhi', false, null, true))) enable = false;
+										if (!game.expandSkills(player.getSkills(false).concat(lib.skill.global)).contains(skills2[i]) && (info.noHidden || get.mode() != 'guozhan' || player.hasSkillTag('nomingzhi', false, null, true))) enable = false;
 										if (info.filter && !info.filter(event, player)) enable = false;
 										if (info.viewAs && typeof info.viewAs != 'function' && event.filterCard && !event.filterCard(info.viewAs, player, event)) enable = false;
 										if (info.viewAs && typeof info.viewAs != 'function' && info.viewAsFilter && info.viewAsFilter(player) == false) enable = false;
@@ -5239,7 +5248,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 								}
 							}
 							var equipskills = [];
-							var ownedskills = player.getSkills(true, false);
+							var ownedskills = player.getSkills('invisible', false);
 							game.expandSkills(ownedskills);
 							for (var i = 0; i < skills.length; i++) {
 								if (!ownedskills.contains(skills[i])) {
@@ -5768,6 +5777,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 							phaseNumber: 0,
 							skipList: [],
 							skills: [],
+							invisibleSkills: [],
 							initedSkills: [],
 							additionalSkills: {},
 							disabledSkills: {},
@@ -10180,9 +10190,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			intro: (function () {
 				var log = [
 					'有bug先检查其他扩展，不行再关闭UI重试，最后再联系作者。',
-					'当前版本：1.2.0.220114.22（Show-K修复版）',
-					'更新日期：2023-04-03',
-					'- 将chooseToDiscard时可能出现的“提示”按钮的文本改为“AI代选”。',
+					'当前版本：1.2.0.220114.26（Show-K修复版）',
+					'更新日期：2023-06-05',
+					'- 修复了invisibleSkills不存在的问题。（感谢寰宇星城）',
+					'- 不再覆盖左慈〖化身〗。',
 					/*
 					'- 新增动皮及背景：[曹节-凤历迎春]、[曹婴-巾帼花舞]、[貂蝉-战场绝版]、[何太后-耀紫迷幻]、[王荣-云裳花容]、[吴苋-金玉满堂]、[周夷-剑舞浏漓]；',
 					'- 新增动皮oncomplete支持(函数内部只能调用this.xxx代码)；',
@@ -10199,10 +10210,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
 				return '<p style="color:rgb(210,210,000); font-size:12px; line-height:14px; text-shadow: 0 0 2px black;">' + log.join('<br>') + '</p>';
 			})(),
-			author: "短歌 QQ464598631",
+			author: "Show-K←寰宇星城←短歌 QQ464598631",
 			diskURL: "",
 			forumURL: "",
-			version: "1.2.0.220114.22",
+			version: "1.2.0.220114.26",
 		},
 		files: {
 			"character": [],

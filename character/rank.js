@@ -1326,6 +1326,7 @@ window.noname_character_rank = {
 			'hpp_chendao',
 			'hpp_daqiao',
 			'hpp_dianwei',
+			'hpp_diaochan',
 			'hpp_dongbai',
 			'hpp_dongyun',
 			'hpp_dongzhuo',
