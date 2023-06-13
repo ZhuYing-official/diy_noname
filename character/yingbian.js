@@ -819,29 +819,41 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						audio:'qimei',
 						charlotte:true,
 						forced:true,
+						popup:false,
 						trigger:{global:['equipAfter','addJudgeAfter','gainAfter','loseAsyncAfter','loseAfter','gainAfter','addToExpansionAfter']},
-						logTarget:function(event,player){
-							return player.storage.qimei_draw;
-						},
 						usable:1,
 						filter:function(event,player){
 							var target=player.storage.qimei_draw;
 							if(!target||!target.isIn()) return false;
-							if(event.name!='gain'||(event.player!=player&&event.player!=target)){
-							var evt1=event.getl(player);
-								if(!evt1||!evt1.hs||!evt1.hs.length){
-									var evt2=event.getl(target);
-									if(!evt2||!evt2.hs||!evt2.hs.length) return false;
-								}
-							}
-							return player.countCards('h')==target.countCards('h');
+							if(player.countCards('h')!=target.countCards('h')) return false;
+							var hasChange=function(event,player){
+								var gain=0,lose=0;
+								if(event.getg) gain=event.getg(player).length;
+								if(event.getl) lose=event.getl(player).hs.length;
+								return gain!=lose;
+							};
+							return hasChange(event,player)||hasChange(event,target);
 						},
 						content:function(){
+							'step 0'
 							if(trigger.delay===false) game.delayx();
-							var evt1=trigger.getl(player);
-							if((trigger.name=='gain'&&player==trigger.player)||(evt1&&evt1.hs&&evt1.hs.length)) player.storage.qimei_draw.draw();
-							var evt2=trigger.getl(player.storage.qimei_draw);
-							if((trigger.name=='gain'&&player==player.storage.qimei_draw)||evt2&&evt2.hs&&evt2.hs.length) player.draw();
+							'step 1'
+							var target=player.storage.qimei_draw;
+							player.logSkill('qimei_draw',target);
+							var drawer=[];
+							var hasChange=function(event,player){
+								var gain=0,lose=0;
+								if(event.getg) gain=event.getg(player).length;
+								if(event.getl) lose=event.getl(player).hs.length;
+								return gain!=lose;
+							};
+							if(hasChange(trigger,player)) drawer.push(target);
+							if(hasChange(trigger,target)) drawer.push(player);
+							if(drawer.length==1) drawer[0].draw();
+							else{
+								game.asyncDraw(drawer.sortBySeat());
+								game.delayex();
+							}
 						},
 						group:'qimei_hp',
 						onremove:true,
@@ -2633,8 +2645,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				lose:false,
 				delay:false,
 				line:true,
-				direct:true,
-				clearTime:true,
+				log:false,
 				prepare:function(cards,player,targets){
 					targets[0].logSkill('ruilve');
 				},
@@ -3565,6 +3576,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jin_simayi:['jin_zhangchunhua','shibao','duyu'],
 			jin_simazhao:['jin_wangyuanji'],
 			jin_simashi:['jin_xiahouhui','jin_yanghuiyu'],
+			xuangongzhu:['duyu'],
 		},
 		characterReplace:{
 			yanghu:['dc_yanghu','jin_yanghu','sp_yanghu'],
@@ -3597,7 +3609,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xijue_xiaoguo_info_guozhan:'其他角色的结束阶段开始时，你可以弃置一张基本牌，令该角色选择一项：1.弃置一张装备牌；2.受到你对其造成的1点伤害。',
 			duyu:'杜预',
 			sanchen:'三陈',
-			sanchen_info:'出牌阶段，你可选择一名本回合内未选择过的角色。其摸三张牌，然后弃置三张牌。若其未以此法弃置牌或以此法弃置的牌的类别均不相同，则其摸一张牌。否则你本阶段内不能再发动〖三陈〗。',
+			sanchen_info:'出牌阶段限一次。你可选择一名本回合内未选择过的角色。其摸三张牌，然后弃置三张牌。若其未以此法弃置牌或以此法弃置的牌的类别均不相同，则其摸一张牌且〖三陈〗于此阶段内使用次数上限+1。',
 			sanchen_info_guozhan:'出牌阶段，你可选择一名本回合内未选择过的角色。其摸三张牌，然后弃置三张牌。若其未以此法弃置牌或以此法弃置的牌的类别均不相同，则其摸一张牌且你获得技能〖破竹〗直到回合结束。否则你本阶段内不能再发动〖三陈〗。',
 			zhaotao:'诏讨',
 			zhaotao_info:'觉醒技，准备阶段，若你本局游戏内发动〖三陈〗的次数大于2，则你减1点体力上限并获得〖破竹〗。',
@@ -3755,9 +3767,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xinwanyi_info:'①当你使用【杀】或普通锦囊牌指定其他角色为唯一目标后，你可将其的一张牌置于你的武将牌上作为“嫕”。②你不能使用/打出/弃置与“嫕”花色相同的牌。③结束阶段或当你受到伤害后，你令一名角色获得你的一张“嫕”。',
 			jin_guohuai:'郭槐',
 			zhefu:'哲妇',
-			zhefu_info:'当你于回合外使用或打出基本牌后，你可令一名有手牌的其他角色选择一项：⒈弃置一张名称相同的基本牌。⒉受到你造成的1点伤害。',
+			zhefu_info:'当你于回合外使用或打出牌后，你可令一名有手牌的其他角色选择一项：⒈弃置一张名称相同的牌。⒉受到你造成的1点伤害。',
 			yidu:'遗毒',
-			yidu_info:'当你使用的【杀】或伤害性锦囊牌结算结束后，若此牌目标数为1且你未造成过渠道为此牌的伤害，则你可以展示目标角色的至多三张手牌。若这些牌颜色均相同，则其弃置这些牌。',
+			yidu_info:'当你使用的【杀】或伤害性锦囊牌结算结束后，你可以展示一名未受到过渠道为此牌伤害的目标角色的至多三张手牌。若这些牌颜色均相同，则你弃置这些牌。',
 			wangxiang:'王祥',
 			bingxin:'冰心',
 			bingxin_info:'每种牌名每回合限一次。当你需要使用基本牌时，若你的手牌数等于体力值且这些牌的颜色均相同，则你可以摸一张牌，视为使用一张基本牌。',

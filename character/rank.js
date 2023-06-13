@@ -179,6 +179,7 @@ window.noname_character_rank = {
 		'zhanghua',
 		'zerong',
 		'wangguan',
+		'duanqiaoxiao',
 		// 'key_misuzu',
 		// 'key_sunohara',
 		// 'key_umi',
@@ -661,6 +662,8 @@ window.noname_character_rank = {
 		'xia_zhaoe',
 		'zhangkai',
 		'sunhong',
+		'zhangjinyun',
+		'dc_mengda',
 	],
 	b: [
 		'diy_feishi',
@@ -1304,6 +1307,7 @@ window.noname_character_rank = {
 			'tw_jiangji',
 			'tw_niufudongxie',
 			'tw_shen_lvmeng',
+			'zhangjinyun',
 
 			//捞德一
 			'hok_lixin',
@@ -1597,6 +1601,7 @@ window.noname_character_rank = {
 			'mengjie',
 			'dc_ruiji',
 			'xia_zhaoe',
+			'duanqiaoxiao',
 
 			//捞德一
 			'cuishi',
