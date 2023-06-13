@@ -7609,10 +7609,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     else event.finish();
                                     'step 2'
                                     if (result.suit == 'club') {
-                                        target.damage();
+                                        target.damage('thunder');
                                         player.recover();
                                     }
-                                    else if (result.suit == 'spade') target.damage(2);
+                                    else if (result.suit == 'spade') target.damage(2, 'thunder');
                                 },
                                 ai: {
                                     useShan: true,
@@ -11646,7 +11646,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhongyao: '#g捞德一评级:2.7',
                             hpp_zhouyu: '#b捞德一评级:3.2',
                             hpp_zhugeguo: '#b捞德一评级:3.4',
-                            hpp_zhugeke: '#b捞德一评级:3.6',
+                            hpp_zhugeke: '#b捞德一评级:3.7',
                             hpp_zhugeliang: '#b捞德一评级:3.2',
                             hpp_zhugezhan: '#g捞德一评级:2.6',
                             hpp_zhuhuan: '#b捞德一评级:3.5',
@@ -12249,18 +12249,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunwukong: '孙悟空',
                             hpp_72bian: '72变',
                             hpp_72bian_backup: '72变',
-                            hpp_72bian_info: '每回合每种类型限一次，出牌阶段，你可以将你的所有基本牌/锦囊牌/装备牌置入弃牌堆，然后从牌堆中获得等量的锦囊牌/装备牌/基本牌。',
+                            hpp_72bian_info: '出牌阶段，你可以将基本牌重铸为锦囊牌，锦囊牌重铸为装备牌，装备牌重铸为基本牌，每个类型的牌每回合限1次。',
                             hpp_ruyi: '如意',
-                            hpp_ruyi_info: '锁定技，若你未装备武器且你的武器栏未被废除，你视为装备【如意金箍棒】。',
+                            hpp_ruyi_info: '锁定技，若你的装备区里没有武器牌时，你视为装备着【如意金箍棒】。',
                             hpp_ruyijingubang: '如意金箍棒',
                             hpp_ruyijingubang2: '如意金箍棒',
-                            hpp_ruyijingubang_info: '回合开始时，你可以将【如意金箍棒】的攻击范围调整至1，2，3，4之间的任意值。当【如意金箍棒】的攻击范围为：1，你使用【杀】不计入次数限制；2，你于回合内使用的第一张【杀】造成的伤害+1；3，你使用【杀】无法被响应；4，你使用【杀】可以额外选择一个目标。',
+                            hpp_ruyijingubang_info: '回合开始时，你可以将如意金箍棒攻击范围调整至1-4，并获得对应效果，初始攻击范围默认为1。1.你使用【杀】不计入次数。2.本回合你使用的第一张【杀】伤害+1。3.你使用【杀】无法被响应。4.你使用【杀】可以额外增加一个目标。',
                             hpp_qitian: '齐天',
-                            hpp_qitian_info: '觉醒技，当你的体力值为1时，你减1点体力上限，然后获得技能〖火眼〗和〖筋斗云〗。',
+                            hpp_qitian_info: '觉醒技，若你的体力值为1时，你减1点体力上限，然后获得技能【火眼】和【筋斗云】。',
                             hpp_huoyan: '火眼',
                             hpp_huoyan_info: '锁定技，其他角色的手牌始终对你可见。',
                             hpp_jindouyun: '筋斗云',
-                            hpp_jindouyun_info: '锁定技，你计算与其他角色的距离-1；其他角色计算与你的距离+1。',
+                            hpp_jindouyun_info: '锁定技，你计算与其他角色的距离时，始终-1；其他角色计算与你的距离时，始终+1。',
 
                             biao_zhu: '标·主',
                             biao_hu: '标·虎',
