@@ -24,6 +24,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_caoren',
                             'hpp_chendao',
                             'hpp_daqiao',
+                            'hpp_dengai',
                             'hpp_dianwei',
                             'hpp_diaochan',
                             'hpp_dongbai',
@@ -46,6 +47,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_jiangwei',
                             'hpp_jiaxu',
                             'hpp_liaohua',
+                            'hpp_lidian',
                             'hpp_lingtong',
                             'hpp_liubiao',
                             'hpp_liubei',
@@ -87,6 +89,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_xiahoudun',
                             'hpp_xiahoulingnv',
                             'hpp_xiaoqiao',
+                            'hpp_xuhuang',
                             'hpp_xusheng',
                             'hpp_xunyu',
                             'hpp_xushi',
@@ -97,8 +100,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_yuanshao',
                             'hpp_yuanshu',
                             'hpp_yuji',
+                            'hpp_yujin',
                             'hpp_zhangchunhua',
                             'hpp_zhangfei',
+                            'hpp_zhanghe',
                             'hpp_zhangjiao',
                             'hpp_zhangliao',
                             'hpp_zhangsong',
@@ -232,6 +237,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_chendao: ['male', 'shu', 4, ['hpp_wanglie'], []],
                             // 欢乐大乔
                             hpp_daqiao: ['female', 'wu', 3, ['hpp_wanrong', 'hpp_guose', 'hpp_liuli'], []],
+                            // 欢乐邓艾
+                            hpp_dengai: ['male', 'wei', 4, ['hpp_tuntian', 'zaoxian'], []],
                             // 欢乐典韦
                             hpp_dianwei: ['male', 'wei', 4, ['hpp_qiangxi'], []],
                             // 欢乐貂蝉
@@ -276,6 +283,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jiaxu: ['male', 'qun', 3, ['hpp_wansha', 'luanwu', 'weimu'], []],
                             // 欢乐廖化
                             hpp_liaohua: ['male', 'shu', 4, ['hpp_dangxian', 'hpp_fuli'], []],
+                            // 欢乐李典
+                            hpp_lidian: ['male', 'wei', 3, ['hpp_xunxun', 'wangxi'], []],
                             // 欢乐凌统
                             hpp_lingtong: ['male', 'wu', 4, ['hpp_xuanfeng', 'hpp_yongjin'], []],
                             // 欢乐刘表
@@ -360,6 +369,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xiahouyuan: ['male', 'wei', 4, ['hpp_shensu'], ['unseen']],
                             // 欢乐小乔
                             hpp_xiaoqiao: ['female', 'wu', 3, ['hpp_tianxiang', 'hpp_hongyan'], []],
+                            // 欢乐徐晃
+                            hpp_xuhuang: ['male', 'wei', 4, ['hpp_duanliang', 'hpp_jiezi'], []],
                             // 欢乐荀彧
                             hpp_xunyu: ['male', 'wei', 3, ['hpp_quhu', 'hpp_jieming'], []],
                             // 欢乐徐盛
@@ -380,10 +391,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yuanshu: ['male', 'qun', 4, ['yongsi', 'hpp_weidi'], []],
                             // 欢乐于吉
                             hpp_yuji: ['male', 'qun', 4, ['hpp_guhuo'], []],
+                            // 欢乐于禁
+                            hpp_yujin: ['male', 'wei', 4, ['hpp_yizhong', 'decadezhenjun'], []],
                             // 欢乐张春华
                             hpp_zhangchunhua: ['female', 'wei', 3, ['hpp_jueqing', 'hpp_shangshi'], []],
                             // 欢乐张飞
                             hpp_zhangfei: ['male', 'shu', 4, ['new_repaoxiao', 'hpp_tishen'], []],
+                            // 欢乐张郃
+                            hpp_zhanghe: ['male', 'wei', 4, ['hpp_qiaobian'], []],
                             // 欢乐张角
                             hpp_zhangjiao: ['male', 'qun', 3, ['hpp_leiji', 'hpp_guidao', 'hpp_huangtian'], ['zhu']],
                             // 欢乐张辽
@@ -499,6 +514,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             chendao: ['hpp_chendao', 'chendao', 'old_chendao', 'ns_chendao'],
                             // D
                             daqiao: ['hpp_daqiao', 're_daqiao', 'daqiao'],
+                            dengai: ['hpp_dengai', 're_dengai', 'ol_dengai', 'dengai'],
                             dianwei: ['hpp_dianwei', 'ol_dianwei', 're_dianwei', 'dianwei'],
                             diaochan: ['hpp_diaochan', 're_diaochan', 'diaochan'],
                             dongbai: ['hpp_dongbai', 're_dongbai', 'dongbai', 'jsrg_dongbai'],
@@ -526,6 +542,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             jiaxu: ['hpp_jiaxu', 're_jiaxu', 'jiaxu', 'ns_jiaxu'],
                             // L
                             liaohua: ['hpp_liaohua', 'xin_liaohua', 're_liaohua', 'liaohua'],
+                            re_lidian: ['hpp_lidian', 're_lidian', 'old_re_lidian', 'junk_lidian'],
                             lingtong: ['hpp_lingtong', 'xin_lingtong', 're_lingtong', 'lingtong', 'old_lingtong'],
                             liubiao: ['hpp_liubiao', 're_liubiao', 'xin_liubiao', 'liubiao', 'oldre_liubiao', 'old_liubiao'],
                             liubei: ['hpp_liubei', 're_liubei', 'liubei', 'junk_liubei'],
@@ -576,6 +593,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             xiahoulingnv: ['hpp_xiahoulingnv', 'xiahoulingnv'],
                             xiahouyuan: ['hpp_xiahouyuan', 'ol_xiahouyuan', 're_xiahouyuan', 'xiahouyuan'],
                             xiaoqiao: ['hpp_xiaoqiao', 'ol_xiaoqiao', 're_xiaoqiao', 'xiaoqiao'],
+                            xuhuang: ['hpp_xuhuang', 'ol_xuhuang', 're_xuhuang', 'xuhuang'],
                             xusheng: ['hpp_xusheng', 'xin_xusheng', 're_xusheng', 'xusheng', 'old_xusheng'],
                             xushi: ['hpp_xushi', 'xushi'],
                             xunyu: ['hpp_xunyu', 'ol_xunyu', 're_xunyu', 'xunyu'],
@@ -587,9 +605,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             re_yuanshao: ['hpp_yuanshao', 'ol_yuanshao', 're_yuanshao', 'xin_yuanshao'],
                             yuanshu: ['hpp_yuanshu', 'yl_yuanshu', 'yuanshu', 're_yuanshu', 'old_yuanshu', 'ol_yuanshu'],
                             yuji: ['hpp_yuji', 'xin_yuji', 're_yuji', 'yuji'],
+                            yujin: ['hpp_yujin', 'yujin_yujin', 'ol_yujin', 'xin_yujin', 'yujin'],
                             // Z
                             zhangchunhua: ['hpp_zhangchunhua', 're_zhangchunhua', 'zhangchunhua', 'mini_zhangchunhua'],
                             zhangfei: ['hpp_zhangfei', 're_zhangfei', 'tw_zhangfei', 'xin_zhangfei', 'old_zhangfei', 'zhangfei'],
+                            zhanghe: ['hpp_zhanghe', 're_zhanghe', 'zhanghe'],
                             zhangjiao: ['hpp_zhangjiao', 're_zhangjiao', 'sp_zhangjiao', 'zhangjiao'],
                             zhangliao: ['hpp_zhangliao', 're_zhangliao', 'zhangliao'],
                             zhangsong: ['hpp_zhangsong', 'zhangsong'],
@@ -1204,6 +1224,34 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         }
                                     }
                                 }
+                            },
+
+                            // 邓艾
+                            hpp_tuntian: {
+                                audio: 'tuntian',
+                                subSkill: {
+                                    tuntian: {
+                                        audio: 'tuntian',
+                                        inherit: 'tuntian',
+                                    },
+                                },
+                                group: ['hpp_tuntian_tuntian', 'tuntian_dist'],
+                                trigger: { player: 'phaseEnd' },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseToDiscard('h', get.prompt('hpp_tuntian'), '弃置一张牌并进行“田”判定').set('ai', function (card) {
+                                        var player = _status.event.player;
+                                        return 7 - get.value(card, player);
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        player.logSkill('hpp_tuntian');
+                                        var next = game.createEvent('hpp_tuntian');
+                                        next.player = player;
+                                        next.setContent(lib.skill.tuntian.content);
+                                    }
+                                },
                             },
 
                             // 典韦
@@ -2886,6 +2934,29 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                                 intro: { content: 'limited' },
+                            },
+
+                            // 李典
+                            hpp_xunxun: {
+                                audio: 'xunxun',
+                                inherit: 'xunxun',
+                                group: 'hpp_xunxun_biyue',
+                                subSkill: {
+                                    biyue: {
+                                        audio: 'xunxun',
+                                        trigger: { player: 'phaseJieshuBegin' },
+                                        forced: true,
+                                        locked: false,
+                                        content: function () {
+                                            var cards = get.bottomCards(2);
+                                            if (cards.length) {
+                                                player.gain(cards);
+                                                player.$draw(cards.length);
+                                                game.log(player, '从牌堆底获得了' + get.cnNumber(cards.length) + '张牌');
+                                            }
+                                        },
+                                    },
+                                },
                             },
 
                             // 凌统
@@ -6339,6 +6410,67 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 徐晃
+                            hpp_duanliang: {
+                                audio: 'duanliang1',
+                                group: ['hpp_duanliang1', 'hpp_duanliang3'],
+                                ai: {
+                                    threaten: 1.2
+                                }
+                            },
+                            hpp_duanliang1: {
+                                audio: 2,
+                                audioname: ['re_xuhuang'],
+                                enable: 'chooseToUse',
+                                filterCard: function (card) {
+                                    if (get.type(card) != 'basic' && get.type(card) != 'equip') return false;
+                                    return get.color(card) == 'black';
+                                },
+                                filter: function (event, player) {
+                                    return player.countCards('hes', { type: ['basic', 'equip'], color: 'black' })
+                                },
+                                position: 'hes',
+                                viewAs: { name: 'bingliang' },
+                                prompt: '将一黑色的基本牌或装备牌当兵粮寸断使用',
+                                check: function (card) { return 6 - get.value(card) },
+                                ai: {
+                                    order: 9
+                                }
+                            },
+                            hpp_duanliang2: {
+                                mod: {
+                                    targetInRange: function (card, player, target) {
+                                        if (card.name == 'bingliang') {
+                                            if (get.distance(player, target) <= 2) return true;
+                                        }
+                                    }
+                                }
+                            },
+                            hpp_duanliang3: {
+                                mod: {
+                                    targetInRange: function (card, player, target) {
+                                        if (card.name == 'bingliang') {
+                                            if (target.countCards('h') >= player.countCards('h')) return true;
+                                        }
+                                    }
+                                }
+                            },
+                            hpp_jiezi: {
+                                audio: 'jiezi',
+                                trigger: { global: ['phaseDrawSkipped', 'phaseDrawCancelled'] },
+                                filter: function (event, player) {
+                                    return event.player != player && player.countMark('hpp_jiezi_silent') < 2;
+                                },
+                                forced: true,
+                                logTarget: 'player',
+                                content: function () {
+                                    player.addTempSkill('hpp_jiezi_silent', 'roundStart');
+                                    player.addMark('hpp_jiezi_silent', 1, false);
+                                    player.draw(2);
+                                },
+                                subSkill: { silent: { onremove: true, charlotte: true } },
+                            },
+
                             // 荀彧
                             hpp_quhu: {
                                 audio: 'quhu',
@@ -7528,6 +7660,31 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 于禁
+                            hpp_yizhong: {
+                                audio: 'yizhong',
+                                trigger: { target: 'shaBefore' },
+                                filter: function (event, player) {
+                                    if (player.getEquip(2)) return false;
+                                    return event.card.name == 'sha' && get.suit(event.card) == 'club';
+                                },
+                                forced: true,
+                                content: function () {
+                                    trigger.cancel();
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (player == target && get.subtype(card) == 'equip2') {
+                                                if (get.equipValue(card) <= 5.5) return 0;
+                                            }
+                                            if (target.getEquip(2)) return;
+                                            if (card.name == 'sha' && get.suit(card) == 'club') return 'zerotarget';
+                                        },
+                                    },
+                                },
+                            },
+
                             // 张春华
                             hpp_jueqing: {
                                 trigger: { source: 'damageBefore' },
@@ -7649,6 +7806,88 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             trigger.card.hpp_tishen_effect2 = true;
                                         },
                                     },
+                                },
+                            },
+
+                            // 张郃
+                            hpp_qiaobian: {
+                                audio: 'qiaobian',
+                                group: ['hpp_qiaobian1', 'qiaobian2', 'qiaobian3', 'hpp_qiaobian4'],
+                                trigger: { player: 'phaseEnd' },
+                                filter: function (event, player) {
+                                    return player.getHistory('skipped').length >= 3;
+                                },
+                                forced: true,
+                                locked: false,
+                                content: function () {
+                                    player.draw(2);
+                                },
+                            },
+                            hpp_qiaobian1: {
+                                trigger: { player: 'phaseJudgeBefore' },
+                                filter: function (event, player) {
+                                    return player.countCards('h');
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseToDiscard(get.prompt('hpp_qiaobian'), '弃置一张手牌并跳过判定阶段').set('ai', function (card) {
+                                        var player = _status.event.player, list = player.getHistory('skipped'), num = list.length + 1;
+                                        if (player.countCards('j')) return 10 - get.useful(card);
+                                        if (num >= 3) return -1;
+                                        if (player.countCards('h') > 1) {
+                                            if (!list.contains('phaseDraw')) {
+                                                var check1 = function () {
+                                                    var i, num = 0, num2 = 0, players = game.filterPlayer();
+                                                    for (i = 0; i < players.length; i++) {
+                                                        if (player != players[i] && players[i].countCards('h')) {
+                                                            var att = get.attitude(player, players[i]);
+                                                            if (att <= 0) num++;
+                                                            if (att < 0) num2++;
+                                                        }
+                                                    }
+                                                    return num >= 2 && num2 > 0;
+                                                };
+                                                if (check1()) num++;
+                                            }
+                                            if (!list.contains('phaseUse')) {
+                                                var check;
+                                                if (!player.canMoveCard(true)) check = false;
+                                                else {
+                                                    check = game.hasPlayer(function (current) {
+                                                        return get.attitude(player, current) > 0 && current.countCards('j');
+                                                    });
+                                                    if (!check) {
+                                                        if (player.countCards('h') > player.hp + 1) check = false;
+                                                        else if (player.countCards('h', { name: ['wuzhong'] })) check = false;
+                                                        else check = true;
+                                                    }
+                                                }
+                                                if (check) num++;
+                                            }
+                                            if (num == 2 && !list.contains('phaseDiscard')) num++;
+                                        }
+                                        if (num == 3) return 10 - get.useful(card);
+                                        return -1;
+                                    }).set('logSkill', 'hpp_qiaobian').setHiddenSkill('hpp_qiaobian');
+                                    'step 1'
+                                    if (result.bool) trigger.cancel();
+                                },
+                            },
+                            hpp_qiaobian4: {
+                                trigger: { player: 'phaseDiscardBefore' },
+                                filter: function (event, player) {
+                                    return player.countCards('h');
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    var next = player.chooseToDiscard(get.prompt('hpp_qiaobian'), '弃置一张手牌并跳过弃牌阶段').set('ai', function (card) {
+                                        if (discard) return 100 - get.useful(card);
+                                        return -1;
+                                    }).set('logSkill', 'hpp_qiaobian').setHiddenSkill('hpp_qiaobian').set('bool', player.needsToDiscard() || player.getHistory('skipped').length == 2);
+                                    'step 1'
+                                    if (result.bool) trigger.cancel();
                                 },
                             },
 
@@ -11789,20 +12028,21 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_bulianshi: '#b捞德一评级:3.7',
                             // C
                             hpp_caiwenji: '#b捞德一评级:3.7',
-                            hpp_caocao: '#b捞德一评级:3.0',
+                            hpp_caocao: '#b捞德一评级:3.5',
                             hpp_caochong: '#g捞德一评级:2.6',
                             hpp_caoren: '#g捞德一评级:2.8',
                             hpp_chendao: '#b捞德一评级:3.4',
                             // D
                             hpp_daqiao: '#b捞德一评级:3.5',
+                            hpp_dengai: '#b捞德一评级:3.5',
                             hpp_dianwei: '#b捞德一评级:3.1',
                             hpp_diaochan: '#b捞德一评级:3.5',
                             hpp_dongbai: '#b捞德一评级:3.5',
                             hpp_dongyun: '#g捞德一评级:2.3',
                             hpp_dongzhuo: '#g捞德一评级:2.7',
-                            hpp_dufuren: '#b捞德一评级:3.3',
+                            hpp_dufuren: '#b捞德一评级:3.7',
                             // F
-                            hpp_fuhuanghou: '#b捞德一评级:3.5',
+                            hpp_fuhuanghou: '#b捞德一评级:3.8',
                             // G
                             hpp_ganning: '#b捞德一评级:3.9',
                             hpp_gaoshun: '#b捞德一评级:3.6',
@@ -11822,26 +12062,27 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jiaxu: '#g捞德一评级:2.4',
                             // L
                             hpp_liaohua: '#b捞德一评级:3.2',
-                            hpp_lingtong: '#b捞德一评级:3.7',
+                            hpp_lidian: '#b捞德一评级:3.5',
+                            hpp_lingtong: '#b捞德一评级:3.8',
                             hpp_liubiao: '#b捞德一评级:3.5',
                             hpp_liubei: '#b捞德一评级:3.8',
                             hpp_liufeng: '#b捞德一评级:3.5',
-                            hpp_liushan: '#g捞德一评级2.8',
+                            hpp_liushan: '#g捞德一评级:2.8',
                             hpp_liuxie: '#b捞德一评级:3.2',
                             hpp_liuyan: '#b捞德一评级:3.7',
-                            hpp_luji: '#g捞德一评级2.1',
-                            hpp_lukang: '#r捞德一评级4.0',
-                            hpp_lusu: '#g捞德一评级2.4',
-                            hpp_luxun: '捞德一评级1.4',
-                            hpp_luyusheng: '#b捞德一评级3.8',
+                            hpp_luji: '#g捞德一评级:2.1',
+                            hpp_lukang: '#b捞德一评级"3.9',
+                            hpp_lusu: '#g捞德一评级:2.4',
+                            hpp_luxun: '捞德一评级:1.4',
+                            hpp_luyusheng: '#r捞德一评级:4.0',
                             hpp_lvbu: '#g捞德一评级:2.0',
-                            hpp_lvlingqi: '#r4.2捞德一评级:4.2',
+                            hpp_lvlingqi: '#r4.2捞德一评级:4.4',
                             hpp_lvmeng: '#g捞德一评级:2.6',
                             // M
                             hpp_machao: '#b捞德一评级:3.7',
-                            hpp_masu: '#b捞德一评级3.8',
-                            hpp_mayunlu: '#b捞德一评级3.5',
-                            hpp_menghuo: '#g捞德一评级2.7',
+                            hpp_masu: '#b捞德一评级:3.8',
+                            hpp_mayunlu: '#b捞德一评级:3.5',
+                            hpp_menghuo: '#g捞德一评级:2.7',
                             // P
                             hpp_panfeng: '#b捞德一评级:3.7',
                             hpp_pangde: '#b捞德一评级:3.7',
@@ -11850,50 +12091,53 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_quyi: '#b捞德一评级:3.9',
                             // S
                             hpp_shamoke: '#b捞德一评级:3.5',
-                            hpp_simayi: '#r捞德一评级:4.1',
+                            hpp_simayi: '#r捞德一评级:4.3',
                             hpp_sunce: '#b捞德一评级:3.7',
                             hpp_sunhao: '#b捞德一评级:3.8',
-                            hpp_sunjian: '#b捞德一评级:3.8',
+                            hpp_sunjian: '#b捞德一评级:3.7',
                             hpp_sunliang: '#b捞德一评级:3.6',
                             hpp_sunluban: '#b捞德一评级:3.5',
                             hpp_sunluyu: '#b捞德一评级:3.7',
-                            hpp_sunquan: '#b捞德一评级:3.9',
+                            hpp_sunquan: '#b捞德一评级:3.8',
                             hpp_sunshangxiang: '#b捞德一评级:3.5',
                             // T
                             hpp_taishici: '#b捞德一评级:3.5',
                             // W
-                            hpp_wangping: '#b捞德一评级3.6',
-                            hpp_weiyan: '#b捞德一评级3.0',
-                            hpp_wangyi: '#g捞德一评级2.2',
+                            hpp_wangping: '#b捞德一评级:3.6',
+                            hpp_weiyan: '#b捞德一评级:3.0',
+                            hpp_wangyi: '#g捞德一评级:2.2',
                             // X
-                            hpp_xiahouba: '#b捞德一评级3.4',
-                            hpp_xiahoudun: '#g捞德一评级2.3',
-                            hpp_xiahoulingnv: '#b捞德一评级3.8',
-                            hpp_xiahouyuan: '#g捞德一评级2.4',
-                            hpp_xiaoqiao: '#g捞德一评级2.2',
-                            hpp_xunyu: '#b捞德一评级3.2',
-                            hpp_xusheng: '#g捞德一评级2.6',
-                            hpp_xushi: '#r捞德一评级4.3',
-                            hpp_xuyou: '#b捞德一评级3.3',
-                            hpp_xuzhu: '#g捞德一评级2.8',
+                            hpp_xiahouba: '#b捞德一评级:3.4',
+                            hpp_xiahoudun: '#g捞德一评级:2.3',
+                            hpp_xiahoulingnv: '#b捞德一评级:3.8',
+                            hpp_xiahouyuan: '#g捞德一评级:2.4',
+                            hpp_xiaoqiao: '#g捞德一评级:2.2',
+                            hpp_xuhuang: '#b捞德一评级:3.7',
+                            hpp_xunyu: '#b捞德一评级:3.2',
+                            hpp_xusheng: '#g捞德一评级:2.6',
+                            hpp_xushi: '#r捞德一评级:4.5',
+                            hpp_xuyou: '#b捞德一评级:3.3',
+                            hpp_xuzhu: '#g捞德一评级:2.8',
                             // Y
-                            hpp_yanliangwenchou: '#g捞德一评级2.5',
-                            hpp_yanyan: '#b捞德一评级3.6',
-                            hpp_yuanshao: '#b捞德一评级3.8',
-                            hpp_yuanshu: '#g捞德一评级2.4',
-                            hpp_yuji: '#b捞德一评级3.1',
+                            hpp_yanliangwenchou: '#g捞德一评级:2.5',
+                            hpp_yanyan: '#b捞德一评级:3.6',
+                            hpp_yuanshao: '#b捞德一评级:3.8',
+                            hpp_yuanshu: '#g捞德一评级:2.4',
+                            hpp_yuji: '#b捞德一评级:3.1',
+                            hpp_yujin: '#b捞德一评级:2.8',
                             // Z
                             hpp_zhangchunhua: '#g捞德一评级:2.4',
-                            hpp_zhangfei: '#b捞德一评级:3.6',
+                            hpp_zhangfei: '#b捞德一评级:3.5',
+                            hpp_zhanghe: '#b捞德一评级:3.4',
                             hpp_zhangjiao: '#b捞德一评级:3.9',
                             hpp_zhangliao: '#b捞德一评级:3.7',
                             hpp_zhangsong: '#b捞德一评级:3.2',
                             hpp_zhangxingcai: '#b捞德一评级:3.0',
                             hpp_zhangzhaozhanghong: '#g捞德一评级:2.8',
-                            hpp_zhaoxiang: '#r捞德一评级:4.1',
+                            hpp_zhaoxiang: '#r捞德一评级:4.2',
                             hpp_zhaoyun: '#b捞德一评级:3.7',
                             hpp_zhenji: '#g捞德一评级:2.7',
-                            hpp_zhonghui: '#b捞德一评级:3.8',
+                            hpp_zhonghui: '#b捞德一评级:3.7',
                             hpp_zhongyao: '#g捞德一评级:2.7',
                             hpp_zhouyu: '#b捞德一评级:3.2',
                             hpp_zhugeguo: '#b捞德一评级:3.4',
@@ -11906,23 +12150,23 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zumao: '#b捞德一评级:3.8',
                             hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
-                            hpp_sp_caiwenji: '#b捞德一评级:3.9',
+                            hpp_sp_caiwenji: '#r捞德一评级:4.0',
                             hpp_sp_daqiao: '#r捞德一评级:4.0',
                             hpp_sp_jiangwei: '#b捞德一评级:3.5',
                             hpp_sp_machao: '#b捞德一评级:3.8',
                             hpp_sp_pangde: '#b捞德一评级:3.1',
                             hpp_sp_pangtong: '#b捞德一评级:3.8',
                             hpp_sp_sunshangxiang: '#b捞德一评级:3.8',
-                            hpp_sp_taishici: '#r捞德一评级:4.2',
+                            hpp_sp_taishici: '#r捞德一评级:4.1',
                             hpp_sp_xiaoqiao: '#b捞德一评级:3.8',
                             hpp_sp_zhaoyun: '#g捞德一评级:2.3',
                             // 神
-                            hpp_shen_caocao: '#r捞德一评级:4.2',
-                            hpp_shen_guojia: '#r捞德一评级:4.0',
+                            hpp_shen_caocao: '#r捞德一评级:4.4',
+                            hpp_shen_guojia: '#r捞德一评级:4.1',
                             hpp_shen_luxun: '#r捞德一评级:4.0',
                             hpp_shen_lvbu: '#r捞德一评级:4.0',
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
-                            hpp_shen_zhaoyun: '#r捞德一评级:4.3',
+                            hpp_shen_zhaoyun: '#r捞德一评级:4.2',
                             hpp_shen_zhangjiao: '#r捞德一评级:4.7',
                             hpp_shen_zhugeliang: '#r捞德一评级:4.0',
                             // 斗地主
@@ -11972,6 +12216,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guose_info: '锁定技，当你失去方块牌时，摸1张牌。',
                             hpp_liuli: '流离',
                             hpp_liuli_info: '你被【杀】时，可以弃一张牌转移给你攻击范围内的一名其他角色。',
+                            hpp_dengai: '邓艾',
+                            hpp_tuntian: '屯田',
+                            hpp_tuntian_info: '当你于回合外失去牌后，你可以进行判定，若结果不为红桃，将判定牌置于你的武将牌上，称为“田”；回合结束时，你可以弃置一张手牌并进行一次“田”的判定；你计算与其他角色的距离-X（X为“田”的数量）。',
                             hpp_dianwei: '典韦',
                             hpp_qiangxi: '强袭',
                             hpp_qiangxi_info: '出牌阶段，你可以失去1点体力，并摸1张牌，然后对攻击范围的一名其他角色造成1点伤害（每名角色限一次）；每当其他角色受到伤害时，你可以弃置一张装备牌，然后本次伤害值+1。',
@@ -12081,6 +12328,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_dangxian_info: '回合开始时你进行一个额外的出牌阶段并摸一张【杀】。',
                             hpp_fuli: '伏枥',
                             hpp_fuli_info: '限定技，当你处于濒死状态时，你可以将体力回复至X点且手牌摸至X张（X为全场势力数），然后若X大于3，你翻面。',
+                            hpp_lidian: '李典',
+                            hpp_xunxun: '恂恂',
+                            hpp_xunxun_info: '摸牌阶段开始时，你可以观看牌堆顶的四张牌，然后将其中的两张牌置于牌堆顶，将其余的牌置于牌堆底，回合结束阶段，你获得牌堆底的两张牌。',
                             hpp_lingtong: '凌统',
                             hpp_xuanfeng: '旋风',
                             hpp_xuanfeng_info: '当你于弃牌阶段弃置过至少两张牌，或当你失去装备区里的牌后，你可以弃置至多两名其他角色的共计两张牌。然后若此时是你的回合内，你可以对其中一名角色造成1点伤害。',
@@ -12262,6 +12512,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_tianxiang_info: '当你受到伤害时，可以弃置一张红桃手牌，选择一名角色代替你承受此伤害，若如此做，你选择一项：1.其摸一张牌；2.令其摸X张牌（X为其损失的体力值且至多为5）。',
                             hpp_hongyan: '红颜',
                             hpp_hongyan_info: '锁定技，你的黑桃牌视为红桃牌，若你的装备区有红桃牌，你的手牌上限等于体力上限。',
+                            hpp_xuhuang: '徐晃',
+                            hpp_duanliang: '断粮',
+                            hpp_duanliang1: '断粮',
+                            hpp_duanliang_info: '你可以将一张黑色的基本牌或装备牌当【兵粮寸断】使用；你对手牌数大于等于你的角色使用【兵粮寸断】无距离限制。',
+                            hpp_jiezi: '截辎',
+                            hpp_jiezi_info: '锁定技，每轮限两次，一名其他角色跳过摸牌阶段后，你摸两张牌。',
                             hpp_xunyu: '荀彧',
                             hpp_quhu: '驱虎',
                             hpp_quhu_backup: '驱虎',
@@ -12305,6 +12561,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yuji: '于吉',
                             hpp_guhuo: '蛊惑',
                             hpp_guhuo_info: '你使用的【杀】或伤害锦囊牌结算后，若没有造成伤害，则将此牌移出游戏，你摸一张牌，并在回合结束后将此牌归还；若造成伤害，你摸一张牌，每回合限一次。',
+                            hpp_yujin: '于禁',
+                            hpp_yizhong: '毅重',
+                            hpp_yizhong_info: '锁定技，当你的防具栏为空时，梅花花色的杀对你无效。',
                             // Z
                             hpp_zhangchunhua: '张春华',
                             hpp_jueqing: '绝情',
@@ -12314,6 +12573,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangfei: '张飞',
                             hpp_tishen: '替身',
                             hpp_tishen_info: '回合外，获得所有对你使用且未对你造成伤害的【杀】。出牌阶段你使用的杀被闪抵消后，则你本阶段使用的下一张【杀】不可被响应且造成的伤害+1。',
+                            hpp_zhanghe: '张郃',
+                            hpp_qiaobian: '巧变',
+                            hpp_qiaobian_info: '你可以弃置一张手牌并跳过一个阶段（准备阶段和结束阶段除外）：若跳过摸牌阶段，你可以获得至多两名角色的各一张手牌；若跳过出牌阶段，你可以移动场上的一张牌。回合结束时，若你跳过了至少三个阶段，则你摸两张牌。',
                             hpp_zhangjiao: '张角',
                             hpp_leiji: '雷击',
                             hpp_leiji_info: '当你使用【闪】或【闪电】时，你可以令一名其他角色判定，若结果为：黑桃，你对其造成2点伤害；梅花，你回复1点体力，然后对其造成1点伤害。你的手牌上限+2。',
@@ -12502,7 +12764,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sijun_info: '准备阶段，若“黄”标记数量大于牌堆的牌数，你可以移去所有“黄”，然后从牌堆中随机获得点数之和为36的牌，并洗牌。',
                             hpp_tianjie: '天劫',
                             hpp_tianjie_info: '每个回合结束时，若本回合牌堆洗过牌，你可以选择至多3名其他角色，对这些角色分别造成X点雷电伤害（X为其手牌中【闪】的数量且至少为1）',
-                            hpp_shen_zhugeliang:'神诸葛亮',
+                            hpp_shen_zhugeliang: '神诸葛亮',
                             hpp_qixing: '七星',
                             hpp_qixing_info: '游戏开始时你多摸七张牌，置于武将牌上，称为“星”。你的每个摸牌阶段结束时，可以用任意张手牌交换等量的“星”。',
                             hpp_kuangfeng: '狂风',
