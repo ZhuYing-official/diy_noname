@@ -2544,15 +2544,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// g绿 b蓝 r红 p粉
 			cuishi: '#g捞德一评级:2.4',
 			liucong: '#g捞德一评级:2.1',
-			hok_daji: '#b捞德一评级:3.6',
+			hok_daji: '#b捞德一评级:3.7',
 			hok_sp_lixin: '#r捞德一评级:4.0',
 			hok_makeboluo: '#b捞德一评级:3.7',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
-			hok_sunwukong: '#b捞德一评级:3.7',
-			hok_wuzetian: '#r捞德一评级:4.0',
-			shen_caozhi: '#r捞德一评级:4.2',
-			shen_dongzhuo: '#r捞德一评级:4.1',
-			shen_lusu: '#r捞德一评级:4.3',
+			hok_sunwukong: '#b捞德一评级:4.0',
+			hok_wuzetian: '#b捞德一评级:3.9',
+			shen_caozhi: '#r捞德一评级:4.3',
+			shen_dongzhuo: '#r捞德一评级:4.2',
+			shen_lusu: '#r捞德一评级:4.4',
 		},
 		translate: {
 			// 崔氏
