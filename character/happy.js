@@ -62,7 +62,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterSort: {
 			happy: {
 				correction_history: ['cuishi', 'liucong'],
-				honor_of_kings: ['hok_daji', 'hok_sp_lixin', 'hok_makeboluo', 'hok_sp_mingshiyin', 'hok_sunwukong'],
+				honor_of_kings: ['hok_daji', 'hok_sp_lixin', 'hok_makeboluo', 'hok_sp_mingshiyin', 'hok_sunwukong', 'hok_wuzetian'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
 			},
 		},
@@ -630,6 +630,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					// 'step 3'
 					player.removeSkill('hok_qianglin_draw');
 				},
+				group: ['hok_qianglin_begin'],
 				subSkill: {
 					draw: {
 						trigger: {
@@ -641,6 +642,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							player.draw();
 						},
 					},
+					begin: {
+						frequent: true,
+						trigger: { player: 'phaseUseBegin' },
+						content: function () {
+							var card = get.cardPile(function (cardx) {
+								return cardx.name == 'sha';
+							});
+							if (card) player.gain(card, 'gain2', 'log');
+						},
+					}
 				},
 				ai: {
 					order: function () {
@@ -758,19 +769,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					var cards = tar.getCards('hej');
 
 					var str = '';
-					if (r < 0.01) {
+					if (r < 0.02) {
 						// 1
 						str += '大凶';
-					} else if (r < 0.21) {
+					} else if (r < 0.18) {
 						// 2
 						str += '中凶';
 					} else if (r < 0.5) {
 						// 3
 						str += '小凶';
-					} else if (r < 0.79) {
+					} else if (r < 0.82) {
 						// 4
 						str += '小吉';
-					} else if (r < 0.99) {
+					} else if (r < 0.98) {
 						// 5
 						str += '中吉';
 					} else {
@@ -780,13 +791,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.popup(str);
 					game.log(str);
 
-					if (r < 0.01) {
+					if (r < 0.02) {
 						// 1
 						if (!gua6) {
 							tar.die();
 							trigger.cancel();
 						}
-					} else if (r < 0.21) {
+					} else if (r < 0.18) {
 						// 2
 						if (!gua5) {
 							trigger.num++;
@@ -801,12 +812,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								tar.discard(cards.randomGet());
 							}
 						}
-					} else if (r < 0.79) {
+					} else if (r < 0.82) {
 						// 4
 						if (!gua3) {
 							tar.draw();
 						}
-					} else if (r < 0.99) {
+					} else if (r < 0.98) {
 						// 5
 						if (!gua2) {
 							trigger.cancel();
@@ -848,19 +859,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 					// var str=get.translation(player)+'占卜结果为：';
 					var str = '';
-					if (r < 0.01) {
+					if (r < 0.02) {
 						// 1
 						str += '大吉';
-					} else if (r < 0.21) {
+					} else if (r < 0.18) {
 						// 2
 						str += '中吉';
 					} else if (r < 0.5) {
 						// 3
 						str += '小吉';
-					} else if (r < 0.79) {
+					} else if (r < 0.82) {
 						// 4
 						str += '小凶';
-					} else if (r < 0.99) {
+					} else if (r < 0.98) {
 						// 5
 						str += '中凶';
 					} else {
@@ -871,13 +882,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					game.delay(0.5);
 					game.log(str);
 
-					if (r < 0.01) {
+					if (r < 0.02) {
 						// 1
 						if (!gua1) {
 							tar.die();
 							trigger.cancel();
 						}
-					} else if (r < 0.21) {
+					} else if (r < 0.18) {
 						// 2
 						if (!gua2) {
 							trigger.num++;
@@ -892,12 +903,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								tar.discard(cards.randomGet());
 							}
 						}
-					} else if (r < 0.79) {
+					} else if (r < 0.82) {
 						// 4
 						if (!gua4) {
 							tar.draw();
 						}
-					} else if (r < 0.99) {
+					} else if (r < 0.98) {
 						// 5
 						if (!gua5) {
 							trigger.cancel();
@@ -1399,41 +1410,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				}
 			},
-			/* old
-			hok_diwei: {
-				usable: 1,
-				enable: 'phaseUse',
-				filterTarget: function (card, player, target) {
-					return target == player.next || target == player.previous;
-				},
-				filterCard: true,
-				selectCard: 1,
-				filter: function (event, player) {
-					return player.countCards('h') > 0 && game.countPlayer(function (current) {
-						return current.isAlive();
-					}) > 2;
-				},
-				content: function () {
-					player.discard(cards);
-					var targetSwap = target.next == player ? target.previous : target.next;
-					game.broadcastAll(function (target1, target2) {
-						game.swapSeat(target1, target2);
-					}, target, targetSwap);
-					player.addMark('hok_dihui', 1);
-				},
-				check: function (card) {
-					return (5 - get.value(card)) && _status.event.player.countCards('h') > 2;
-				},
-				ai: {
-					order: function () {
-						return get.order({ name: 'tao' }) - 0.3;
-					},
-					result: {
-						player: 1
-					},
-				}
-			},
-			*/
 			hok_diwei: {
 				derivation: ['feiying'],
 				usable: 1,
@@ -2546,9 +2522,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			liucong: '#g捞德一评级:2.1',
 			hok_daji: '#b捞德一评级:3.7',
 			hok_sp_lixin: '#r捞德一评级:4.0',
-			hok_makeboluo: '#b捞德一评级:3.7',
+			hok_makeboluo: '#b捞德一评级:3.9',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
-			hok_sunwukong: '#b捞德一评级:4.0',
+			hok_sunwukong: '#r捞德一评级:4.0',
 			hok_wuzetian: '#b捞德一评级:3.9',
 			shen_caozhi: '#r捞德一评级:4.3',
 			shen_dongzhuo: '#r捞德一评级:4.2',
@@ -2592,7 +2568,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_zuolun: '左轮',
 			hok_zuolun_info: '锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
 			hok_qianglin: '枪林',
-			hok_qianglin_info: '出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀（不可以触发酒），若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
+			hok_qianglin_info: '出牌阶段开始时，你获得一张【杀】。出牌阶段限1次，当你使用【杀】时，你可以再弃置1张【杀】，视为对目标使用2张无颜色的雷杀（不可以触发酒），若以此法每次令任意角色受到伤害或流失体力，你模1张牌。',
 			hok_danyu: '弹雨',
 			hok_danyu_info: '出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// SP明世隐
@@ -2607,7 +2583,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				3.小吉/小凶：受到伤害的角色随机弃置一张牌；<br/>\
 				4.小凶/小吉：受到伤害的角色摸一张牌；<br/>\
 				5.中凶/中吉：受到伤害的角色将此伤害改为回复体力并摸一张牌；<br/>\
-				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌。',
+				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌。<br/>\
+				(大、中、小概率分别为：2% 16% 32%)',
 			hok_biangua: '变卦',
 			hok_biangua3: '变卦',
 			hok_biangua_info: '当你发动命卦后，获得1个“卦”标记。出牌阶段限一次，当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
