@@ -1441,6 +1441,7 @@ window.noname_character_rank = {
 			'hpp_zuoci',
 			'hpp_sp_caiwenji',
 			'hpp_sp_daqiao',
+			'hpp_sp_diaochan',
 			'hpp_sp_jiangwei',
 			'hpp_sp_machao',
 			'hpp_sp_pangde',

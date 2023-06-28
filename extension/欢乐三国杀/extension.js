@@ -140,6 +140,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zuoci',
                             'hpp_sp_caiwenji',
                             'hpp_sp_daqiao',
+                            'hpp_sp_diaochan',
                             'hpp_sp_jiangwei',
                             'hpp_sp_machao',
                             'hpp_sp_pangde',
@@ -486,6 +487,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_caiwenji: ['female', 'wei', 3, ['hpp_chenqing', 'hpp_mozhi'], []],
                             // 欢乐SP大乔
                             hpp_sp_daqiao: ['female', 'wu', 3, ['hpp_yanxiao', 'hpp_guose', 'hpp_anxian'], []],
+                            // 欢乐SP貂蝉
+                            hpp_sp_diaochan: ['female', 'qun', 3, ['hpp_lihun', 'hpp_pianyi'], []],
                             // 欢乐SP姜维
                             hpp_sp_jiangwei: ['male', 'wei', 4, ['hpp_kunfen', 'hpp_fengliang'], []],
                             // 欢乐SP马超
@@ -529,6 +532,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yanliangwenchou: '东汉末年河北袁绍部下武将，素有威名。颜良与文丑一起作为袁绍军队的勇将而闻名。建安四年（199），袁绍以颜良、文丑为将，率精卒十万，准备攻许都；次年，兵进黎阳，遣颜良攻白马。终均亡于关羽刀下。',
                             hpp_sp_caiwenji: '名琰，原字昭姬，晋时避司马昭讳，改字文姬，东汉末年陈留圉（今河南开封杞县）人，东汉大文学家蔡邕的女儿，是中国历史上著名的才女和文学家，精于天文数理，既博学能文，又善诗赋，兼长辩才与音律。代表作有《胡笳十八拍》、《悲愤诗》等 。',
                             hpp_sp_daqiao: '庐江皖县人，为乔公长女，孙策之妻，小乔之姊。与小乔并称为“江东二乔”，容貌国色流离。',
+                            hpp_sp_diaochan: '中国古代四大美女之一，有闭月羞花之貌。司徒王允之义女，由王允授意施行连环计，离间董卓、吕布，借布手除卓。后貂蝉成为吕布的妾。',
                             hpp_sp_jiangwei: '字伯约，天水冀人。三国时期蜀汉著名将领、军事统帅。原为曹魏天水郡的中郎将，后降蜀汉，官至凉州刺史、大将军。诸葛亮去世后继承诸葛亮的遗志，继续率领蜀汉军队北伐曹魏，与曹魏名将陈泰、郭淮、邓艾等多次交手。',
                             hpp_sp_machao: '字孟起，扶风茂陵人。面如冠玉，目如流星，虎体猿臂，彪腹狼腰，声雄力猛。因衣着讲究，举止非凡，故人称“锦马超”。麾铁骑，捻金枪。',
                             hpp_sp_pangde: '字令明，东汉末年雍州南安郡狟道县（今甘肃天水市武山县四门镇）人。曹操部下重要将领。官至立义将军，拜关门亭侯。谥曰壮侯。有一子庞会。',
@@ -690,6 +694,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // SP
                             sp_caiwenji: ['hpp_sp_caiwenji', 'sp_caiwenji'],
                             sp_daqiao: ['hpp_sp_daqiao', 'sp_daqiao'],
+                            sp_diaochan: ['hpp_sp_diaochan', 'sp_diaochan'],
                             sp_jiangwei: ['hpp_sp_jiangwei', 'sp_jiangwei'],
                             sp_machao: ['hpp_sp_machao', 'sp_machao', 'old_machao'],
                             sp_pangde: ['hpp_sp_pangde', 'sp_pangde'],
@@ -11474,6 +11479,32 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // SP貂蝉
+                            hpp_lihun: {
+                                audio: 'lihun',
+                                inherit: 'lihun',
+                                filterTarget: lib.filter.notMe,
+                                filter: function (event, player) {
+                                    return game.hasPlayer(function (current) {
+                                        return current != player && current.countCards('h');
+                                    });
+                                },
+                                filterCard: () => false,
+                                selectCard: -1,
+                            },
+                            biyue_sp_diaochan: { audio: 2 },
+                            hpp_pianyi: {
+                                audio: 'biyue',
+                                audioname2: { hpp_sp_diaochan: 'biyue_sp_diaochan' },
+                                trigger: { player: 'phaseJieshuBegin' },
+                                frequent: true,
+                                content: function () {
+                                    var num = 1;
+                                    if (player.isTurnedOver()) num = 3;
+                                    player.draw(num);
+                                },
+                            },
+
                             // SP姜维
                             hpp_kunfen: {
                                 audio: 'kunfen',
@@ -13412,6 +13443,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // SP
                             hpp_sp_caiwenji: '#r捞德一评级:4.0',
                             hpp_sp_daqiao: '#r捞德一评级:4.0',
+                            hpp_sp_diaochan: '#b捞德一评级:3.6',
                             hpp_sp_jiangwei: '#b捞德一评级:3.5',
                             hpp_sp_machao: '#b捞德一评级:3.8',
                             hpp_sp_pangde: '#b捞德一评级:3.1',
@@ -13419,7 +13451,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_sunshangxiang: '#b捞德一评级:3.8',
                             hpp_sp_taishici: '#r捞德一评级:4.1',
                             hpp_sp_xiaoqiao: '#b捞德一评级:3.8',
-                            hpp_sp_zhaoyun: '#g捞德一评级:2.3',
+                            hpp_sp_zhaoyun: '#g捞德一评级:2.6',
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.4',
                             hpp_shen_guojia: '#r捞德一评级:4.1',
@@ -14005,6 +14037,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yanxiao_info: '出牌阶段，你可以将一张方块牌置于一名角色的判定区内。判定区内有“言笑”牌的角色下个判定阶段开始时，获得其判定区里的所有牌，并进行一次判定，若为红色，其摸一张牌。若为黑色，本回合出杀次数+1。',
                             hpp_anxian: '安娴',
                             hpp_anxian_info: '每当你使用【杀】指定目标时，你可以令其弃置一张手牌；当你成为【杀】的目标时，你可以弃置一张手牌使之无效，然后该【杀】的使用者摸一张牌，若你弃置的是方块牌，则视为对【杀】的来源使用一张【杀】（此杀不能触发安娴）。',
+                            hpp_sp_diaochan: 'SP貂蝉',
+                            hpp_lihun: '离魂',
+                            hpp_lihun_info: '出牌阶段限一次，你可翻面，并获得一名其他角色所有手牌。出牌阶段结束时，你须为该角色每一点体力分配给其一张牌。',
+                            hpp_pianyi: '翩仪',
+                            hpp_pianyi_info: '回合结束阶段开始时，你可以摸一张牌，如你处于翻面状态，则摸三张牌。',
                             hpp_sp_jiangwei: 'SP姜维',
                             hpp_kunfen: '困奋',
                             hpp_kunfen_info: '结束阶段，你可以失去1点体力，然后摸两张牌，并可以视为对一名角色使用【火攻】。',
