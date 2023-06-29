@@ -50,6 +50,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_guohuai',
                             'hpp_guohuanghou',
                             'hpp_guojia',
+                            'hpp_handang',
                             'hpp_haozhao',
                             'hpp_huaman',
                             'hpp_huanggai',
@@ -304,6 +305,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guohuanghou: ['female', 'wei', 3, ['hpp_jiaozhao', 'hpp_danxin'], []],
                             // 欢乐郭嘉
                             hpp_guojia: ['male', 'wei', 3, ['hpp_tiandu', 'hpp_yiji'], []],
+                            // 欢乐韩当
+                            hpp_handang: ['male', 'wu', 4, ['xingongji', 'xinjiefan'], []],
                             // 欢乐郝昭
                             hpp_haozhao: ['male', 'wei', 4, ['drlt_zhenggu'], []],
                             // 欢乐花鬘
@@ -590,6 +593,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             guohuanghou: ['hpp_guohuanghou', 're_guohuanghou', 'guohuanghou'],
                             guojia: ['hpp_guojia', 're_guojia', 'guojia'],
                             // H
+                            handang: ['hpp_handang', 'tw_handang', 'xin_handang', 're_handang', 'handang', 'old_handang'],
                             haozhao: ['hpp_haozhao', 'haozhao'],
                             huaman: ['hpp_huaman', 'huaman', 'sp_huaman'],
                             huanggai: ['hpp_huanggai', 're_huanggai', 'huanggai'],
@@ -770,7 +774,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     }
                                     'step 1'
                                     player.chooseTarget(get.prompt2('hpp_anxu'), function (card, player, target) {
-                                        alert(event.notMeMaxHand);
+                                        game.log(target, ' ', target != player && target.countCards('h') && target.countCards('h') == event.notMeMaxHand);
+                                        game.log('target != player', target != player);
+                                        game.log("target.countCards('h')", target.countCards('h'));
+                                        game.log("event.notMeMaxHand", event.notMeMaxHand);
                                         return target != player && target.countCards('h') && target.countCards('h') == event.notMeMaxHand;
                                         // return target.isMaxHandcard() && target.countCards('h') && player != target;
                                     }).set('ai', function (target) {
@@ -3396,9 +3403,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     var str = '###矫诏(' + (player.countMark('hpp_danxin') + 1) + '级)';
                                     str += '###请选择并声明' + get.translation(cards[0]) + '视为的牌';
                                     if (player.countMark('hpp_danxin') < 2) str += '，且此牌不能指定你为目标';
-                                    player.chooseButton([str, [list, 'vcard']], true).set('filterButton', function (button) {
-                                        return _status.event.list2.contains(button.link);
-                                    }).set('ai', function (button) {
+                                    // player.chooseButton([str, [list, 'vcard']], true).set('filterButton', function (button) {
+                                    //     return _status.event.list2.contains(button.link);
+                                    // }).set('ai', function (button) {
+                                    //     var player = _status.event.player;
+                                    //     return player.getUseValue({ name: button.link[2], nature: button.link[3] });
+                                    // }).set('list2', list2);
+                                    player.chooseButton([str, [list2, 'vcard']], true).set('ai', function (button) {
                                         var player = _status.event.player;
                                         return player.getUseValue({ name: button.link[2], nature: button.link[3] });
                                     }).set('list2', list2);
@@ -7040,6 +7051,104 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: { combo: 'hpp_feijun' },
                             },
 
+                            // 王异
+                            hpp_zhenlie: {
+                                audio: 'zhenlie',
+                                filter: function (event, player) {
+                                    return event.player != player && event.card && (event.card.name == 'sha' || get.type(event.card) == 'trick');
+                                },
+                                logTarget: 'player',
+                                check: function (event, player) {
+                                    if (event.getParent().excluded.contains(player)) return false;
+                                    if (get.attitude(player, event.player) > 0) {
+                                        return false;
+                                    }
+                                    if (get.tag(event.card, 'respondSha')) {
+                                        if (player.countCards('h', { name: 'sha' }) == 0) {
+                                            return true;
+                                        }
+                                    }
+                                    else if (get.tag(event.card, 'respondShan')) {
+                                        if (player.countCards('h', { name: 'shan' }) == 0) {
+                                            return true;
+                                        }
+                                    }
+                                    else if (get.tag(event.card, 'damage')) {
+                                        if (event.card.name == 'shuiyanqijunx') return player.countCards('e') == 0;
+                                        return true;
+                                    }
+                                    else if ((event.card.name == 'shunshou' || (event.card.name == 'zhujinqiyuan' && (event.card.yingbian || get.distance(event.player, player) < 0))) && player.hp > 2) {
+                                        return true;
+                                    }
+                                    return false;
+                                },
+                                trigger: { target: 'useCardToTargeted' },
+                                content: function () {
+                                    "step 0"
+                                    player.loseHp();
+                                    "step 1"
+                                    trigger.getParent().excluded.add(player);
+                                    "step 2"
+                                    if (trigger.player.countCards('he')) {
+                                        player.discardPlayerCard(trigger.player, 'he', true);
+                                    }
+                                },
+                                ai: {
+                                    expose: 0.3
+                                }
+                            },
+                            hpp_miji: {
+                                audio: 'miji',
+                                trigger: { player: 'phaseJieshuBegin' },
+                                filter: function (event, player) {
+                                    return player.hp < player.maxHp;
+                                },
+                                content: function () {
+                                    "step 0"
+                                    event.num = player.getDamagedHp();
+                                    player.draw(event.num);
+                                    "step 1"
+                                    var check = player.countCards('h') - event.num;
+                                    player.chooseCardTarget({
+                                        selectCard: event.num,
+                                        filterTarget: function (card, player, target) {
+                                            return player != target;
+                                        },
+                                        ai1: function (card) {
+                                            var player = _status.event.player;
+                                            if (player.maxHp - player.hp == 1 && card.name == 'du') return 30;
+                                            var check = _status.event.check;
+                                            if (check < 1) return 0;
+                                            if (player.hp > 1 && check < 2) return 0;
+                                            return get.unuseful(card) + 9;
+                                        },
+                                        ai2: function (target) {
+                                            var att = get.attitude(_status.event.player, target);
+                                            if (ui.selected.cards.length == 1 && ui.selected.cards[0].name == 'du') return 1 - att;
+                                            return att - 2;
+                                        },
+                                        prompt: '将' + get.cnNumber(event.num) + '张手牌交给一名其他角色',
+                                    }).set('check', check);
+                                    "step 2"
+                                    if (result.bool) {
+                                        player.give(result.cards, result.targets[0]);
+                                        player.line(result.targets, 'green');
+                                    }
+                                },
+                                ai: {
+                                    threaten: function (player, target) {
+                                        if (target.hp == 1) return 3;
+                                        if (target.hp == 2) return 1.5;
+                                        return 0.5;
+                                    },
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (get.tag(card, 'recover') && player.hp >= player.maxHp - 1) return [0, 0];
+                                        }
+                                    }
+                                }
+                            },
+
                             // 魏延
                             hpp_kuanggu: {
                                 audio: 'kuanggu',
@@ -7150,104 +7259,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         }
                                     },
                                 },
-                            },
-
-                            // 王异
-                            hpp_zhenlie: {
-                                audio: 'zhenlie',
-                                filter: function (event, player) {
-                                    return event.player != player && event.card && (event.card.name == 'sha' || get.type(event.card) == 'trick');
-                                },
-                                logTarget: 'player',
-                                check: function (event, player) {
-                                    if (event.getParent().excluded.contains(player)) return false;
-                                    if (get.attitude(player, event.player) > 0) {
-                                        return false;
-                                    }
-                                    if (get.tag(event.card, 'respondSha')) {
-                                        if (player.countCards('h', { name: 'sha' }) == 0) {
-                                            return true;
-                                        }
-                                    }
-                                    else if (get.tag(event.card, 'respondShan')) {
-                                        if (player.countCards('h', { name: 'shan' }) == 0) {
-                                            return true;
-                                        }
-                                    }
-                                    else if (get.tag(event.card, 'damage')) {
-                                        if (event.card.name == 'shuiyanqijunx') return player.countCards('e') == 0;
-                                        return true;
-                                    }
-                                    else if ((event.card.name == 'shunshou' || (event.card.name == 'zhujinqiyuan' && (event.card.yingbian || get.distance(event.player, player) < 0))) && player.hp > 2) {
-                                        return true;
-                                    }
-                                    return false;
-                                },
-                                trigger: { target: 'useCardToTargeted' },
-                                content: function () {
-                                    "step 0"
-                                    player.loseHp();
-                                    "step 1"
-                                    trigger.getParent().excluded.add(player);
-                                    "step 2"
-                                    if (trigger.player.countCards('he')) {
-                                        player.discardPlayerCard(trigger.player, 'he', true);
-                                    }
-                                },
-                                ai: {
-                                    expose: 0.3
-                                }
-                            },
-                            hpp_miji: {
-                                audio: 'miji',
-                                trigger: { player: 'phaseJieshuBegin' },
-                                filter: function (event, player) {
-                                    return player.hp < player.maxHp;
-                                },
-                                content: function () {
-                                    "step 0"
-                                    event.num = player.getDamagedHp();
-                                    player.draw(event.num);
-                                    "step 1"
-                                    var check = player.countCards('h') - event.num;
-                                    player.chooseCardTarget({
-                                        selectCard: event.num,
-                                        filterTarget: function (card, player, target) {
-                                            return player != target;
-                                        },
-                                        ai1: function (card) {
-                                            var player = _status.event.player;
-                                            if (player.maxHp - player.hp == 1 && card.name == 'du') return 30;
-                                            var check = _status.event.check;
-                                            if (check < 1) return 0;
-                                            if (player.hp > 1 && check < 2) return 0;
-                                            return get.unuseful(card) + 9;
-                                        },
-                                        ai2: function (target) {
-                                            var att = get.attitude(_status.event.player, target);
-                                            if (ui.selected.cards.length == 1 && ui.selected.cards[0].name == 'du') return 1 - att;
-                                            return att - 2;
-                                        },
-                                        prompt: '将' + get.cnNumber(event.num) + '张手牌交给一名其他角色',
-                                    }).set('check', check);
-                                    "step 2"
-                                    if (result.bool) {
-                                        player.give(result.cards, result.targets[0]);
-                                        player.line(result.targets, 'green');
-                                    }
-                                },
-                                ai: {
-                                    threaten: function (player, target) {
-                                        if (target.hp == 1) return 3;
-                                        if (target.hp == 2) return 1.5;
-                                        return 0.5;
-                                    },
-                                    effect: {
-                                        target: function (card, player, target) {
-                                            if (get.tag(card, 'recover') && player.hp >= player.maxHp - 1) return [0, 0];
-                                        }
-                                    }
-                                }
                             },
 
                             // 太史慈
@@ -13340,6 +13351,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guohuanghou: '#b捞德一评级:3.8',
                             hpp_guojia: '捞德一评级1.2',
                             // H
+                            hpp_handang: '#g捞德一评级:2.5',
                             hpp_haozhao: '#g捞德一评级:2.8',
                             hpp_huaman: '#r捞德一评级:4.3',
                             hpp_huanggai: '#b捞德一评级:3.5',
@@ -13645,6 +13657,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yiji: '遗计',
                             hpp_yiji_info: '当你受到1点伤害后，你可以观看牌堆顶的两张牌，然后交给任意角色。',
                             // H
+                            hpp_handang: '韩当',
                             hpp_haozhao: '郝昭',
                             hpp_huaman: '花鬘',
                             hpp_souying: '薮影',
