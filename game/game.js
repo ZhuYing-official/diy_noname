@@ -23795,6 +23795,14 @@
 					}
 					return true;
 				},
+				isMaxHandcardNotMe: function (p) {
+					var nh = this.countCards('h');
+					for (var i = 0; i < game.players.length; i++) {
+						if (game.players[i].isOut() || game.players[i] == p) continue;
+						if (game.players[i].countCards('h') > nh) return false;
+					}
+					return true;
+				},
 				isMinHandcard: function (equal) {
 					var nh = this.countCards('h');
 					for (var i = 0; i < game.players.length; i++) {

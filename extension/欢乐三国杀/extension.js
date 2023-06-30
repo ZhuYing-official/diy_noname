@@ -800,25 +800,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 content: function () {
                                     'step 0'
-                                    event.notMeMaxHand = 0;
-                                    for (var i = 0; i < game.players.length; i++) {
-                                        if (game.players[i].isOut() || game.players[i] == player) continue;
-                                        event.notMeMaxHand = game.players[i].countCards('h') > event.notMeMaxHand ? game.players[i].countCards('h') : event.notMeMaxHand;
-                                    }
-                                    'step 1'
                                     player.chooseTarget(get.prompt2('hpp_anxu'), function (card, player, target) {
-                                        game.log(target, ' ', target != player && target.countCards('h') && target.countCards('h') == event.notMeMaxHand);
-                                        game.log('target != player', target != player);
-                                        game.log("target.countCards('h')", target.countCards('h'));
-                                        game.log("event.notMeMaxHand", event.notMeMaxHand);
-                                        return target != player && target.countCards('h') && target.countCards('h') == event.notMeMaxHand;
-                                        // return target.isMaxHandcard() && target.countCards('h') && player != target;
+                                        return target.isMaxHandcardNotMe(player) && target.countCards('h') && player != target;
                                     }).set('ai', function (target) {
                                         var att = get.attitude(_status.event.player, target);
                                         if (target.hasSkill('tuntian')) return att / 10;
                                         return -att;
                                     });
-                                    'step 2'
+                                    'step 1'
                                     if (result.bool) {
                                         var target = result.targets[0];
                                         event.target = target;
@@ -828,7 +817,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     else {
                                         event.finish();
                                     }
-                                    'step 3'
+                                    'step 2'
                                     if (get.suit(result.cards[0]) == 'spade') {
                                         player.line(target);
                                         target.draw();
