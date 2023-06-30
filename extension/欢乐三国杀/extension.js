@@ -426,7 +426,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢乐夏侯令女
                             hpp_xiahoulingnv: ['female', 'wei', 4, ['fuping', 'hpp_weilie'], []],
                             // 欢乐夏侯渊
-                            hpp_xiahouyuan: ['male', 'wei', 4, ['hpp_shensu'], ['unseen']],
+                            hpp_xiahouyuan: ['male', 'wei', 4, ['hpp_shensu'], []],
                             // 欢乐小乔
                             hpp_xiaoqiao: ['female', 'wu', 3, ['hpp_tianxiang', 'hpp_hongyan'], []],
                             // 欢乐辛宪英
