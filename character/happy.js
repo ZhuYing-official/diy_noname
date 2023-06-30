@@ -1423,16 +1423,22 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					});
 					'step 1'
 					player.discard(cards);
+					event.feiying = false;
 					switch (result.control) {
 						case '选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置':
 							break;
 						case '直到你的下个回合，你获得技能“飞影”':
-							player.addTempSkill('feiying');
-							event.goto(4);
+							event.feiying = true;
 							break;
 						default:
 					}
 					'step 2'
+					player.addMark('hok_dihui', 1);
+					if (event.feiying) {
+						player.addTempSkill('feiying', { player: 'phaseBefore' });
+						event.finish();
+					}
+					'step 3'
 					player.chooseTarget('选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置', function (card, player, target) {
 						return target == player.next || target == player.previous;
 					}).set('ai', function (target) {
@@ -1441,14 +1447,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 						return get.attitude(_status.event.player, target);
 					});
-					'step 3'
+					'step 4'
 					var target = result.targets[0];
 					var targetSwap = target.next == player ? target.previous : target.next;
 					game.broadcastAll(function (target1, target2) {
 						game.swapSeat(target1, target2);
 					}, target, targetSwap);
-					'step 4'
-					player.addMark('hok_dihui', 1);
 				},
 				check: function (card) {
 					return (5 - get.value(card)) && _status.event.player.countCards('h') > 2;
