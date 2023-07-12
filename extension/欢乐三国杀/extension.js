@@ -57,6 +57,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_haozhao',
                             'hpp_huaman',
                             'hpp_huanggai',
+                            'hpp_huangyueying',
                             'hpp_huangzhong',
                             'hpp_huaxiong',
                             'hpp_jiangwei',
@@ -101,6 +102,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_sunquan',
                             'hpp_sunshangxiang',
                             'hpp_taishici',
+                            'hpp_wangji',
                             'hpp_wangping',
                             'hpp_wangyi',
                             'hpp_weiyan',
@@ -326,6 +328,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huaman: ['female', 'shu', 4, ['hmmanyi', 'mansi', 'hpp_souying', 'hpp_zhanyuan'], []],
                             // 欢乐黄盖
                             hpp_huanggai: ['male', 'wu', 4, ['kurou', 'hpp_zhaxiang'], []],
+                            // 欢乐黄月英
+                            hpp_huangyueying: ['female', 'shu', 3, ['hpp_jizhi', 'hpp_qicai'], []],
                             // 欢乐黄忠
                             hpp_huangzhong: ['male', 'shu', 4, ['hpp_liegong'], []],
                             // 欢乐华雄
@@ -414,6 +418,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunshangxiang: ['female', 'wu', 3, ['hpp_jieyi', 'xiaoji'], []],
                             // 欢乐太史慈
                             hpp_taishici: ['male', 'wu', 4, ['hpp_tianyi'], []],
+                            // 欢乐王基
+                            hpp_wangji: ['male', 'wei', 3, ['hpp_qizhi', 'hpp_jinqu'], []],
                             // 欢乐王平
                             hpp_wangping: ['male', 'shu', 4, ['hpp_feijun', 'hpp_binglue'], []],
                             // 欢乐魏延
@@ -627,6 +633,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             haozhao: ['hpp_haozhao', 'haozhao'],
                             huaman: ['hpp_huaman', 'huaman', 'sp_huaman'],
                             huanggai: ['hpp_huanggai', 're_huanggai', 'huanggai'],
+                            huangyueying: ['hpp_huangyueying', 're_huangyueying', 'huangyueying', 'junk_huangyueying'],
                             huangzhong: ['hpp_huangzhong', 'ol_huangzhong', 're_huangzhong', 'huangzhong'],
                             huaxiong: ['hpp_huaxiong', 're_huaxiong', 'old_huaxiong', 'huaxiong', 'ol_huaxiong'],
                             // J
@@ -680,6 +687,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // T
                             taishici: ['hpp_taishici', 're_taishici', 'taishici'],
                             // W
+                            wangji: ['hpp_wangji', 'wangji'],
                             wangping: ['hpp_wangping', 'wangping'],
                             weiyan: ['hpp_weiyan', 'ol_weiyan', 're_weiyan', 'weiyan'],
                             wangyi: ['hpp_wangyi', 're_wangyi', 'wangyi', 'old_wangyi'],
@@ -4142,6 +4150,86 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 黄月英
+                            hpp_jizhi: {
+                                audio: 'rejizhi',
+                                audioname2: { WU_lukang: 'rejizhi_lukang' },
+                                trigger: { player: 'useCard' },
+                                filter: function (event, player) {
+                                    return get.type2(event.card) == 'trick';
+                                },
+                                frequent: true,
+                                content: function () {
+                                    'step 0'
+                                    player.draw();
+                                    'step 1'
+                                    var card = result[0];
+                                    event.card = card;
+                                    if (['basic', 'trick', 'equip'].contains(get.type2(card))) {
+                                        if (['basic', 'trick'].contains(get.type2(card))) {
+                                            player.addTempSkill('hpp_jizhi_' + get.type2(card));
+                                            player.addMark('hpp_jizhi_' + get.type2(card), 1, false);
+                                            event.finish();
+                                        }
+                                        else player.chooseTarget('集智：是否将' + get.translation(card) + '置入一名其他角色的装备栏？', function (card, player, target) {
+                                            return target != player && target.isEmpty(get.subtype(_status.event.card));
+                                        }).set('card', card).set('ai', function (target) {
+                                            var player = _status.event.player;
+                                            var card = _status.event.card;
+                                            if ((player.isEmpty(get.subtype(_status.event.card)) || get.equipValue(player.getEquip(get.subtype(_status.event.card))) < 0) && get.equipValue(card) > 0) return 0;
+                                            return get.attitude(player, target);
+                                        });
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    if (result.bool) {
+                                        var target = result.targets[0];
+                                        player.line(target);
+                                        player.$give(card, target, false);
+                                        game.delay(0.5);
+                                        target.equip(card);
+                                    }
+                                },
+                                ai: { noautowuxie: true },
+                                subSkill: {
+                                    basic: {
+                                        mark: true,
+                                        marktext: '集',
+                                        intro: { content: '手牌上限+#' },
+                                        charlotte: true,
+                                        onremove: true,
+                                        mod: {
+                                            maxHandcard: function (player, num) {
+                                                return num + player.countMark('hpp_jizhi_basic');
+                                            },
+                                        },
+                                    },
+                                    trick: {
+                                        mark: true,
+                                        marktext: '智',
+                                        intro: { content: '使用【杀】的额定次数+#' },
+                                        charlotte: true,
+                                        onremove: true,
+                                        mod: {
+                                            cardUsable: function (card, player, num) {
+                                                if (card.name == 'sha') return num + player.countMark('hpp_jizhi_trick');
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_qicai: {
+                                mod: {
+                                    targetInRange: function (card, player, target, now) {
+                                        var type = get.type(card);
+                                        if (type == 'trick' || type == 'delay') return true;
+                                    },
+                                    canBeDiscarded: function (card) {
+                                        if (get.position(card) == 'e' && ['equip1', 'equip2'].contains(get.subtype(card))) return false;
+                                    },
+                                },
+                            },
+
                             // 黄忠
                             hpp_liegong: {
                                 mod: {
@@ -7401,6 +7489,73 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         },
                                     },
                                 },
+                            },
+
+                            // 王基
+                            hpp_qizhi: {
+                                audio: 'qizhi',
+                                trigger: { player: 'useCardToPlayered' },
+                                filter: function (event, player) {
+                                    if (!event.targets || !event.isFirstTarget) return false;
+                                    if (_status.currentPhase != player) return false;
+                                    var type = get.type(event.card, 'trick');
+                                    if (type != 'basic' && type != 'trick') return false;
+                                    return game.hasPlayer(function (target) {
+                                        return !event.targets.contains(target) && target.countCards('he') > 0;
+                                    });
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseTarget(get.prompt('hpp_qizhi'), '弃置一名角色的一张牌，然后若弃置的牌与使用的牌类型相同，你摸一张牌；类型不同，其摸一张牌', function (card, player, target) {
+                                        return !_status.event.targets.contains(target) && target.countCards('he') > 0;
+                                    }).set('ai', function (target) {
+                                        var player = _status.event.player;
+                                        if (target == player) return 2;
+                                        if (get.attitude(player, target) <= 0) {
+                                            return 1
+                                        }
+                                        return 0.5;
+                                    }).set('targets', trigger.targets);
+                                    'step 1'
+                                    if (result.bool) {
+                                        player.logSkill('hpp_qizhi', result.targets);
+                                        player.discardPlayerCard(result.targets[0], true, 'he');
+                                        event.target = result.targets[0];
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    if (result.bool && get.type2(result.cards[0]) == get.type2(trigger.card)) player.draw();
+                                    else target.draw();
+                                },
+                            },
+                            hpp_jinqu: {
+                                audio: 'jinqu',
+                                trigger: { player: 'phaseDiscardBefore' },
+                                prompt: function (event, player) {
+                                    var num = player.getHistory('useSkill', function (evt) {
+                                        return evt.skill == 'hpp_qizhi';
+                                    }).length + 1;
+                                    return '进趋：是否摸两张牌并跳过弃牌阶段，然后将手牌弃置至' + get.cnNumber(num) + '张？';
+                                },
+                                check: function (event, player) {
+                                    var num = player.getHistory('useSkill', function (evt) {
+                                        return evt.skill == 'hpp_qizhi';
+                                    }).length + 1;
+                                    var numx = player.countCards('h') + 2 - num;
+                                    return num >= 2 || player.needsToDiscard() >= numx;
+                                },
+                                content: function () {
+                                    'step 0'
+                                    trigger.cancel();
+                                    player.draw(2);
+                                    'step 1'
+                                    var num = player.getHistory('useSkill', function (evt) {
+                                        return evt.skill == 'hpp_qizhi';
+                                    }).length + 1;
+                                    if (player.countCards('h') > num) player.chooseToDiscard(player.countCards('h') - num, true);
+                                },
+                                ai: { combo: 'hpp_qizhi' },
                             },
 
                             // 王平
@@ -14061,7 +14216,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // B
                             hpp_bulianshi: '#b捞德一评级:3.7',
                             // C
-                            hpp_caifuren:'#b捞德一评级:3.7',
+                            hpp_caifuren: '#b捞德一评级:3.7',
                             hpp_caiwenji: '#b捞德一评级:3.8',
                             hpp_caoang: '#b捞德一评级:3.7',
                             hpp_caocao: '#b捞德一评级:3.5',
@@ -14103,6 +14258,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_haozhao: '#g捞德一评级:2.8',
                             hpp_huaman: '#r捞德一评级:4.5',
                             hpp_huanggai: '#b捞德一评级:3.5',
+                            hpp_huangyueying: '#b捞德一评级:3.5',
                             hpp_huangzhong: '#g捞德一评级:2.9',
                             hpp_huaxiong: '#g捞德一评级:2.9',
                             // J
@@ -14155,6 +14311,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // T
                             hpp_taishici: '#b捞德一评级:3.5',
                             // W
+                            hpp_wangji:'#b捞德一评级:3.4',
                             hpp_wangping: '#b捞德一评级:3.6',
                             hpp_weiyan: '#b捞德一评级:3.0',
                             hpp_wangyi: '#g捞德一评级:2.3',
@@ -14250,7 +14407,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_anxu: '安恤',
                             hpp_anxu_info: '出牌阶段开始和结束时，你可以获得手牌数最多的其他角色一张手牌。若你获得的牌是黑桃，该角色摸一张牌。',
                             // C
-                            hpp_caifuren:'蔡夫人',
+                            hpp_caifuren: '蔡夫人',
                             hpp_qieting: '窃听',
                             hpp_qieting_info: '其他角色的回合结束时，若其手牌数大于你，则你摸一张牌。若其没有于本回合内对另一名角色造成过伤害，则你可以选择一项：1.观看其两张手牌并获得其中的一张；2.将其装备区里的一张牌置入你的装备区；3.摸一张牌。',
                             hpp_xianzhou: '献州',
@@ -14436,6 +14593,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huanggai: '黄盖',
                             hpp_zhaxiang: '诈降',
                             hpp_zhaxiang_info: '锁定技，你使用红色【杀】无距离限制且不能被【闪】响应，且你可以多使用一张【杀】。',
+                            hpp_huangyueying:'黄月英',
+                            hpp_jizhi: '集智',
+                            hpp_jizhi_info: '当你使用一张锦囊牌时，你可以摸一张牌。若此牌是基本牌，本回合手牌上限+1；若此牌是装备牌，则可以置入其他角色的装备栏；若此牌是锦囊牌，本回合出杀次数+1。',
+                            hpp_qicai: '奇才',
+                            hpp_qicai_info: '锁定技，你使用锦囊牌无距离限制；其他角色不能弃置你装备区内的防具和武器牌。',
                             hpp_huangzhong: '黄忠',
                             hpp_liegong: '烈弓',
                             hpp_liegong_info: '你的【杀】无视距离。当你使用【杀】指定目标后：若目标角色的手牌数小于等于你，不能使用【闪】；目标体力大于等于你，此【杀】伤害+1。',
@@ -14619,6 +14781,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_tianyi: '天义',
                             hpp_tianyi_info: '出牌阶段开始时，你可以选择一项效果发动：1、本回合出杀次数+1，杀造成伤害后回复1点体力；2、摸一张牌，本回合杀无距离限制且无视防具。',
                             // W
+                            hpp_wangji:'王基',
+                            hpp_qizhi: '奇制',
+                            hpp_qizhi_info: '当你于回合内使用基本牌或锦囊牌指定目标后，你可以弃置不是此牌目标的一名角色的一张牌。若弃置的牌与使用的牌类型相同，你摸一张牌；类型不同，其摸一张牌。',
+                            hpp_jinqu: '进趋',
+                            hpp_jinqu_info: '你可以跳过弃牌阶段并摸两张牌。若如此做，你将手牌弃置至X张（X为你于此回合内发动过“奇制”的次数+1）。',
                             hpp_wangping: '王平',
                             hpp_feijun: '飞军',
                             hpp_feijun_info: '出牌阶段限一次，你可以弃置一张牌，然后选择一项：令一名其他角色交给你一张牌；或令一名其他角色弃置一张装备区的牌。',
