@@ -147,6 +147,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhugezhan',
                             'hpp_zhuhuan',
                             'hpp_zhuran',
+                            'hpp_zhurong',
                             'hpp_zhuzhi',
                             'hpp_zumao',
                             'hpp_zuoci',
@@ -510,6 +511,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhuhuan: ['male', 'wu', 4, ['hpp_fenli', 'hpp_pingkou'], []],
                             // 欢乐朱然
                             hpp_zhuran: ['male', 'wu', 4, ['hpp_danshou'], []],
+                            // 欢乐祝融
+                            hpp_zhurong: ['female', 'shu', 4, ['hpp_juxiang', 'minirelieren', 'changbiao'], []],
                             // 欢乐朱治
                             hpp_zhuzhi: ['male', 'wu', 4, ['hpp_anguo'], []],
                             // 欢乐祖茂
@@ -736,6 +739,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhugezhan: ['hpp_zhugezhan', 'zhugezhan', 'old_zhugezhan'],
                             zhuhuan: ['hpp_zhuhuan', 're_zhuhuan', 'xin_zhuhuan', 'zhuhuan', 'old_zhuhuan'],
                             zhuran: ['hpp_zhuran', 're_zhuran', 'xin_zhuran', 'zhuran', 'old_zhuran'],
+                            zhurong: ['hpp_zhurong', 're_zhurong', 'ol_zhurong', 'zhurong'],
                             zhuzhi: ['hpp_zhuhzi', 're_zhuzhi', 'zhuzhi', 'xin_zhuzhi', 'old_zhuzhi'],
                             zumao: ['hpp_zumao', 'zumao', 'tw_zumao'],
                             zuoci: ['hpp_zuoci', 're_zuoci', 'zuoci'],
@@ -11747,6 +11751,90 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 祝融
+                            hpp_juxiang: {
+                                group: 'juxiang1',
+                                audio: 'juxiang1',
+                                preHidden: ['juxiang1', 'hpp_juxiang'],
+                                trigger: { global: ['useCardAfter', 'loseAfter'] },
+                                filter: function (event, player) {
+                                    if (event.name == 'useCard') return (event.cards.filterInD().length || game.hasPlayer2(function (current) {
+                                        return current.getHistory('damage', function (evt) {
+                                            return evt.card && evt.card == event.card;
+                                        }).length;
+                                    })) && event.card.name == 'nanman' && event.player != player;
+                                    if (event.type != 'discard' || event.getlx === false) return false;
+                                    var cards = event.cards2.slice(0);
+                                    var evt = event.getl(player);
+                                    if (evt && evt.cards) cards.removeArray(evt.cards);
+                                    return cards.filter(function (card) {
+                                        return card.name == 'nanman' && get.position(card, true) == 'd';
+                                    }).length;
+                                },
+                                forced: true,
+                                content: function () {
+                                    'step 0'
+                                    if (trigger.name == 'lose') {
+                                        var cards = trigger.cards2.slice(0);
+                                        var evt = trigger.getl(player);
+                                        if (evt && evt.cards) cards.removeArray(evt.cards);
+                                        player.gain(cards.filter(function (card) {
+                                            return card.name == 'nanman' && get.position(card, true) == 'd';
+                                        }), 'gain2');
+                                        event.finish();
+                                        return;
+                                    }
+                                    if (trigger.cards.filterInD().length) player.gain(trigger.cards.filterInD(), 'gain2');
+                                    'step 1'
+                                    if (game.hasPlayer2(function (current) {
+                                        return current.getHistory('damage', function (evt) {
+                                            return evt.card && evt.card == trigger.card;
+                                        }).length;
+                                    })) player.draw();
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card) {
+                                            if (card.name == 'nanman') return [0, 1];
+                                        },
+                                    },
+                                },
+                            },
+                            minirelieren: {
+                                group: 'minirelieren_gain',
+                                shaRelated: true,
+                                audio: 'lieren',
+                                trigger: { player: 'useCardToPlayered' },
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha' && player.canCompare(event.target);
+                                },
+                                check: function (event, player) {
+                                    return get.attitude(player, event.target) < 0;
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.chooseToCompare(trigger.target).clear = false;
+                                    'step 1'
+                                    if (result.bool) {
+                                        if (trigger.target.countGainableCards(player, 'he')) player.gainPlayerCard(trigger.target, true, 'he');
+                                        ui.clear();
+                                    }
+                                },
+                                subSkill: {
+                                    gain: {
+                                        trigger: { player: 'chooseToCompareAfter' },
+                                        filter: function (event, player) {
+                                            if (event.getParent().name != 'minirelieren') return false;
+                                            return get.position(event.card2, true) == 'o';
+                                        },
+                                        direct: true,
+                                        content: function () {
+                                            player.gain(trigger.card2, 'gain2');
+                                        },
+                                    },
+                                },
+                            },
+
                             // 朱治
                             hpp_anguo: {
                                 audio: 'anguo',
@@ -14311,7 +14399,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // T
                             hpp_taishici: '#b捞德一评级:3.5',
                             // W
-                            hpp_wangji:'#b捞德一评级:3.4',
+                            hpp_wangji: '#b捞德一评级:3.4',
                             hpp_wangping: '#b捞德一评级:3.6',
                             hpp_weiyan: '#b捞德一评级:3.0',
                             hpp_wangyi: '#g捞德一评级:2.3',
@@ -14360,6 +14448,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhugezhan: '#g捞德一评级:2.8',
                             hpp_zhuhuan: '#b捞德一评级:3.5',
                             hpp_zhuran: '#b捞德一评级:3.7',
+                            hpp_zhurong: '#b捞德一评级:3.8',
                             hpp_zhuzhi: '#b捞德一评级:3.6',
                             hpp_zumao: '#b捞德一评级:3.7',
                             hpp_zuoci: '#b捞德一评级:3.4',
@@ -14593,7 +14682,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huanggai: '黄盖',
                             hpp_zhaxiang: '诈降',
                             hpp_zhaxiang_info: '锁定技，你使用红色【杀】无距离限制且不能被【闪】响应，且你可以多使用一张【杀】。',
-                            hpp_huangyueying:'黄月英',
+                            hpp_huangyueying: '黄月英',
                             hpp_jizhi: '集智',
                             hpp_jizhi_info: '当你使用一张锦囊牌时，你可以摸一张牌。若此牌是基本牌，本回合手牌上限+1；若此牌是装备牌，则可以置入其他角色的装备栏；若此牌是锦囊牌，本回合出杀次数+1。',
                             hpp_qicai: '奇才',
@@ -14781,7 +14870,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_tianyi: '天义',
                             hpp_tianyi_info: '出牌阶段开始时，你可以选择一项效果发动：1、本回合出杀次数+1，杀造成伤害后回复1点体力；2、摸一张牌，本回合杀无距离限制且无视防具。',
                             // W
-                            hpp_wangji:'王基',
+                            hpp_wangji: '王基',
                             hpp_qizhi: '奇制',
                             hpp_qizhi_info: '当你于回合内使用基本牌或锦囊牌指定目标后，你可以弃置不是此牌目标的一名角色的一张牌。若弃置的牌与使用的牌类型相同，你摸一张牌；类型不同，其摸一张牌。',
                             hpp_jinqu: '进趋',
@@ -14975,6 +15064,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhuran: '朱然',
                             hpp_danshou: '胆守',
                             hpp_danshou_info: '每个回合限一次，当你成为基本牌或锦囊牌的目标后，你可以摸X张牌（X为你本回合成为牌的目标的次数）；当前回合角色的结束阶段，若你本回合没有以此法摸牌，你可以弃置与其手牌数相同的牌数对其造成1点伤害。',
+                            hpp_zhurong:'祝融',
+                            hpp_juxiang: '巨象',
+                            hpp_juxiang_info: '锁定技，【南蛮入侵】对你无效；当其他角色使用或弃置的【南蛮入侵】进入弃牌堆时，你获得之，若该牌造成过伤害，则你额外摸一张牌。',
+                            minirelieren: '烈刃',
+                            minirelieren_info: '当你使用【杀】指定一个目标后，你可以与其拼点，你获得其拼点的牌，若你赢，你获得其一张牌。',
                             hpp_zhuzhi: '朱治',
                             hpp_anguo: '安国',
                             hpp_anguo_info: '出牌阶段限一次，你可以选择一名角色，若其手牌数为全场最少，其摸一张牌；体力值为全场最低，回复1点体力；装备区内牌数为全场最少，随机使用一张装备牌。然后若该角色有未执行的分支且你满足条件，你执行之。',

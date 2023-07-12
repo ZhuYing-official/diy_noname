@@ -1447,6 +1447,7 @@ window.noname_character_rank = {
 			'hpp_zhugezhan',
 			'hpp_zhuhuan',
 			'hpp_zhuran',
+			'hpp_zhurong',
 			'hpp_zhuzhi',
 			'hpp_zumao',
 			'hpp_zuoci',
