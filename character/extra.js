@@ -842,7 +842,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return false;
 				},
 				delay:false,
-				locked:true,
+				locked:false,
 				filterTarget:function(card,player,target){
 					var event=_status.event,evt=event;
 					if(event._backup) evt=event._backup;
@@ -983,6 +983,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player:'enterGame',
 						},
 						forced:true,
+						locked:false,
 						filter:function(event,player){
 							return event.name!='phase'||game.phaseNumber==0;
 						},
@@ -2433,61 +2434,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			// 神郭嘉
-			// reshuishi:{
-			// 	audio:'shuishi',
-			// 	enable:'phaseUse',
-			// 	usable:1,
-			// 	filter:function(event,player){
-			// 		return player.maxHp<10;
-			// 	},
-			// 	content:function(){
-			// 		'step 0'
-			// 		event.cards=[];
-			// 		event.suits=[];
-			// 		'step 1'
-			// 		player.judge(function(result){
-			// 			var evt=_status.event.getParent('reshuishi');
-			// 			if(evt&&evt.suits&&evt.suits.contains(get.suit(result))) return 0;
-			// 			return 1;
-			// 		}).set('callback',function(){
-			// 			event.getParent().orderingCards.remove(event.judgeResult.card);
-			// 		}).judge2=function(result){
-			// 			return result.bool?true:false;
-			// 		};
-			// 		'step 2'
-			// 		event.cards.push(result.card);
-			// 		if(result.bool&&player.maxHp<10){
-			// 			event.suits.push(result.suit);
-			// 			player.gainMaxHp();
-			// 			event.goto(1);
-			// 		}
-			// 		else{
-			// 			cards=cards.filterInD();
-			// 			if(cards.length) player.chooseTarget('将'+get.translation(cards)+'交给一名角色',true).set('ai',function(target){
-			// 				var player=_status.event.player;
-			// 				var att=get.attitude(player,target)/Math.sqrt(1+target.countCards('h'));
-			// 				if(target.hasSkillTag('nogain')) att/=10;
-			// 				return att;
-			// 			});
-			// 			else event.finish();
-			// 		}
-			// 		'step 3'
-			// 		if(result.bool){
-			// 			var target=result.targets[0];
-			// 			event.target=target;
-			// 			player.line(target,'green');
-			// 			target.gain(cards,'gain2').giver=player;
-			// 		}
-			// 		'step 4'
-			// 		if(target.isMaxHandcard()) player.loseMaxHp();
-			// 	},
-			// 	ai:{
-			// 		order:1.2,
-			// 		result:{
-			// 			player:1,
-			// 		},
-			// 	},
-			// },
 			reshuishi:{
 				audio:'shuishi',
 				enable:'phaseUse',
@@ -4176,11 +4122,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'judge'},
 				direct:true,
 				filter:function(event,player){
-					return player.countCards('he')>0&&player.hasMark('renjie');
+					return player.countCards('hes')>0&&player.hasMark('renjie');
 				},
 				content:function(){
 					"step 0"
-					player.chooseCard('是否弃置一枚“忍”，并发动〖鬼才〗？','he',function(card){
+					player.chooseCard('是否弃置一枚“忍”，并发动〖鬼才〗？','hes',function(card){
 						var player=_status.event.player;
 						var mod2=game.checkMod(card,player,'unchanged','cardEnabled2',player);
 						if(mod2!='unchanged') return mod2;
@@ -4587,6 +4533,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player:'enterGame',
 				},
 				forced:true,
+				locked:false,
 				filter:function(event,player){
 					return (event.name!='phase'||game.phaseNumber==0);
 				},
@@ -4620,8 +4567,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						gains.removeArray(player.getCards('h'));
 						if(!pushs.length||pushs.length!=gains.length) return;
 						player.addToExpansion(pushs,player,'giveAuto').gaintag.add('qixing');
-						game.log(player,'将',pushs,'作为“星”置于武将牌上');
-						player.gain(gains,'gain2');
+						//game.log(player,'将',pushs,'作为“星”置于武将牌上');
+						player.gain(gains,'draw');
 					}
 				},
 				intro:{
@@ -4686,7 +4633,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.logSkill('qixing2');
 						player.addToExpansion(pushs,player,'giveAuto').gaintag.add('qixing');
 						game.log(player,'将',pushs,'作为“星”置于武将牌上');
-						player.gain(gains,'gain2');
+						player.gain(gains,'draw');
 					}
 				},
 			},
@@ -6735,7 +6682,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			shen_machao:'神马超',
 			shouli:'狩骊',
 			shouli_backup:'狩骊',
-			shouli_info:'锁定技。①游戏开始时，你令场上所有角色从你的下家起，依次使用牌堆中的一张不为赠物的坐骑牌。②你可以将场上的一张进攻坐骑牌当做【杀】（无任何次数限制），防御坐骑牌当做【闪】使用或打出。若此坐骑牌的拥有者不为你，则其非锁定技于本回合内失效。且当你或其于本回合内受到伤害时，此伤害+1且改为雷属性。',
+			shouli_info:'①游戏开始时，你令场上所有角色从你的下家起，依次使用牌堆中的一张不为赠物的坐骑牌。②你可以将场上的一张进攻坐骑牌当做【杀】（无任何次数限制），防御坐骑牌当做【闪】使用或打出。若此坐骑牌的拥有者不为你，则其非锁定技于本回合内失效。且当你或其于本回合内受到伤害时，此伤害+1且改为雷属性。',
 			hengwu:'横骛',
 			hengwu_info:'当你使用或打出有花色的牌时，若你的手牌区内没有与此牌花色相同的牌，则你可以摸X张牌（X为场上装备区内花色与此牌相同的牌数）。',
 			

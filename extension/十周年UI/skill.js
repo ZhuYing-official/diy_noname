@@ -1,7 +1,6 @@
 'use strict';
 decadeModule.import(function (lib, game, ui, get, ai, _status) {
 	decadeUI.skill = {
-
 		guanxing: {
 			audio: 2,
 			audioname: ['jiangwei', 're_jiangwei', 're_zhugeliang'],
@@ -1733,6 +1732,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 						"step 4"
 						game.cardsDiscard(event.cards1);
 						if (event.cards2) {
+							// player.logSkill(event.name);
 							player.gain(event.cards2, 'gain2', 'log');
 						}
 					}

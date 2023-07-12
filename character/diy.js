@@ -10969,6 +10969,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{player:['useCardAfter','respondAfter']},
 				forced:true,
 				popup:false,
+				charlotte:true,
 				filter:function(event,player){
 					return event.skill=='junktaoluan_backup'||event.skill=='junktaoluan5'||event.skill=='junktaoluan4';
 				},
@@ -11012,6 +11013,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'phaseEnd'},
 				forced:true,
 				popup:false,
+				charlotte:true,
 				content:function(){
 					player.loseHp();
 				},
@@ -16741,11 +16743,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			iriya_haozhi:'豪掷',
 			iriya_haozhi_info:'出牌阶段，你可以按照斗地主牌型弃置至少两张牌，且其他角色可以依次对其进行一轮响应。最后一名进行响应的角色可以根据对应牌型执行对应效果。'
 			+'对子：其可以令至多两名角色各摸一张牌。'
-			+'三带：其使用的下一张牌可以多指定一个目标且无距离和次数限制。'
-			+'单顺：其可以对至多2名其他角色造成1点伤害。'
-			+'双顺：其可以弃置至多2名其他角色的一张牌并对其造成1点伤害。'
-			+'三顺/飞机：其可以令至多2名其他角色翻面，弃置其的一张牌并对其造成1点伤害。'
-			+'炸弹/四带二：其可以令至多2名其他角色翻面，弃置这些角色装备区内的所有牌和一张手牌，对这些角色造成1点伤害。',
+			+'三带：其可以弃置至多三名其他角色的各一张牌，然后摸一张牌。'
+			+'单顺：其可以弃置一名其他角色的一张牌。若其未以此法弃置过颜色相同的牌，则其可以重复此流程。然后其摸等量的牌。'
+			+'双顺：其可以获得一名其他角色的一张牌。若其未以此法获得过颜色相同的牌，则其可以重复此流程。然后其回复等量的体力。'
+			+'三顺/飞机：其可以令至多3名其他角色翻面，然后对其中一名角色造成1点火属性伤害。'
+			+'炸弹/四带二：其可以对一名角色造成2点雷属性伤害，然后目标角色翻面，弃置装备区的所有牌和四张手牌。',
 
 			key_kud:'库特莉亚芙卡',
 			kud_qiaoshou:'巧手',

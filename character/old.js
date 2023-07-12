@@ -45,7 +45,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ol_yuanshu:['male','qun',4,['wangzun','tongji']],
 			pangde:['male','qun',4,['mashu','mengjin']],
 			ol_huaxiong:["male","qun",6,["new_reyaowu"]],
-			old_wangyun:['male','qun',4,['wylianji','moucheng']],
+			old_wangyun:['male','qun',4,['wylianji','moucheng'],['clan:太原王氏']],
 			xiaoqiao:['female','wu',3,['tianxiang','hongyan']],
 			weiyan:['male','shu',4,['kuanggu']],
 			xiahouyuan:['male','wei',4,['shensu']],
@@ -404,7 +404,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(i=='sha'){
 							for(var j of lib.inpile_nature){
 								if(event.filterCard({name:i,nature:j},player,event)) return true;
-					}
+							}
 						}
 					}
 					return false;
@@ -524,24 +524,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					fireAttack:true,
 					skillTagFilter:function(player){
 						if(!player.countCards('hs')) return false;
-			},
+					},
 					threaten:1.2,
 					order:10,
 					result:{player:1},
 				},
 				subSkill:{
 					cheated:{
-				trigger:{
+						trigger:{
 							player:'gainAfter',
 							global:'loseAsyncAfter',
-				},
+						},
 						charlotte:true,
 						forced:true,
 						silent:true,
 						popup:false,
 						firstDo:true,
 						onremove:true,
-				filter:function(event,player){
+						filter:function(event,player){
 							if(event.getParent().name=='draw') return true;
 							var cards=event.getg(player);
 							if(!cards.length) return false;
@@ -551,13 +551,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								if(evt&&evt.cards&&evt.cards.length) return true;
 								return false;
 							});
-				},
-				content:function(){
+						},
+						content:function(){
 							player.removeSkill('old_guhuo_cheated');
+						}
 					}
-					}
-							}
-				},
+				}
+			},
 			old_guhuo_guess:{
 				audio:'old_guhuo',
 				trigger:{
@@ -567,6 +567,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				silent:true,
 				popup:false,
 				firstDo:true,
+				charlotte:true,
 				filter:function(event,player){
 					return event.skill&&event.skill.indexOf('old_guhuo_')==0;
 				},
@@ -651,7 +652,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(evt.player.getStorage('old_guhuo_cheated').contains(card.name+card.nature)) return Math.random()+0.3;
 						}
 						return Math.random();
-						});
+					});
 					'step 2'
 					if(result.links[0][2]=='reguhuo_betray'){
 						target.addExpose(0.2);
@@ -675,15 +676,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 5'
 					if(!event.betrayers.length){
 						event.goto(7);
-							}
+					}
 					'step 6'
 					if(event.fake){
 						for(var target of event.betrayers){
 							target.popup('质疑正确','wood');
-							}
-						event.goon=false;
 						}
-						else{
+						event.goon=false;
+					}
+					else{
 						for(var target of event.betrayers){
 							target.popup('质疑错误','fire');
 							target.loseHp();
@@ -700,12 +701,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						trigger.line=false;
 					}
 					'step 8'
-							game.delay();
+					game.delay();
 					'step 9'
 					if(!event.goon){
 						if(event.fake) game.asyncDraw(event.betrayers);
 						game.broadcastAll(ui.clear);
-						}
+					}
 				},
 			},
 			old_zuilun:{
