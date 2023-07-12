@@ -1319,6 +1319,7 @@ window.noname_character_rank = {
 			'shen_lusu',
 			// 欢乐三国杀
 			'hpp_bulianshi',
+			'hpp_caifuren',
 			'hpp_caiwenji',
 			'hpp_caoang',
 			'hpp_caocao',
