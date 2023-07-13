@@ -1440,6 +1440,7 @@ window.noname_character_rank = {
 			'hpp_zhenji',
 			'hpp_zhonghui',
 			'hpp_zhongyao',
+			'hpp_zhoucang',
 			'hpp_zhouyu',
 			'hpp_zhugeguo',
 			'hpp_zhugeke',
