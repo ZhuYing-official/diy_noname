@@ -105,6 +105,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_taishici',
                             'hpp_wangji',
                             'hpp_wangping',
+                            'hpp_wangrong',
                             'hpp_wangyi',
                             'hpp_weiyan',
                             'hpp_wuyi',
@@ -428,6 +429,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_wangji: ['male', 'wei', 3, ['hpp_qizhi', 'hpp_jinqu'], []],
                             // 欢乐王平
                             hpp_wangping: ['male', 'shu', 4, ['hpp_feijun', 'hpp_binglue'], []],
+                            // 欢乐王荣
+                            hpp_wangrong: ['female', 'qun', 3, ['hpp_minsi', 'minijijing', 'zhuide'], []],
                             // 欢乐魏延
                             hpp_weiyan: ['male', 'shu', 4, ['hpp_kuanggu', 'hpp_qimou'], []],
                             // 欢乐王异
@@ -702,6 +705,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // W
                             wangji: ['hpp_wangji', 'wangji'],
                             wangping: ['hpp_wangping', 'wangping'],
+                            wangrong: ['hpp_wangrong', 'wangrong', 'ol_wangrong'],
                             weiyan: ['hpp_weiyan', 'ol_weiyan', 're_weiyan', 'weiyan'],
                             wangyi: ['hpp_wangyi', 're_wangyi', 'wangyi', 'old_wangyi'],
                             wuyi: ['hpp_wuyi', 're_wuyi', 'xin_wuyi', 'wuyi'],
@@ -7726,6 +7730,61 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: { combo: 'hpp_feijun' },
                             },
 
+                            // 王荣
+                            hpp_minsi: {
+                                audio: 'minsi',
+                                inherit: 'minsi',
+                                content: function () {
+                                    player.draw(cards.length * 2).gaintag = ['hpp_minsi2'];
+                                    player.addTempSkill('hpp_minsi2');
+                                },
+                            },
+                            hpp_minsi2: {
+                                onremove: function (player) {
+                                    player.removeGaintag('hpp_minsi2');
+                                },
+                                mod: {
+                                    targetInRange: function (card, player, target) {
+                                        if (!card.cards) return;
+                                        for (var i of card.cards) {
+                                            if (!i.hasGaintag('hpp_minsi2')) return;
+                                        }
+                                        return true;
+                                    },
+                                    ignoredHandcard: function (card, player) {
+                                        if (card.hasGaintag('hpp_minsi2')) return true;
+                                    },
+                                    cardDiscardable: function (card, player, name) {
+                                        if (name == 'phaseDiscard' && card.hasGaintag('hpp_minsi2')) return false;
+                                    },
+                                    aiOrder: function (player, card, num) {
+                                        if (get.itemtype(card) == 'card' && card.hasGaintag('hpp_minsi2')) return num - 0.1;
+                                    },
+                                },
+                            },
+                            minijijing: {
+                                audio: 'jijing',
+                                trigger: { player: 'damageEnd' },
+                                frequent: true,
+                                content: function () {
+                                    'step 0'
+                                    player.judge();
+                                    'step 1'
+                                    player.chooseToDiscard('是否弃置任意张点数之和不小于' + get.cnNumber(num) + '的牌并回复1点体力？', 'he').set('selectCard', function () {
+                                        var num = 0;
+                                        for (var i = 0; i < ui.selected.cards.length; i++) {
+                                            num += get.number(ui.selected.cards[i]);
+                                        }
+                                        if (num >= _status.event.num) return ui.selected.cards.length;
+                                        return ui.selected.cards.length + 2;
+                                    }).set('ai', function (card) {
+                                        return 6 - get.value(card);
+                                    }).set('num', result.number).set('complexCard', true);
+                                    'step 2'
+                                    if (result.bool) player.recover();
+                                },
+                            },
+
                             // 王异
                             hpp_zhenlie: {
                                 audio: 'zhenlie',
@@ -14591,6 +14650,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // W
                             hpp_wangji: '#b捞德一评级:3.4',
                             hpp_wangping: '#b捞德一评级:3.6',
+                            hpp_wangrong: '#b捞德一评级:3.6',
                             hpp_weiyan: '#b捞德一评级:3.0',
                             hpp_wangyi: '#g捞德一评级:2.3',
                             hpp_wuyi: '#g捞德一评级:2.8',
@@ -15075,6 +15135,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_feijun_info: '出牌阶段限一次，你可以弃置一张牌，然后选择一项：令一名其他角色交给你一张牌；或令一名其他角色弃置一张装备区的牌。',
                             hpp_binglue: '兵略',
                             hpp_binglue_info: '锁定技，当你发动“飞军”时，摸1张牌，若目标与你之前指定的目标均不相同，则你再摸X张牌（X为场上成为过你发动“飞军”目标的存活角色数）。',
+                            hpp_wangrong:'王荣',
+                            hpp_minsi: '敏思',
+                            hpp_minsi2: '敏思',
+                            hpp_minsi_info: '出牌阶段限1次，你可以弃置任意张点数之和为13的牌，并摸2倍弃置牌数量的牌。本回合以此法获得的牌，无距离限制且不计入手牌上限。',
+                            minijijing: '吉境',
+                            minijijing_info: '你受到伤害后可以执行1次判定，可选择弃置任意张点数之和大于等于判定结果点数的牌并回复1点体力。',
                             hpp_weiyan: '魏延',
                             hpp_kuanggu: '狂骨',
                             hpp_kuanggu_info: '当你对一名角色造成1点伤害后，你可以回复1点体力或摸一张牌。',

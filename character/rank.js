@@ -1405,6 +1405,7 @@ window.noname_character_rank = {
 			'hpp_taishici',
 			'hpp_wangji',
 			'hpp_wangping',
+			'hpp_wangrong',
 			'hpp_wangyi',
 			'hpp_weiyan',
 			'hpp_wuyi',
