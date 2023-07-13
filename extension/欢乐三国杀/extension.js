@@ -3804,8 +3804,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     result: { player: 1 },
                                 },
                             },
-                            /*
-                            hpp_jiaozhao: {
+                            old_hpp_jiaozhao: {
                                 derivation: ['hpp_jiaozhao_2', 'hpp_jiaozhao_3'],
                                 audio: 'jiaozhao',
                                 enable: 'phaseUse',
@@ -3880,7 +3879,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     result: { player: 1 },
                                 },
                             },
-                            */
                             hpp_jiaozhao_1: {
                                 init: function (player) {
                                     if (!player.storage.hpp_jiaozhao_1) player.storage.hpp_jiaozhao_1 = [[], [], [], []];
@@ -5665,11 +5663,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     var num = player.storage.hpp_duliang3[trigger.player.playerid];
                                     delete player.storage.hpp_duliang3[trigger.player.playerid];
                                     var cards = trigger.player.getCards('he');
-                                    if (!cards.length) event.finish();
-                                    else if (cards.length <= num) event._result = { bool: true, cards: cards };
-                                    else trigger.player.chooseCard('he', '督粮：将' + get.cnNumber(num) + '张牌交给' + get.translation(player), num, function (card) {
-                                        return trigger.cards.contains(card);
-                                    });
+                                    trigger.player.storage.duliangs = trigger.cards;
+                                    if (!cards.length) {
+                                        event.finish();
+                                    }
+                                    else if (cards.length <= num) {
+                                        event._result = { bool: true, cards: cards };
+                                    }
+                                    else {
+                                        trigger.player.chooseCard('he', '督粮：将' + get.cnNumber(num) + '张牌交给' + get.translation(player), num, function (card, player) {
+                                            return player.storage.duliangs.contains(card);
+                                        });
+                                    }
                                     'step 1'
                                     if (result.bool) player.gain(result.cards, trigger.player, 'giveAuto');
                                 },
@@ -15135,7 +15140,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_feijun_info: '出牌阶段限一次，你可以弃置一张牌，然后选择一项：令一名其他角色交给你一张牌；或令一名其他角色弃置一张装备区的牌。',
                             hpp_binglue: '兵略',
                             hpp_binglue_info: '锁定技，当你发动“飞军”时，摸1张牌，若目标与你之前指定的目标均不相同，则你再摸X张牌（X为场上成为过你发动“飞军”目标的存活角色数）。',
-                            hpp_wangrong:'王荣',
+                            hpp_wangrong: '王荣',
                             hpp_minsi: '敏思',
                             hpp_minsi2: '敏思',
                             hpp_minsi_info: '出牌阶段限1次，你可以弃置任意张点数之和为13的牌，并摸2倍弃置牌数量的牌。本回合以此法获得的牌，无距离限制且不计入手牌上限。',
