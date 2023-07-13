@@ -27,6 +27,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_caopi',
                             'hpp_caoren',
                             'hpp_caorui',
+                            'hpp_caoxing',
                             'hpp_caoxiu',
                             'hpp_caoying',
                             'hpp_caozhang',
@@ -109,6 +110,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_wuyi',
                             'hpp_xiahouba',
                             'hpp_xiahoudun',
+                            'hpp_xiahoujie',
                             'hpp_xiahoulingnv',
                             'hpp_xiaoqiao',
                             'hpp_xinxianying',
@@ -270,6 +272,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caoren: ['male', 'wei', 4, ['hpp_jushou', 'xinjiewei'], []],
                             // 欢乐曹叡
                             hpp_caorui: ['male', 'wei', 3, ['huituo', 'hpp_mingjian', 'hpp_xingshuai'], ['zhu']],
+                            // 欢乐曹性
+                            hpp_caoxing: ['male', 'qun', 4, ['hpp_liushi', 'zhanwan'], []],
                             // 欢乐曹休
                             hpp_caoxiu: ['male', 'wei', 4, ['qianju', 'hpp_qingxi'], []],
                             // 欢乐曹婴
@@ -434,6 +438,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xiahouba: ['male', 'shu', 4, ['hpp_baobian'], []],
                             // 欢乐夏侯惇
                             hpp_xiahoudun: ['male', 'wei', 4, ['reganglie', 'hpp_qingjian'], []],
+                            // 欢乐夏侯杰
+                            hpp_xiahoujie: ['male', 'wei', 5, ['hpp_liedan', 'hpp_zhuangdan'], []],
                             // 欢乐夏侯令女
                             hpp_xiahoulingnv: ['female', 'wei', 4, ['fuping', 'hpp_weilie'], []],
                             // 欢乐夏侯渊
@@ -605,6 +611,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             caopi: ['hpp_caopi', 'caopi', 're_caopi', 'ps_caopi'],
                             caoren: ['hpp_caoren', 'caoren', 'new_caoren', 'old_caoren'],
                             caorui: ['hpp_caorui', 'caorui', 'old_caorui'],
+                            caoxing: ['hpp_caoxing', 'caoxing'],
                             caoxiu: ['hpp_caoxiu', 're_caoxiu', 'tw_caoxiu', 'xin_caoxiu', 'caoxiu', 'old_caoxiu'],
                             caoying: ['hpp_caoying', 'caoying'],
                             caozhang: ['hpp_caozhang', 're_caozhang', 'xin_caozhang', 'caozhang'],
@@ -701,6 +708,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // X
                             xiahouba: ['hpp_xiahouba', 'xiahouba', 'tw_xiahouba'],
                             xiahoudun: ['hpp_xiahoudun', 're_xiahoudun', 'xin_xiahoudun', 'xiahoudun'],
+                            xiahoujie: ['hpp_xiahoujie', 'xiahoujie'],
                             xiahoulingnv: ['hpp_xiahoulingnv', 'xiahoulingnv'],
                             xiahouyuan: ['hpp_xiahouyuan', 'ol_xiahouyuan', 're_xiahouyuan', 'xiahouyuan'],
                             xiaoqiao: ['hpp_xiaoqiao', 'ol_xiaoqiao', 're_xiaoqiao', 'xiaoqiao'],
@@ -1486,6 +1494,29 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             }
                                         });
                                     }
+                                },
+                            },
+
+                            // 曹性
+                            hpp_liushi: {
+                                audio: 'cxliushi',
+                                inherit: 'cxliushi',
+                                group: 'hpp_liushi_damage',
+                                subSkill: {
+                                    damage: {
+                                        audio: 'cxliushi',
+                                        trigger: { source: 'damageSource' },
+                                        filter: function (event, player) {
+                                            return event.card && event.card.name == 'sha';
+                                        },
+                                        logTarget: 'player',
+                                        forced: true,
+                                        locked: false,
+                                        content: function () {
+                                            trigger.player.addMark('cxliushi2', 1);
+                                            trigger.player.addSkill('cxliushi2');
+                                        },
+                                    },
                                 },
                             },
 
@@ -8055,6 +8086,52 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: { expose: 0.3 },
                             },
 
+                            // 夏侯杰
+                            hpp_liedan: {
+                                audio: 'liedan',
+                                trigger: { global: 'phaseZhunbeiBegin' },
+                                forced: true,
+                                filter: function (event, player) {
+                                    return (player != event.player || player.countMark('hpp_liedan') >= 5) && !player.hasSkill('hpp_zhuangdan_mark');
+                                },
+                                logTarget: 'player',
+                                content: function () {
+                                    if (player == trigger.player) {
+                                        player.die();
+                                        return;
+                                    }
+                                    var num = 0;
+                                    if (player.hp > trigger.player.hp) num++;
+                                    if (player.countCards('h') > trigger.player.countCards('h')) num++;
+                                    if (player.countCards('e') > trigger.player.countCards('e')) num++;
+                                    if (num) {
+                                        player.draw(num);
+                                        if (num == 3 && player.maxHp < 8) player.gainMaxHp();
+                                    }
+                                    else {
+                                        player.addMark('hpp_liedan', 1);
+                                        player.loseHp();
+                                    }
+                                },
+                                intro: { content: 'mark' },
+                            },
+                            hpp_zhuangdan: {
+                                audio: 'zhuangdan',
+                                trigger: { global: 'phaseEnd' },
+                                forced: true,
+                                filter: function (event, player) {
+                                    return player != event.player && player.isMaxHandcard(true);
+                                },
+                                content: function () {
+                                    player.addTempSkill('hpp_zhuangdan_mark', { player: 'phaseEnd' })
+                                },
+                            },
+                            hpp_zhuangdan_mark: {
+                                mark: true,
+                                marktext: '胆',
+                                intro: { content: '【裂胆】失效直到你的回合结束' },
+                            },
+
                             // 夏侯令女
                             hpp_weilie: {
                                 audio: 'weilie',
@@ -14424,6 +14501,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caopi: '#g捞德一评级:2.9',
                             hpp_caoren: '#g捞德一评级:2.8',
                             hpp_caorui: '#g捞德一评级:2.9',
+                            hpp_caoxing: '#b捞德一评级:3.6',
                             hpp_caoxiu: '#b捞德一评级:3.7',
                             hpp_caoying: '#b捞德一评级:3.8',
                             hpp_caozhang: '#b捞德一评级:3.7',
@@ -14519,6 +14597,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // X
                             hpp_xiahouba: '#b捞德一评级:3.3',
                             hpp_xiahoudun: '#g捞德一评级:2.4',
+                            hpp_xiahoujie: '#b捞德一评级:3.7',
                             hpp_xiahoulingnv: '#b捞德一评级:3.7',
                             hpp_xiahouyuan: '#g捞德一评级:2.4',
                             hpp_xiaoqiao: '#g捞德一评级:2.6',
@@ -14642,6 +14721,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_mingjian_info: '出牌阶段限一次，你可以将任意张手牌交给一名其他角色，然后该角色下回合的手牌上限+1，且出牌阶段内可以多使用一张【杀】。',
                             hpp_xingshuai: '兴衰',
                             hpp_xingshuai_info: '主公技，限定技，当你进入濒死状态时，你可令其他魏势力角色依次选择是否令你回复1点体力。选择是的角色在此次濒死结算结束后受到1点伤害并摸一张牌。',
+                            hpp_caoxing: '曹性',
+                            hpp_liushi: '流矢',
+                            hpp_liushi_info: '出牌阶段，你可以将一张红桃牌置于牌堆顶，视为对一名角色使用一张【杀】（不计入次数且无距离限制）。你使用【杀】造成伤害后，该角色手牌上限-1。',
                             hpp_caoxiu: '曹休',
                             hpp_qingxi: '倾袭',
                             hpp_qingxi_info: '当你使用【杀】或【决斗】指定目标后，你可令其选择一项：1.弃置等同你攻击范围内的人数张手牌（最多为二，若你装备区有武器牌，则改为最多为四），然后弃置你的此武器牌；2.令此牌对其伤害+1且进行一次判定，若结果为红色，此牌不能被该角色响应，若结果为黑色，你摸2张牌。',
@@ -15011,6 +15093,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xiahoudun: '夏侯惇',
                             hpp_qingjian: '清俭',
                             hpp_qingjian_info: '每回合限一次，当你于摸牌阶段外获得牌后，你可以展示任意张牌并交给一名其他角色，然后你摸一张牌。',
+                            hpp_xiahoujie: '夏侯杰',
+                            hpp_liedan: '裂胆',
+                            hpp_liedan_info: '锁定技，其他角色的准备阶段，你与其依次比较双方的手牌数，体力值与装备区牌数，你每有一项大于该角色则摸一张牌。若均大于该角色，你加1点体力上限（你的体力上限最大为8）；若小于等于，你失去1点体力并获得一枚“裂”标记。准备阶段，若“裂”大于等于5，你死亡。',
+                            hpp_zhuangdan: '壮胆',
+                            hpp_zhuangdan_mark: '壮胆',
+                            hpp_zhuangdan_info: '锁定技，其他角色的回合结束时，若你的手牌数是全场唯一最多的，【裂胆】失效直到你回合结束。',
                             hpp_xiahoulingnv: '夏侯令女',
                             hpp_weilie: '炜烈',
                             hpp_weilie_info: '每局游戏限一次，出牌阶段，你可以弃置一张牌令一名角色回复1点体力，摸一张牌。你每次发动“浮萍”记录牌名时，此技能使用次数+1。',
@@ -15146,7 +15234,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huomo_info: '当你需要使用基本牌时，你可以将一张不为基本牌的黑色牌置于牌堆顶。若如此做，你视为使用此基本牌，每回合限两次。',
                             hpp_zuoding: '佐定',
                             hpp_zuoding_info: '任意角色在其出牌阶段内使用黑桃牌时，若没有角色受到过伤害，你可以令其中的一个目标角色摸一张牌。',
-                            hpp_zhoucang:'周仓',
+                            hpp_zhoucang: '周仓',
                             hpp_zhongyong: '忠勇',
                             hpp_zhongyong_info: '当你使用的【杀】结算完毕后，你可以将此【杀】或目标角色使用的【闪】交给除该角色以外的一名其他角色，若其以此法获得的牌中有：红色，其可以对你攻击范围内的角色使用一张【杀】；黑色，你与其各摸一张牌。',
                             hpp_daopu: '刀仆',
