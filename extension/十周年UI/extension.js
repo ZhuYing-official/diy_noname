@@ -5874,6 +5874,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 										isExt = true;
 									} else {
 										switch (value) {
+											case '先':
+												filename = 'xianshou';
+												break;
+											case '后':
+												filename = 'houshou';
+												break;
 											case '猜':
 												filename = 'cai';
 												if (_status.mode == 'purple' && identity == 'cai') {
@@ -10202,10 +10208,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 			intro: (function () {
 				var log = [
 					'有bug先检查其他扩展，不行再关闭UI重试，最后再联系作者。',
-					'当前版本：1.2.0.220114.27（Show-K修复版）',
-					'更新日期：2023-06-30',
-					'- 感谢原作者短歌的认可！',
-					'- 修复了因equip和addJudge导致的问题。',
+					'当前版本：1.2.0.220114.28（Show-K修复版）',
+					'更新日期：2023-07-14',
+					'- 创建了GitHub仓库。欢迎各位前来反馈和帮助！',
+					'《十周年UI》采用GNU通用公共许可证v3.0授权',
+					'仓库链接：',
+					'<a href="https://github.com/Tipx-L/decade-ui" target="_blank">https:<wbr>//<wbr>github<wbr>.com<wbr>/Tipx<wbr>-L<wbr>/decade<wbr>-ui</a>',
+					'<a href="https://hub.fgit.ml/Tipx-L/decade-ui" target="_blank">FastGit</a>',
+					'最新版下载链接：',
+					'<a download href="https://ghproxy.com/https://github.com/Tipx-L/decade-ui/releases/latest/download/decade-ui.zip" target="_blank">GitHub Proxy</a>',
+					'<a download href="https://hub.fgit.ml/Tipx-L/decade-ui/releases/latest/download/decade-ui.zip" target="_blank">FastGit</a>',
+					'<a download href="https://github.com/Tipx-L/decade-ui/releases/latest/download/decade-ui.zip" target="_blank">GitHub</a>',
+					'最新版（无动态背景和动态皮肤）下载链接：',
+					'<a download href="https://ghproxy.com/https://github.com/Tipx-L/decade-ui/releases/latest/download/decade-ui-no-dynamics.zip" target="_blank">GitHub Proxy</a>',
+					'<a download href="https://hub.fgit.ml/Tipx-L/decade-ui/releases/latest/download/decade-ui-no-dynamics.zip" target="_blank">FastGit</a>',
+					'<a download href="https://github.com/Tipx-L/decade-ui/releases/latest/download/decade-ui-no-dynamics.zip" target="_blank">GitHub</a>',
+					'或者关注微信公众号“无名杀扩展交流”，及时获取《十周年UI》最新版',
 					/*
 					'- 新增动皮及背景：[曹节-凤历迎春]、[曹婴-巾帼花舞]、[貂蝉-战场绝版]、[何太后-耀紫迷幻]、[王荣-云裳花容]、[吴苋-金玉满堂]、[周夷-剑舞浏漓]；',
 					'- 新增动皮oncomplete支持(函数内部只能调用this.xxx代码)；',
@@ -10223,9 +10241,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 				return '<p style="color:rgb(210,210,000); font-size:12px; line-height:14px; text-shadow: 0 0 2px black;">' + log.join('<br>') + '</p>';
 			})(),
 			author: "Show-K←寰宇星城←短歌 QQ464598631",
-			diskURL: "",
-			forumURL: "",
-			version: "1.2.0.220114.27",
+			diskURL: "https://ghproxy.com/https://github.com/Tipx-L/decade-ui/releases/latest/download/decade-ui.zip",
+			forumURL: "https://hub.fgit.ml/Tipx-L/decade-ui/issues",
+			version: "1.2.0.220114.28",
 		},
 		files: {
 			"character": [],
