@@ -308,7 +308,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				'gz_jiangwei','gz_zhangfei','gz_sp_zhugeliang',
 				'gz_zhouyu','gz_lingcao','gz_daqiao','gz_dingfeng',
 				'gz_yuji','gz_caiwenji','gz_diaochan','gz_zuoci',
-				'gz_jin_simazhao','gz_dongzhao',
+				'gz_key_ushio','gz_jin_simazhao','gz_dongzhao',
 				'gz_liuba','gz_zhouyi','gz_re_xunchen',
 				'gz_fuwan','gz_zhugejin','gz_yangxiu',
 				'gz_yangyan','gz_tw_tianyu','gz_yangwan',
@@ -374,7 +374,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				guozhan_mobile:["gz_lingcao","gz_lifeng","gz_sp_duyu"],
 				guozhan_qunxiong:['gz_xf_huangquan','gz_guohuai','gz_guanqiujian','gz_zhujun','gz_chengong','gz_re_xugong'],
 				guozhan_tw:['gz_yangxiu','gz_tw_tianyu','gz_tw_xiahoushang','gz_liaohua','gz_chendao','gz_zhugejin','gz_zumao','gz_fuwan','gz_tw_liufuren','gz_old_huaxiong'],
-				guozhan_others:["gz_beimihu","gz_re_nanhualaoxian"],
+				guozhan_others:["gz_beimihu","gz_key_ushio","gz_re_nanhualaoxian"],
 			}
 		},
 		characterPack:{
@@ -579,6 +579,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				gz_re_xugong:['male','wu',3,['gzbiaozhao','gzyechou'],['doublegroup:wu:qun']],
 				
 				gz_yangwan:['female','shu',3,['gzyouyan','gzzhuihuan'],['gzskin']],
+
+				gz_key_ushio:['female','key',3,['ushio_huanxin','ushio_xilv'],['doublegroup:key:wei:shu:wu:qun:jin']],
 			}
 		},
 		skill:{
@@ -3012,7 +3014,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				trigger:{player:'phaseDrawBegin2'},
 				forced:true,
-				filter:(event,player)=>!event.numFixed&&player.isMaxHp(),
+				filter:(event,player)=>!event.numFixed&&player.isMaxHandcard(),
 				preHidden:true,
 				content:function(){
 					trigger.num+=2;
