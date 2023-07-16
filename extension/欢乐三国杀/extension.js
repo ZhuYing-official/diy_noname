@@ -174,6 +174,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_sp_zhaoyun',
                             'hpp_sp_zhugeliang',
 
+                            'hpp_dalanmao',
                             'hpp_sunwukong',
                         ],
                         //史诗
@@ -258,7 +259,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei'],
                                 shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce', 'shen_daxiaoqiao'],
                                 shen_qun: ['hpp_shen_lvbu', 'hpp_shen_huatuo', 'hpp_shen_zhenji', 'hpp_shen_zhangjiao', 'shen_diaochan'],
-                                doudizhu: ['hpp_sunwukong'],
+                                doudizhu: ['hpp_sunwukong', 'hpp_dalanmao'],
                             },
                         },
                         character: {
@@ -595,6 +596,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神诸葛亮
                             hpp_shen_zhugeliang: ['male', 'shen', 3, ['hpp_qixing', 'hpp_kuangfeng', 'hpp_dawu'], ['shu']],
 
+                            // 大懒猫
+                            hpp_dalanmao: ['male', 'shen', 4, ['hpp_zuzhou', 'hpp_moyu', 'hpp_sanlian'], []],
                             // 孙悟空
                             hpp_sunwukong: ['male', 'shen', 4, ['hpp_72bian', 'hpp_ruyi', 'hpp_qitian'], []],
                         },
@@ -621,6 +624,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhaoyun: '字子龙，常山真定人。身长八尺，姿颜雄伟。长坂坡单骑救阿斗，先主云：“子龙一身都是胆也。”',
                             hpp_shen_zhouyu: '字公瑾，庐江舒县人。东汉末年名将。有姿貌、精音律，江东有“曲有误，周郎顾”之语。周瑜少与孙策交好，后孙策遇刺身亡，孙权继任。周瑜将兵赴丧，以中护军的身份与长史张昭共掌众事，建安十三年（208年），周瑜率东吴军与刘备军联合，在赤壁击败曹操。此战也奠定了三分天下的基础。',
                             hpp_shen_zhugeliang: '字孔明、号卧龙，汉族，琅琊阳都人，三国时期蜀汉丞相、杰出的政治家、军事家、发明家、文学家。在世时被封为武乡侯，死后追谥忠武侯，后来东晋政权推崇诸葛亮军事才能，特追封他为武兴王。诸葛亮为匡扶蜀汉政权，呕心沥血、鞠躬尽瘁、死而后已。其代表作有《前出师表》、《后出师表》、《诫子书》等。曾发明木牛流马等，并改造连弩，可一弩十矢俱发。于234年在宝鸡五丈原逝世。',
+                            hpp_dalanmao: '欢乐三国杀家园系统角色',
                             hpp_sunwukong: '狗卡桌游《自在西游》联动角色',
                         },
                         characterReplace: {
@@ -15241,6 +15245,176 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     },
                                 },
                             },
+                            //大懒猫
+                            hpp_zuzhou: {
+                                trigger: { global: 'phaseBegin' },
+                                check: function (event, player) {
+                                    if (player.hp + player.countCards('hs', { name: 'tao' }) <= 1) return false;
+                                    if (event.player == player) return player.countCards('h', { name: ['sha', 'shan'] }) >= 3 && player.countCards('h', { name: 'sha' }) < 3 && player.countCards('h', { name: 'shan' }) < 3;
+                                    return get.attitude(player, event.player) < 0 && event.player.countCards('h', { name: 'sha' }) > 2;
+                                },
+                                logTarget: 'player',
+                                content: function () {
+                                    'step 0'
+                                    player.loseHp();
+                                    'step 1'
+                                    player.chooseControl().set('choiceList', [
+                                        '令' + get.translation(trigger.player) + '本回合手牌中所有的【杀】视为【闪】',
+                                        '令' + get.translation(trigger.player) + '本回合手牌中所有的【闪】视为【杀】',
+                                    ]).set('ai', function () {
+                                        var player = _status.event.player;
+                                        return player == _status.event.target ? 1 : 0;
+                                    }).set('target', trigger.player);
+                                    'step 2'
+                                    trigger.player.addTempSkill('hpp_zuzhou2');
+                                    trigger.player.storage.hpp_zuzhou2 = result.index;
+                                },
+                                ai: { expose: 0.2 },
+                            },
+                            hpp_zuzhou2: {
+                                charlotte: true,
+                                onremove: true,
+                                mod: {
+                                    cardname: function (card, player, name) {
+                                        var list = ['sha', 'shan'];
+                                        if (player.storage.hpp_zuzhou2 == 1) list.reverse();
+                                        if (card.name == list[0]) return list[1];
+                                    },
+                                },
+                            },
+                            hpp_moyu: {
+                                trigger: { player: 'phaseUseBegin' },
+                                check: function (event, player) {
+                                    return player.hp + player.countCards('hs', { name: 'tao' }) <= 2;
+                                },
+                                content: function () {
+                                    player.addTempSkill('hpp_moyu2');
+                                    player.addMark('hpp_moyu2', 2, false);
+                                    player.addTempSkill('hpp_moyu3', { player: 'hpp_moyu3After' });
+                                    player.addMark('hpp_moyu3', 2, false);
+                                },
+                            },
+                            hpp_moyu2: {
+                                group: 'zishou2',
+                                charlotte: true,
+                                onremove: true,
+                                mod: {
+                                    maxHandcard: function (player, num) {
+                                        return num + player.countMark('hpp_moyu2');
+                                    },
+                                },
+                                trigger: { player: 'phaseEnd' },
+                                filter: function (event, player) {
+                                    return player.isDamaged();
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.recover();
+                                },
+                            },
+                            hpp_moyu3: {
+                                charlotte: true,
+                                onremove: true,
+                                trigger: { player: 'phaseBegin' },
+                                firstDo: true,
+                                direct: true,
+                                content: function () {
+                                    player.addTempSkill('hpp_moyu4');
+                                    player.addMark('hpp_moyu4', 2, false);
+                                },
+                            },
+                            hpp_moyu4: {
+                                charlotte: true,
+                                onremove: true,
+                                trigger: { player: 'phaseDrawBegin2' },
+                                filter: function (event, player) {
+                                    return !event.numFixed;
+                                },
+                                forced: true,
+                                content: function () {
+                                    trigger.num += player.countMark('hpp_moyu4');
+                                },
+                            },
+                            hpp_sanlian: {
+                                enable: 'phaseUse',
+                                filter: function (event, player) {
+                                    return player.countCards('h', function (card) {
+                                        return lib.skill.hpp_sanlian.filterCard(card, player);
+                                    });
+                                },
+                                filterCard: function (card, player) {
+                                    if (ui.selected.cards.length) {
+                                        var cardx = ui.selected.cards[0];
+                                        return get.type2(card) == get.type2(cardx);
+                                    }
+                                    return player.countCards('h', function (cardx) {
+                                        return get.type2(card) == get.type2(cardx);
+                                    }) >= 3;
+                                },
+                                selectCard: 3,
+                                check: function (card) {
+                                    return 6 - get.value(card);
+                                },
+                                complexCard: true,
+                                content: function () {
+                                    'step 0'
+                                    player.draw(player.getDamagedHp());
+                                    player.addTempSkill('hpp_sanlian_hanbing');
+                                    'step 1'
+                                    var card = cards[0];
+                                    for (var cardx of cards) {
+                                        if (get.name(cardx, player) != get.name(card, player)) {
+                                            player.removeSkill('hpp_sanlian_hanbing');
+                                            break;
+                                        }
+                                    }
+                                    'step 2'
+                                    for (var i of game.filterPlayer().sortBySeat(player)) {
+                                        player.line(i);
+                                        i.damage();
+                                    }
+                                    'step 3'
+                                    if (player.hasSkill('hpp_sanlian_hanbing')) {
+                                        player.removeSkill('hpp_sanlian_hanbing');
+                                    }
+                                    // for (var i of game.filterPlayer().sortBySeat(player)) {
+                                    //     if (i == player) continue;
+                                    //     player.line(i);
+                                    //     player.discardPlayerCard(i, 'he', true);
+                                    // }
+                                },
+                                subSkill: {
+                                    hanbing: {
+                                        trigger: { source: 'damageBegin2' },
+                                        forced: true,
+                                        filter: function (event) {
+                                            return event.card.name == 'sha';
+                                        },
+                                        content: function () {
+                                            if (trigger.player == player) {
+                                                event.finish();
+                                            }
+                                            else {
+                                                if (trigger.player.countDiscardableCards(player, 'he')) {
+                                                    player.line(trigger.player);
+                                                    player.discardPlayerCard('he', trigger.player, true);
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                ai: {
+                                    order: 10,
+                                    result: {
+                                        player: function (player) {
+                                            if (player.hp + player.countCards('hs', { name: ['tao', 'jiu'] }) < 2) return -1;
+                                            return game.countPlayer(function (current) {
+                                                return get.sgn(get.damageEffect(current, player, player));
+                                            });
+                                        },
+                                    },
+                                },
+                            },
                         },
                         dynamicTranslate: {
                             hpp_zhongjian: function (player) {
@@ -15443,6 +15617,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhouyu: '#r捞德一评级:4.0',
                             hpp_shen_zhugeliang: '#r捞德一评级:4.1',
                             // 斗地主
+                            hpp_dalanmao: '#b地主专属' + '<br/>' + '捞德一评级:3.6',
                             hpp_sunwukong: '#r地主专属' + '<br/>' + '捞德一评级:4.2',
                         },
                         translate: {
@@ -16231,6 +16406,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huoyan_info: '锁定技，其他角色的手牌始终对你可见。',
                             hpp_jindouyun: '筋斗云',
                             hpp_jindouyun_info: '锁定技，你计算与其他角色的距离时，始终-1；其他角色计算与你的距离时，始终+1。',
+                            hpp_dalanmao: '大懒猫',
+                            hpp_zuzhou: '诅咒',
+                            hpp_zuzhou_info: '任意角色的回合开始时，你可以失去1点体力，并选择一项：1、令其手牌中的所有【杀】视为【闪】直到回合结束。2、令其手牌中的所有【闪】视为【杀】直到回合结束。',
+                            hpp_moyu: '摸鱼',
+                            hpp_moyu2: '摸鱼',
+                            hpp_moyu4: '摸鱼',
+                            hpp_moyu_info: '你的出牌阶段开始时，你可以令你本回合手牌上限+2，下个回合摸牌阶段摸牌数+2；若你如此做，则你本回合无法对其他角色使用牌，回合结束时，回复1点体力。',
+                            hpp_sanlian: '三连',
+                            hpp_sanlian_info: '你的出牌阶段，你可以弃置三张类型相同的手牌，再摸X张牌（X为你已损的体力），并对全场所有角色造成1点伤害，若这三张牌的牌名相同，则弃置受到伤害的其他角色各一张牌。',
 
                             biao_zhu: '标·主',
                             biao_hu: '标·虎',

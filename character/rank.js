@@ -1502,6 +1502,7 @@ window.noname_character_rank = {
 			'hpp_shen_zhouyu',
 			'hpp_shen_zhugeliang',
 
+			'hpp_dalanmao',
 			'hpp_sunwukong',
 		],
 		epic: [
