@@ -64,6 +64,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				correction_history: ['cuishi', 'liucong'],
 				honor_of_kings: ['hok_daji', 'hok_sp_lixin', 'hok_makeboluo', 'hok_sp_mingshiyin', 'hok_sunwukong', 'hok_wuzetian'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
+				hpp_hpp: ['hpp_re_luxun'],
 			},
 		},
 		character: {
@@ -91,6 +92,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			shen_dongzhuo: ['male', 'shen', 5, ['cannue', 'xiehan', 'huidu'], ['qun']],
 			// 神鲁肃
 			shen_lusu: ['male', 'shen', 3, ['diying', 'fusheng', 'chiyan', 'lianmeng'], ['wu']],
+
+			// 欢乐陆逊
+			hpp_re_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'hpp_lianying'], []],
 		},
 		characterIntro: {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
@@ -2239,6 +2243,38 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 
+			// 欢乐界陆逊
+			hpp_lianying: {
+				audio: 'relianying',
+				trigger: {
+					player: 'loseAfter',
+					global: ['equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+				},
+				frequent: true,
+				filter: function (event, player) {
+					if (player.countCards('h')) return false;
+					var evt = event.getl(player);
+					return evt && evt.player == player && evt.hs && evt.hs.length > 0;
+				},
+				content: function () {
+					player.draw(player.maxHp);
+				},
+				ai: {
+					threaten: 0.8,
+					effect: {
+						target: function (card) {
+							if (card.name == 'guohe') return 0.4;
+						}
+					},
+					noh: true,
+					skillTagFilter: function (player, tag) {
+						if (tag == 'noh') {
+							if (player.countCards('h') != 1) return false;
+						}
+					}
+				}
+			},
+
 			// others
 			hppxingwu: {
 				audio: 2,
@@ -2649,10 +2685,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lianmeng: '联盟',
 			lianmeng_info: '出牌阶段限一次，你可以选择两张手牌交给一名其他角色，你摸三张牌。',
 
+			// 欢乐界陆逊
+			hpp_re_luxun: '欢乐界陆逊',
+			hpp_lianying: '连营',
+			hpp_lianying_info: '当你失去最后的手牌时，你可以摸至手牌上限。',
 
 			correction_history: '正史',
 			honor_of_kings: '王者荣耀',
 			happy_kings: '娱乐神将',
+			hpp_hpp: '欢乐三国杀·捞',
 		},
 	};
 });

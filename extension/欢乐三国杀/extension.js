@@ -70,8 +70,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_lidian',
                             'hpp_lijue',
                             'hpp_lingtong',
-                            'hpp_liubiao',
                             'hpp_liubei',
+                            'hpp_liubiao',
+                            'hpp_liuchen',
                             'hpp_liufeng',
                             'hpp_liushan',
                             'hpp_liuxie',
@@ -367,10 +368,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_lijue: ['male', 'qun', '5/6', ['xinfu_yisuan', 'xinfu_langxi'], []],
                             // 欢乐凌统
                             hpp_lingtong: ['male', 'wu', 4, ['hpp_xuanfeng', 'hpp_yongjin'], []],
-                            // 欢乐刘表
-                            hpp_liubiao: ['male', 'qun', 3, ['hpp_zishou', 'hpp_zongshi'], []],
                             // 欢乐刘备
                             hpp_liubei: ['male', 'shu', 4, ['hpp_rende', 'hpp_jijiang'], ['zhu']],
+                            // 欢乐刘表
+                            hpp_liubiao: ['male', 'qun', 3, ['hpp_zishou', 'hpp_zongshi'], []],
+                            // 刘谌
+                            hpp_liuchen: ['male', 'shu', 4, ['hpp_zhanjue', 'hpp_qinwang'], ['zhu']],
                             // 欢乐刘封
                             hpp_liufeng: ['male', 'shu', 4, ['hpp_xiansi'], []],
                             // 欢乐刘禅
@@ -688,8 +691,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             re_lidian: ['hpp_lidian', 're_lidian', 'old_re_lidian', 'junk_lidian'],
                             lijue: ['hpp_lijue', 'lijue', 'ns_lijue'],
                             lingtong: ['hpp_lingtong', 'xin_lingtong', 're_lingtong', 'lingtong', 'old_lingtong'],
-                            liubiao: ['hpp_liubiao', 're_liubiao', 'xin_liubiao', 'liubiao', 'oldre_liubiao', 'old_liubiao'],
                             liubei: ['hpp_liubei', 're_liubei', 'liubei', 'junk_liubei'],
+                            liubiao: ['hpp_liubiao', 're_liubiao', 'xin_liubiao', 'liubiao', 'oldre_liubiao', 'old_liubiao'],
+                            liuchen: ['hpp_liuchen', 're_liuchen', 'liuchen'],
                             liufeng: ['hpp_liufeng', 're_liufeng', 'liufeng'],
                             liushan: ['hpp_liushan', 'ol_liushan', 're_liushan', 'liushan'],
                             liuxie: ['hpp_liuxie', 'liuxie'],
@@ -5066,96 +5070,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 }
                             },
 
-                            // 刘表
-                            hpp_zishou: {
-                                audio: 'zishou',
-                                audioname: ['re_liubiao'],
-                                trigger: { player: 'phaseDrawBegin2' },
-                                check: function (event, player) {
-                                    return player.countCards('h') <= (player.hasSkill('zongshi') ? player.maxHp : (player.hp - 2)) || player.skipList.contains('phaseUse') || !player.countCards('h', function (card) {
-                                        return get.tag(card, 'damage') && player.hasUseTarget(card);
-                                    });
-                                },
-                                filter: function (event, player) {
-                                    return !event.numFixed;
-                                },
-                                content: function () {
-                                    trigger.num += game.countGroup();
-                                    player.addTempSkill('hpp_zishou2');
-                                },
-                                ai: {
-                                    threaten: 1.5
-                                }
-                            },
-                            hpp_zishou2: {
-                                audio: 'rezishou',
-                                trigger: {
-                                    source: 'damageBegin2',
-                                },
-                                forced: true,
-                                filter: function (event, player) {
-                                    if (event.name == 'damage') return event.player != player;
-                                    if (player.getHistory('skipped').contains('phaseUse')) return false;
-                                    return player.getHistory('useCard', function (evt) {
-                                        if (evt.targets && evt.targets.length && evt.isPhaseUsing()) {
-                                            var targets = evt.targets.slice(0);
-                                            while (targets.contains(player)) targets.remove(player);
-                                            return targets.length > 0;
-                                        }
-                                        return false;
-                                    }).length == 0;
-                                },
-                                popup: false,
-                                content: function () {
-                                    if (trigger.name == 'damage') {
-                                        player.logSkill('hpp_zishou', trigger.player);
-                                        trigger.cancel();
-                                        event.finish();
-                                        return;
-                                    }
-                                },
-                                ai: {
-                                    effect: {
-                                        player: function (card, player, target) {
-                                            if (get.tag(card, 'damage')) return 'zeroplayertarget';
-                                        },
-                                    },
-                                },
-                            },
-                            hpp_zongshi: {
-                                audio: 'decadezongshi',
-                                mod: {
-                                    maxHandcard: function (player, num) {
-                                        return num + game.countGroup();
-                                    },
-                                },
-                                trigger: { player: 'phaseZhunbeiBegin' },
-                                forced: true,
-                                filter: function (event, player) {
-                                    return player.countCards('h') > player.hp;
-                                },
-                                content: function () {
-                                    player.addTempSkill('hpp_zongshi_shainfinity');
-                                },
-                                subSkill: {
-                                    shainfinity: {
-                                        audio: 'hpp_zongshi',
-                                        mod: {
-                                            cardUsable: function (card, player, num) {
-                                                if (card.name == 'sha') return Infinity;
-                                            }
-                                        },
-                                        ai: {
-                                            // unequip: true,
-                                            skillTagFilter: function (player, tag, arg) {
-                                                if (arg && arg.name == 'sha') return true;
-                                                return false;
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-
                             // 刘备
                             hpp_rende: {
                                 audio: 'rerende',
@@ -5498,6 +5412,263 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 content: function () {
                                     player.removeSkill('hpp_jijiang3');
+                                },
+                            },
+
+                            // 刘表
+                            hpp_zishou: {
+                                audio: 'zishou',
+                                audioname: ['re_liubiao'],
+                                trigger: { player: 'phaseDrawBegin2' },
+                                check: function (event, player) {
+                                    return player.countCards('h') <= (player.hasSkill('zongshi') ? player.maxHp : (player.hp - 2)) || player.skipList.contains('phaseUse') || !player.countCards('h', function (card) {
+                                        return get.tag(card, 'damage') && player.hasUseTarget(card);
+                                    });
+                                },
+                                filter: function (event, player) {
+                                    return !event.numFixed;
+                                },
+                                content: function () {
+                                    trigger.num += game.countGroup();
+                                    player.addTempSkill('hpp_zishou2');
+                                },
+                                ai: {
+                                    threaten: 1.5
+                                }
+                            },
+                            hpp_zishou2: {
+                                audio: 'rezishou',
+                                trigger: {
+                                    source: 'damageBegin2',
+                                },
+                                forced: true,
+                                filter: function (event, player) {
+                                    if (event.name == 'damage') return event.player != player;
+                                    if (player.getHistory('skipped').contains('phaseUse')) return false;
+                                    return player.getHistory('useCard', function (evt) {
+                                        if (evt.targets && evt.targets.length && evt.isPhaseUsing()) {
+                                            var targets = evt.targets.slice(0);
+                                            while (targets.contains(player)) targets.remove(player);
+                                            return targets.length > 0;
+                                        }
+                                        return false;
+                                    }).length == 0;
+                                },
+                                popup: false,
+                                content: function () {
+                                    if (trigger.name == 'damage') {
+                                        player.logSkill('hpp_zishou', trigger.player);
+                                        trigger.cancel();
+                                        event.finish();
+                                        return;
+                                    }
+                                },
+                                ai: {
+                                    effect: {
+                                        player: function (card, player, target) {
+                                            if (get.tag(card, 'damage')) return 'zeroplayertarget';
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_zongshi: {
+                                audio: 'decadezongshi',
+                                mod: {
+                                    maxHandcard: function (player, num) {
+                                        return num + game.countGroup();
+                                    },
+                                },
+                                trigger: { player: 'phaseZhunbeiBegin' },
+                                forced: true,
+                                filter: function (event, player) {
+                                    return player.countCards('h') > player.hp;
+                                },
+                                content: function () {
+                                    player.addTempSkill('hpp_zongshi_shainfinity');
+                                },
+                                subSkill: {
+                                    shainfinity: {
+                                        audio: 'hpp_zongshi',
+                                        mod: {
+                                            cardUsable: function (card, player, num) {
+                                                if (card.name == 'sha') return Infinity;
+                                            }
+                                        },
+                                        ai: {
+                                            // unequip: true,
+                                            skillTagFilter: function (player, tag, arg) {
+                                                if (arg && arg.name == 'sha') return true;
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+
+                            // 刘谌
+                            hpp_zhanjue: {
+                                audio: 'zhanjue',
+                                enable: 'phaseUse',
+                                filterCard: function (card) {
+                                    return !card.hasGaintag('hpp_qinwang');
+                                },
+                                selectCard: -1,
+                                position: 'h',
+                                filter: function (event, player) {
+                                    var stat = player.getStat().skill;
+                                    if (stat.hpp_zhanjue_draw && stat.hpp_zhanjue_draw >= 3) return false;
+                                    var hs = player.getCards('h', function (card) {
+                                        return !card.hasGaintag('hpp_qinwang');
+                                    });
+                                    if (!hs.length) return false;
+                                    for (var i = 0; i < hs.length; i++) {
+                                        var mod2 = game.checkMod(hs[i], player, 'unchanged', 'cardEnabled2', player);
+                                        if (mod2 === false) return false;
+                                    }
+                                    return event.filterCard(get.autoViewAs({ name: 'juedou' }, hs))
+                                },
+                                viewAs: { name: 'juedou' },
+                                onuse: function (links, player) {
+                                    player.addTempSkill('hpp_zhanjue_effect', 'phaseUseEnd');
+                                },
+                                ai: {
+                                    order: 1,
+                                    tag: {
+                                        respond: 2,
+                                        respondSha: 2,
+                                        damage: 1,
+                                    },
+                                    result: {
+                                        target: -1.5,
+                                        player: function (player, target) {
+                                            if (player.hasSkillTag('directHit_ai', true, {
+                                                target: target,
+                                                card: { name: 'juedou' },
+                                            }, true)) {
+                                                return 0;
+                                            }
+                                            if (get.damageEffect(target, player, target) > 0 && get.attitude(player, target) > 0 && get.attitude(target, player) > 0) {
+                                                return 0;
+                                            }
+                                            var hs1 = target.getCards('h', 'sha');
+                                            var hs2 = player.getCards('h', function (card) {
+                                                return card.hasGaintag('hpp_qinwang') && get.name(card) == 'sha';
+                                            });
+                                            if (hs1.length > hs2.length + 1) {
+                                                return -2;
+                                            }
+                                            var hsx = target.getCards('h');
+                                            if (hsx.length > 2 && hs2.length == 0 && hsx[0].number < 6) {
+                                                return -2;
+                                            }
+                                            if (hsx.length > 3 && hs2.length == 0) {
+                                                return -2;
+                                            }
+                                            if (hs1.length > hs2.length && (!hs2.length || hs1[0].number > hs2[0].number)) {
+                                                return -2;
+                                            }
+                                            return -0.5;
+                                        },
+                                    },
+                                },
+                                subSkill: {
+                                    effect: {
+                                        charlotte: true,
+                                        onremove: function (player) {
+                                            delete player.getStat().skill.hpp_zhanjue_draw;
+                                        },
+                                        trigger: { player: 'useCardAfter' },
+                                        filter: function (event, player) {
+                                            return event.skill == 'hpp_zhanjue';
+                                        },
+                                        forced: true,
+                                        popup: false,
+                                        content: function () {
+                                            'step 0'
+                                            var stat = player.getStat().skill;
+                                            if (!stat.hpp_zhanjue_draw) stat.hpp_zhanjue_draw = 0;
+                                            stat.hpp_zhanjue_draw++;
+                                            player.draw('nodelay');
+                                            var list = game.filterPlayer(function (current) {
+                                                if (current.getHistory('damage', function (evt) {
+                                                    return evt.card == trigger.card;
+                                                }).length > 0) {
+                                                    if (current == player) {
+                                                        stat.hpp_zhanjue_draw++;
+                                                    }
+                                                    return true;
+                                                }
+                                                return false;
+                                            });
+                                            if (list.length) {
+                                                list.sortBySeat();
+                                                game.asyncDraw(list);
+                                            }
+                                            'step 1'
+                                            game.delay();
+                                            'step 2'
+                                            if (player.getHistory('damage', function (evt) {
+                                                return evt.card == trigger.card;
+                                            }).length) {
+                                                for (var i of game.filterPlayer().filter(function (target) {
+                                                    return target.getHistory('sourceDamage', function (evt) {
+                                                        return evt.card == trigger.card && evt.player == player;
+                                                    }).length && target.isIn() && target.countCards('he');
+                                                })) player.discardPlayerCard(i, 'he');
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_qinwang: {
+                                audio: 'qinwang1',
+                                enable: 'phaseUse',
+                                usable: 1,
+                                zhuSkill: true,
+                                filter: function (event, player) {
+                                    if (!player.hasZhuSkill('hpp_qinwang')) return false;
+                                    return game.hasPlayer(function (current) {
+                                        return current != player && current.group == 'shu' && player.hasZhuSkill('hpp_qinwang', current);
+                                    });
+                                },
+                                selectTarget: -1,
+                                filterTarget: function (card, player, current) {
+                                    return current != player && current.group == 'shu' && player.hasZhuSkill('hpp_qinwang', current);
+                                },
+                                content: function () {
+                                    'step 0'
+                                    if (target.hasCard(function (card) {
+                                        return _status.connectMode || get.name(card, target) == 'sha';
+                                    }, 'h')) {
+                                        target.chooseCard('是否交给' + get.translation(player) + '一张基本牌？', function (card, player) {
+                                            return get.type(card) == 'basic';
+                                        }, 'h').set('goon', get.attitude(target, player) > 0).set('ai', function (card) {
+                                            return _status.event.goon ? 1 : 0;
+                                        });
+                                    }
+                                    else event.finish();
+                                    'step 1'
+                                    if (result.bool) {
+                                        var card = result.cards[0];
+                                        target.give(card, player).gaintag.add('hpp_qinwang');
+                                        player.addTempSkill('hpp_qinwang_clear');
+                                        player.chooseBool('是否令' + get.translation(target) + '摸一张牌？');
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    if (result.bool) target.draw();
+                                },
+                                ai: {
+                                    order: 5,
+                                    result: { player: 1 },
+                                },
+                                subSkill: {
+                                    clear: {
+                                        charlotte: true,
+                                        onremove: function (player) {
+                                            player.removeGaintag('hpp_qinwang');
+                                        },
+                                    },
                                 },
                             },
 
@@ -15492,8 +15663,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_lidian: '#b捞德一评级:3.5',
                             hpp_lijue: '#b捞德一评级:3.7',
                             hpp_lingtong: '#b捞德一评级:3.8',
-                            hpp_liubiao: '#b捞德一评级:3.5',
                             hpp_liubei: '#b捞德一评级:3.7',
+                            hpp_liubiao: '#b捞德一评级:3.5',
+                            hpp_liuchen: '#b捞德一评级:3.5',
                             hpp_liufeng: '#b捞德一评级:3.5',
                             hpp_liushan: '#g捞德一评级:2.9',
                             hpp_liuxie: '#b捞德一评级:3.2',
@@ -15876,16 +16048,21 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xuanfeng_info: '当你于弃牌阶段弃置过至少两张牌，或当你失去装备区里的牌后，你可以弃置至多两名其他角色的共计两张牌。然后若此时是你的回合内，你可以对其中一名角色造成1点伤害。',
                             hpp_yongjin: '勇进',
                             hpp_yongjin_info: '限定技，出牌阶段，你可以移动场上的至多三张装备牌。',
-                            hpp_liubiao: '刘表',
-                            hpp_zishou: '自守',
-                            hpp_zishou_info: '摸牌阶段，你可以多摸X张牌（X为全场势力数），然后当你本回合对其他角色造成伤害时，防止此伤害。',
-                            hpp_zongshi: '宗室',
-                            hpp_zongshi_info: '锁定技，你的手牌上限+X（X为全场势力函数）；准备阶段，若你的手牌数大于你的体力值，则你本回合使用【杀】无次数限制。',
                             hpp_liubei: '刘备',
                             hpp_rende: '仁德',
                             hpp_rende_info: '出牌阶段每名角色限一次，你可以将任意张手牌交给一名其他角色,并可以让其无法对你使用红色【杀】直到你的下回合开始。当你给出第二张“仁德”牌时，你可以视为使用一张基本牌或普通锦囊牌。',
                             hpp_jijiang: '激将',
                             hpp_jijiang_info: '主公技，其他蜀势力角色可以在你需要时代替你使用或打出【杀】。若以此法出杀，则你与其各摸一张牌。你的回合外，当其他蜀势力角色使用或打出【杀】时，其可令你摸一张牌，每回合限一张。',
+                            hpp_liubiao: '刘表',
+                            hpp_zishou: '自守',
+                            hpp_zishou_info: '摸牌阶段，你可以多摸X张牌（X为全场势力数），然后当你本回合对其他角色造成伤害时，防止此伤害。',
+                            hpp_zongshi: '宗室',
+                            hpp_zongshi_info: '锁定技，你的手牌上限+X（X为全场势力函数）；准备阶段，若你的手牌数大于你的体力值，则你本回合使用【杀】无次数限制。',
+                            hpp_liuchen: '刘谌',
+                            hpp_zhanjue: '战绝',
+                            hpp_zhanjue_info: '出牌阶段，你可以将所有手牌当【决斗】使用，然后你和受伤的角色各摸一张牌。若你因此摸过三张或更多的牌，则本回合〖战绝〗失效，若你因【决斗】受到伤害，你可以弃置伤害来源区域内的一张牌。',
+                            hpp_qinwang: '勤王',
+                            hpp_qinwang_info: '主公技。出牌阶段限一次，你可以令所有其他蜀国角色依次选择是否交给你一张基本牌，然后你可令选择是的角色摸一张牌（以此法获得的牌本回合不计算在〖战绝〗使用的牌中）。',
                             hpp_liufeng: '刘封',
                             hpp_xiansi: '陷嗣',
                             hpp_xiansi_info: '准备阶段开始时，你可以弃置至多两名其他角色区域内的各一张牌。弃置了装备区的牌，且你在其攻击范围内，视为目标对你使用一张【杀】；若陷嗣只弃置一张牌，则你摸一张牌。',
