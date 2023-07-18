@@ -1378,6 +1378,7 @@ window.noname_character_rank = {
 			'hpp_guojia',
 			'hpp_handang',
 			'hpp_haozhao',
+			'hpp_hetaihou',
 			'hpp_huaman',
 			'hpp_huanggai',
 			'hpp_huangyueying',
@@ -1504,6 +1505,7 @@ window.noname_character_rank = {
 			'hpp_shen_lvmeng',
 			'hpp_shen_zhangjiao',
 			'hpp_shen_zhaoyun',
+			'hpp_shen_zhenji',
 			'hpp_shen_zhouyu',
 			'hpp_shen_zhugeliang',
 
