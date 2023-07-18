@@ -314,6 +314,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caozhi: ['male', 'wei', 3, ['hpp_luoying', 'hpp_jiushi'], []],
                             // 欢乐陈到
                             hpp_chendao: ['male', 'shu', 4, ['hpp_wanglie'], []],
+                            // 欢乐陈宫
+                            hpp_chengong: ['male', 'qun', 3, ['hpp_mingce', 'zhichi'], []],
                             // 欢乐程普
                             hpp_chengpu: ['male', 'wu', 4, ['hpp_lihuo', 'hpp_chunlao'], []],
                             // 欢乐陈群
@@ -680,6 +682,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             caozhen: ['hpp_caozhen', 're_caozhen', 'xin_caozhen', 'caozhen', 'old_caozhen'],
                             caozhi: ['hpp_caozhi', 're_caozhi', 'dc_caozhi', 'caozhi', 'ps_caozhi'],
                             chendao: ['hpp_chendao', 'chendao', 'old_chendao', 'ns_chendao'],
+                            chengong: ['hpp_chengong', 're_chengong', 'chengong'],
                             chengpu: ['hpp_chengpu', 're_chengpu', 'tw_chengpu', 'ns_chengpu', 'chengpu', 'xin_chengpu'],
                             chenqun: ['hpp_chenqun', 'dc_chenqun', 'chenqun', 're_chenqun', 'old_chenqun'],
                             chunyuqiong: ['hpp_chunyuqiong', 'chunyuqiong', 're_chunyuqiong'],
@@ -2266,6 +2269,49 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 forced: true,
                                 content: function () {
                                     player.draw(lib.skill.hpp_wanglie2.getNum(player));
+                                },
+                            },
+
+                            // 陈宫
+                            hpp_mingce: {
+                                audio: 'mingce',
+                                trigger: { player: 'phaseUseBegin' },
+                                filter: function (event, player) {
+                                    return game.hasPlayer(function (target) {
+                                        return target != player && game.hasPlayer(function (current) {
+                                            return target.canUse({ name: 'sha' }, current, false) && target.inRange(current);
+                                        });
+                                    });
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseCardTarget({
+                                        prompt: get.prompt2('hpp_mingce'),
+                                        filterTarget: function (card, player, target) {
+                                            if (ui.selected.targets.length) return ui.selected.targets[0].canUse({ name: 'sha' }, target, false) && ui.selected.targets[0].inRange(target);
+                                            return target != player;
+                                        },
+                                        selectTarget: 2,
+                                        filterCard: () => false,
+                                        selectCard: -1,
+                                        targetprompt: ['出杀者', '出杀目标'],
+                                        ai2: function (target) {
+                                            var player = _status.event.player;
+                                            if (ui.selected.targets.length == 0) {
+                                                if (get.attitude(player, target) <= 0) return 0;
+                                                var card = { name: 'sha', isCard: true };
+                                                return target.getUseValue(card, false);
+                                            }
+                                            return -get.attitude(player, target);
+                                        },
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        player.logSkill('hpp_mingce');
+                                        player.line2(result.targets);
+                                        result.targets[0].useCard({ name: 'sha', isCard: true }, result.targets[1], false, 'noai');
+                                    }
                                 },
                             },
 
@@ -16311,6 +16357,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caozhen: '#g捞德一评级:2.8',
                             hpp_caozhi: '#r捞德一评级:4.2',
                             hpp_chendao: '#b捞德一评级:3.4',
+                            hpp_chengong: '#b捞德一评级:3.5',
                             hpp_chengpu: '#b捞德一评级:3.4',
                             hpp_chenqun: '#g捞德一评级:2.9',
                             hpp_chunyuqiong: '#b捞德一评级:3.4',
@@ -16579,6 +16626,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_wanglie: '往烈',
                             hpp_wanglie2: '往烈',
                             hpp_wanglie_info: '出牌阶段，你使用的牌无距离限制。当你于出牌阶段内使用一张牌时，你可令此牌不能被响应，回合结束时，你摸X张牌，X为此牌造成的伤害数，若如此做，本回合你不能再使用牌。',
+                            hpp_chengong: '陈宫',
+                            hpp_mingce: '明策',
+                            hpp_mingce_info: '出牌阶段开始时，你可以选择一名其他角色，视为该角色对其攻击范围内你选择的另一名角色使用一张【杀】。',
                             hpp_chengpu: '程普',
                             hpp_lihuo: '疠火',
                             hpp_lihuo_info: '当你使用普通【杀】可以改为火【杀】，若此【杀】造成的伤害大于1，你失去1点体力；你使用火【杀】可以多选择一个目标；每回合你的火【杀】首次造成伤害后，摸一张牌。',
