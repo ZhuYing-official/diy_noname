@@ -2563,6 +2563,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 audio: 'cangchu',
                                 trigger: { global: 'phaseBefore', player: 'enterGame' },
                                 marktext: '粮',
+                                forced: true,
                                 filter: function (event, player) {
                                     if (event.name == 'phase' && game.phaseNumber != 0) return false;
                                     return player.countMark('hpp_cangchu') < game.countPlayer();
@@ -6879,7 +6880,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.chooseButton(['怀柔：选择获得一种基本牌或锦囊牌', [list, 'vcard']], true);
                                     'step 1'
                                     player.storage.hpp_huairou2.push(result.links[0][2]);
-                                    var card = get.cardPile(function (card) {
+                                    var card = get.cardPile2(function (card) {
                                         return card.name == result.links[0][2] && (get.nature(card) == result.links[0][3] || !result.links[0][3]);
                                     });
                                     if (!card) {
