@@ -9626,7 +9626,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 }
                             },
                             hpp_duanliang1: {
-                                audio: 2,
+                                audio: 'duanliang1',
                                 audioname: ['re_xuhuang'],
                                 enable: 'chooseToUse',
                                 filterCard: function (card) {
@@ -12373,7 +12373,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         forced: true,
                                         popup: false,
                                         filter: function (event) {
-                                            return event.skill == 'fanghun_sha' || event.skill == 'fanghun_shan';
+                                            return event.skill == 'hpp_fanghun_sha' || event.skill == 'hpp_fanghun_shan';
                                         },
                                         content: function () {
                                             player.draw();
