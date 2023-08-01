@@ -31,7 +31,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			shen_jiangwei:['male','shen',4,['jiufa','tianren','pingxiang'],['shen']],
 			
 			shen_sunce:['male','shen','1/6',['yingba','scfuhai','pinghe'],['wu']],
-			shen_xunyu:['male','shen',3,['tianzuo','lingce','dinghan'],['wei']],
+			shen_xunyu:['male','shen',3,['tianzuo','lingce','dinghan'],['wei','clan:颍川荀氏']],
 			shen_taishici:['male','shen',4,['dulie','tspowei'],['wu']],
 			shen_guojia:['male','shen',3,['reshuishi','stianyi','resghuishi'],['wei']],
 			shen_diaochan:['female','shen',3,['meihun','huoxin'],['qun']],
@@ -620,6 +620,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						player.gain(cards,'gain2');
 					}
+				},
+				ai:{
+					combo:'yizhao',
 				}
 			},
 			sanshou:{
@@ -1108,6 +1111,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				group:'twwuhun_gain',
 				subSkill:{
 					gain:{
+						audio:'twwuhun',
 						trigger:{
 							player:'damageEnd',
 							source:'damageSource',
@@ -1116,7 +1120,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						filter:function(event,player,name){
 							if(event.player==event.source) return false;
 							var target=lib.skill.twwuhun_gain.logTarget(event,player);
-							if(!target||!target.isAlive()) return false;
+							if(!target||!target.isIn()) return false;
 							return name=='damageEnd'||target.hasMark('twwuhun');
 						},
 						logTarget:function(event,player){
@@ -2861,7 +2865,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				usable:1,
 				filter:function(event,player){
 					var target=player.storage.zuoxing;
-					if(!target||!target.isAlive()||target.maxHp<2) return false;
+					if(!target||!target.isIn()||target.maxHp<2) return false;
 					for(var i of lib.inpile){
 						if(get.type(i)=='trick'&&event.filterCard({name:i,isCard:true},player,event)) return true;
 					}
@@ -3379,7 +3383,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{global:'damageEnd'},
 				filter:function(event,player){
-					return event.player.isAlive()&&player.getExpansions('chuyuan').length<player.maxHp;
+					return event.player.isIn()&&player.getExpansions('chuyuan').length<player.maxHp;
 				},
 				logTarget:'player',
 				locked:false,
@@ -3750,7 +3754,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.turnOver();
 					"step 6"
 					event.count--;
-					if(event.count){
+					if(event.count&&player.hasSkill('new_guixin')){
 						player.chooseBool(get.prompt2('new_guixin')).ai=function(){
 							return lib.skill.new_guixin.check({num:event.count},player);
 						};
@@ -5391,7 +5395,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var map={sha:'diamond',tao:'heart'}
 						for(var i=0;i<list.length;i++){
 							var name=list[i];
-							if(player.countCards('hs',function(card){
+							if(player.countCards('hes',function(card){
 								return (name!='sha'||get.value(card)<5)&&get.suit(card,player)==map[name];
 							})>0&&player.getUseValue({name:name,nature:name=='sha'?'fire':null})>0){
 								var temp=get.order({name:name,nature:name=='sha'?'fire':null});
@@ -5406,7 +5410,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					return 1;
 				},
-				position:'hs',
+				position:'hes',
 				filterCard:function(card,player,event){
 					event=event||_status.event;
 					var filter=event._backup.filterCard;
@@ -5419,10 +5423,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filter:function(event,player){
 					var filter=event.filterCard;
-					if(filter({name:'sha',nature:'fire'},player,event)&&player.countCards('hs',{suit:'diamond'})) return true;
-					if(filter({name:'shan'},player,event)&&player.countCards('hs',{suit:'club'})) return true;
-					if(filter({name:'tao'},player,event)&&player.countCards('hs',{suit:'heart'})) return true;
-					if(filter({name:'wuxie'},player,event)&&player.countCards('hs',{suit:'spade'})) return true;
+					if(filter({name:'sha',nature:'fire'},player,event)&&player.countCards('hes',{suit:'diamond'})) return true;
+					if(filter({name:'shan'},player,event)&&player.countCards('hes',{suit:'club'})) return true;
+					if(filter({name:'tao'},player,event)&&player.countCards('hes',{suit:'heart'})) return true;
+					if(filter({name:'wuxie'},player,event)&&player.countCards('hes',{suit:'spade'})) return true;
 					return false;
 				},
 				ai:{
@@ -5435,7 +5439,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							case 'respondShan':name='club';break;
 							case 'save':name='heart';break;
 						}
-						if(!player.countCards('hs',{suit:name})) return false;
+						if(!player.countCards('hes',{suit:name})) return false;
 					},
 					order:function(item,player){
 						if(player&&_status.event.type=='phase'){
@@ -5444,7 +5448,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							var map={sha:'diamond',tao:'heart'}
 							for(var i=0;i<list.length;i++){
 								var name=list[i];
-								if(player.countCards('hs',function(card){
+								if(player.countCards('hes',function(card){
 									return (name!='sha'||get.value(card)<5)&&get.suit(card,player)==map[name];
 								})>0&&player.getUseValue({name:name,nature:name=='sha'?'fire':null})>0){
 									var temp=get.order({name:name,nature:name=='sha'?'fire':null});
@@ -5458,9 +5462,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				hiddenCard:function(player,name){
-					if(name=='wuxie'&&_status.connectMode&&player.countCards('hs')>0) return true;
-					if(name=='wuxie') return player.countCards('hs',{suit:'spade'})>0;
-					if(name=='tao') return player.countCards('hs',{suit:'heart'})>0;
+					if(name=='wuxie'&&_status.connectMode&&player.countCards('hes')>0) return true;
+					if(name=='wuxie') return player.countCards('hes',{suit:'spade'})>0;
+					if(name=='tao') return player.countCards('hes',{suit:'heart'})>0;
 				},
 			},
 			xinjuejing:{
@@ -5865,7 +5869,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filter:function(event,player){
 					if(player.storage.drlt_duorui.length) return false;
-					return player!=event.player&&event.player.isAlive()&&_status.currentPhase==player;
+					return player!=event.player&&event.player.isIn()&&_status.currentPhase==player;
 				},
 				check:function(event,player){
 					if(player.countDisabled()<5&&player.isDisabled(5)) return false;
@@ -6245,7 +6249,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						},
 						forced:true,
 						filter:function(event,player){
-							return player!=event.player&&event.player.hasMark('drlt_jieying_mark')&&event.player.isAlive();
+							return player!=event.player&&event.player.hasMark('drlt_jieying_mark')&&event.player.isIn();
 						},
 						logTarget:'player',
 						content:function(){
@@ -6458,7 +6462,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					'step 0'
 					if(!event.qizheng_name){
-						if(player.isAlive()) player.chooseControl('奇兵','正兵').set('prompt','请选择'+get.translation(target)+'的标记').set('choice',function(){
+						if(player.isIn()) player.chooseControl('奇兵','正兵').set('prompt','请选择'+get.translation(target)+'的标记').set('choice',function(){
 							var e1=1.5*get.sgn(get.damageEffect(target,player,target));
 							var e2=0;
 							if(target.countGainableCards(player,'h')>0&&!target.hasSkillTag('noh')) e2=-1;
@@ -6598,7 +6602,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			relonghun:'龙魂',
 			relonghun_info:'你可以将同花色的一至两张牌按下列规则使用或打出：红桃当【桃】，方块当火【杀】，梅花当【闪】，黑桃当普【无懈可击】。若你以此法使用了两张红色牌，则此牌回复值或伤害值+1。若你以此法使用了两张黑色牌，则你弃置当前回合角色一张牌。',
 			xinlonghun:'龙魂',
-			xinlonghun_info:'你可以将你的手牌按下列规则使用或打出：红桃当【桃】，方块当火【杀】，梅花当【闪】，黑桃当普【无懈可击】。',
+			xinlonghun_info:'你可以将你的牌按下列规则使用或打出：红桃当【桃】，方块当火【杀】，梅花当【闪】，黑桃当普【无懈可击】。',
 			longhun:'龙魂',
 			longhun1:'龙魂♥︎',
 			longhun2:'龙魂♦︎',
@@ -6846,7 +6850,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			extra_mobilezhi:'始计篇·智',
 			extra_mobilexin:'始计篇·信',
 			extra_offline:'神话再临·线下',
-			extra_decade:'十周年服神将',
+			extra_decade:'神·武',
 			extra_tw:'海外服神将',
 		},
 	};

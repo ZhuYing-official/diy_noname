@@ -1,9 +1,34 @@
 "use strict";
 (function () {
-	// if(!localStorage.getItem('noname_alerted')){
-	// localStorage.setItem('noname_alerted',true);
-	// alert('无名杀官方发布地址仅有GitHub仓库！\n其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！');
-	// }
+	if (!localStorage.getItem('gplv3_noname_alerted')) {
+		if (confirm('①无名杀是一款基于GPLv3协议的开源软件！\n你可以在遵守GPLv3协议的基础上任意使用，修改并转发《无名杀》，以及所有基于《无名杀》开发的拓展。\n点击“确定”即代表您认可并接受GPLv3协议↓️\nhttps://www.gnu.org/licenses/gpl-3.0.html\n②无名杀官方发布地址仅有GitHub仓库！\n其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为玩家自发组织，与无名杀官方无关！')) {
+			localStorage.setItem('gplv3_noname_alerted', true);
+		}
+		else {
+			var ua = navigator.userAgent.toLowerCase();
+			var ios = ua.indexOf('iphone') != -1 || ua.indexOf('ipad') != -1 || ua.indexOf('macintosh') != -1;
+			//electron
+			if (typeof window.process == 'object' && typeof window.require == 'function') {
+				var versions = window.process.versions;
+				var electronVersion = parseFloat(versions.electron);
+				var remote;
+				if (electronVersion >= 14) {
+					remote = require('@electron/remote');
+				} else {
+					remote = require('electron').remote;
+				}
+				var thisWindow = remote.getCurrentWindow();
+				thisWindow.destroy();
+				window.process.exit();
+			}
+			//android-cordova环境
+			//ios-cordova环境或ios浏览器环境
+			//非ios的网页版
+			else if (!ios) {
+				window.close();
+			}
+		}
+	}
 	var _status = {
 		paused: false,
 		paused2: false,
@@ -3622,6 +3647,12 @@
 						name: '显示分享扩展',
 						init: true,
 						unfrequent: true,
+					},
+					show_extensionimage: {
+						name: '显示扩展武将图片',
+						intro: '关闭扩展武将包仍加载扩展武将图片',
+						init: true,
+						unfrequent: true,
 					}
 				}
 			},
@@ -6526,7 +6557,7 @@
 			globalId: 0,
 		},
 		help: {
-			'关于游戏': '<div style="margin:10px">关于无名杀</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br><a href="https://github.com/libccy/noname">点击前往Github仓库</a><br><li>无名杀基于GPLv3开源协议。<br><a href="https://www.gnu.org/licenses/gpl-3.0.html">点击查看GPLv3协议</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为粉丝自发组织，与无名杀官方无关！',
+			'关于游戏': '<div style="margin:10px">关于无名杀</div><ul style="margin-top:0"><li>无名杀官方发布地址仅有GitHub仓库！<br><a href="https://github.com/libccy/noname">点击前往Github仓库</a><br><li>无名杀基于GPLv3开源协议。<br><a href="https://www.gnu.org/licenses/gpl-3.0.html">点击查看GPLv3协议</a><br><li>其他所有的所谓“无名杀”社群（包括但不限于绝大多数“官方”QQ群、QQ频道等）均为玩家自发组织，与无名杀官方无关！',
 			'游戏操作': '<ul><li>长按/鼠标悬停/右键单击显示信息。<li>触屏模式中，双指点击切换暂停；下划显示菜单，上划切换托管。<li>键盘快捷键<br>' +
 				'<table><tr><td>A<td>切换托管<tr><td>W<td>切换不询问无懈<tr><td>空格<td>暂停</table><li>编辑牌堆<br>在卡牌包中修改牌堆后，将自动创建一个临时牌堆，在所有模式中共用，当保存当前牌堆后，临时牌堆被清除。每个模式可设置不同的已保存牌堆，设置的牌堆优先级大于临时牌堆。</ul>',
 			'游戏命令': '<div style="margin:10px">变量名</div><ul style="margin-top:0"><li>场上角色<br>game.players<li>阵亡角色<br>game.dead' +
@@ -6894,6 +6925,10 @@
 							else if (lib.character[name]) {
 								nameinfo = lib.character[name];
 							}
+							else if (lib.config.show_extensionimage) {
+								var pack = Object.keys(lib.characterPack).find(pack => Object.keys(lib.characterPack[pack]).contains(name));
+								if (pack) nameinfo = lib.characterPack[pack][name];
+							}
 							else if (name.indexOf('::') != -1) {
 								name = name.split('::');
 								modeimage = name[0];
@@ -7027,109 +7062,198 @@
 						return this.childNodes[row].childNodes[col];
 					}
 				};
-				Array.prototype.filterInD = function (pos) {
-					if (!pos) pos = 'o';
-					var list = [];
-					for (var i = 0; i < this.length; i++) {
-						if (pos.indexOf(get.position(this[i], true)) != -1) list.push(this[i]);
+				Object.defineProperty(Array.prototype, "filterInD", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (pos) {
+						if (!pos) pos = 'o';
+						var list = [];
+						for (var i = 0; i < this.length; i++) {
+							if (pos.indexOf(get.position(this[i], true)) != -1) list.push(this[i]);
+						}
+						return list;
 					}
-					return list;
-				};
-				Array.prototype.contains = function (item) {
-					return this.indexOf(item) != -1;
-				};
-				Array.prototype.add = function () {
-					for (var i = 0; i < arguments.length; i++) {
-						if (this.contains(arguments[i])) {
+				});
+				Object.defineProperty(Array.prototype, "contains", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (item) {
+						return this.indexOf(item) != -1;
+					}
+				});
+				Object.defineProperty(Array.prototype, "add", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function () {
+						for (var i = 0; i < arguments.length; i++) {
+							if (this.contains(arguments[i])) {
+								return false;
+							}
+							this.push(arguments[i]);
+						}
+						return this;
+					}
+				});
+				Object.defineProperty(Array.prototype, "addArray", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (arr) {
+						for (var i = 0; i < arr.length; i++) {
+							this.add(arr[i]);
+						}
+						return this;
+					}
+				});
+				Object.defineProperty(Array.prototype, "remove", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (item) {
+						if (Array.isArray(item)) {
+							for (var i = 0; i < item.length; i++) this.remove(item[i]);
+							return;
+						}
+						var pos = this.indexOf(item);
+						if (pos == -1) {
 							return false;
 						}
-						this.push(arguments[i]);
+						this.splice(pos, 1);
+						return this;
 					}
-					return this;
-				};
-				Array.prototype.addArray = function (arr) {
-					for (var i = 0; i < arr.length; i++) {
-						this.add(arr[i]);
+				});
+				Object.defineProperty(Array.prototype, "removeArray", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (arr) {
+						for (var i = 0; i < arr.length; i++) {
+							this.remove(arr[i]);
+						}
+						return this;
 					}
-					return this;
-				};
-				Array.prototype.remove = function (item) {
-					if (Array.isArray(item)) {
-						for (var i = 0; i < item.length; i++) this.remove(item[i]);
-						return;
+				});
+				Object.defineProperty(Array.prototype, "randomGet", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function () {
+						var arr = this.slice(0);
+						for (var i = 0; i < arguments.length; i++) arr.remove(arguments[i]);
+						return arr[Math.floor(Math.random() * arr.length)];
 					}
-					var pos = this.indexOf(item);
-					if (pos == -1) {
-						return false;
+				});
+				Object.defineProperty(Array.prototype, "randomRemove", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (num) {
+						if (typeof num == 'number') {
+							var list = [];
+							for (var i = 0; i < num; i++) {
+								if (this.length) {
+									list.push(this.randomRemove());
+								}
+								else {
+									break;
+								}
+							}
+							return list;
+						}
+						else {
+							return this.splice(Math.floor(Math.random() * this.length), 1)[0];
+						}
 					}
-					this.splice(pos, 1);
-					return this;
-				};
-				Array.prototype.removeArray = function (arr) {
-					for (var i = 0; i < arr.length; i++) {
-						this.remove(arr[i]);
+				});
+				Object.defineProperty(Array.prototype, "randomSort", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function () {
+						var list = [];
+						while (this.length) {
+							list.push(this.randomRemove());
+						}
+						for (var i = 0; i < list.length; i++) {
+							this.push(list[i]);
+						}
+						return this;
 					}
-					return this;
-				};
-				Array.prototype.randomGet = function () {
-					var arr = this.slice(0);
-					for (var i = 0; i < arguments.length; i++) arr.remove(arguments[i]);
-					return arr[Math.floor(Math.random() * arr.length)];
-				};
-				Array.prototype.randomRemove = function (num) {
-					if (typeof num == 'number') {
+				});
+				Object.defineProperty(Array.prototype, "randomGets", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (num) {
+						if (num > this.length) {
+							num = this.length;
+						}
+						var arr = this.slice(0);
 						var list = [];
 						for (var i = 0; i < num; i++) {
-							if (this.length) {
-								list.push(this.randomRemove());
-							}
-							else {
-								break;
-							}
+							list.push(arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
 						}
 						return list;
 					}
-					else {
-						return this.splice(Math.floor(Math.random() * this.length), 1)[0];
+				});
+				Object.defineProperty(Array.prototype, "sortBySeat", {
+					configurable: true,
+					enumerable: false,
+					writable: true,
+					value: function (target) {
+						lib.tempSortSeat = target;
+						this.sort(lib.sort.seat);
+						delete lib.tempSortSeat;
+						return this;
 					}
-				};
-				Array.prototype.randomSort = function () {
-					var list = [];
-					while (this.length) {
-						list.push(this.randomRemove());
-					}
-					for (var i = 0; i < list.length; i++) {
-						this.push(list[i]);
-					}
-					return this;
-				};
-				Array.prototype.randomGets = function (num) {
-					if (num > this.length) {
-						num = this.length;
-					}
-					var arr = this.slice(0);
-					var list = [];
-					for (var i = 0; i < num; i++) {
-						list.push(arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
-					}
-					return list;
-				};
-				Array.prototype.sortBySeat = function (target) {
-					lib.tempSortSeat = target;
-					this.sort(lib.sort.seat);
-					delete lib.tempSortSeat;
-					return this;
-				};
+				});
+				if (!('includes' in Array.prototype)) {
+					Object.defineProperty(Array.prototype, 'includes', {
+						enumerable: false,
+						configurable: true,
+						writable: true,
+						value: function (searchElement, fromIndex) {
+							if (this == null) {
+								throw new TypeError('"this" is null or not defined');
+							}
+							var o = Object(this);
+							var len = o.length >>> 0;
+							if (len === 0) {
+								return false;
+							}
+							var n = fromIndex | 0;
+							var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+							function sameValueZero(x, y) {
+								return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
+							}
+							while (k < len) {
+								if (sameValueZero(o[k], searchElement)) {
+									return true;
+								}
+								k++;
+							}
+							return false;
+						}
+					});
+				}
 				if (!Array.from) {
-					Array.from = function (args) {
-						var list = [];
-						if (args && args.length) {
-							for (var i = 0; i < args.length; i++) {
-								list.push(args[i]);
+					Object.defineProperty(Array, "from", {
+						configurable: true,
+						enumerable: false,
+						writable: true,
+						value: function (args) {
+							var list = [];
+							if (args && args.length) {
+								for (var i = 0; i < args.length; i++) {
+									list.push(args[i]);
+								}
 							}
+							return list;
 						}
-						return list;
-					}
+					});
 				}
 				window.onkeydown = function (e) {
 					if (!ui.menuContainer || !ui.menuContainer.classList.contains('hidden')) {
@@ -9361,6 +9485,7 @@
 					localStorage.removeItem(lib.configprefix + 'background');
 				}
 			},
+			//by 诗笺
 			parsex: function (func) {
 				var str = func.toString();
 				//获取第一个 { 后的所有字符
@@ -9381,7 +9506,7 @@
 							insertStr = `switch(step){case 0:`;
 						} else {
 							insertStr = `break;case ${k}:`;
-				}
+						}
 						var copy = str;
 						copy = copy.slice(0, skip + result.index) + insertStr + copy.slice(skip + result.index + result[0].length);
 						//测试是否有错误
@@ -9392,7 +9517,7 @@
 						} catch (error) {
 							k--;
 							skip += result.index + result[0].length;
-					}
+						}
 					}
 					str = `if(event.step==${k}){event.finish();return;}` + str;
 				}
@@ -10338,6 +10463,22 @@
 			content: {
 				emptyEvent: function () {
 					event.trigger(event.name);
+				},
+				changeGroup: function () {
+					'step 0'
+					event.originGroup = player.group;
+					if (!event.group) event.group = player.group;
+					var group = event.group;
+					player.getHistory('custom').push(event);
+					if (event.broadcast !== false) {
+						game.broadcast(function (player, group) {
+							player.group = group;
+							player.node.name.dataset.nature = get.groupnature(group);
+						}, player, group);
+					}
+					player.group = group;
+					player.node.name.dataset.nature = get.groupnature(group);
+					if (event.log !== false) game.log(player, '将势力变为了', '#y' + get.translation(group + 2));
 				},
 				chooseToDebate: function () {
 					'step 0'
@@ -11300,7 +11441,7 @@
 							if (subtype == 'equip6' && ['equip3', 'equip4'].contains(event.pos)) return true;
 							return false;
 						});
-						if (cards.length) player.discard(cards).delay = false;
+						if (cards.length) player.loseToDiscardpile(cards).delay = false;
 						game.log(player, '废除了', get.translation(event.pos), '栏');
 						player.$disableEquip(event.pos);
 					}
@@ -11818,6 +11959,7 @@
 					'step 0'
 					event.filter1 = function (info) {
 						if (info[1].isDead() && !lib.skill[info[0]].forceDie) return false;
+						if (info[1].isOut() && !lib.skill[info[0]].forceOut) return false;
 						return lib.filter.filterTrigger(trigger, info[1], event.triggername, info[0]);
 					}
 					event.filter2 = function (info2) {
@@ -11887,7 +12029,8 @@
 					for (var i = 0; i < event.choice.length; i++) {
 						controls.push(event.choice[i][0]);
 					}
-					event.current.chooseControl(controls).set('prompt', '选择下一个触发的技能').set('forceDie', true).set('arrangeSkill', true);
+					event.current.chooseControl(controls)
+						.set('prompt', '选择下一个触发的技能').set('forceDie', true).set('arrangeSkill', true).set('includeOut', true)
 					'step 5'
 					if (result.control) {
 						for (var i = 0; i < event.doing.list.length; i++) {
@@ -11911,6 +12054,7 @@
 				},
 				createTrigger: function () {
 					"step 0"
+					//console.log('triggering: ' + player.name+ ' \'s skill: ' + event.skill+' in ' + event.triggername)
 					if (lib.filter.filterTrigger(trigger, player, event.triggername, event.skill)) {
 						var fullskills = game.expandSkills(player.getSkills().concat(lib.skill.global));
 						if (!fullskills.contains(event.skill)) {
@@ -11999,6 +12143,7 @@
 							var next = player.chooseBool(str);
 							if (event.frequentSkill) next.set('frequentSkill', event.skill);
 							next.set('forceDie', true);
+							next.set('includeOut', true);
 							next.ai = function () {
 								return !check || check(trigger, player);
 							};
@@ -12083,6 +12228,7 @@
 					next.setContent(info.content);
 					next.skillHidden = event.skillHidden;
 					if (info.forceDie) next.forceDie = true;
+					if (info.forceOut || event.skill == '_turnover') next.includeOut = true;
 					"step 4"
 					if (player._hookTrigger) {
 						for (var i = 0; i < player._hookTrigger.length; i++) {
@@ -12720,19 +12866,55 @@
 								if (event.dialog && typeof event.dialog == 'object') event.dialog.close();
 								var dialog = info.chooseButton.dialog(event, player);
 								if (info.chooseButton.chooseControl) {
-									var next = player.chooseControl(info.chooseButton.chooseControl(event, player));
-									next.dialog = dialog;
-									next.set('ai', info.chooseButton.check || function () { return 0; });
-									if (event.id) next._parent_id = event.id;
-									next.type = 'chooseToUse_button';
+									var choices = info.chooseButton.chooseControl(event, player);
+									var choicesx = choices.slice(0);
+									choicesx.remove('cancel2');
+									if (choicesx.length == 1 && dialog.direct || dialog.forceDirect) {
+										event._result = {
+											bool: true,
+											control: choicesx[0],
+											index: 0,
+										}
+									}
+									else {
+										var next = player.chooseControl(choices);
+										next.dialog = dialog;
+										next.set('ai', info.chooseButton.check || function () { return 0; });
+										if (event.id) next._parent_id = event.id;
+										next.type = 'chooseToUse_button';
+									}
 								}
 								else {
-									var next = player.chooseButton(dialog);
-									next.set('ai', info.chooseButton.check || function () { return 1; });
-									next.set('filterButton', info.chooseButton.filter || function () { return true; });
-									next.set('selectButton', info.chooseButton.select || 1);
-									if (event.id) next._parent_id = event.id;
-									next.type = 'chooseToUse_button';
+									var ai = info.chooseButton.check || function () { return 1; };
+									var filterButton = info.chooseButton.filter || function () { return true };
+									var selectButton = info.chooseButton.select || 1;
+									var chooseable = [];
+									var evt = game.createEvent('emptyEvent');
+									event.next.remove(evt);
+									evt.parent = _status.event;
+									evt.player = player;
+									var tmpevt = _status.event;
+									_status.event = evt;
+									for (var i = 0; i < dialog.buttons.length; i++) {
+										var btn = dialog.buttons[i];
+										if (filterButton(btn, player)) chooseable.push(btn);
+									}
+									_status.event = tmpevt;
+									if (chooseable.length == 1 && dialog.direct || dialog.forceDirect) {
+										event._result = {
+											bool: true,
+											buttons: chooseable[0],
+											links: [chooseable[0].link],
+										}
+									}
+									else {
+										var next = player.chooseButton(dialog);
+										next.set('ai', ai);
+										next.set('filterButton', filterButton);
+										next.set('selectButton', selectButton);
+										if (event.id) next._parent_id = event.id;
+										next.type = 'chooseToUse_button';
+									}
 								}
 								event.buttoned = event.result.skill;
 							}
@@ -12901,15 +13083,51 @@
 								if (event.dialog && typeof event.dialog == 'object') event.dialog.close();
 								var dialog = info.chooseButton.dialog(event, player);
 								if (info.chooseButton.chooseControl) {
-									var next = player.chooseControl(info.chooseButton.chooseControl(event, player));
-									next.dialog = dialog;
-									next.set('ai', info.chooseButton.check || function () { return 0; });
+									var choices = info.chooseButton.chooseControl(event, player);
+									var choicesx = choices.slice(0);
+									choicesx.remove('cancel2');
+									if (choicesx.length == 1 && dialog.direct || dialog.forceDirect) {
+										event._result = {
+											bool: true,
+											control: choicesx[0],
+											index: 0,
+										}
+									}
+									else {
+										var next = player.chooseControl(choices);
+										next.dialog = dialog;
+										next.set('ai', info.chooseButton.check || function () { return 0; });
+									}
 								}
 								else {
-									var next = player.chooseButton(dialog);
-									next.set('ai', info.chooseButton.check || function () { return 1; });
-									next.set('filterButton', info.chooseButton.filter || function () { return true; });
-									next.set('selectButton', info.chooseButton.select || 1);
+									var ai = info.chooseButton.check || function () { return 1; };
+									var filterButton = info.chooseButton.filter || function () { return true };
+									var selectButton = info.chooseButton.select || 1;
+									var chooseable = [];
+									var evt = game.createEvent('emptyEvent');
+									event.next.remove(evt);
+									evt.parent = _status.event;
+									evt.player = player;
+									var tmpevt = _status.event;
+									_status.event = evt;
+									for (var i = 0; i < dialog.buttons.length; i++) {
+										var btn = dialog.buttons[i];
+										if (filterButton(btn, player)) chooseable.push(btn);
+									}
+									_status.event = tmpevt;
+									if (chooseable.length == 1 && dialog.direct || dialog.forceDirect) {
+										event._result = {
+											bool: true,
+											buttons: chooseable[0],
+											links: [chooseable[0].link],
+										}
+									}
+									else {
+										var next = player.chooseButton(dialog);
+										next.set('ai', ai);
+										next.set('filterButton', filterButton);
+										next.set('selectButton', selectButton);
+									}
 								}
 								event.buttoned = event.result.skill;
 							}
@@ -13214,12 +13432,12 @@
 					}
 					for (var i of event.gain_list) {
 						if (i[1].length > 0) {
-						var next = i[0].gain(i[1]);
-						next.getlx = false;
-						if (event.visible) next.visible = true;
-						if (event.giver) next.giver = event.giver;
-						if (event.gaintag) next.gaintag.addArray(event.gaintag);
-					}
+							var next = i[0].gain(i[1]);
+							next.getlx = false;
+							if (event.visible) next.visible = true;
+							if (event.giver) next.giver = event.giver;
+							if (event.gaintag) next.gaintag.addArray(event.gaintag);
+						}
 					}
 					'step 2'
 					game.delayx();
@@ -15417,13 +15635,17 @@
 					if (target) {
 						event.triggeredTargets1.push(target);
 						var next = game.createEvent('useCardToPlayer', false);
-						if (event.triggeredTargets1.length == 1) next.isFirstTarget = true;
+						if (!event.isFirstTarget1) {
+							event.isFirstTarget1 = true;
+							next.isFirstTarget = true;
+						}
 						next.setContent('emptyEvent');
 						next.targets = targets;
 						next.target = target;
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.excluded = event.excluded;
 						next.directHit = event.directHit;
 						next.customArgs = event.customArgs;
@@ -15437,13 +15659,17 @@
 					if (target) {
 						event.triggeredTargets2.push(target);
 						var next = game.createEvent('useCardToTarget', false);
-						if (event.triggeredTargets2.length == 1) next.isFirstTarget = true;
+						if (!event.isFirstTarget2) {
+							event.isFirstTarget2 = true;
+							next.isFirstTarget = true;
+						}
 						next.setContent('emptyEvent');
 						next.targets = targets;
 						next.target = target;
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.excluded = event.excluded;
 						next.directHit = event.directHit;
 						next.customArgs = event.customArgs;
@@ -15470,13 +15696,17 @@
 					if (target) {
 						event.triggeredTargets3.push(target);
 						var next = game.createEvent('useCardToPlayered', false);
-						if (event.triggeredTargets3.length == 1) next.isFirstTarget = true;
+						if (!event.isFirstTarget3) {
+							event.isFirstTarget3 = true;
+							next.isFirstTarget = true;
+						}
 						next.setContent('emptyEvent');
 						next.targets = targets;
 						next.target = target;
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.excluded = event.excluded;
 						next.directHit = event.directHit;
 						next.customArgs = event.customArgs;
@@ -15490,13 +15720,17 @@
 					if (target) {
 						event.triggeredTargets4.push(target);
 						var next = game.createEvent('useCardToTargeted', false);
-						if (event.triggeredTargets4.length == 1) next.isFirstTarget = true;
+						if (!event.isFirstTarget4) {
+							event.isFirstTarget4 = true;
+							next.isFirstTarget = true;
+						}
 						next.setContent('emptyEvent');
 						next.targets = targets;
 						next.target = target;
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.excluded = event.excluded;
 						next.directHit = event.directHit;
 						next.customArgs = event.customArgs;
@@ -15518,6 +15752,7 @@
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.type = 'precard';
 						if (event.forceDie) next.forceDie = true;
 					}
@@ -15528,6 +15763,7 @@
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.type = 'precard';
 						if (event.forceDie) next.forceDie = true;
 					}
@@ -15539,6 +15775,7 @@
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.type = 'precard';
 						next.addedTarget = event.addedTarget;
 						next.addedTargets = event.addedTargets;
@@ -15623,6 +15860,7 @@
 						next.card = card;
 						next.cards = cards;
 						next.player = player;
+						next.skill = event.skill;
 						next.preResult = event.preResult;
 						next.type = 'postcard';
 						if (event.forceDie) next.forceDie = true;
@@ -15656,6 +15894,7 @@
 					"step 0"
 					var info = get.info(event.skill);
 					if (!info.noForceDie) event.forceDie = true;
+					if (!info.noForceOut) event.includeOut = true;
 					event._skill = event.skill;
 					game.trySkillAudio(event.skill, player);
 					var checkShow = player.checkShow(event.skill);
@@ -15836,6 +16075,7 @@
 						next.cards = cards;
 						next.player = player;
 						if (event.forceDie) next.forceDie = true;
+						if (event.includeOut) next.includeOut = true;
 					}
 					"step 2"
 					if (!event.skill) {
@@ -15878,6 +16118,7 @@
 					}
 					next.target = targets[num];
 					if (event.forceDie) next.forceDie = true;
+					if (event.includeOut) next.includeOut = true;
 					if (next.target && !info.multitarget) {
 						if (num == 0 && targets.length > 1) {
 							// var ttt=next.target;
@@ -15913,6 +16154,7 @@
 						next.cards = cards;
 						next.player = player;
 						if (event.forceDie) next.forceDie = true;
+						if (event.includeOut) next.includeOut = true;
 					}
 					"step 4"
 					if (player.getStat().allSkills > 200) {
@@ -15991,6 +16233,7 @@
 					game.log(player, '弃置了', cards);
 					event.done = player.lose(cards, event.position, 'visible');
 					event.done.type = 'discard';
+					if (event.discarder) event.done.discarder = event.discarder;
 					"step 1"
 					event.trigger('discard');
 				},
@@ -17144,9 +17387,9 @@
 							}
 						}
 						if (_status.characterlist) {
-							if (lib.character[player.name] && player.name.indexOf('gz_shibing') != 0) _status.characterlist.add(player.name);
-							if (lib.character[player.name1] && player.name1.indexOf('gz_shibing') != 0) _status.characterlist.add(player.name1);
-							if (lib.character[player.name2] && player.name2.indexOf('gz_shibing') != 0) _status.characterlist.add(player.name2);
+							if (lib.character[player.name] && player.name.indexOf('gz_shibing') != 0 && player.name.indexOf('gz_jun_') != 0) _status.characterlist.add(player.name);
+							if (lib.character[player.name1] && player.name1.indexOf('gz_shibing') != 0 && player.name1.indexOf('gz_jun_') != 0) _status.characterlist.add(player.name1);
+							if (lib.character[player.name2] && player.name2.indexOf('gz_shibing') != 0 && player.name2.indexOf('gz_jun_') != 0) _status.characterlist.add(player.name2);
 						}
 						event.cards = player.getCards('hejsx');
 						if (event.cards.length) {
@@ -18092,16 +18335,23 @@
 					return this.maxHp - Math.max(0, this.hp);
 				},
 				changeGroup: function (group, log, broadcast) {
-					var player = this;
-					if (broadcast !== false) {
-						game.broadcast(function (player, group) {
-							player.group = group;
-							player.node.name.dataset.nature = get.groupnature(group);
-						}, player, group);
+					var next = game.createEvent('changeGroup');
+					next.player = this;
+					next.log = true;
+					for (var i = 0; i < arguments.length; i++) {
+						var arg = arguments[i];
+						if (lib.group.contains(arg)) {
+							next.group = arg;
+						}
+						else if (typeof arg === 'boolean') {
+							next.log = arg;
+						}
+						else if (arg === 'nobroadcast') {
+							next.broadcast = false;
+						}
 					}
-					player.group = group;
-					player.node.name.dataset.nature = get.groupnature(group);
-					if (log !== false) game.log(this, '将势力变为了', '#y' + get.translation(group + 2));
+					next.setContent('changeGroup');
+					return next;
 				},
 				chooseToDuiben: function (target) {
 					var next = game.createEvent('chooseToDuiben');
@@ -18905,6 +19155,7 @@
 						dead: this.isDead(),
 						linked: this.isLinked(),
 						turnedover: this.isTurnedOver(),
+						out: this.isOut(),
 						phaseNumber: this.phaseNumber,
 						unseen: this.isUnseen(0),
 						unseen2: this.isUnseen(1),
@@ -22020,6 +22271,7 @@
 					}
 					if (!name) return false;
 					if (this.hasJudge(name)) return false;
+					if (this.isOut()) return false;
 					var mod = game.checkMod(card, this, this, 'unchanged', 'targetEnabled', this);
 					if (mod != 'unchanged') return mod;
 					return true;
@@ -22102,6 +22354,7 @@
 					}
 					var next = game.createEvent('turnOver');
 					next.player = this;
+					next.includeOut = true;
 					next.setContent('turnOver');
 					return next;
 				},
@@ -22363,6 +22616,7 @@
 						var next = game.createEvent('logSkill', false), evt = _status.event;
 						next.player = player;
 						next.forceDie = true;
+						next.includeOut = true;
 						evt.next.remove(next);
 						if (evt.logSkill) evt = evt.getParent();
 						for (var i in logInfo) {
@@ -22377,6 +22631,7 @@
 						var next2 = game.createEvent('logSkillBegin', false);
 						next2.player = player;
 						next2.forceDie = true;
+						next2.includeOut = true;
 						for (var i in logInfo) {
 							if (i == 'event') next2.log_event = logInfo[i];
 							else next2[i] = logInfo[i];
@@ -22732,6 +22987,7 @@
 							if (lib.skill[name] && lib.skill[name].markimage) {
 								node.setBackgroundImage(lib.skill[name].markimage);
 								node.style['box-shadow'] = 'none';
+								node.style['background-size'] = 'contain';
 							}
 							else {
 								var str = lib.translate[name + '_bg'];
@@ -23436,7 +23692,7 @@
 					this.addSkill(skill, checkConflict, true, true);
 
 					if (!expire) {
-						expire = 'phaseAfter';
+						expire = ['phaseAfter', 'phaseBefore'];
 					}
 					this.tempSkills[skill] = expire;
 
@@ -24342,11 +24598,8 @@
 					return false;
 				},
 				canEquip: function (name, replace) {
-					if (get.type(name) == 'card') {
-						name = get.equiptype(name);
-					}
 					var range = get.subtype(name);
-					if (this.isDisabled(range)) return false;
+					if (!range || this.isDisabled(range)) return false;
 					if (['equip3', 'equip4'].contains(range) && this.getEquip(6)) return false;
 					if (!replace && !this.isEmpty(range)) return false;
 					return true;
@@ -26848,7 +27101,7 @@
 						}
 					}
 					if (!start) return;
-					if (!game.players.contains(start)) {
+					if (!game.players.contains(start) && !game.dead.contains(start)) {
 						start = game.findNext(start);
 					}
 					var list = [];
@@ -28455,7 +28708,7 @@
 				},
 			},
 			_showHiddenCharacter: {
-				trigger: { player: ['changeHp', 'phaseBeginStart', 'loseMaxHpBegin'] },
+				trigger: { player: ['changeHp', 'phaseBeginStart', 'loseMaxHpBegin', 'gainMaxHpBegin'] },
 				firstDo: true,
 				forced: true,
 				popup: false,
@@ -28840,6 +29093,19 @@
 				content: function () {
 					player.removeSkill('counttrigger');
 					delete player.storage.counttrigger;
+				},
+				group: 'counttrigger_2',
+				subSkill: {
+					2: {
+						trigger: { global: 'phaseBefore' },
+						silent: true,
+						charlotte: true,
+						priority: 100,
+						content: function () {
+							player.removeSkill('counttrigger');
+							delete player.storage.counttrigger;
+						},
+					}
 				}
 			},
 			_recovercheck: {
@@ -28858,6 +29124,7 @@
 			_turnover: {
 				trigger: { player: 'phaseBefore' },
 				forced: true,
+				forceOut: true,
 				priority: 100,
 				popup: false,
 				firstDo: true,
@@ -28903,14 +29170,16 @@
 						useCard: [],
 						changeHp: [],
 					});
-					game.countPlayer2(function (current) {
+					var players = game.players.slice(0).concat(game.dead);
+					for (var i = 0; i < players.length; i++) {
+						var current = players[i];
 						current.actionHistory.push({ useCard: [], respond: [], skipped: [], lose: [], gain: [], sourceDamage: [], damage: [], custom: [], useSkill: [] });
 						current.stat.push({ card: {}, skill: {} });
 						if (isRound) {
 							current.getHistory().isRound = true;
 							current.getStat().isRound = true;
 						}
-					});
+					};
 					player.getHistory().isMe = true;
 					player.getStat().isMe = true;
 					if (isRound) {
@@ -29389,10 +29658,10 @@
 				giveup: function (player) {
 					if (lib.node.observing.contains(this) || !player || !player._giveUp) return;
 					_status.event.next.length = 0;
-					game.createEvent('giveup', false).setContent(function () {
+					game.createEvent('giveup', false).set('includeOut', true).setContent(function () {
 						game.log(player, '投降');
 						player.popup('投降');
-						player.die('nosource');
+						player.die('nosource').includeOut = true;
 					}).player = player;
 				},
 				auto: function () {
@@ -29973,6 +30242,7 @@
 							}
 							else {
 								player.init(info.name1, info.name2);
+								if (info.name && info.name != info.name1) player.name = info.name;
 							}
 							if (!info.unseen) player.classList.remove('unseen');
 							if (!info.unseen2) player.classList.remove('unseen2');
@@ -29982,7 +30252,7 @@
 							}
 							player.playerid = i;
 							player.nickname = info.nickname;
-							player.changeGroup(info.group, false, false);
+							player.changeGroup(info.group, false, 'nobroadcast');
 							player.identity = info.identity;
 							player.identityShown = info.identityShown;
 							player.hp = info.hp;
@@ -30011,6 +30281,9 @@
 							}
 							if (info.turnedover) {
 								player.classList.add('turnedover');
+							}
+							if (info.out) {
+								player.classList.add('out');
 							}
 							if (info.disableJudge) {
 								player.$disableJudge();
@@ -33731,13 +34004,16 @@
 			}
 		},
 		createTrigger: function (name, skill, player, event) {
-			if (player.isOut() || player.removed) return;
-			if (player.isDead() && !lib.skill[skill].forceDie) return;
+			var info = get.info(skill);
+			if (!info) return false;
+			if ((player.isOut() || player.removed) && !info.forceOut) return;
+			if (player.isDead() && !info.forceDie) return;
 			var next = game.createEvent('trigger', false);
 			next.skill = skill;
 			next.player = player;
 			next.triggername = name;
 			next.forceDie = true;
+			next.includeOut = true;
 			next._trigger = event;
 			next.setContent('createTrigger');
 		},
@@ -34055,10 +34331,10 @@
 										deleteFolderRecursive(curPath);
 									} else {
 										lib.node.fs.unlinkSync(curPath);
-							}
-						});
+									}
+								});
 								lib.node.fs.rmdirSync(path);
-					}
+							}
 						};
 						deleteFolderRecursive(__dirname + '/extension/' + extname);
 					} catch (e) { }
@@ -37789,28 +38065,28 @@
 				}
 			}
 		},
-		hasPlayer: function (func) {
+		hasPlayer: function (func, includeOut) {
 			for (var i = 0; i < game.players.length; i++) {
-				if (game.players[i].isOut()) continue;
+				if (!includeOut && game.players[i].isOut()) continue;
 				if (func(game.players[i])) return true;
 			}
 			return false;
 		},
-		hasPlayer2: function (func) {
+		hasPlayer2: function (func, includeOut) {
 			var players = game.players.slice(0).concat(game.dead);
 			for (var i = 0; i < players.length; i++) {
-				if (players[i].isOut()) continue;
+				if (!includeOut && players[i].isOut()) continue;
 				if (func(players[i])) return true;
 			}
 			return false;
 		},
-		countPlayer: function (func) {
+		countPlayer: function (func, includeOut) {
 			var num = 0;
 			if (typeof func != 'function') {
 				func = lib.filter.all;
 			}
 			for (var i = 0; i < game.players.length; i++) {
-				if (game.players[i].isOut()) continue;
+				if (!includeOut && game.players[i].isOut()) continue;
 				var result = func(game.players[i]);
 				if (typeof result == 'number') {
 					num += result;
@@ -37821,14 +38097,14 @@
 			}
 			return num;
 		},
-		countPlayer2: function (func) {
+		countPlayer2: function (func, includeOut) {
 			var num = 0;
 			if (typeof func != 'function') {
 				func = lib.filter.all;
 			}
 			var players = game.players.slice(0).concat(game.dead);
 			for (var i = 0; i < players.length; i++) {
-				if (players[i].isOut()) continue;
+				if (!includeOut && players[i].isOut()) continue;
 				var result = func(players[i]);
 				if (typeof result == 'number') {
 					num += result;
@@ -37839,7 +38115,7 @@
 			}
 			return num;
 		},
-		filterPlayer: function (func, list) {
+		filterPlayer: function (func, list, includeOut) {
 			if (!Array.isArray(list)) {
 				list = [];
 			}
@@ -37847,14 +38123,14 @@
 				func = lib.filter.all;
 			}
 			for (var i = 0; i < game.players.length; i++) {
-				if (game.players[i].isOut()) continue;
+				if (!includeOut && game.players[i].isOut()) continue;
 				if (func(game.players[i])) {
 					list.add(game.players[i]);
 				}
 			}
 			return list;
 		},
-		filterPlayer2: function (func, list) {
+		filterPlayer2: function (func, list, includeOut) {
 			if (!Array.isArray(list)) {
 				list = [];
 			}
@@ -37863,26 +38139,26 @@
 			}
 			var players = game.players.slice(0).concat(game.dead);
 			for (var i = 0; i < players.length; i++) {
-				if (players[i].isOut()) continue;
+				if (!includeOut && players[i].isOut()) continue;
 				if (func(players[i])) {
 					list.add(players[i]);
 				}
 			}
 			return list;
 		},
-		findPlayer: function (func) {
+		findPlayer: function (func, includeOut) {
 			for (var i = 0; i < game.players.length; i++) {
-				if (game.players[i].isOut()) continue;
+				if (!includeOut && game.players[i].isOut()) continue;
 				if (func(game.players[i])) {
 					return game.players[i];
 				}
 			}
 			return null;
 		},
-		findPlayer2: function (func) {
+		findPlayer2: function (func, includeOut) {
 			var players = game.players.slice(0).concat(game.dead);
 			for (var i = 0; i < players.length; i++) {
-				if (players[i].isOut()) continue;
+				if (!includeOut && players[i].isOut()) continue;
 				if (func(players[i])) {
 					return players[i];
 				}
@@ -43722,388 +43998,388 @@
 						ui.click.menuTab('其它');
 						clickMode.call(ui.commandnode);
 					};
-					// (function(){
-					// 	var page=ui.create.div('');
-					// 	var node=ui.create.div('.menubutton.large','更新',start.firstChild,clickMode);
-					// 	node.link=page;
+					// (function () {
+					// 	var page = ui.create.div('');
+					// 	var node = ui.create.div('.menubutton.large', '更新', start.firstChild, clickMode);
+					// 	node.link = page;
 					// 	page.classList.add('menu-help');
-					// 	var ul=document.createElement('ul');
-					// 	var li1=document.createElement('li');
-					// 	var li2=document.createElement('li');
-					// 	var li3=document.createElement('li');
-					// 	var trimurl=function(str){
-					// 		if(str==lib.updateURLS.github){
+					// 	var ul = document.createElement('ul');
+					// 	var li1 = document.createElement('li');
+					// 	var li2 = document.createElement('li');
+					// 	var li3 = document.createElement('li');
+					// 	var trimurl = function (str) {
+					// 		if (str == lib.updateURLS.github) {
 					// 			return 'GitHub';
 					// 		}
-					// 		if(str==lib.updateURLS.gitee){
+					// 		if (str == lib.updateURLS.gitee) {
 					// 			return 'Gitee';
 					// 		}
 					// 		var index;
-					// 		index=str.indexOf('://');
-					// 		if(index!=-1){
-					// 			str=str.slice(index+3);
+					// 		index = str.indexOf('://');
+					// 		if (index != -1) {
+					// 			str = str.slice(index + 3);
 					// 		}
-					// 		index=str.indexOf('/');
-					// 		if(index!=-1){
-					// 			str=str.slice(0,index);
+					// 		index = str.indexOf('/');
+					// 		if (index != -1) {
+					// 			str = str.slice(0, index);
 					// 		}
-					// 		if(str.length>15){
-					// 			var list=str.split('.');
-					// 			if(list.length>1){
+					// 		if (str.length > 15) {
+					// 			var list = str.split('.');
+					// 			if (list.length > 1) {
 					// 				list.shift();
 					// 			}
-					// 			str=list[0];
-					// 			for(var i=1;i<list.length;i++){
-					// 				str+='.'+list[i];
+					// 			str = list[0];
+					// 			for (var i = 1; i < list.length; i++) {
+					// 				str += '.' + list[i];
 					// 			}
 					// 		}
-					// 		if(str.length>15){
-					// 			var list=str.split('.');
-					// 			if(list.length>1){
+					// 		if (str.length > 15) {
+					// 			var list = str.split('.');
+					// 			if (list.length > 1) {
 					// 				list.pop();
 					// 			}
-					// 			str=list[0];
-					// 			for(var i=1;i<list.length;i++){
-					// 				str+='.'+list[i];
+					// 			str = list[0];
+					// 			for (var i = 1; i < list.length; i++) {
+					// 				str += '.' + list[i];
 					// 			}
 					// 		}
 					// 		return str;
 					// 	}
-					// 	li1.innerHTML='游戏版本：'+lib.version+'<p style="margin-top:8px;white-space:nowrap"></p>';
-					// 	li2.innerHTML='素材版本：'+(lib.config.asset_version||'无')+'<p style="margin-top:8px"></p>';
-					// 	li3.innerHTML='更新地址：<span>'+trimurl(lib.config.updateURL||lib.updateURL)+'</span><p style="margin-top:8px"></p>';
-					// 	li3.style.whiteSpace='nowrap';
-					// 	li3.style.display='none';// coding
+					// 	li1.innerHTML = '游戏版本：' + lib.version + '<p style="margin-top:8px;white-space:nowrap"></p>';
+					// 	li2.innerHTML = '素材版本：' + (lib.config.asset_version || '无') + '<p style="margin-top:8px"></p>';
+					// 	li3.innerHTML = '更新地址：<span>' + trimurl(lib.config.updateURL || lib.updateURL) + '</span><p style="margin-top:8px"></p>';
+					// 	li3.style.whiteSpace = 'nowrap';
+					// 	li3.style.display = 'none';// coding
 
-					// 	var button1,button2,button3,button4,button5;
+					// 	var button1, button2, button3, button4, button5;
 
-					// 	game.checkForUpdate=function(forcecheck,dev){
-					// 		if(!dev&&button1.disabled){
+					// 	game.checkForUpdate = function (forcecheck, dev) {
+					// 		if (!dev && button1.disabled) {
 					// 			return;
 					// 		}
-					// 		else if(dev&&button3.disabled){
+					// 		else if (dev && button3.disabled) {
 					// 			return;
 					// 		}
-					// 		else if(!game.download){
+					// 		else if (!game.download) {
 					// 			alert('此版本不支持游戏内更新，请手动更新');
 					// 			return;
 					// 		}
-					// 		else{
-					// 			if(dev){
-					// 				button3.innerHTML='正在检查更新';
+					// 		else {
+					// 			if (dev) {
+					// 				button3.innerHTML = '正在检查更新';
 					// 			}
-					// 			else{
-					// 				button1.innerHTML='正在检查更新';
+					// 			else {
+					// 				button1.innerHTML = '正在检查更新';
 					// 			}
-					// 			button3.disabled=true;
-					// 			button1.disabled=true;
+					// 			button3.disabled = true;
+					// 			button1.disabled = true;
 
-					// 			var goupdate=function(files,update){
-					// 				lib.version=update.version;
-					// 				if(update.dev&&!lib.config.debug){
-					// 					dev='nodev';
+					// 			var goupdate = function (files, update) {
+					// 				lib.version = update.version;
+					// 				if (update.dev && !lib.config.debug) {
+					// 					dev = 'nodev';
 					// 				}
-					// 				lib.init.req('game/source.js',function(){
-					// 					try{
+					// 				lib.init.req('game/source.js', function () {
+					// 					try {
 					// 						eval(this.responseText);
-					// 						if(!window.noname_source_list){
-					// 							throw('err');
+					// 						if (!window.noname_source_list) {
+					// 							throw ('err');
 					// 						}
 					// 					}
-					// 					catch(e){
+					// 					catch (e) {
 					// 						alert('更新地址有误');
 					// 						console.log(e);
 					// 						return;
 					// 					}
 
-					// 					var updates=window.noname_source_list;
+					// 					var updates = window.noname_source_list;
 					// 					delete window.noname_source_list;
-					// 					if(Array.isArray(files)){
+					// 					if (Array.isArray(files)) {
 					// 						files.add('game/update.js');
-					// 						var files2=[];
-					// 						for(var i=0;i<files.length;i++){
-					// 							var str=files[i].indexOf('*');
-					// 							if(str!=-1){
-					// 								str=files[i].slice(0,str);
-					// 								files.splice(i--,1);
-					// 								for(var j=0;j<updates.length;j++){
-					// 									if(updates[j].indexOf(str)==0){
+					// 						var files2 = [];
+					// 						for (var i = 0; i < files.length; i++) {
+					// 							var str = files[i].indexOf('*');
+					// 							if (str != -1) {
+					// 								str = files[i].slice(0, str);
+					// 								files.splice(i--, 1);
+					// 								for (var j = 0; j < updates.length; j++) {
+					// 									if (updates[j].indexOf(str) == 0) {
 					// 										files2.push(updates[j]);
 					// 									}
 					// 								}
 					// 							}
 					// 						}
-					// 						updates=files.concat(files2);
+					// 						updates = files.concat(files2);
 					// 					}
-					// 					for(var i=0;i<updates.length;i++){
-					// 						if(updates[i].indexOf('theme/')==0&&updates[i].indexOf('.css')==-1){
-					// 							updates.splice(i--,1);
+					// 					for (var i = 0; i < updates.length; i++) {
+					// 						if (updates[i].indexOf('theme/') == 0 && updates[i].indexOf('.css') == -1) {
+					// 							updates.splice(i--, 1);
 					// 						}
-					// 						else if(updates[i].indexOf('node_modules/')==0&&!update.node){
-					// 							updates.splice(i--,1);
+					// 						else if (updates[i].indexOf('node_modules/') == 0 && !update.node) {
+					// 							updates.splice(i--, 1);
 					// 						}
 					// 					}
 
-					// 					if(!ui.arena.classList.contains('menupaused')){
+					// 					if (!ui.arena.classList.contains('menupaused')) {
 					// 						ui.click.configMenu();
 					// 						ui.click.menuTab('其它');
 					// 					}
-					// 					var p=button1.parentNode;
+					// 					var p = button1.parentNode;
 					// 					button1.remove();
 					// 					button3.remove();
-					// 					var span=document.createElement('span');
-					// 					var n1=0;
-					// 					var n2=updates.length;
-					// 					span.innerHTML='正在下载文件（'+n1+'/'+n2+'）';
+					// 					var span = document.createElement('span');
+					// 					var n1 = 0;
+					// 					var n2 = updates.length;
+					// 					span.innerHTML = '正在下载文件（' + n1 + '/' + n2 + '）';
 					// 					p.appendChild(span);
-					// 					var finish=function(){
-					// 						span.innerHTML='游戏更新完毕（'+n1+'/'+n2+'）';
+					// 					var finish = function () {
+					// 						span.innerHTML = '游戏更新完毕（' + n1 + '/' + n2 + '）';
 					// 						p.appendChild(document.createElement('br'));
-					// 						var button=document.createElement('button');
-					// 						button.innerHTML='重新启动';
-					// 						button.onclick=game.reload;
-					// 						button.style.marginTop='8px';
+					// 						var button = document.createElement('button');
+					// 						button.innerHTML = '重新启动';
+					// 						button.onclick = game.reload;
+					// 						button.style.marginTop = '8px';
 					// 						p.appendChild(button);
 					// 					}
-					// 					game.multiDownload(updates,function(){
+					// 					game.multiDownload(updates, function () {
 					// 						n1++;
-					// 						span.innerHTML='正在下载文件（'+n1+'/'+n2+'）';
-					// 					},function(e){
-					// 						game.print('下载失败：'+e.source);
-					// 					},function(){
-					// 						setTimeout(finish,500);
-					// 					},null,dev);
-					// 				},function(){
+					// 						span.innerHTML = '正在下载文件（' + n1 + '/' + n2 + '）';
+					// 					}, function (e) {
+					// 						game.print('下载失败：' + e.source);
+					// 					}, function () {
+					// 						setTimeout(finish, 500);
+					// 					}, null, dev);
+					// 				}, function () {
 					// 					alert('更新地址有误');
-					// 				},true);
+					// 				}, true);
 					// 			};
 
-					// 			lib.init.req('game/update.js',function(){
-					// 				try{
+					// 			lib.init.req('game/update.js', function () {
+					// 				try {
 					// 					eval(this.responseText);
-					// 					if(!window.noname_update){
-					// 						throw('err');
+					// 					if (!window.noname_update) {
+					// 						throw ('err');
 					// 					}
 					// 				}
-					// 				catch(e){
+					// 				catch (e) {
 					// 					alert('更新地址有误');
 					// 					console.log(e);
 					// 					return;
 					// 				}
 
-					// 				var update=window.noname_update;
+					// 				var update = window.noname_update;
 					// 				delete window.noname_update;
-					// 				if(forcecheck===false){
-					// 					if(update.version==lib.config.check_version){
+					// 				if (forcecheck === false) {
+					// 					if (update.version == lib.config.check_version) {
 					// 						return;
 					// 					}
 					// 				}
-					// 				game.saveConfig('check_version',update.version);
-					// 				var goon=true;
-					// 				if(!dev){
-					// 					if(update.version.indexOf('beta')!=-1||update.version==lib.version){
-					// 						goon=false;
+					// 				game.saveConfig('check_version', update.version);
+					// 				var goon = true;
+					// 				if (!dev) {
+					// 					if (update.version.indexOf('beta') != -1 || update.version == lib.version) {
+					// 						goon = false;
 					// 					}
 					// 				}
-					// 				if(goon){
-					// 					var files=null;
-					// 					var version=lib.version;
-					// 					if(Array.isArray(update.dev)&&dev){
-					// 						files=update.dev;
+					// 				if (goon) {
+					// 					var files = null;
+					// 					var version = lib.version;
+					// 					if (Array.isArray(update.dev) && dev) {
+					// 						files = update.dev;
 					// 					}
-					// 					else if(Array.isArray(update.files)&&update.update&&!dev){
-					// 						var version1=version.split('.');
-					// 						var version2=update.update.split('.');
-					// 						for(var i=0;i<version1.length&&i<version2.length;i++){
-					// 							if(version2[i]>version1[i]){
-					// 								files=false;break;
+					// 					else if (Array.isArray(update.files) && update.update && !dev) {
+					// 						var version1 = version.split('.');
+					// 						var version2 = update.update.split('.');
+					// 						for (var i = 0; i < version1.length && i < version2.length; i++) {
+					// 							if (version2[i] > version1[i]) {
+					// 								files = false; break;
 					// 							}
-					// 							else if(version1[i]>version2[i]){
-					// 								files=update.files.slice(0);break;
+					// 							else if (version1[i] > version2[i]) {
+					// 								files = update.files.slice(0); break;
 					// 							}
 					// 						}
-					// 						if(files===null){
-					// 							if(version1.length>=version2.length){
-					// 								files=update.files.slice(0);
+					// 						if (files === null) {
+					// 							if (version1.length >= version2.length) {
+					// 								files = update.files.slice(0);
 					// 							}
 					// 						}
 					// 					}
 					// 					var str;
-					// 					if(dev){
-					// 						str='开发版仅供测试使用，可能存在风险，是否确定更新？'
+					// 					if (dev) {
+					// 						str = '开发版仅供测试使用，可能存在风险，是否确定更新？'
 					// 					}
-					// 					else{
-					// 						str='有新版本'+update.version+'可用，是否下载？';
+					// 					else {
+					// 						str = '有新版本' + update.version + '可用，是否下载？';
 					// 					}
-					// 					if(navigator.notification&&navigator.notification.confirm){
+					// 					if (navigator.notification && navigator.notification.confirm) {
 					// 						var str2;
-					// 						if(dev){
-					// 							str2=str;
-					// 							str='更新到开发版';
+					// 						if (dev) {
+					// 							str2 = str;
+					// 							str = '更新到开发版';
 					// 						}
-					// 						else{
-					// 							str2=update.changeLog[0];
-					// 							for(var i=1;i<update.changeLog.length;i++){
-					// 								if(update.changeLog[i].indexOf('://')==-1){
-					// 									str2+='；'+update.changeLog[i];
+					// 						else {
+					// 							str2 = update.changeLog[0];
+					// 							for (var i = 1; i < update.changeLog.length; i++) {
+					// 								if (update.changeLog[i].indexOf('://') == -1) {
+					// 									str2 += '；' + update.changeLog[i];
 					// 								}
 					// 							}
 					// 						}
 					// 						navigator.notification.confirm(
 					// 							str2,
-					// 							function(index){
-					// 								if(index==1){
-					// 									goupdate(files,update);
+					// 							function (index) {
+					// 								if (index == 1) {
+					// 									goupdate(files, update);
 					// 								}
-					// 								else{
-					// 									button1.disabled=false;
-					// 									button1.innerHTML='检查游戏更新';
-					// 									button3.disabled=false;
-					// 									button3.innerHTML='更新到开发版';
+					// 								else {
+					// 									button1.disabled = false;
+					// 									button1.innerHTML = '检查游戏更新';
+					// 									button3.disabled = false;
+					// 									button3.innerHTML = '更新到开发版';
 					// 								}
 					// 							},
 					// 							str,
-					// 							['确定','取消']
+					// 							['确定', '取消']
 					// 						);
 					// 					}
-					// 					else{
-					// 						if(confirm(str)){
-					// 							goupdate(files,update);
+					// 					else {
+					// 						if (confirm(str)) {
+					// 							goupdate(files, update);
 					// 						}
-					// 						else{
-					// 							button1.disabled=false;
-					// 							button1.innerHTML='检查游戏更新';
-					// 							button3.disabled=false;
-					// 							button3.innerHTML='更新到开发版';
+					// 						else {
+					// 							button1.disabled = false;
+					// 							button1.innerHTML = '检查游戏更新';
+					// 							button3.disabled = false;
+					// 							button3.innerHTML = '更新到开发版';
 					// 						}
 					// 					}
 					// 				}
-					// 				else{
+					// 				else {
 					// 					alert('当前版本已是最新');
-					// 					button1.disabled=false;
-					// 					button1.innerHTML='检查游戏更新';
-					// 					button3.disabled=false;
-					// 					button3.innerHTML='更新到开发版';
+					// 					button1.disabled = false;
+					// 					button1.innerHTML = '检查游戏更新';
+					// 					button3.disabled = false;
+					// 					button3.innerHTML = '更新到开发版';
 					// 				}
-					// 			},function(){
-					// 				if(forcecheck===false){
+					// 			}, function () {
+					// 				if (forcecheck === false) {
 					// 					return;
 					// 				}
 					// 				alert('连接失败');
-					// 				button1.disabled=false;
-					// 				button1.innerHTML='检查游戏更新';
-					// 				button3.disabled=false;
-					// 				button3.innerHTML='更新到开发版';
-					// 			},true);
+					// 				button1.disabled = false;
+					// 				button1.innerHTML = '检查游戏更新';
+					// 				button3.disabled = false;
+					// 				button3.innerHTML = '更新到开发版';
+					// 			}, true);
 					// 		}
 					// 	};
-					// 	game.checkForAssetUpdate=function(type){
-					// 		if(button2.disabled){
+					// 	game.checkForAssetUpdate = function (type) {
+					// 		if (button2.disabled) {
 					// 			return;
 					// 		}
-					// 		else if(game.download){
-					// 			button2.innerHTML='正在检查更新';
-					// 			button2.disabled=true;
-					// 			lib.init.req('game/asset.js',function(){
-					// 				try{
+					// 		else if (game.download) {
+					// 			button2.innerHTML = '正在检查更新';
+					// 			button2.disabled = true;
+					// 			lib.init.req('game/asset.js', function () {
+					// 				try {
 					// 					eval(this.responseText);
-					// 					if(!window.noname_asset_list||!window.noname_skin_list){
-					// 						throw('err');
+					// 					if (!window.noname_asset_list || !window.noname_skin_list) {
+					// 						throw ('err');
 					// 					}
 					// 				}
-					// 				catch(e){
+					// 				catch (e) {
 					// 					alert('更新地址有误');
 					// 					console.log(e);
 					// 					return;
 					// 				}
 
-					// 				var updates=window.noname_asset_list;
+					// 				var updates = window.noname_asset_list;
 					// 				delete window.noname_asset_list;
-					// 				var skins=window.noname_skin_list;
+					// 				var skins = window.noname_skin_list;
 					// 				delete window.noname_skin_list;
-					// 				var asset_version=updates.shift();
+					// 				var asset_version = updates.shift();
 
-					// 				var skipcharacter=[],skipcard=['tiesuo_mark','shield'];
-					// 				if(!lib.config.asset_full){
-					// 					for(var i=0;i<lib.config.all.sgscharacters.length;i++){
-					// 						var pack=lib.characterPack[lib.config.all.sgscharacters[i]];
-					// 						for(var j in pack){
+					// 				var skipcharacter = [], skipcard = ['tiesuo_mark', 'shield'];
+					// 				if (!lib.config.asset_full) {
+					// 					for (var i = 0; i < lib.config.all.sgscharacters.length; i++) {
+					// 						var pack = lib.characterPack[lib.config.all.sgscharacters[i]];
+					// 						for (var j in pack) {
 					// 							skipcharacter.add(j);
 					// 						}
 					// 					}
-					// 					for(var i=0;i<lib.config.all.sgscards.length;i++){
-					// 						var pack=lib.cardPack[lib.config.all.sgscards[i]];
-					// 						if(pack){
-					// 							skipcard=skipcard.concat(pack);
+					// 					for (var i = 0; i < lib.config.all.sgscards.length; i++) {
+					// 						var pack = lib.cardPack[lib.config.all.sgscards[i]];
+					// 						if (pack) {
+					// 							skipcard = skipcard.concat(pack);
 					// 						}
 					// 					}
 					// 				}
-					// 				for(var i=0;i<updates.length;i++){
-					// 					switch(updates[i].slice(0,5)){
-					// 						case 'image':{
-					// 							if(!lib.config.asset_full){
-					// 								if(!lib.config.asset_image){
-					// 									updates.splice(i--,1);
+					// 				for (var i = 0; i < updates.length; i++) {
+					// 					switch (updates[i].slice(0, 5)) {
+					// 						case 'image': {
+					// 							if (!lib.config.asset_full) {
+					// 								if (!lib.config.asset_image) {
+					// 									updates.splice(i--, 1);
 					// 								}
-					// 								else{
-					// 									if(updates[i].indexOf('image/character')==0){
-					// 										if(updates[i].indexOf('jun_')!=16&&updates[i].indexOf('gz_')!=16&&!skipcharacter.contains(updates[i].slice(16,updates[i].lastIndexOf('.')))){
-					// 											updates.splice(i--,1);
+					// 								else {
+					// 									if (updates[i].indexOf('image/character') == 0) {
+					// 										if (updates[i].indexOf('jun_') != 16 && updates[i].indexOf('gz_') != 16 && !skipcharacter.contains(updates[i].slice(16, updates[i].lastIndexOf('.')))) {
+					// 											updates.splice(i--, 1);
 					// 										}
 					// 									}
-					// 									else if(updates[i].indexOf('image/card')==0){
-					// 										if(updates[i].indexOf('qiaosi_card')!=11&&!skipcard.contains(updates[i].slice(11,updates[i].lastIndexOf('.')))){
-					// 											updates.splice(i--,1);
+					// 									else if (updates[i].indexOf('image/card') == 0) {
+					// 										if (updates[i].indexOf('qiaosi_card') != 11 && !skipcard.contains(updates[i].slice(11, updates[i].lastIndexOf('.')))) {
+					// 											updates.splice(i--, 1);
 					// 										}
 					// 									}
-					// 									else if(updates[i].indexOf('image/mode/stone')==0){
-					// 										updates.splice(i--,1);
+					// 									else if (updates[i].indexOf('image/mode/stone') == 0) {
+					// 										updates.splice(i--, 1);
 					// 									}
 					// 								}
 					// 							}
 					// 							break;
 					// 						}
-					// 						case 'audio':{
-					// 							if(!lib.config.asset_audio){
-					// 								updates.splice(i--,1);
+					// 						case 'audio': {
+					// 							if (!lib.config.asset_audio) {
+					// 								updates.splice(i--, 1);
 					// 							}
 					// 							break;
 					// 						}
-					// 						case 'font/':{
-					// 							if(!lib.config.asset_font){
-					// 								updates.splice(i--,1);
+					// 						case 'font/': {
+					// 							if (!lib.config.asset_font) {
+					// 								updates.splice(i--, 1);
 					// 							}
 					// 						}
 					// 					}
 					// 				}
-					// 				if(lib.config.asset_skin){
-					// 					for(var i in skins){
-					// 						for(var j=1;j<=skins[i];j++){
-					// 							updates.push('image/skin/'+i+'/'+j+'.jpg');
+					// 				if (lib.config.asset_skin) {
+					// 					for (var i in skins) {
+					// 						for (var j = 1; j <= skins[i]; j++) {
+					// 							updates.push('image/skin/' + i + '/' + j + '.jpg');
 					// 						}
 					// 					}
 					// 				}
-					// 				if(!ui.arena.classList.contains('menupaused')){
+					// 				if (!ui.arena.classList.contains('menupaused')) {
 					// 					ui.click.configMenu();
 					// 					ui.click.menuTab('其它');
 					// 				}
 
-					// 				var proceed=function(){
-					// 					if(updates.length==0){
+					// 				var proceed = function () {
+					// 					if (updates.length == 0) {
 					// 						game.print(updates);
-					// 						game.saveConfig('asset_version',asset_version);
+					// 						game.saveConfig('asset_version', asset_version);
 					// 						alert('素材已是最新');
-					// 						button2.disabled=false;
-					// 						button2.innerHTML='检查素材更新';
+					// 						button2.disabled = false;
+					// 						button2.innerHTML = '检查素材更新';
 					// 						return;
 					// 					}
-					// 					var p=button2.parentNode;
+					// 					var p = button2.parentNode;
 					// 					button2.remove();
-					// 					var span=document.createElement('span');
-					// 					span.style.whiteSpace='nowrap';
-					// 					var n1=0;
-					// 					var n2=updates.length;
-					// 					span.innerHTML='正在下载素材（'+n1+'/'+n2+'）';
+					// 					var span = document.createElement('span');
+					// 					span.style.whiteSpace = 'nowrap';
+					// 					var n1 = 0;
+					// 					var n2 = updates.length;
+					// 					span.innerHTML = '正在下载素材（' + n1 + '/' + n2 + '）';
 					// 					span1.remove();
 					// 					span2.remove();
 					// 					span2_check.remove();
@@ -44122,252 +44398,252 @@
 					// 					span6_br.remove();
 					// 					p.appendChild(span);
 
-					// 					var br6=ui.create.node('br');
-					// 					var span7=ui.create.div('.hrefnode','详细信息');
-					// 					span7.style.marginTop='6px';
+					// 					var br6 = ui.create.node('br');
+					// 					var span7 = ui.create.div('.hrefnode', '详细信息');
+					// 					span7.style.marginTop = '6px';
 					// 					span7.listen(ui.click.consoleMenu);
 					// 					p.appendChild(br6);
 					// 					p.appendChild(span7);
 
-					// 					var finish=function(){
-					// 						if(n1==n2){
-					// 							game.saveConfig('asset_version',asset_version);
+					// 					var finish = function () {
+					// 						if (n1 == n2) {
+					// 							game.saveConfig('asset_version', asset_version);
 					// 						}
-					// 						span.innerHTML='素材更新完毕（'+n1+'/'+n2+'）';
+					// 						span.innerHTML = '素材更新完毕（' + n1 + '/' + n2 + '）';
 					// 						p.appendChild(document.createElement('br'));
-					// 						var button=document.createElement('button');
-					// 						button.innerHTML='重新启动';
-					// 						button.onclick=game.reload;
-					// 						button.style.marginTop='8px';
+					// 						var button = document.createElement('button');
+					// 						button.innerHTML = '重新启动';
+					// 						button.onclick = game.reload;
+					// 						button.style.marginTop = '8px';
 					// 						p.appendChild(button);
 					// 					}
-					// 					game.multiDownload(updates,function(){
+					// 					game.multiDownload(updates, function () {
 					// 						n1++;
-					// 						span.innerHTML='正在下载素材（'+n1+'/'+n2+'）';
-					// 					},function(e){
-					// 						game.print('下载失败：'+e.source);
-					// 					},function(){
-					// 						setTimeout(finish,500);
+					// 						span.innerHTML = '正在下载素材（' + n1 + '/' + n2 + '）';
+					// 					}, function (e) {
+					// 						game.print('下载失败：' + e.source);
+					// 					}, function () {
+					// 						setTimeout(finish, 500);
 					// 					});
 					// 				};
-					// 				game.checkFileList(updates,proceed);
-					// 			},function(){
+					// 				game.checkFileList(updates, proceed);
+					// 			}, function () {
 					// 				alert('连接失败');
-					// 				button2.disabled=false;
-					// 				button2.innerHTML='检查素材更新';
-					// 			},true);
+					// 				button2.disabled = false;
+					// 				button2.innerHTML = '检查素材更新';
+					// 			}, true);
 					// 		}
-					// 		else{
+					// 		else {
 					// 			alert('此版本不支持游戏内更新素材，请手动更新');
 					// 		}
 					// 	};
 
-					// 	button1=document.createElement('button');
-					// 	button1.innerHTML='检查游戏更新';
-					// 	button1.onclick=game.checkForUpdate;
+					// 	button1 = document.createElement('button');
+					// 	button1.innerHTML = '检查游戏更新';
+					// 	button1.onclick = game.checkForUpdate;
 					// 	li1.lastChild.appendChild(button1);
 
-					// 	button3=document.createElement('button');
-					// 	button3.innerHTML='更新到开发版';
-					// 	button3.style.marginLeft='5px';
-					// 	button3.onclick=function(){
-					// 		game.checkForUpdate(null,true);
+					// 	button3 = document.createElement('button');
+					// 	button3.innerHTML = '更新到开发版';
+					// 	button3.style.marginLeft = '5px';
+					// 	button3.onclick = function () {
+					// 		game.checkForUpdate(null, true);
 					// 	};
 					// 	// if(lib.config.dev){
 					// 	//     li1.lastChild.appendChild(button3);
 					// 	// }
 
-					// 	(function(){
-					// 		var updatep1=li1.querySelector('p');
-					// 		var updatep2=li2;
-					// 		var updatep3=li3;
-					// 		var updatep4=node;
-					// 		var updatepx=ui.create.node('p');
+					// 	(function () {
+					// 		var updatep1 = li1.querySelector('p');
+					// 		var updatep2 = li2;
+					// 		var updatep3 = li3;
+					// 		var updatep4 = node;
+					// 		var updatepx = ui.create.node('p');
 					// 		li1.appendChild(updatepx);
-					// 		updatepx.style.display='none';
-					// 		updatepx.style.whiteSpace='nowrap';
-					// 		updatepx.style.marginTop='8px';
-					// 		var buttonx=ui.create.node('button','访问项目主页',function(){
+					// 		updatepx.style.display = 'none';
+					// 		updatepx.style.whiteSpace = 'nowrap';
+					// 		updatepx.style.marginTop = '8px';
+					// 		var buttonx = ui.create.node('button', '访问项目主页', function () {
 					// 			window.open('https://github.com/ZhuYing-official/diy_noname');
 					// 		});
 					// 		updatepx.appendChild(buttonx);
-					// 		ui.updateUpdate=function(){
-					// 			if(!game.download){
-					// 				updatep1.style.display='none';
-					// 				updatep2.style.display='none';
-					// 				updatep3.style.display='none';
-					// 				updatepx.style.display='';
-					// 				updatep4.innerHTML='关于';
+					// 		ui.updateUpdate = function () {
+					// 			if (!game.download) {
+					// 				updatep1.style.display = 'none';
+					// 				updatep2.style.display = 'none';
+					// 				updatep3.style.display = 'none';
+					// 				updatepx.style.display = '';
+					// 				updatep4.innerHTML = '关于';
 					// 			}
-					// 			else{
-					// 				updatep1.style.display='';
-					// 				updatep2.style.display='';
-					// 				updatep3.style.display='none'; // coding
-					// 				updatepx.style.display='none';
-					// 				updatep4.innerHTML='更新';
+					// 			else {
+					// 				updatep1.style.display = '';
+					// 				updatep2.style.display = '';
+					// 				updatep3.style.display = 'none'; // coding
+					// 				updatepx.style.display = 'none';
+					// 				updatep4.innerHTML = '更新';
 					// 			}
 					// 		}
 					// 		ui.updateUpdate();
 					// 	}());
 
-					// 	button4=document.createElement('button');
-					// 	button4.innerHTML='设置更新地址';
-					// 	button4.onclick=function(){
-					// 		game.prompt('设置更新地址',function(str){
-					// 			if(str){
-					// 				game.saveConfig('updateURL',str);
-					// 				li3.querySelector('span').innerHTML=trimurl(str);
-					// 				button5.style.display='';
-					// 				button6.style.display='none';
+					// 	button4 = document.createElement('button');
+					// 	button4.innerHTML = '设置更新地址';
+					// 	button4.onclick = function () {
+					// 		game.prompt('设置更新地址', function (str) {
+					// 			if (str) {
+					// 				game.saveConfig('updateURL', str);
+					// 				li3.querySelector('span').innerHTML = trimurl(str);
+					// 				button5.style.display = '';
+					// 				button6.style.display = 'none';
 					// 			}
 					// 		});
 					// 	};
 					// 	// li3.lastChild.appendChild(button4);
 
-					// 	var button6=document.createElement('button');
-					// 	button6.innerHTML='设为备用镜像';
-					// 	button6.style.display='none';// coding
+					// 	var button6 = document.createElement('button');
+					// 	button6.innerHTML = '设为备用镜像';
+					// 	button6.style.display = 'none';// coding
 					// 	// button6.style.marginLeft='5px';
-					// 	button6.onclick=function(){
-					// 		game.saveConfig('updateURL',lib.mirrorURL);
-					// 		button5.style.display='';
-					// 		button6.style.display='none';
-					// 		li3.querySelector('span').innerHTML=trimurl(lib.mirrorURL);
+					// 	button6.onclick = function () {
+					// 		game.saveConfig('updateURL', lib.mirrorURL);
+					// 		button5.style.display = '';
+					// 		button6.style.display = 'none';
+					// 		li3.querySelector('span').innerHTML = trimurl(lib.mirrorURL);
 					// 	};
 					// 	li3.lastChild.appendChild(button6);
 
-					// 	button5=document.createElement('button');
-					// 	button5.innerHTML='设为默认镜像';
+					// 	button5 = document.createElement('button');
+					// 	button5.innerHTML = '设为默认镜像';
 					// 	// button5.style.marginLeft='5px';
-					// 	button5.onclick=function(){
+					// 	button5.onclick = function () {
 					// 		game.saveConfig('updateURL');
-					// 		button5.style.display='none';
-					// 		button6.style.display='';
-					// 		li3.querySelector('span').innerHTML=trimurl(lib.updateURL);
+					// 		button5.style.display = 'none';
+					// 		button6.style.display = '';
+					// 		li3.querySelector('span').innerHTML = trimurl(lib.updateURL);
 					// 	};
 					// 	li3.lastChild.appendChild(button5);
-					// 	if(!lib.config.updateURL){
-					// 		button5.style.display='none';
+					// 	if (!lib.config.updateURL) {
+					// 		button5.style.display = 'none';
 					// 	}
-					// 	else{
-					// 		button6.style.display='none';
+					// 	else {
+					// 		button6.style.display = 'none';
 					// 	}
 
-					// 	button2=document.createElement('button');
-					// 	button2.innerHTML='检查素材更新';
-					// 	button2.onclick=game.checkForAssetUpdate;
+					// 	button2 = document.createElement('button');
+					// 	button2.innerHTML = '检查素材更新';
+					// 	button2.onclick = game.checkForAssetUpdate;
 					// 	li2.lastChild.appendChild(button2);
 
-					// 	var span1=ui.create.div('.config.more','选项 <div>&gt;</div>');
-					// 	span1.style.fontSize='small';
-					// 	span1.style.display='inline';
-					// 	span1.toggle=function(){
-					// 		if(!this.classList.toggle('on')){
-					// 			game.saveConfig('asset_toggle_off',true);
-					// 			span2.style.display='none';
-					// 			span2_br.style.display='none';
-					// 			span2_check.style.display='none';
-					// 			span3.style.display='none';
-					// 			span3_br.style.display='none';
-					// 			span3_check.style.display='none';
-					// 			span4.style.display='none';
-					// 			span4_br.style.display='none';
-					// 			span4_check.style.display='none';
-					// 			span5.style.display='none';
-					// 			span5_br.style.display='none';
-					// 			span5_check.style.display='none';
-					// 			span6.style.display='none';
-					// 			span6_br.style.display='none';
-					// 			span6_check.style.display='none';
+					// 	var span1 = ui.create.div('.config.more', '选项 <div>&gt;</div>');
+					// 	span1.style.fontSize = 'small';
+					// 	span1.style.display = 'inline';
+					// 	span1.toggle = function () {
+					// 		if (!this.classList.toggle('on')) {
+					// 			game.saveConfig('asset_toggle_off', true);
+					// 			span2.style.display = 'none';
+					// 			span2_br.style.display = 'none';
+					// 			span2_check.style.display = 'none';
+					// 			span3.style.display = 'none';
+					// 			span3_br.style.display = 'none';
+					// 			span3_check.style.display = 'none';
+					// 			span4.style.display = 'none';
+					// 			span4_br.style.display = 'none';
+					// 			span4_check.style.display = 'none';
+					// 			span5.style.display = 'none';
+					// 			span5_br.style.display = 'none';
+					// 			span5_check.style.display = 'none';
+					// 			span6.style.display = 'none';
+					// 			span6_br.style.display = 'none';
+					// 			span6_check.style.display = 'none';
 					// 		}
-					// 		else{
+					// 		else {
 					// 			game.saveConfig('asset_toggle_off');
-					// 			span2.style.display='';
-					// 			span2_br.style.display='';
-					// 			span2_check.style.display='';
-					// 			span3.style.display='';
-					// 			span3_br.style.display='';
-					// 			span3_check.style.display='';
-					// 			span4.style.display='';
-					// 			span4_br.style.display='';
-					// 			span4_check.style.display='';
-					// 			span5.style.display='';
-					// 			span5_br.style.display='';
-					// 			span5_check.style.display='';
-					// 			span6.style.display='';
-					// 			span6_br.style.display='';
-					// 			span6_check.style.display='';
+					// 			span2.style.display = '';
+					// 			span2_br.style.display = '';
+					// 			span2_check.style.display = '';
+					// 			span3.style.display = '';
+					// 			span3_br.style.display = '';
+					// 			span3_check.style.display = '';
+					// 			span4.style.display = '';
+					// 			span4_br.style.display = '';
+					// 			span4_check.style.display = '';
+					// 			span5.style.display = '';
+					// 			span5_br.style.display = '';
+					// 			span5_check.style.display = '';
+					// 			span6.style.display = '';
+					// 			span6_br.style.display = '';
+					// 			span6_check.style.display = '';
 					// 		}
 					// 	};
 					// 	span1.listen(span1.toggle);
 					// 	li2.lastChild.appendChild(span1);
 
-					// 	var span6_br=ui.create.node('br');
+					// 	var span6_br = ui.create.node('br');
 					// 	li2.lastChild.appendChild(span6_br);
 
-					// 	var span5=ui.create.div('','图片素材（精简，126MB）');
-					// 	span5.style.fontSize='small';
-					// 	span5.style.lineHeight='16px';
-					// 	var span5_check=document.createElement('input');
-					// 	span5_check.type='checkbox';
-					// 	span5_check.style.marginLeft='5px';
-					// 	if(lib.config.asset_image){
-					// 		span5_check.checked=true;
+					// 	var span5 = ui.create.div('', '图片素材（精简，126MB）');
+					// 	span5.style.fontSize = 'small';
+					// 	span5.style.lineHeight = '16px';
+					// 	var span5_check = document.createElement('input');
+					// 	span5_check.type = 'checkbox';
+					// 	span5_check.style.marginLeft = '5px';
+					// 	if (lib.config.asset_image) {
+					// 		span5_check.checked = true;
 					// 	}
-					// 	span5_check.onchange=function(){
-					// 		game.saveConfig('asset_image',this.checked);
+					// 	span5_check.onchange = function () {
+					// 		game.saveConfig('asset_image', this.checked);
 					// 	}
-					// 	var span2_br=ui.create.node('br');
+					// 	var span2_br = ui.create.node('br');
 
-					// 	var span4=ui.create.div('','字体素材（48MB）');
-					// 	span4.style.fontSize='small';
-					// 	span4.style.lineHeight='16px';
+					// 	var span4 = ui.create.div('', '字体素材（48MB）');
+					// 	span4.style.fontSize = 'small';
+					// 	span4.style.lineHeight = '16px';
 					// 	li2.lastChild.appendChild(span4);
-					// 	var span4_check=document.createElement('input');
-					// 	span4_check.type='checkbox';
-					// 	span4_check.style.marginLeft='5px';
-					// 	if(lib.config.asset_font){
-					// 		span4_check.checked=true;
+					// 	var span4_check = document.createElement('input');
+					// 	span4_check.type = 'checkbox';
+					// 	span4_check.style.marginLeft = '5px';
+					// 	if (lib.config.asset_font) {
+					// 		span4_check.checked = true;
 					// 	}
-					// 	span4_check.onchange=function(){
-					// 		game.saveConfig('asset_font',this.checked);
+					// 	span4_check.onchange = function () {
+					// 		game.saveConfig('asset_font', this.checked);
 					// 	}
 					// 	li2.lastChild.appendChild(span4_check);
-					// 	var span3_br=ui.create.node('br');
+					// 	var span3_br = ui.create.node('br');
 					// 	li2.lastChild.appendChild(span3_br);
 
-					// 	var span3=ui.create.div('','音效素材（125MB）');
-					// 	span3.style.fontSize='small';
-					// 	span3.style.lineHeight='16px';
+					// 	var span3 = ui.create.div('', '音效素材（125MB）');
+					// 	span3.style.fontSize = 'small';
+					// 	span3.style.lineHeight = '16px';
 					// 	li2.lastChild.appendChild(span3);
-					// 	var span3_check=document.createElement('input');
-					// 	span3_check.type='checkbox';
-					// 	span3_check.style.marginLeft='5px';
-					// 	if(lib.config.asset_audio){
-					// 		span3_check.checked=true;
+					// 	var span3_check = document.createElement('input');
+					// 	span3_check.type = 'checkbox';
+					// 	span3_check.style.marginLeft = '5px';
+					// 	if (lib.config.asset_audio) {
+					// 		span3_check.checked = true;
 					// 	}
-					// 	span3_check.onchange=function(){
-					// 		game.saveConfig('asset_audio',this.checked);
+					// 	span3_check.onchange = function () {
+					// 		game.saveConfig('asset_audio', this.checked);
 					// 	}
 					// 	li2.lastChild.appendChild(span3_check);
-					// 	var span4_br=ui.create.node('br');
+					// 	var span4_br = ui.create.node('br');
 					// 	li2.lastChild.appendChild(span4_br);
 
-					// 	var span2=ui.create.div('','皮肤素材（351MB）');
-					// 	span2.style.fontSize='small';
-					// 	span2.style.lineHeight='16px';
+					// 	var span2 = ui.create.div('', '皮肤素材（351MB）');
+					// 	span2.style.fontSize = 'small';
+					// 	span2.style.lineHeight = '16px';
 					// 	li2.lastChild.appendChild(span2);
-					// 	var span2_check=document.createElement('input');
-					// 	span2_check.type='checkbox';
-					// 	span2_check.style.marginLeft='5px';
-					// 	if(lib.config.asset_skin){
-					// 		span2_check.checked=true;
+					// 	var span2_check = document.createElement('input');
+					// 	span2_check.type = 'checkbox';
+					// 	span2_check.style.marginLeft = '5px';
+					// 	if (lib.config.asset_skin) {
+					// 		span2_check.checked = true;
 					// 	}
-					// 	span2_check.onchange=function(){
-					// 		game.saveConfig('asset_skin',this.checked);
+					// 	span2_check.onchange = function () {
+					// 		game.saveConfig('asset_skin', this.checked);
 					// 	}
 					// 	li2.lastChild.appendChild(span2_check);
-					// 	var span5_br=ui.create.node('br');
+					// 	var span5_br = ui.create.node('br');
 					// 	li2.lastChild.appendChild(span5_br);
 
 
@@ -44375,36 +44651,36 @@
 					// 	li2.lastChild.appendChild(span5_check);
 					// 	li2.lastChild.appendChild(span2_br);
 
-					// 	var span6=ui.create.div('','图片素材（完整，203MB）');
-					// 	span6.style.fontSize='small';
-					// 	span6.style.lineHeight='16px';
+					// 	var span6 = ui.create.div('', '图片素材（完整，203MB）');
+					// 	span6.style.fontSize = 'small';
+					// 	span6.style.lineHeight = '16px';
 					// 	li2.lastChild.appendChild(span6);
-					// 	var span6_check=document.createElement('input');
-					// 	span6_check.type='checkbox';
-					// 	span6_check.style.marginLeft='5px';
-					// 	if(lib.config.asset_full){
-					// 		span6_check.checked=true;
+					// 	var span6_check = document.createElement('input');
+					// 	span6_check.type = 'checkbox';
+					// 	span6_check.style.marginLeft = '5px';
+					// 	if (lib.config.asset_full) {
+					// 		span6_check.checked = true;
 					// 	}
-					// 	span6_check.onchange=function(){
-					// 		game.saveConfig('asset_full',this.checked);
+					// 	span6_check.onchange = function () {
+					// 		game.saveConfig('asset_full', this.checked);
 					// 	}
 					// 	li2.lastChild.appendChild(span6_check);
 
-					// 	span2.style.display='none';
-					// 	span2_br.style.display='none';
-					// 	span2_check.style.display='none';
-					// 	span3.style.display='none';
-					// 	span3_br.style.display='none';
-					// 	span3_check.style.display='none';
-					// 	span4.style.display='none';
-					// 	span4_br.style.display='none';
-					// 	span4_check.style.display='none';
-					// 	span5.style.display='none';
-					// 	span5_br.style.display='none';
-					// 	span5_check.style.display='none';
-					// 	span6.style.display='none';
-					// 	span6_br.style.display='none';
-					// 	span6_check.style.display='none';
+					// 	span2.style.display = 'none';
+					// 	span2_br.style.display = 'none';
+					// 	span2_check.style.display = 'none';
+					// 	span3.style.display = 'none';
+					// 	span3_br.style.display = 'none';
+					// 	span3_check.style.display = 'none';
+					// 	span4.style.display = 'none';
+					// 	span4_br.style.display = 'none';
+					// 	span4_check.style.display = 'none';
+					// 	span5.style.display = 'none';
+					// 	span5_br.style.display = 'none';
+					// 	span5_check.style.display = 'none';
+					// 	span6.style.display = 'none';
+					// 	span6_br.style.display = 'none';
+					// 	span6_check.style.display = 'none';
 
 					// 	ul.appendChild(li1);
 					// 	ul.appendChild(li2);
@@ -44412,7 +44688,7 @@
 					// 	page.appendChild(ul);
 
 
-					// 	if(!lib.config.asset_toggle_off){
+					// 	if (!lib.config.asset_toggle_off) {
 					// 		span1.toggle();
 					// 	}
 					// }());
@@ -44707,6 +44983,7 @@
 						pre.style.margin = 0;
 						pre.style.padding = 0;
 						pre.style.position = 'relative';
+						pre.style.webkitUserSelect = pre.style.userSelect = 'text';
 						lib.setScroll(pre);
 						page.appendChild(text);
 
@@ -44731,6 +45008,10 @@
 						var logs = [];
 						var logindex = -1;
 						var cheat = lib.cheat;
+						//使用正则匹配绝大多数的普通obj对象，避免解析成代码块。
+						var reg = /^\{([^{}]+:\s*([^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\)))(?:,\s*([^{}]+:\s*(?:[^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\))))*\}$/;
+						//使用new Function隔绝作用域，避免在控制台可以直接访问到runCommand等变量
+						var fun = (new Function('reg', 'value', '_status', 'lib', 'game', 'ui', 'get', 'ai', `"use strict";\nreturn eval(reg.test(value)?('('+value+')'):value)`));
 						var runCommand = function (e) {
 							if (text2.value && !['up', 'down'].contains(text2.value)) {
 								logindex = -1;
@@ -44770,7 +45051,9 @@
 							else {
 								if (!game.observe && !game.online) {
 									try {
-										var result = eval(text2.value);
+										var value = text2.value.trim();
+										if (value.endsWith(";")) value = value.slice(0, -1).trim();
+										var result = fun(reg, value, _status, lib, game, ui, get, ai);
 										game.print(result);
 									}
 									catch (e) {
@@ -44803,26 +45086,30 @@
 						});
 						page.appendChild(text2);
 						game.print = function () {
-							var textstr = '';
-							for (var i = 0; i < arguments.length; i++) {
-								if (get.is.object(arguments[i])) {
-									var argi = get.stringify(arguments[i]);
-									if (argi && argi.length < 5000) {
-										textstr += argi;
+							var args = [].slice.call(arguments);
+							var printResult = args.map(arg => {
+								if (get.is.object(arg) || typeof arg == 'function') {
+									var argi = get.stringify(arg);
+									if (argi/*&&argi.length<5000*/) {
+										return argi.replace(/&/g, '&amp;')
+											.replace(/</g, '&lt;')
+											.replace(/>/g, '&gt;')
+											.replace(/"/g, '&quot;')
+											.replace(/'/g, '&#39;');
 									}
-									else {
-										textstr += arguments[i].toString();
+									else return arg.toString();
+								} else {
+									var str = String(arg);
+									if (!/<[a-zA-Z]+[^>]*?\/?>.*?(?=<\/[a-zA-Z]+[^>]*?>|$)/.exec(str)) return String(arg)
+										.replace(/&/g, '&amp;')
+										.replace(/</g, '&lt;')
+										.replace(/>/g, '&gt;')
+										.replace(/"/g, '&quot;')
+										.replace(/'/g, '&#39;');
+									else return str;
 									}
-								}
-								else {
-									textstr += arguments[i];
-								}
-								if (i < arguments.length - 1) {
-									textstr += ' ';
-								}
-							}
-							textstr += '<br>';
-							pre.innerHTML += textstr;
+							}).join(' ');
+							pre.innerHTML += printResult + '<br>';
 							text.scrollTop = text.scrollHeight;
 						}
 						if (_status.toprint) {
@@ -45202,10 +45489,10 @@
 					}
 					else {
 						_status.event.next.length = 0;
-						game.createEvent('giveup', false).setContent(function () {
+						game.createEvent('giveup', false).set('includeOut', true).setContent(function () {
 							game.log(player, '投降');
 							player.popup('投降');
-							player.die('nosource');
+							player.die('nosource').includeOut = true;
 						}).player = player;
 					}
 					if (_status.paused && _status.imchoosing && !_status.auto) {
@@ -45661,7 +45948,7 @@
 							bool2 = true;
 						}
 						if (!bool4 && get.is.double(i)) bool4 = true;
-						if (bool1 && bool2 && bool4) break;
+						if (bool1 && bool2 && bool4 && bool5) break;
 					}
 					if (bool1) groups.add('shen');
 					if (bool2 && !bool3) groups.add('key');
@@ -47012,14 +47299,6 @@
 						node.firstChild.innerHTML = '正在测试';
 						node.removeEventListener('click', ui.click.resume);
 					}, 500);
-				}
-				if (!localStorage.getItem('gplv3_alerted')) {
-					if (confirm('无名杀是一款基于GPLv3协议的开源软件！\n你可以在遵守GPLv3协议的基础上任意使用，修改并转发《无名杀》，以及所有基于《无名杀》开发的拓展。\n点击“确定”即代表您认可并接受GPLv3协议↓️\nhttps://www.gnu.org/licenses/gpl-3.0.html')) {
-						localStorage.setItem('gplv3_alerted', true);
-					}
-					else {
-						game.exit();
-					}
 				}
 			},
 			system: function (str, func, right, before) {
@@ -50271,7 +50550,7 @@
 				}
 				// ui.click.skin(this,player.name);
 				game.pause2();
-				ui.click.charactercard(player.name, null, null, true, this);
+				ui.click.charactercard(player.name1 || player.name, null, null, true, this);
 			},
 			avatar2: function () {
 				if (!lib.config.doubleclick_intro) return;
@@ -50517,7 +50796,7 @@
 				}
 				game.uncheck();
 				game.check();
-				if (event.skillDialog) {
+				if (event.skillDialog === true) {
 					var str = get.translation(skill);
 					if (info.prompt) {
 						var str2;
@@ -53170,18 +53449,24 @@
 					threaten = info.ai.threaten(player, player);
 				}
 			}
-			if (type == 'in') {
+			if (type.indexOf('in') != -1) {
 				if (info.enable == 'phaseUse') num += 0.5;
 				if (info.trigger && info.trigger.player) {
 					var list = Array.isArray(info.trigger.player) ? info.trigger.player : [info.trigger.player];
 					var add = false;
 					for (var i of list) {
+						if (i.indexOf('phase') == 0) {
+							num += 0.5;
+							add = true;
+						}
+						else {
 						for (var j of lib.phaseName) {
 							if (i.indexOf[j] == 0) {
 								num += 0.5;
 								add = true;
 								break;
 							}
+						}
 						}
 						if (add) break;
 					}
@@ -53193,12 +53478,22 @@
 					num += Math.sqrt(threaten) - 1;
 				}
 			}
-			else if (type == 'out') {
+			if (type.indexOf('out') != -1) {
 				if (threaten < 1) {
-					num = 1 / Math.sqrt(threaten);
+					num *= 1 / Math.sqrt(threaten);
 				}
-				if (info.trigger && (info.trigger.global || info.trigger.target || (typeof info.trigger.player == 'string' &&
-					(info.trigger.player.indexOf('damage') == 0 || info.trigger.player.indexOf('lose') == 0)))) num += 0.1;
+				if (info.trigger) {
+					if (info.trigger.global) {
+						var list = Array.isArray(info.trigger.global) ? info.trigger.global : [info.trigger.global];
+						num += Math.min(3, list.length) / 10;
+						for (var i of list) {
+							if (i.indexOf('lose') == 0 || i.indexOf('use') == 0) num += 0.3;
+							if (i.indexOf('cardsDiscard') == 0) num += 0.4;
+						}
+					}
+					if (info.trigger.target || (typeof info.trigger.player == 'string' &&
+						(info.trigger.player.indexOf('damage') == 0 || info.trigger.player.indexOf('lose') == 0))) num += 0.1;
+				}
 				if (info.ai) {
 					if (info.ai.maixie || info.ai.maixie_hp || info.ai.maixie_defend) {
 						num += 0.5;
