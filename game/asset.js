@@ -5685,6 +5685,12 @@ window.noname_asset_list = [
 	'audio/skill/hppxingwu2.mp3',
 	'audio/skill/hppluoyan1.mp3',
 	'audio/skill/hpphuimou1.mp3',
+	'audio/skill/hppshixian1.mp3',
+	'audio/skill/hppshixian2.mp3',
+	'audio/skill/hppqiangjinjiu1.mp3',
+	'audio/skill/hppjingyesi1.mp3',
+	'audio/skill/hppxiakexing1.mp3',
+	'audio/skill/hppxinglunan1.mp3',
 
 	'audio/voice/male/0.mp3',
 	'audio/voice/male/1.mp3',

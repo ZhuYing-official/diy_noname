@@ -2543,6 +2543,163 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			hppshixian: {
+				audio: 2,
+				derivation: ['qiangjinjiu', 'jingyesi', 'xiakexing', 'xinglunan'],
+				trigger: { player: 'phaseBegin' },
+				forced: true,
+				content: function () {
+					'step 0'
+					if (player.additionalSkills.hppshixian) player.removeAdditionalSkill('hppshixian');
+					var cards = get.cards(4);
+					for (var i = cards.length - 1; i--; i >= 0) {
+						ui.cardPile.insertBefore(cards[i], ui.cardPile.firstChild);
+					}
+					game.updateRoundNumber();
+					event.cards = cards;
+					player.showCards(cards, get.translation(player) + '发动了【诗仙】');
+					'step 1'
+					var map = {
+						'heart': 'qiangjinjiu',
+						'diamond': 'jingyesi',
+						'spade': 'xiakexing',
+						'club': 'xinglunan'
+					}, list = [];
+					for (var i in map) {
+						if (cards.some(card => get.suit(card, player) == i)) list.push(map[i]);
+					}
+					if (list.length) player.addAdditionalSkill('hppshixian', list);
+					event.cards = cards.filter(function (card) {
+						return cards.some(function (cardx) {
+							if (cardx == card) return false;
+							return get.suit(card, player) == get.suit(cardx, player);
+						});
+					});
+					if (event.cards.length) player.chooseBool('诗仙：是否获得' + get.translation(event.cards) + '？');
+					else event.finish();
+					'step 2'
+					if (result.bool) player.gain(cards, 'gain2');
+				},
+			},
+			//将进酒
+			hppqiangjinjiu: {
+				audio: 1,
+				nobracket: true,
+				trigger: { global: 'phaseBegin' },
+				filter: function (event, player) {
+					if (event.player == player) return false;
+					return player.countCards('h') && event.player.countCards('he');
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					player.chooseToDiscard(get.prompt2('qiangjinjiu', trigger.player)).set('ai', function (card) {
+						var player = _status.event.player;
+						var target = _status.event.target;
+						if (get.attitude(player, target) > 0) return 0;
+						return 6 - get.value(card);
+					}).set('target', trigger.player).logSkill = ['qiangjinjiu', trigger.player];
+					'step 1'
+					if (result.bool) {
+						if (!trigger.player.countCards('e')) event._result = { bool: true, index: 1 };
+						else player.chooseControl().set('choiceList', [
+							'弃置' + get.translation(trigger.player) + '装备区里的所有装备牌',
+							'获得' + get.translation(trigger.player) + '手牌中的所有【酒】（若其手牌中没有【酒】则改为获得其一张牌）',
+						]).set('ai', () => 0);
+					}
+					else event.finish();
+					'step 2'
+					if (result.index == 0) {
+						trigger.player.discard(trigger.player.getCards('e')).discarder = player;
+						var card = get.cardPile2(card => card.name == 'jiu');
+						if (card) trigger.player.gain(card, 'gain2');
+					}
+					else {
+						if (trigger.player.countCards('h', { name: 'jiu' })) player.gain(trigger.player.getCards('h', { name: 'jiu' }), trigger.player, 'give');
+						else player.gainPlayerCard(trigger.player, 'he', true);
+					}
+				},
+			},
+			//静夜思
+			hppjingyesi: {
+				audio: 1,
+				nobracket: true,
+				trigger: { player: ['phaseUseEnd', 'phaseDiscardEnd'] },
+				direct: true,
+				content: function () {
+					'step 0'
+					var card = get[trigger.name == 'phaseDiscard' ? 'bottomCards' : 'cards']()[0];
+					if (trigger.name == 'phaseDiscard') {
+						player.logSkill('jingyesi');
+						player.gain(card, 'gain2');
+						event.finish();
+					}
+					else {
+						player.chooseControl('ok').set('dialog', ['牌堆顶', [card]]);
+						player.chooseUseTarget(card, false).logSkill = 'jingyesi';
+					}
+				},
+			},
+			//侠客行
+			hppxiakexing: {
+				audio: 1,
+				nobracket: true,
+				trigger: { player: 'useCard', source: 'damageSource' },
+				filter: function (event, player) {
+					if (event.name == 'useCard') return get.translation(event.card.name).indexOf('剑') != -1 && player.hasUseTarget(get.autoViewAs({ name: 'wanjian' }, []));
+					return event.card && event.card.name == 'sha' && player.getEquip(1) && event.player.isIn() && player.canCompare(event.player);
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					if (trigger.name == 'useCard') {
+						player.chooseUseTarget(true, { name: 'wanjian' }, []);
+						event.finish();
+					}
+					else player.chooseBool('是否和' + get.translation(trigger.player) + '拼点？', '若你赢，其减1点体力上限；若你没赢，弃置你装备区里的武器牌').set('choice', player.hasCard(function (card) {
+						return get.value(card) <= 5 || get.number(card) > 10;
+					}) && (get.attitude(player, trigger.player) <= 0 || trigger.player.countCards('h') >= 4));
+					'step 1'
+					if (result.bool) {
+						player.line(trigger.player);
+						player.chooseToCompare(trigger.player);
+					}
+					else event.finish();
+					'step 2'
+					if (result.bool) trigger.player.loseMaxHp();
+					else {
+						var card = player.getEquip(1);
+						if (card) player.discard(card);
+					}
+				},
+			},
+			//行路难
+			hppxinglunan: {
+				audio: 1,
+				nobracket: true,
+				trigger: { global: 'useCardAfter' },
+				filter: function (event, player) {
+					if (player == _status.currentPhase || event.card.name != 'sha' || event.player == player) return false;
+					return event.targets && event.targets.contains(player);
+				},
+				forced: true,
+				locked: false,
+				content: function () {
+					player.addTempSkill('xingluBuff', { player: 'phaseBegin' });
+					player.addMark('xingluBuff', 1, false);
+				},
+			},
+			xingluBuff: {
+				nobracket: true,
+				charlotte: true,
+				onremove: true,
+				intro: { content: '其他角色计算与你的距离+#' },
+				mod: {
+					globalTo: function (from, to, distance) {
+						return distance + to.countMark('xingluBuff');
+					},
+				},
+			},
 		},
 		dynamicTranslate: {
 			// 屈降
