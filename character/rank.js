@@ -1454,6 +1454,7 @@ window.noname_character_rank = {
 			'hpp_sunquan',
 			'hpp_sunshangxiang',
 			'hpp_taishici',
+			'hpp_tangji',
 			'hpp_wangji',
 			'hpp_wangping',
 			'hpp_wangrong',
@@ -1553,6 +1554,7 @@ window.noname_character_rank = {
 			'hpp_shen_zhugeliang',
 
 			'hpp_dalanmao',
+			'hpp_libai',
 			'hpp_sunwukong',
 		],
 		epic: [
