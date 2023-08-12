@@ -214,7 +214,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             'hpp_dalanmao',
                             'hpp_libai',
-                            'hpp_libai',
                             'hpp_sunwukong',
                         ],
                         //史诗
