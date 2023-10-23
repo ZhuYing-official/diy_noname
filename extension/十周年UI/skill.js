@@ -1,21 +1,15 @@
 'use strict';
-decadeModule.import(function (lib, game, ui, get, ai, _status) {
-	decadeUI.skill = {
+decadeModule.import((lib, game, ui, get, ai, _status) => {
+	const skillMap = {
 		guanxing: {
-			audio: 2,
-			audioname: ['jiangwei', 're_jiangwei', 're_zhugeliang'],
-			trigger: {
-				player: 'phaseZhunbeiBegin'
-			},
-			frequent: true,
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
 					event.goto(3);
 				}
-				"step 1"
+				'step 1'
 				var num = Math.min(5, game.countPlayer());
 				if (player.hasSkill('yizhi') && player.hasSkill('guanxing')) {
 					num = 5;
@@ -60,7 +54,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 					bottom = cards;
 					return [top, bottom];
 				}
-				"step 2"
+				'step 2'
 				var top = result.moved[0];
 				var bottom = result.moved[1];
 				top.reverse();
@@ -152,26 +146,14 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 		},
 
 		reguanxing: {
-			audio: 'guanxing',
-			audioname: ['jiangwei', 're_jiangwei', 're_zhugeliang', 'gexuan'],
-			frequent: true,
-			trigger: {
-				player: ['phaseZhunbeiBegin', 'phaseJieshuBegin']
-			},
-			filter: function (event, player, name) {
-				if (name == 'phaseJieshuBegin') {
-					return player.hasSkill('reguanxing_on');
-				}
-				return true;
-			},
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
 					event.goto(3);
 				}
-				"step 1"
+				'step 1'
 				var num = game.countPlayer() < 4 ? 3 : 5;
 				var cards = get.cards(num);
 				game.cardsGotoOrdering(cards);
@@ -215,7 +197,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 					bottom = cards;
 					return [top, bottom];
 				}
-				"step 2"
+				'step 2'
 				var top = result.moved[0];
 				var bottom = result.moved[1];
 				top.reverse();
@@ -345,25 +327,15 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) + '张牌置于牌堆底');
 				game.updateRoundNumber();
 			},
-			subSkill: {
-				on: {}
-			},
-		},
-
 		chengxiang: {
-			audio: 2,
-			frequent: true,
-			trigger: {
-				player: 'damageEnd'
-			},
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
 					event.goto(5);
 				}
-				"step 1"
+				'step 1'
 				event.cards = get.cards(4);
 				game.cardsGotoOrdering(event.cards);
 				event.videoId = lib.status.videoId++;
@@ -381,7 +353,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				event.time = get.utc();
 				game.addVideo('showCards', player, ['称象', get.cardsInfo(event.cards)]);
 				game.addVideo('delay', null, 2);
-				"step 2"
+				'step 2'
 				var next = player.chooseButton([0, 4]);
 				next.set('dialog', event.videoId);
 				next.set('filterButton', function (button) {
@@ -395,7 +367,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				next.set('ai', function (button) {
 					return get.value(button.link, _status.event.player);
 				});
-				"step 3"
+				'step 3'
 				if (result.bool && result.links) {
 					//player.logSkill('chengxiang');
 					var cards2 = [];
@@ -412,7 +384,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				if (time > 0) {
 					game.delay(0, time);
 				}
-				"step 4"
+				'step 4'
 				game.broadcastAll('closeDialog', event.videoId);
 				var cards2 = event.cards2;
 				player.gain(cards2, 'log', 'gain2');
@@ -520,49 +492,11 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 					game.cardsDiscard(event.cards1);
 					player.gain(event.cards2, 'log', 'gain2');
 				}
-			},
-			ai: {
-				maixie: true,
-				maixie_hp: true,
-				effect: {
-					target: function (card, player, target) {
-						if (get.tag(card, 'damage')) {
-							if (player.hasSkillTag('jueqing', false, target)) return [1, -2];
-							if (!target.hasFriend()) return;
-							if (target.hp >= 4) return [1, 2];
-							if (target.hp == 3) return [1, 1.5];
-							if (target.hp == 2) return [1, 0.5];
-						}
-					}
-				}
 			}
 		},
 		xinfu_zuilun: {
-			audio: 2,
-			trigger: {
-				player: 'phaseJieshuBegin',
-			},
-			check: function (event, player) {
-				var num = 0;
-				if (player.getHistory('lose', function (evt) {
-					return evt.type == 'discard';
-				}).length) num++;
-				if (!player.isMinHandcard()) num++;
-				if (!player.getStat('damage')) num++;
-				if (num == 3) return player.hp >= 2;
-				return true;
-			},
-			prompt: function (event, player) {
-				var num = 3;
-				if (player.getHistory('lose', function (evt) {
-					return evt.type == 'discard';
-				}).length) num--;
-				if (!player.isMinHandcard()) num--;
-				if (!player.getStat('damage')) num--;
-				return get.prompt('xinfu_zuilun') + '（可获得' + get.cnNumber(num) + '张牌）'
-			},
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
@@ -763,19 +697,15 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 			},
 		},
 		xunxun: {
-			audio: 2,
-			trigger: {
-				player: 'phaseDrawBegin1'
-			},
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
 					event.goto(3);
 				}
 
-				"step 1"
+				'step 1'
 				var cards = get.cards(4);
 				game.cardsGotoOrdering(cards);
 				var next = player.chooseToMove('恂恂：将两张牌置于牌堆顶', true);
@@ -864,24 +794,14 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				for (var i = 0; i < cards.length; i++) {
 					ui.cardPile.appendChild(cards[i]);
 				}
+			}
 			},
 
 		},
 
 		xinfu_dianhua: {
-			audio: 2,
-			frequent: true,
-			trigger: {
-				player: ["phaseZhunbeiBegin", "phaseJieshuBegin"],
-			},
-			filter: function (event, player) {
-				for (var i = 0; i < lib.suit.length; i++) {
-					if (player.hasMark('xinfu_falu_' + lib.suit[i])) return true;
-				}
-				return false;
-			},
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
@@ -935,7 +855,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 					bottom = cards;
 					return [top, bottom];
 				}
-				"step 2"
+				'step 2'
 				var top = result.moved[0];
 				var bottom = result.moved[1];
 				top.reverse();
@@ -1078,78 +998,18 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				player.popup(get.cnNumber(event.num1) + '上' + get.cnNumber(event.num2) + '下');
 				game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) + '张牌置于牌堆底');
 				game.updateRoundNumber();
-			},
-
+			}
 		},
 		zongxuan: {
-			audio: 2,
-			frequent: false,
-			trigger: {
-				player: 'loseAfter'
-			},
-			check: function (event) {
-				var cards = [];
-				for (var i = 0; i < event.cards2.length; i++) {
-					if (get.position(event.cards2[i]) == 'd') {
-						cards.push(event.cards2[i]);
-					}
-				}
-
-				var player = event.player;
-
-				if (_status.currentPhase == player) {
-					for (var i = 0; i < cards.length; i++) {
-						if (get.value(cards[i], event.player) > 4) return true;
-					}
-				} else if (_status.currentPhase) {
-					var next = _status.currentPhase.getNext();
-					var judges = next.node.judges.childNodes;
-					if (get.attitude(player, next) > 0) {
-						if (judges.length > 0) {
-							for (var j = 0; j < judges.length; j++) {
-								var judge = get.judge(judges[j]);
-								for (var i = 0; i < cards.length; i++) {
-									if (judge(cards[i]) >= 0) return true;
-								}
-							}
-						} else {
-							for (var i = 0; i < cards.length; i++) if (get.value(cards[i], next) > 4) return true;
-						}
-					} else {
-						if (judges.length > 0) {
-							for (var j = 0; j < judges.length; j++) {
-								var judge = get.judge(judges[j]);
-								for (var i = 0; i < cards.length; i++) {
-									if (judge(cards[i]) < 0) return true;
-								}
-							}
-						} else {
-							for (var i = 0; i < cards.length; i++) if (get.value(cards[i], next) < 4) return true;
-						}
-
-					}
-				}
-
-				return false;
-			},
-			filter: function (event, player) {
-				if (event.type != 'discard') return false;
-				for (var i = 0; i < event.cards2.length; i++) {
-					if (get.position(event.cards2[i]) == 'd') {
-						return true;
-					}
-				}
-				return false;
-			},
 			content: function () {
-				"step 0"
+				'step 0'
 				if (_status.connectMode) {
 					event.goto(1);
 				} else {
 					event.goto(3);
 				}
 
-				"step 1"
+				'step 1'
 				var cards = [];
 				var evt = trigger.getl(player);
 				for (var i = 0; i < evt.cards2.length; i++) {
@@ -1279,82 +1139,11 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				}
 
 				game.log(player, '将' + get.cnNumber(event.num2) + '张牌置于牌堆顶');
-			},
+			}
 		},
 		identity_junshi: {
-			name: '军师',
-			mark: true,
-			silent: true,
-			intro: { content: '准备阶段开始时，可以观看牌堆顶的三张牌，然后将这些牌以任意顺序置于牌堆顶或牌堆底' },
-			trigger: {
-				player: 'phaseBegin'
-			},
 			content: function () {
 				"step 0"
-				if (_status.connectMode) {
-					event.goto(1);
-				} else {
-					event.goto(3);
-				}
-
-				"step 1"
-				var cards = get.cards(3);
-				game.cardsGotoOrdering(cards);
-				var next = player.chooseToMove();
-				next.set('list', [
-					['牌堆顶', cards],
-					['牌堆底'],
-				]);
-				next.set('prompt', '观星：点击将牌移动到牌堆顶或牌堆底');
-				next.processAI = function (list) {
-					var cards = list[0][1], player = _status.event.player;
-					var top = [];
-					var judges = player.getCards('j');
-					var stopped = false;
-					if (!player.hasWuxie()) {
-						for (var i = 0; i < judges.length; i++) {
-							var judge = get.judge(judges[i]);
-							cards.sort(function (a, b) {
-								return judge(b) - judge(a);
-							});
-							if (judge(cards[0]) < 0) {
-								stopped = true; break;
-							}
-							else {
-								top.unshift(cards.shift());
-							}
-						}
-					}
-					var bottom;
-					if (!stopped) {
-						cards.sort(function (a, b) {
-							return get.value(b, player) - get.value(a, player);
-						});
-						while (cards.length) {
-							if (get.value(cards[0], player) <= 5) break;
-							top.unshift(cards.shift());
-						}
-					}
-					bottom = cards;
-					return [top, bottom];
-				}
-				"step 2"
-				var top = result.moved[0];
-				var bottom = result.moved[1];
-				top.reverse();
-				for (var i = 0; i < top.length; i++) {
-					ui.cardPile.insertBefore(top[i], ui.cardPile.firstChild);
-				}
-				for (i = 0; i < bottom.length; i++) {
-					ui.cardPile.appendChild(bottom[i]);
-				}
-				player.popup(get.cnNumber(top.length) + '上' + get.cnNumber(bottom.length) + '下');
-				game.log(player, '将' + get.cnNumber(top.length) + '张牌置于牌堆顶');
-				game.updateRoundNumber();
-				game.delayx();
-
-				event.finish();
-				"step 3"
 				if (player.isUnderControl()) {
 					game.modeSwapPlayer(player);
 				}
@@ -1412,52 +1201,14 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				} else if (!event.isMine()) {
 					event.switchToAuto();
 				}
-				"step 4"
+				'step 4'
 				player.popup(get.cnNumber(event.num1) + '上' + get.cnNumber(event.num2) + '下');
 				game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) + '张牌置于牌堆底');
 				game.updateRoundNumber();
 			},
 		},
 		wuxin: {
-			audio: 2,
-			trigger: {
-				player: 'phaseDrawBegin1'
-			},
 			content: function () {
-				"step 0"
-				if (_status.connectMode) {
-					event.goto(1);
-				} else {
-					event.goto(3);
-				}
-
-				'step 1'
-				var num = get.population('qun');
-				if (player.hasSkill('huangjintianbingfu')) {
-					num += player.getExpansions('huangjintianbingfu').length;
-				}
-				var cards = get.cards(num);
-				game.cardsGotoOrdering(cards);
-				var next = player.chooseToMove('悟心：将卡牌以任意顺序置于牌堆顶');
-				next.set('list', [['牌堆顶', cards]]);
-				next.set('processAI', function (list) {
-					var cards = list[0][1].slice(0);
-					cards.sort(function (a, b) {
-						return get.value(b) - get.value(a);
-					});
-					return [cards];
-				})
-				'step 2'
-				if (result.bool) {
-					var list = result.moved[0].slice(0);
-					while (list.length) {
-						ui.cardPile.insertBefore(list.pop(), ui.cardPile.firstChild);
-					}
-					game.updateRoundNumber();
-				}
-
-				event.finish();
-				'step 3'
 				var num = get.population('qun');
 				if (player.hasSkill('huangjintianbingfu')) {
 					num += player.getExpansions('huangjintianbingfu').length;
@@ -1511,61 +1262,13 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				} else if (!event.isMine()) {
 					event.switchToAuto();
 				}
-			},
+			}
 		},
-		luoying: {
-			group: ['luoying_discard', 'luoying_judge'],
-			subfrequent: ['judge'],
-			subSkill: {
-				discard: {
-					audio: 2,
-					trigger: {
-						global: 'loseAfter'
-					},
-					filter: function (event, player) {
-						if (event.type != 'discard') return false;
-						if (event.player == player) return false;
-						for (var i = 0; i < event.cards2.length; i++) {
-							if (get.suit(event.cards2[i], event.player) == 'club' && get.position(event.cards2[i], true) == 'd') {
-								return true;
-							}
-						}
-						return false;
-					},
-					// direct: true,
+		luoying_discard: {
 					content: function () {
-						"step 0"
-						if (_status.connectMode) {
-							event.goto(1);
-						} else {
-							event.goto(4);
-						}
-
-						"step 1"
+				"step 0"
 						if (trigger.delay == false) game.delay();
-						"step 2"
-						var cards = [], cards2 = trigger.cards.slice(0), evt = trigger.getl(player);
-						if (evt && evt.cards) cards2.removeArray(evt.cards);
-						for (var i = 0; i < cards2.length; i++) {
-							if (cards2[i].original != 'j' && get.suit(cards2[i], trigger.player) == 'club' && get.position(cards2[i], true) == 'd') {
-								cards.push(cards2[i]);
-							}
-						}
-						if (cards.length) {
-							player.chooseButton(['落英：选择要获得的牌', cards], [1, cards.length]).set('ai', function (button) {
-								return get.value(button.link, _status.event.player, 'raw');
-							});
-						}
-						"step 3"
-						if (result.bool) {
-							player.logSkill(event.name);
-							player.gain(result.links, 'gain2', 'log');
-						}
-
-						event.finish();
-						"step 4"
-						if (trigger.delay == false) game.delay();
-						"step 5"
+				"step 1"
 						var cards = [];
 						for (var i = 0; i < trigger.cards2.length; i++) {
 							var card = trigger.cards2[i];
@@ -1642,50 +1345,17 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 						} else if (!event.isMine()) {
 							event.switchToAuto();
 						}
-						"step 6"
+				"step 2"
 						game.cardsDiscard(event.cards1);
 						if (event.cards2) {
 							// player.logSkill(event.name);
 							player.gain(event.cards2, 'gain2', 'log');
 						}
-					},
+			}
 				},
-				judge: {
-					audio: 2,
-					trigger: {
-						global: 'cardsDiscardAfter'
-					},
-					// direct: true,
-					check: function (event, player) {
-						return event.cards[0].name != 'du';
-					},
-					filter: function (event, player) {
-						var evt = event.getParent().relatedEvent;
-						if (!evt || evt.name != 'judge') return;
-						if (evt.player == player) return false;
-						if (get.position(event.cards[0], true) != 'd') return false;
-						return (get.suit(event.cards[0]) == 'club');
-					},
+		luoying_judge: {
 					content: function () {
-						"step 0"
-						if (_status.connectMode) {
-							event.goto(1);
-						} else {
-							event.goto(3);
-						}
-
-						"step 1"
-						player.chooseButton(['落英：选择要获得的牌', trigger.cards], [1, trigger.cards.length]).set('ai', function (button) {
-							return get.value(button.link, _status.event.player, 'raw');
-						});
-						"step 2"
-						if (result.bool) {
-							player.logSkill(event.name);
-							player.gain(result.links, 'gain2', 'log');
-						}
-
-						event.finish();
-						"step 3"
+				"step 0"
 						var cards = trigger.cards;
 
 						var dialog = decadeUI.content.chooseGuanXing(player, cards, cards.length, null, cards.length, false);
@@ -1729,7 +1399,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 						} else if (!event.isMine()) {
 							event.switchToAuto();
 						}
-						"step 4"
+				"step 1"
 						game.cardsDiscard(event.cards1);
 						if (event.cards2) {
 							// player.logSkill(event.name);
@@ -1737,8 +1407,6 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 						}
 					}
 				},
-			}
-		},
 		// huashen: {
 		// 	audio: 'huashen2',
 		// 	unique: true,
@@ -2079,80 +1747,16 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 		// 		}
 		// 	}
 		// },
-		nsanruo: {
-			unique: true,
-			init: function (player) {
-				if (!player.node.handcards1.cardMod) {
-					player.node.handcards1.cardMod = {};
-				}
-				if (!player.node.handcards2.cardMod) {
-					player.node.handcards2.cardMod = {};
-				}
-				var cardMod = function (card) {
-					if (get.info(card).multitarget) return;
-					if (card.name == 'sha' || get.type(card) == 'trick') return ['暗弱', '杀或普通锦囊牌对你不可见'];
-				};
-				player.node.handcards1.cardMod.nsanruo = cardMod;
-				player.node.handcards2.cardMod.nsanruo = cardMod;
-				player.node.handcards1.classList.add('nsanruo');
-				player.node.handcards2.classList.add('nsanruo');
-				if (!ui.css.nsanruo) {
-					ui.css.nsanruo = lib.init.sheet(
-						'.handcards.nsanruo>.card[data-card-type="trick"]:not(*[data-card-multitarget="1"])>*,' +
-						'.handcards.nsanruo>.card[data-card-name="sha"]>*{visibility:hidden !important;}',
-						'.handcards.nsanruo>.card[data-card-type="trick"]:not(*[data-card-multitarget="1"]),' +
-						'.handcards.nsanruo>.card[data-card-name="sha"]{background-size:0 0 !important;box-shadow:inset 0 0 0 2px white;}'
-					);
-				}
-			},
-			onremove: function (player) {
-				player.node.handcards1.classList.remove('nsanruo');
-				player.node.handcards2.classList.remove('nsanruo');
-				delete player.node.handcards1.cardMod.nsanruo;
-				delete player.node.handcards2.cardMod.nsanruo;
-			},
-			ai: {
-				neg: true
-			}
-		}
-	};
-
-	decadeUI.inheritSkill = {
+			};
+	const inheritSkillMap = {
 		xz_xunxun: {
-			audio: 2,
-			trigger: {
-				player: 'phaseDrawBegin1'
-			},
-			filter: function (event, player) {
-				var num = game.countPlayer(function (current) {
-					return current.isDamaged();
-				});
-				return num >= 1 && !player.hasSkill('xunxun');
-			},
-			content: decadeUI.skill.xunxun.content,
+			content: skillMap.xunxun.content
 		},
-		reluoying: {
-			subSkill: {
-				discard: {
-					audio: 'reluoying',
-					trigger: {
-						global: 'loseAfter'
-					},
-					filter: decadeUI.skill.luoying.subSkill.discard.filter,
-					// direct: true,
-					content: decadeUI.skill.luoying.subSkill.discard.content,
-				},
-				judge: {
-					audio: 'reluoying',
-					trigger: {
-						global: 'cardsDiscardAfter'
-					},
-					// direct: true,
-					check: decadeUI.skill.luoying.subSkill.judge.check,
-					filter: decadeUI.skill.luoying.subSkill.judge.filter,
-					content: decadeUI.skill.luoying.subSkill.judge.content,
-				}
-			}
+		reluoying_discard: {
+			content: skillMap.luoying_discard.content
+		},
+		reluoying_judge: {
+			content: skillMap.luoying_judge.content
 		},
 		nk_shekong: {
 			content: function () {
@@ -2304,12 +1908,11 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 				player.popup(get.cnNumber(event.num1) + '上' + get.cnNumber(event.num2) + '下');
 				game.log(player, '将' + get.cnNumber(event.num1) + '张牌置于牌堆顶，' + get.cnNumber(event.num2) + '张牌置于牌堆底');
 				game.updateRoundNumber()
+			}
 			},
-		},
-
 		xinbenxi: {
 			content: function () {
-				"step 0"
+				'step 0'
 				event.videoId = lib.status.videoId++;
 				var func = function (card, id, bool) {
 					var list = ['为XXX多指定一个目标', '令XXX无视防具', '令XXX不可被抵消', '当XXX造成伤害时摸一张牌',];
@@ -2392,7 +1995,7 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 								}
 						}
 					});
-				"step 1"
+				'step 1'
 				if (player.isOnline2()) {
 					player.send('closeDialog', event.videoId);
 				}
@@ -2427,240 +2030,30 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 					map[result.links[i]](trigger, player, event);
 				}
 				if (!result.links.contains(0)) event.finish();
-				"step 2"
+				'step 2'
 				if (result.targets) {
 					player.line(result.targets);
 					trigger.targets.addArray(result.targets);
 				}
-			},
-
-		}
-	};
-
-	if (!_status.connectMode) {
-		for (var key in decadeUI.skill) {
-			if (lib.skill[key]) lib.skill[key] = decadeUI.skill[key];
-		}
-
-		for (var key in decadeUI.inheritSkill) {
-			if (lib.skill[key]) {
-				for (var j in decadeUI.inheritSkill[key]) {
-					lib.skill[key][j] = decadeUI.inheritSkill[key][j];
-				}
 			}
 		}
+	};
+	if (!_status.connectMode) {
+		Object.keys(skillMap).forEach(key => {
+			const skill = lib.skill[key];
+			if (!skill) return;
+			const decadeUISkill = skillMap[key];
+			Object.keys(decadeUISkill).forEach(subKey => skill[subKey] = decadeUISkill[subKey]);
+		});
+		Object.keys(inheritSkillMap).forEach(key => {
+			const skill = lib.skill[key];
+			if (!skill) return;
+			const decadeUIInheritSkill = inheritSkillMap[key];
+			Object.keys(decadeUIInheritSkill).forEach(subKey => skill[subKey] = decadeUIInheritSkill[subKey]);
+		});
 	}
-
-	decadeUI.onlineSkill = {
+	const onlineSkillMap = {
 		xinfu_pingcai: {
-			subSkill: { backup: {} },
-			wolong_card: function () {
-				'step 0'
-				var ingame = game.hasPlayer(function (current) {
-					return ['sp_zhugeliang', 're_sp_zhugeliang', 'ol_sp_zhugeliang', 'prp_zhugeliang'].contains(current.name) || ['sp_zhugeliang', 're_sp_zhugeliang', 'ol_sp_zhugeliang', 'prp_zhugeliang'].contains(current.name2);
-				}) ? true : false;
-				var prompt = '请选择';
-				prompt += ingame ? '至多两名' : '一名';
-				prompt += '角色，对其造成1点火焰伤害';
-				var range = ingame ? [1, 2] : [1, 1]
-				player.chooseTarget(prompt, range).set('ai', function (target) {
-					var player = _status.event.player;
-					return get.damageEffect(target, player, player, 'fire');
-				});
-				'step 1'
-				if (result.bool && result.targets.length) {
-					player.line(result.targets, 'fire');
-					result.targets.sortBySeat();
-					for (var i = 0; i < result.targets.length; i++) {
-						result.targets[i].damage('fire');
-					}
-				}
-			},
-			fengchu_card: function () {
-				'step 0'
-				var ingame = game.hasPlayer(function (current) {
-					return ['re_pangtong', 'pangtong', 'ol_pangtong'].contains(current.name) || ['re_pangtong', 'pangtong', 'ol_pangtong'].contains(current.name2);
-				}) ? true : false;
-				var prompt = '请选择';
-				prompt += ingame ? '至多四名' : '至多三名';
-				prompt += '要横置的角色';
-				var range = ingame ? [1, 4] : [1, 3]
-				player.chooseTarget(prompt, range).set('ai', function (target) {
-					var player = _status.event.player;
-					return get.effect(target, { name: 'tiesuo' }, player, player)
-				});
-				'step 1'
-				if (result.bool && result.targets.length) {
-					player.line(result.targets, 'green');
-					result.targets.sortBySeat();
-					for (var i = 0; i < result.targets.length; i++) {
-						result.targets[i].link();
-					}
-				}
-			},
-			xuanjian_card: function () {
-				'step 0'
-				event.ingame = game.hasPlayer(function (current) {
-					return ['re_xushu', 'xin_xushu', 'xushu', 'dc_xushu'].contains(current.name) || ['re_xushu', 'xin_xushu', 'xushu', 'dc_xushu'].contains(current.name2);
-				}) ? true : false;
-				var prompt = '请选择一名角色，令其回复一点体力并摸一张牌';
-				prompt += event.ingame ? '，然后你摸一张牌。' : '。';
-				player.chooseTarget(prompt).set('ai', function (target) {
-					var player = _status.event.player;
-					return get.attitude(player, target) * (target.isDamaged() ? 2 : 1);
-				});
-				'step 1'
-				if (result.bool && result.targets.length) {
-					var target = result.targets[0];
-					player.line(target, 'thunder');
-					target.draw();
-					target.recover();
-					if (event.ingame) player.draw();
-				}
-			},
-			shuijing_card: function () {
-				'step 0'
-				event.ingame = game.hasPlayer(function (current) {
-					return current.name == 'simahui' || current.name2 == 'simahui';
-				}) ? true : false;
-				var prompt = '将一名角色装备区中的';
-				prompt += event.ingame ? '一张牌' : '防具牌';
-				prompt += '移动到另一名角色的装备区中';
-				var next = player.chooseTarget(2, function (card, player, target) {
-					if (ui.selected.targets.length) {
-						if (!_status.event.ingame) {
-							return target.isEmpty(2) ? true : false;
-						}
-						var from = ui.selected.targets[0];
-						if (target.isMin()) return false;
-						var es = from.getCards('e');
-						for (var i = 0; i < es.length; i++) {
-							if (['equip3', 'equip4'].contains(get.subtype(es[i])) && target.getEquip('liulongcanjia')) continue;
-							if (es[i].name == 'liulongcanjia' && target.countCards('e', { subtype: ['equip3', 'equip4'] }) > 1) continue;
-							if (target.isEmpty(get.subtype(es[i]))) return true;
-						}
-						return false;
-					}
-					else {
-						if (!event.ingame) {
-							if (target.getEquip(2)) return true;
-							return false;
-						}
-						return target.countCards('e') > 0;
-					}
-				});
-				next.set('ingame', event.ingame)
-				next.set('ai', function (target) {
-					var player = _status.event.player;
-					var att = get.attitude(player, target);
-					if (ui.selected.targets.length == 0) {
-						if (att < 0) {
-							if (game.hasPlayer(function (current) {
-								if (get.attitude(player, current) > 0) {
-									var es = target.getCards('e');
-									for (var i = 0; i < es.length; i++) {
-										if (['equip3', 'equip4'].contains(get.subtype(es[i])) && current.getEquip('liulongcanjia')) continue;
-										else if (es[i].name == 'liulongcanjia' && target.countCards('e', { subtype: ['equip3', 'equip4'] }) > 1) continue;
-										else if (current.isEmpty(get.subtype(es[i]))) return true;
-									}
-									return false;
-								}
-							})) return -att;
-						}
-						return 0;
-					}
-					if (att > 0) {
-						var es = ui.selected.targets[0].getCards('e');
-						var i;
-						for (i = 0; i < es.length; i++) {
-							if (['equip3', 'equip4'].contains(get.subtype(es[i])) && target.getEquip('liulongcanjia')) continue;
-							if (es[i].name == 'liulongcanjia' && target.countCards('e', { subtype: ['equip3', 'equip4'] }) > 1) continue;
-							if (target.isEmpty(get.subtype(es[i]))) break;
-						}
-						if (i == es.length) return 0;
-					}
-					return -att * get.attitude(player, ui.selected.targets[0]);
-				});
-				next.set('multitarget', true);
-				next.set('targetprompt', ['被移走', '移动目标']);
-				next.set('prompt', prompt);
-				'step 1'
-				if (result.bool) {
-					player.line2(result.targets, 'green');
-					event.targets = result.targets;
-				}
-				else event.finish();
-				'step 2'
-				game.delay();
-				'step 3'
-				if (targets.length == 2) {
-					if (!event.ingame) {
-						event._result = {
-							bool: true,
-							links: [targets[0].getEquip(2)],
-						};
-					}
-					else {
-						player.choosePlayerCard('e', true, function (button) {
-							return get.equipValue(button.link);
-						}, targets[0]).set('targets0', targets[0]).set('targets1', targets[1]).set('filterButton', function (button) {
-							var targets1 = _status.event.targets1;
-							if (['equip3', 'equip4'].contains(get.subtype(button.link)) && targets1.getEquip('liulongcanjia')) return false;
-							if (button.link.name == 'liulongcanjia' && targets1.countCards('e', { subtype: ['equip3', 'equip4'] }) > 1) return false;
-							return !targets1.countCards('e', { subtype: get.subtype(button.link) });
-
-						});
-					}
-				}
-				else event.finish();
-				'step 4'
-				if (result.bool && result.links.length) {
-					var link = result.links[0];
-					if (get.position(link) == 'e') event.targets[1].equip(link);
-					else if (link.viewAs) event.targets[1].addJudge({ name: link.viewAs }, [link]);
-					else event.targets[1].addJudge(link);
-					event.targets[0].$give(link, event.targets[1], false)
-					game.delay();
-				}
-			},
-			audio: true,
-			enable: "phaseUse",
-			usable: 1,
-			chooseButton: {
-				dialog: function () {
-					var list = ["wolong", "fengchu", "xuanjian", "shuijing"];
-					for (var i = 0; i < list.length; i++) {
-						list[i] = ['', '', list[i] + '_card'];
-					}
-					return ui.create.dialog('评才', [list, 'vcard']);
-				},
-				check: function (button) {
-					var name = button.link[2];
-					var player = _status.event.player;
-					if (name == 'xuanjian_card') {
-						if (game.hasPlayer(function (current) {
-							return current.isDamaged() && current.hp < 3 && get.attitude(player, current) > 1;
-						})) return 1 + Math.random();
-						else return 1;
-					}
-					else if (name == 'wolong_card') {
-						if (game.hasPlayer(function (current) {
-							return get.damageEffect(current, player, player, 'fire') > 0;
-						})) return 1.2 + Math.random();
-						else return 0.5;
-					}
-					else return 0.6;
-				},
-				backup: function (links, player) {
-					return {
-						audio: 'xinfu_pingcai',
-						filterCard: () => false,
-						selectCard: -1,
-						takara: links[0][2],
-						content: lib.skill.xinfu_pingcai.contentx,
-					}
-				},
-			},
 			contentx: function () {
 				"step 0"
 				event.pingcai_delayed = true;
@@ -2884,20 +2277,13 @@ decadeModule.import(function (lib, game, ui, get, ai, _status) {
 						player: player,
 					});
 				}
-			},
-			ai: {
-				order: 7,
-				fireAttack: true,
-				threaten: 1.7,
-				result: {
-					player: 1,
-				},
-			},
+			}
 		}
 	};
-
-	for (var key in decadeUI.onlineSkill) {
-		if (lib.skill[key]) lib.skill[key] = decadeUI.onlineSkill[key];
-	}
-
+	Object.keys(onlineSkillMap).forEach(key => {
+		const skill = lib.skill[key];
+		if (!skill) return;
+		const decadeUIOnlineSkill = onlineSkillMap[key];
+		Object.keys(decadeUIOnlineSkill).forEach(subKey => skill[subKey] = decadeUIOnlineSkill[subKey]);
+	});
 });

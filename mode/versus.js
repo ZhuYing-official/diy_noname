@@ -278,7 +278,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.players[i].setIdentity(list[i]);
 					game.players[i].node.identity.style.display='none';
 					game.players[i].getId();
-					game.players[i].node.action.innerHTML='获即<br>胜将';
+					game.players[i].node.action.innerHTML='即将<br>获胜';
 					game.players[i].node.action.style.letterSpacing='0px';
 					game.players[i].node.action.style.lineHeight='22px';
 					game.players[i].node.action.style.top='3px';
@@ -650,7 +650,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			chooseCharacterJiange:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.showConfig=true;
 				next.setContent(function(){
 					'step 0'
@@ -853,7 +853,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterSiguo:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.showConfig=true;
 				next.setContent(function(){
 					'step 0'
@@ -1130,7 +1130,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterTwo:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.showConfig=true;
 				next.setContent(function(){
 					'step 0'
@@ -1439,7 +1439,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterEndless:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.showConfig=true;
 				next.setContent(function(){
 					'step 0'
@@ -1586,7 +1586,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterFour:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.showConfig=true;
 				next.ai=function(player,list,list2){
 					if(player.identity=='zhu'){
@@ -1626,9 +1626,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var list2=[];
 
 					event.list=[];
+					event.choiceFour=(get.config('character_four')||lib.choiceFour);
 					event.filterChoice=function(name){
 						if(get.config('enable_all')) return false;
-						return !lib.choiceFour.contains(name);
+						return !event.choiceFour.contains(name);
 					}
 					for(i in lib.character){
 						if(event.filterChoice(i)) continue;
@@ -1932,7 +1933,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterThree:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.setContent(function(){
 					'step 0'
 					if(lib.config.continue_name_versus_three){
@@ -2041,7 +2042,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacter:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.showConfig=true;
 				next.setContent(function(){
 					"step 0"
@@ -2546,7 +2547,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			chooseCharacterOLGuandu:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.setContent(function(){
 					"step 0"
 					var list=[
@@ -2686,7 +2687,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterGuandu:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.setContent(function(){
 					'step 0'
 					lib.init.onfree();
@@ -2738,7 +2739,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterOL4:function(){
-				var next=game.createEvent('chooseCharacter',false);
+				var next=game.createEvent('chooseCharacter');
 				next.setContent(function(){
 					"step 0"
 					var list=[
@@ -2937,7 +2938,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterOL3:function(){
-				var next=game.createEvent('chooseCharacterOL',false);
+				var next=game.createEvent('chooseCharacterOL');
 				next.setContent(function(){
 					'step 0'
 					game.additionaldead=[];
@@ -3054,7 +3055,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterOL2:function(){
-				var next=game.createEvent('chooseCharacterOL',false);
+				var next=game.createEvent('chooseCharacterOL');
 				next.setContent(function(){
 					'step 0'
 					var ref=game.players[0];
@@ -3387,7 +3388,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			chooseCharacterOL1:function(){
-				var next=game.createEvent('chooseCharacterOL',false);
+				var next=game.createEvent('chooseCharacterOL');
 				next.setContent(function(){
 					'step 0'
 					game.removeCard('shengdong');
@@ -3589,6 +3590,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			phaseLoopThree:function(player){
+				_status.isRoundFilter=function(event){
+					return event._isThreeRound===true;
+				};
 				var next=game.createEvent('phaseLoop');
 				next.player=player;
 				next.swap=function(player){
@@ -3601,8 +3605,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				};
 				next.setContent(function(){
 					'step 0'
+					var next=player.phase();
+					if(!game.players.some(current=>current.classList.contains('acted'))){
+						next._isThreeRound=true;
+					}
 					player.classList.add('acted');
-					player.phase();
 					'step 1'
 					if(player.identity!='zhu'){
 						for(var i=0;i<game.players.length;i++){
@@ -4577,10 +4584,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				silent:true,
 				firstDo:true,
 				filter:function(event,player){
-					return !lib.linked.contains(event.nature);
+					return !event.hasNature('linked');
 				},
 				content:function(){
-					trigger.nature='fire';
+					game.setNature(trigger,'fire');
 				},
 			},
 			liangcaokuifa:{
@@ -5861,7 +5868,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:false,
 				trigger:{player:'damageBefore'},
 				filter:function(event){
-					if(event.nature!='thunder') return true;
+					if(!event.hasNature('thunder')) return true;
 					return false;
 				},
 				forced:true,
@@ -5886,7 +5893,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_biantian3:{
 				trigger:{player:'damageBegin3'},
 				filter:function(event){
-					if(event.nature=='fire') return true;
+					if(event.hasNature('fire')) return true;
 					return false;
 				},
 				mark:true,
@@ -5962,7 +5969,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				trigger:{player:'damageBegin2'},
 				filter:function(event){
-					return event.nature=='fire';
+					return event.hasNature('fire');
 				},
 				forced:true,
 				content:function(){

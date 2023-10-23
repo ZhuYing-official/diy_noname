@@ -56,7 +56,7 @@ function hok_remove(player, arrays) {
 };
 //-------------------------------------------------------------
 game.import('character', function (lib, game, ui, get, ai, _status) {
-	return {
+	var happy = {
 		name: 'happy',
 		connect: true,
 		characterSort: {
@@ -64,7 +64,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				correction_history: ['cuishi', 'liucong'],
 				honor_of_kings: ['hok_daji', 'hok_sp_lixin', 'hok_makeboluo', 'hok_sp_mingshiyin', 'hok_sunwukong', 'hok_wuzetian'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
-				hpp_hpp: ['hpp_re_luxun'],
+				hpp_hpp: ['hpp_re_luxun', 'hpp_re_lvbu'],
 			},
 		},
 		character: {
@@ -93,8 +93,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 神鲁肃
 			shen_lusu: ['male', 'shen', 3, ['diying', 'fusheng', 'chiyan', 'lianmeng'], ['wu']],
 
-			// 欢乐陆逊
+			// 欢杀陆逊
 			hpp_re_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'hpp_lianying'], []],
+			// 欢杀吕布
+			hpp_re_lvbu: ['male', 'qun', 5, ['wushuang', 'hpp_shenwei'], []],
 		},
 		characterIntro: {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
@@ -1113,7 +1115,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						if (['trick', 'delay'].contains(lib.card[card.name].type) && get.color(card) == 'black') return 'thunder';
 					},
 					targetInRange: function (card, player) {
-						if (card.name == 'sha' && (card.nature == 'fire' || card.nature == 'thunder')) return true;
+						if (card.name == 'sha' && (card.hasNature('fire') || card.hasNature('thunder'))) return true;
 					},
 				},
 				group: 'hok_qitian_shan',
@@ -1122,7 +1124,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						enable: ['chooseToRespond', 'chooseToUse'],
 						filterCard: function (card) {
 							return ((lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay') && get.color(card) == 'red')
-								|| (card.name == 'sha', card.nature == 'fire');
+								|| (card.name == 'sha', card.hasNature('fire'));
 						},
 						viewAs: { name: 'shan' },
 						viewAsFilter: function (player) {
@@ -2243,7 +2245,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 
-			// 欢乐界陆逊
+			// 欢杀界陆逊
 			hpp_lianying: {
 				audio: 'relianying',
 				trigger: {
@@ -2271,6 +2273,21 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						if (tag == 'noh') {
 							if (player.countCards('h') != 1) return false;
 						}
+					}
+				}
+			},
+			// 欢杀界吕布
+			hpp_shenwei: {
+				audio: 'shenwei',
+				unique: true,
+				trigger: { player: 'phaseDrawBegin' },
+				forced: true,
+				content: function () {
+					trigger.num += 2;
+				},
+				mod: {
+					maxHandcard: function (player, current) {
+						return current + 2;
 					}
 				}
 			},
@@ -2543,6 +2560,32 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			hppqingchuang: {
+				audio: 1,
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					if (!player.hasMark('hpp_buqu')) return false;
+					return player.countCards('h', card => lib.skill.hpp_qingchuang.filterCard(card, player));
+				},
+				filterCard: function (card, player) {
+					return get.name(card, player) == 'tao' || get.name(card, player) == 'jiu';
+				},
+				check: function (card) {
+					var player = _status.event.player;
+					return 2 - ['tao', 'jiu'].indexOf(get.name(card, player));
+				},
+				usable: 1,
+				delay: 0,
+				content: function () {
+					player.removeMark('hpp_buqu', 1);
+					player.draw();
+				},
+				ai: {
+					order: 7,
+					result: { player: 1 },
+				},
+			},
+			// 诗仙
 			hppshixian: {
 				audio: 2,
 				derivation: ['qiangjinjiu', 'jingyesi', 'xiakexing', 'xinglunan'],
@@ -2700,6 +2743,92 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			// 捣药
+			hppdaoyao: {
+				audio: 2,
+				enable: 'phaseUse',
+				filter: function (card, player) {
+					return player.countDiscardableCards(player, 'h');
+				},
+				filterCard: lib.filter.cardDiscardable,
+				check: function (card) {
+					return 6 - get.value(card);
+				},
+				usable: 1,
+				content: function () {
+					var card = get.cardPile2(card => card.name == 'tao');
+					if (card) player.gain(card, 'gain2');
+					player.draw(2 + (card ? 0 : 1));
+				},
+				ai: {
+					order: 9,
+					result: { player: 1 },
+				},
+			},
+			hppbenyue: {
+				unique: true,
+				derivation: 'hpp_guanghan',
+				audio: 2,
+				trigger: {
+					global: ['loseAsyncAfter'],
+					player: ['recoverEnd', 'gainAfter'],
+				},
+				filter: function (event, player) {
+					if (event.name == 'gain' || event.name == 'loseAsync') {
+						if (!event.getg(player).some(card => card.name == 'tao')) return false;
+						return player.countCards('h', { name: 'tao' }) >= 3;
+					}
+					else {
+						var num = 0;
+						game.getAllGlobalHistory('changeHp', evt => {
+							if (evt.getParent().name == 'recover' && evt.player == player) num += evt.num;
+						});
+						return num >= 3;
+					}
+				},
+				forced: true,
+				juexingji: true,
+				skillAnimation: true,
+				animationColor: 'silver',
+				content: function () {
+					player.awakenSkill('hpp_benyue');
+					if (player.maxHp < 15) player.gainMaxHp(15 - player.maxHp);
+					player.addSkillLog('hpp_guanghan');
+				},
+			},
+			hppguanghan: {
+				audio: 2,
+				trigger: { global: 'damageEnd' },
+				filter: function (event, player) {
+					if (!event.player.isIn()) return false;
+					return lib.skill.hpp_guanghan.logTarget(event, player).length;
+				},
+				logTarget: function (event, player) {
+					var target = event.player;
+					return game.filterPlayer(current => {
+						if (current != target.getPrevious() && current != target.getNext()) return false;
+						return current != player;
+					});
+				},
+				forced: true,
+				content: function () {
+					'step 0'
+					event.targets = lib.skill.hpp_guanghan.logTarget(trigger, player).sortBySeat();
+					'step 1'
+					var target = event.targets.shift();
+					event.target = target;
+					target.chooseToDiscard('h', '广寒：弃置一张手牌，或失去1点体力').set('ai', card => {
+						var player = _status.event.player;
+						if (card.name == 'tao' || card.name == 'jiu') return 0;
+						if (player.hasSkill('zhaxiang') && player.hp > 1) return 0;
+						return 6 - get.value(card);
+					});
+					'step 2'
+					if (!result.bool) target.loseHp(trigger.num);
+					if (event.targets.length) event.goto(1);
+				},
+				ai: { threaten: 5 },
+			},
 		},
 		dynamicTranslate: {
 			// 屈降
@@ -2744,13 +2873,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你1张手牌。',
 
 			// 妲己
-			hok_daji: '妲己',
+			hok_daji: '王者妲己',
 			hok_meixin: '魅心',
 			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记不大于4，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
 			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记大于3，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害(如果目标大于6改为5点火焰伤害)，你可以减少其中1~3个目标。',
 			// SP李信
-			hok_sp_lixin: 'SP李信',
+			hok_sp_lixin: '王者SP李信',
 			hok_wangming: '王命',
 			hok_wangming_info: '锁定技，游戏开始时，你获得4枚「王」标记，你视为拥有当前主公的主公技；锁定技，当你造成/受到伤害且你的「王」标记大于7，你获得一枚「王」标记。',
 			hok_dengshen: '登神',
@@ -2761,7 +2890,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_tongkuang_tongyu: '统御',
 			hok_tongkuang_kuangbao: '狂暴',
 			// 马克波罗
-			hok_makeboluo: '马克波罗',
+			hok_makeboluo: '王者马克波罗',
 			hok_zuolun: '左轮',
 			hok_zuolun_info: '锁定技，当你对其他角色造成伤害且该角色“破防”标记不超过2时，该角色获得1枚“破防”标记，破防标记为2时受到你的伤害视为体力流失。',
 			hok_qianglin: '枪林',
@@ -2769,7 +2898,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_danyu: '弹雨',
 			hok_danyu_info: '出牌阶段限1次，你可以弃置全部手牌（至少4张），选择1至3名目标，对其造成1~2次1点雷电伤害。',
 			// SP明世隐
-			hok_sp_mingshiyin: 'SP明世隐',
+			hok_sp_mingshiyin: '王者SP明世隐',
 			hok_taigua: '泰卦',
 			hok_taigua_info: '出牌阶段限两次，你对自己造成1点伤害，然后令一名角色回复1点体力。',
 			hok_minggua: '命卦',
@@ -2786,7 +2915,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_biangua3: '变卦',
 			hok_biangua_info: '当你发动命卦后，获得1个“卦”标记。出牌阶段限一次，当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',
 			// 孙悟空
-			hok_sunwukong: '孙悟空',
+			hok_sunwukong: '王者孙悟空',
 			hok_qitian: '齐天',
 			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌视为【火杀】，黑色锦囊牌视为【雷杀】，你的【火杀】可以当做【闪】。',
 			hok_shengbang: '圣棒',
@@ -2796,7 +2925,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_naogong: '闹宫',
 			hok_naogong_info: '限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
 			// 武则天
-			hok_wuzetian: '武则天',
+			hok_wuzetian: '王者武则天',
 			hok_dihui: '帝辉',
 			hok_dihui_info: '出牌阶段限1次，你选择1张手牌视为使用【杀】，你获得1个标记“曌”。当你的“曌”为2时，移去两个“曌”标记，强化你的帝辉并可以使用1次直到回合结束。',
 			hok_dihui_sha_info: '你选择1张手牌视为使用【杀】，你获得1个标记“曌”。',
@@ -2842,10 +2971,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lianmeng: '联盟',
 			lianmeng_info: '出牌阶段限一次，你可以选择两张手牌交给一名其他角色，你摸三张牌。',
 
-			// 欢乐界陆逊
-			hpp_re_luxun: '欢乐界陆逊',
+			// 欢杀界陆逊
+			hpp_re_luxun: '欢杀界陆逊',
 			hpp_lianying: '连营',
 			hpp_lianying_info: '当你失去最后的手牌时，你可以摸至手牌上限。',
+			hpp_re_lvbu: '欢杀界吕布',
+			hpp_shenwei: '神威',
+			hpp_shenwei_info: '锁定技，摸牌阶段，你额外摸2张牌，你的手牌上限+2',
 
 			correction_history: '正史',
 			honor_of_kings: '王者荣耀',
@@ -2853,4 +2985,23 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hpp_hpp: '欢乐三国杀·捞',
 		},
 	};
+	for (var i in happy.character) {
+		if (happy.translate[i]) {
+			if (happy.translate[i].indexOf('神') == 0) happy.translate[i + '_prefix'] = '神';
+			else if (happy.translate[i].indexOf('王者SP') == 0) happy.translate[i + '_prefix'] = '王者SP';
+			else if (happy.translate[i].indexOf('王者') == 0) happy.translate[i + '_prefix'] = '王者';
+			else if (happy.translate[i].indexOf('欢杀') == 0) happy.translate[i + '_prefix'] = '欢杀';
+		}
+	}
+	lib.namePrefix.set('王者', {
+		color: '#fdd559',
+		nature: 'shenmm',
+		showName: '农',
+	});
+	lib.namePrefix.set('王者SP', {
+		color: '#fdd559',
+		nature: 'soilmm',
+		getSpan: (prefix, name) => `${get.prefixSpan('王者')}${get.prefixSpan('SP')}`,
+	});
+	return happy;
 });

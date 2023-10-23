@@ -259,8 +259,7 @@ body>.background {
 	border-radius: 2px;
 }
 
-.card,
-.card.decade-card {
+.card {
 	width: 108px;
 	height: 150px;
 	box-shadow: 0 1px 4px black;
@@ -332,19 +331,21 @@ body>.background {
 }
 
 .card>.suit-num {
-	font-size: 25px;
 	color: black;
-	text-align: center;
-	top: 10px;
-	left: 5px;
-	width: 25px;
+	display: flex;
+	flex-direction: column;
+	font-size: 25px;
 	height: auto;
-	line-height: 20px;
-	text-shadow: 0 0 3px #ffffff, 0 0 8px #ffffff;
+	left: 5px;
 	letter-spacing: -1px;
-	transform-origin: 0 0;
-	z-index: 1;
+	line-height: 20px;
+	text-align: center;
+	text-shadow: 0 0 3px #ffffff, 0 0 8px #ffffff;
 	-webkit-text-size-adjust: none;
+	top: 10px;
+	transform-origin: 0 0;
+	width: 25px;
+	z-index: 1;
 }
 
 .dui-mobile .card>.suit-num>.suit {
@@ -386,6 +387,12 @@ body>.background {
 	text-shadow: none;
 	white-space: normal;
 	background: rgba(230, 210, 166, 0.8);
+}
+
+.card.fullborder>.range.card-tag,
+.card.fullimage>.range.card-tag {
+	background-color: rgba(0, 0, 0, 0.8);
+	border-color: white;
 }
 
 .card>.card-mask {

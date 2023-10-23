@@ -138,6 +138,12 @@
 	display: none;
 }
 
+.card.fullborder>.gaintag.info,
+.card.fullimage>.gaintag.info {
+	background-color: rgba(0, 0, 0, 0.8);
+	border-color: white;
+}
+
 /*卡名辅助显示及控制*/
 .card>.name,
 .card.fullskin>.name,
@@ -155,6 +161,15 @@
 	border: 1px solid black;
 	border-radius: 2px;
 	z-index: 1;
+}
+
+.card.fullborder>.name,
+.card.fullborder>.name.long,
+.card.fullimage>.name,
+.card.fullimage>.name.long {
+	background-color: rgba(0, 0, 0, 0.8);
+	border-color: white;
+	font-family: shousha;
 }
 
 #window[data-card-alternate-name-visible='off'] .card>.name,
@@ -212,4 +227,17 @@
 
 .card>.temp-name:empty {
 	display: none;
+}
+
+.card.fullborder>.temp-name,
+.card.fullimage>.temp-name {
+	background-color: rgba(0, 0, 0, 0.8);
+	border-color: white;
+}
+
+.handcards.nsanruo>.card.decade-card[data-card-type='trick']:not(*[data-card-multitarget='1']),
+.handcards.nsanruo>.card.decade-card[data-card-name='sha'] {
+	background-image: url('../../image/character/ns_liuzhang.jpg') !important;
+	background-position: center;
+	background-size: cover !important;
 }
