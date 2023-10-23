@@ -2585,6 +2585,65 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					result: { player: 1 },
 				},
 			},
+			// 72变
+			hpp72bian: {
+				onChooseToUse: function (event) {
+					if (event.type == 'phase' && !game.online && !event['hpp_72bian_type']) {
+						var evtx = event.getParent('phaseUse');
+						var list = ['basic', 'trick', 'equip'], player = event.player;
+						player.getHistory('lose', function (evt) {
+							var evt2 = evt.getParent();
+							if (evt2.name == 'useSkill' && evt2.skill == 'hpp_72bian') list.remove(get.type2(evt.cards2[0]));
+						});
+						event.set('hpp_72bian_type', list);
+					}
+				},
+				nobracket: true,
+				audio: 1,
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					return player.countCards('he', function (card) {
+						return event['hpp_72bian_type'].includes(get.type2(card));
+					});
+				},
+				filterCard: function (card, player) {
+					return _status.event['hpp_72bian_type'].includes(get.type2(card));
+				},
+				check: function (card) {
+					var player = _status.event.player;
+					if (player.hasSkill('hpp_72bian_' + get.type2(card))) return -1;
+					return 5 - get.value(card);
+				},
+				position: 'he',
+				prepare: function (cards, player) {
+					player.$throw(cards, 1000);
+					game.log(player, '将', cards, '置入了弃牌堆');
+				},
+				discard: false,
+				loseTo: 'discardPile',
+				visible: true,
+				content: function () {
+					var list = ['basic', 'trick', 'equip'];
+					var type = list[(list.indexOf(get.type2(cards[0])) + 1) % 3];
+					var card = get.cardPile2(function (card) {
+						return get.type2(card) == type;
+					});
+					if (card) {
+						player.gain(card, 'draw');
+						game.log(player, '获得了一张', '#g' + get.translation(type) + '牌');
+					}
+					else {
+						player.log('无牌可得了吗？');
+						game.log('但是牌堆中已经没有', '#g' + get.translation(type) + '牌', '了！');
+						player.addTempSkill('hpp_72bian_' + get.type2(cards[0]), 'washCard');
+					}
+				},
+				ai: {
+					order: 1,
+					result: { player: 1 },
+				},
+				subSkill: { basic: { charlotte: true }, trick: { charlotte: true }, equip: { charlotte: true } },
+			},
 			// 诗仙
 			hppshixian: {
 				audio: 2,

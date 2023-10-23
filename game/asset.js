@@ -5912,6 +5912,7 @@ window.noname_asset_list = [
 	'audio/skill/hppxingwu2.mp3',
 	'audio/skill/hppluoyan1.mp3',
 	'audio/skill/hpphuimou1.mp3',
+	'audio/skill/hpp72bian1.mp3',
 	'audio/skill/hppshixian1.mp3',
 	'audio/skill/hppshixian2.mp3',
 	'audio/skill/hppqiangjinjiu1.mp3',
