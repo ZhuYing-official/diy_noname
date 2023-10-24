@@ -13304,6 +13304,87 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: { expose: 0.25 },
                             },
 
+                            // 严夫人
+                            hpp_channi: {
+                                audio: 'channi',
+                                inherit: 'channi',
+                                content: function () {
+                                    'step 0'
+                                    player.addTempSkill('hpp_channi_effect', { player: 'hpp_channiAfter' });
+                                    player.give(cards, target);
+                                    'step 1'
+                                    if (target.countCards('h') > 0) {
+                                        game.broadcastAll(function (num) {
+                                            lib.skill.hpp_channi_backup.selectCard = [1, num];
+                                        }, cards.length);
+                                        var next = target.chooseToUse();
+                                        next.set('openskilldialog', '将至多' + get.cnNumber(cards.length) + '张手牌当做【决斗】使用');
+                                        next.set('norestore', true);
+                                        next.set('addCount', false);
+                                        next.set('_backupevent', 'hpp_channi_backup');
+                                        next.set('custom', {
+                                            add: {},
+                                            replace: { window: function () { } }
+                                        });
+                                        next.backup('hpp_channi_backup');
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    if (result.bool) {
+                                        var evts = target.getHistory('useCard', function (evt) {
+                                            return evt.card.name == 'juedou' && evt.getParent(2) == event;
+                                        });
+                                        if (!evts.length) return;
+                                        var num = evts[0].cards.length;
+                                        if (target.hasHistory('sourceDamage', function (evt) {
+                                            return evt.card && evt.card.name == 'juedou' && evt.getParent(4) == event;
+                                        })) target.draw(num);
+                                    }
+                                },
+                                subSkill: {
+                                    backup: {
+                                        filterCard: function (card) {
+                                            return get.itemtype(card) == 'card';
+                                        },
+                                        viewAs: { name: 'juedou' },
+                                        position: 'h',
+                                        filterTarget: lib.filter.targetEnabled,
+                                        check: (card) => get.name(card) == 'sha' ? 7 : 5.5 - get.value(card),
+                                        log: false,
+                                        precontent: function () {
+                                            delete event.result.skill;
+                                        },
+                                    },
+                                    effect: {
+                                        charlotte: true,
+                                        trigger: { global: 'damageBegin2' },
+                                        filter: function (event, player) {
+                                            if (!player.countCards('h')) return false;
+                                            var evt = event.getParent(5);
+                                            return evt.skill == 'hpp_channi' && evt.player == player && evt.targets[0] == event.player;
+                                        },
+                                        prompt2: function (event, player) {
+                                            return '弃置所有手牌，防止即将对' + get.translation(event.player) + '造成的伤害';
+                                        },
+                                        content: function () {
+                                            player.discard(player.getCards('h'));
+                                            trigger.cancel();
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_nifu: {
+                                audio: 'nifu',
+                                trigger: { global: 'phaseEnd' },
+                                filter: function (event, player) {
+                                    return player.countCards('h') < 3;
+                                },
+                                forced: true,
+                                content: function () {
+                                    player.drawTo(3);
+                                },
+                            },
+
                             // 颜良文丑
                             hpp_shuangxiong: {
                                 audio: 'shuangxiong',
