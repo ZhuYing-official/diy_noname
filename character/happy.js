@@ -2585,6 +2585,154 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					result: { player: 1 },
 				},
 			},
+			hppjinghong: {
+				audio: 2,
+				trigger: { player: 'phaseZhunbeiBegin' },
+				filter: function (event, player) {
+					return game.hasPlayer(function (current) {
+						return current != player && current.countCards('h');
+					});
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					var num = Math.min(game.countPlayer(function (current) {
+						return current != player && current.countCards('h');
+					}), game.countPlayer() - 1, 4);
+					player.chooseTarget(get.prompt2('hpp_jinghong'), [1, num], lib.filter.notMe).set('ai', function (target) {
+						var player = _status.event.player;
+						if (!target.countCards('h')) return 0;
+						return (1 - get.sgn(get.attitude(player, target))) / target.countCards('h');
+					});
+					'step 1'
+					if (result.bool) {
+						var targets = result.targets.sortBySeat();
+						event.targets = targets;
+						player.logSkill('hpp_jinghong', targets);
+						player.addTempSkill('hpp_jinghong_effect');
+					}
+					else event.finish();
+					'step 2'
+					var target = event.targets.shift();
+					event.target = target;
+					player.line(target);
+					if (!target.countCards('h')) event.redo();
+					'step 3'
+					var card = target.getCards('h').randomGet();
+					player.showCards(card, get.translation(player) + '展示的' + get.translation(target) + '的手牌');
+					if (get.color(card, target) == 'black') player.gain(card, target, 'giveAuto', 'bySelf').gaintag.add('hpp_jinghong');
+					if (get.color(card, target) == 'red') target.discard(card);
+					'step 4'
+					if (event.targets.length) event.goto(2);
+				},
+				subSkill: {
+					effect: {
+						charlotte: true,
+						onremove: function (player) {
+							player.removeGaintag('hpp_jinghong');
+						},
+						mod: {
+							ignoredHandcard: function (card, player) {
+								if (card.hasGaintag('hpp_jinghong')) return true;
+							},
+							cardDiscardable: function (card, player, name) {
+								if (name == 'phaseDiscard' && card.hasGaintag('hpp_jinghong')) return false;
+							},
+						},
+					},
+				},
+			},
+			hppspluoshen: {
+				mod: {
+					aiValue: function (player, card, num) {
+						if (get.name(card) != 'shan' && get.color(card) != 'black') return;
+						var cards = player.getCards('hs', function (card) {
+							return get.name(card) == 'shan' || get.color(card) == 'black';
+						});
+						cards.sort(function (a, b) {
+							return (get.name(b) == 'shan' ? 1 : 2) - (get.name(a) == 'shan' ? 1 : 2);
+						});
+						var geti = function () {
+							if (cards.includes(card)) {
+								return cards.indexOf(card);
+							}
+							return cards.length;
+						};
+						if (get.name(card) == 'shan') return Math.min(num, [6, 4, 3][Math.min(geti(), 2)]) * 0.6;
+						return Math.max(num, [6.5, 4, 3][Math.min(geti(), 2)]);
+					},
+					aiUseful: function () {
+						return lib.skill.hpp_spluoshen.mod.aiValue.apply(this, arguments);
+					},
+				},
+				audio: 2,
+				enable: ['chooseToRespond', 'chooseToUse'],
+				filterCard: function (card) {
+					return get.color(card) == 'black';
+				},
+				frequent: true,
+				locked: false,
+				position: 'hes',
+				viewAs: { name: 'shan' },
+				viewAsFilter: function (player) {
+					if (!player.countCards('hes', { color: 'black' })) return false;
+				},
+				onuse: function (links, player) {
+					player.addTempSkill('hpp_spluoshen_effect');
+				},
+				onrespond: function (links, player) {
+					player.addTempSkill('hpp_spluoshen_effect');
+				},
+				prompt: '将一张黑色牌当作【闪】使用或打出',
+				check: () => 1,
+				ai: {
+					order: function (item, player) {
+						if (!player.hasSkill('hpp_spluoshen_used')) return 1145141919810
+						return 2;
+					},
+					respondShan: true,
+					skillTagFilter: function (player) {
+						if (!player.countCards('hes', { color: 'black' })) return false;
+					},
+					effect: {
+						target: function (card, player, target, current) {
+							if (get.tag(card, 'respondShan') && current < 0) return 0.6
+						},
+					},
+				},
+				subSkill: {
+					used: { charlotte: true },
+					effect: {
+						charlotte: true,
+						trigger: { player: ['useCardAfter', 'respondAfter'] },
+						filter: function (event, player) {
+							return event.skill == 'hpp_spluoshen' && !player.hasSkill('hpp_spluoshen_used');
+						},
+						prompt2: '进行一次判定并获得判定牌，若结果为黑色，你可以重复此流程',
+						content: function () {
+							'step 0'
+							player.addTempSkill('hpp_spluoshen_used', 'roundStart');
+							event.cards = [];
+							'step 1'
+							var next = player.judge(function (card) {
+								var color = get.color(card);
+								return color == 'black' ? 1 : -1;
+							});
+							next.judge2 = function (result) {
+								return result.bool;
+							};
+							next.set('callback', function () {
+								if (get.position(card, true) == 'o') player.gain(card, 'gain2');
+							});
+							'step 2'
+							if (result.judge > 0) player.chooseBool('是否继续进行【洛神】判定？').set('frequentSkill', 'hpp_spluoshen');
+							else event.finish();
+							'step 3'
+							if (result.bool) event.goto(1);
+						},
+					},
+				},
+			},
 			// 72变
 			hpp72bian: {
 				onChooseToUse: function (event) {
@@ -2910,10 +3058,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_makeboluo: '#b捞德一评级:3.9',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 			hok_sunwukong: '#r捞德一评级:4.0',
-			hok_wuzetian: '#b捞德一评级:3.9',
+			hok_wuzetian: '#bUNICRON评级:3.9',
 			shen_caozhi: '#r捞德一评级:4.3',
 			shen_dongzhuo: '#r捞德一评级:4.2',
 			shen_lusu: '#r捞德一评级:4.4',
+			hpp_re_luxun:'#b捞德一评级:3.5',
+			hpp_re_lvbu:'#b捞德一评级:3.7',
 		},
 		translate: {
 			// 崔氏
