@@ -2733,6 +2733,333 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			hppmeihun: {
+				audio: 2,
+				trigger: { player: 'phaseJieshuBegin', target: 'useCardToTargeted' },
+				filter: function (event, player) {
+					if (event.name != 'phaseJieshu' && game.getGlobalHistory('useCard', function (evt) {
+						return evt.card.name == 'sha' && evt.targets.includes(player);
+					}).indexOf(event.getParent()) != 0) return false;
+					return game.hasPlayer(function (current) {
+						return current != player && current.countCards('he');
+					});
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					player.chooseTarget(get.prompt2('hpp_meihun'), function (card, player, target) {
+						return target != player && target.countCards('he');
+					}).set('ai', function (target) {
+						var player = _status.event.player;
+						return -get.sgn(get.attitude(player, target)) * target.countCards('he');
+					});
+					'step 1'
+					if (result.bool) {
+						var target = result.targets[0];
+						player.logSkill('hpp_meihun', target);
+						event.target = target;
+						player.chooseControl(lib.suit.slice(0).reverse()).set('prompt', '请声明一个花色').set('ai', function () {
+							var target = _status.event.target, cards = target.getCards('he');
+							var suits = lib.suit.slice(0);
+							suits.sort(function (a, b) {
+								var num = function (suit) {
+									return cards.filter(function (card) {
+										return get.suit(card) == suit;
+									}).length;
+								};
+								return num(b) - num(a);
+							});
+							return suits[0];
+						}).set('target', target);
+					}
+					else event.finish();
+					'step 2'
+					var suit = result.control;
+					player.chat(get.translation(suit + 2));
+					game.log(player, '选择了', '#y' + get.translation(suit + 2));
+					if (target.countCards('he', { suit: suit })) player.gain(target.getCards('he', { suit: suit }), target, 'giveAuto');
+					else if (target.countCards('h')) player.gainPlayerCard(target, true, 'h', 'visible');
+				},
+			},
+			hpphuoxin: {
+				audio: 2,
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					return game.hasPlayer(function (target) {
+						return lib.skill.hpp_huoxin.filterTarget(null, player, target);
+					}) && player.countCards('he');
+				},
+				filterTarget: function (card, player, target) {
+					if (!ui.selected.targets.length) {
+						return game.hasPlayer(function (current) {
+							return current != target && target.canCompare(current);
+						});
+					}
+					return ui.selected.targets[0].canCompare(target);
+				},
+				selectTarget: 2,
+				multitarget: true,
+				multiline: true,
+				targetprompt: ['发起人', '拼点目标'],
+				filterCard: true,
+				check: function (card) {
+					return 1 / (get.value(card) || 0.5);
+				},
+				position: 'he',
+				usable: 1,
+				content: function () {
+					'step 0'
+					event.list = [];
+					targets[0].chooseToCompare(targets[1]);
+					'step 1'
+					for (var target of targets) {
+						if (result.winner !== target) event.list.push(target);
+					}
+					event.list.sortBySeat();
+					var suits = lib.suit.slice(0).reverse();
+					suits.push('cancel2');
+					player.chooseControl(suits).set('prompt', get.translation(event.list) + '拼点没赢，是否声明一个花色令其进行选择？').set('ai', function () {
+						var currents = _status.event.list, cards = [];
+						for (var i of currents) cards.addArray(i.getCards('he'));
+						var suits = lib.suit.slice(0);
+						suits.sort(function (a, b) {
+							var num = function (suit) {
+								return cards.filter(function (card) {
+									return get.suit(card) == suit;
+								}).length;
+							};
+							return num(b) - num(a);
+						});
+						return suits[0];
+					}).set('list', event.list);
+					'step 2'
+					var suit = result.control;
+					if (suit != 'cancel2') {
+						player.chat(get.translation(suit + 2));
+						game.log(player, '选择了', '#y' + get.translation(suit + 2));
+						event.suit = suit;
+					}
+					else event.finish();
+					'step 3'
+					var target = event.list.shift();
+					event.target = target;
+					player.line(target);
+					if (!target.countCards('he', { suit: event.suit })) event._result = { index: 1 };
+					else target.chooseControl().set('choiceList', [
+						'交给' + get.translation(player) + '所有的' + get.translation(event.suit) + '牌',
+						'不能使用或打出' + get.translation(event.suit) + '牌直到你的下个回合结束'
+					]).set('ai', () => 1);
+					'step 4'
+					if (result.index == 0) player.gain(target.getCards('he', { suit: event.suit }), target, 'giveAuto');
+					else {
+						target.addTempSkill('hpp_huoxin_use', { player: 'phaseEnd' });
+						target.markAuto('hpp_huoxin_use', [event.suit]);
+					}
+					'step 5'
+					if (event.list.length) event.goto(3);
+				},
+				ai: {
+					order: 12,
+					result: {
+						target: function (player, target) {
+							return -target.countCards('h');
+						},
+					},
+				},
+				subSkill: {
+					use: {
+						charlotte: true,
+						onremove: true,
+						intro: { name: '魅惑', content: '不能使用或打出$花色的牌' },
+						mod: {
+							cardEnabled2: function (card, player) {
+								if (player.getStorage('hpp_huoxin_use').includes(get.suit(card))) return false;
+							},
+						},
+					},
+				},
+			},
+			hppjishi: {
+				mod: {
+					maxHandcard: function (player, num) {
+						return num + 3;
+					},
+				},
+				audio: 2,
+				group: ['hpp_jishi_recover', 'hpp_jishi_lose'],
+				marktext: '药',
+				intro: { name2: '药', content: 'mark' },
+				trigger: { global: 'phaseBefore', player: 'enterGame' },
+				filter: function (event, player) {
+					if (player.countMark('hpp_jishi') >= 3) return false;
+					return event.name != 'phase' || game.phaseNumber == 0;
+				},
+				forced: true,
+				locked: false,
+				content: function () {
+					player.addMark('hpp_jishi', Math.min(3, 3 - player.countMark('hpp_jishi')));
+				},
+				ai: { threaten: 10 },
+				subSkill: {
+					recover: {
+						audio: 'hpp_jishi',
+						trigger: { global: 'dying' },
+						filter: function (event, player) {
+							return event.player.hp <= 0 && player.hasMark('hpp_jishi');
+						},
+						prompt2: function (event, player) {
+							return '令' + get.translation(event.player) + '回复体力至1点';
+						},
+						logTarget: 'player',
+						check: function (event, player) {
+							return get.recoverEffect(event.player, player, player) > 0;
+						},
+						content: function () {
+							player.removeMark('hpp_jishi', 1);
+							trigger.player.recover(1 - trigger.player.hp);
+						},
+					},
+					lose: {
+						audio: 'hpp_jishi',
+						trigger: {
+							player: 'loseAfter',
+							global: ['equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+						},
+						filter: function (event, player) {
+							var bool = false;
+							if (event.name == 'gain' && player == event.player) return false;
+							var evt = event.getl(player);
+							if (!evt || !evt.cards2 || !evt.cards2.length) return false;
+							for (var i of evt.cards2) {
+								if (get.color(i, player) == 'red' && i.original == 'h') bool = true;
+							}
+							if (!bool) return false;
+							return player != _status.currentPhase && player.countMark('hpp_jishi') < 3;
+						},
+						forced: true,
+						locked: false,
+						content: function () {
+							var num = 0, evt = trigger.getl(player);
+							for (var i of evt.cards2) {
+								if (get.color(i, player) == 'red' && i.original == 'h' && num < 3 - player.countMark('hpp_jishi')) num++;
+							}
+							player.addMark('hpp_jishi', num);
+						},
+					},
+				},
+			},
+			hpptaoxian: {
+				group: 'hpp_taoxian_use',
+				audio: 2,
+				enable: 'chooseToUse',
+				filterCard: function (card) {
+					return get.suit(card) == 'heart';
+				},
+				viewAs: { name: 'tao' },
+				viewAsFilter: function (player) {
+					if (!player.countCards('hes', { suit: 'heart' })) return false;
+					return true;
+				},
+				position: 'hes',
+				prompt: '将一张红桃牌当作桃使用',
+				check: function (card) {
+					if (_status.event.type == 'dying') return 1 / Math.max(0.1, get.value(card));
+					return 8 - get.value(card);
+				},
+				ai: { threaten: 10 },
+				subSkill: {
+					use: {
+						audio: 'hpp_taoxian',
+						trigger: { global: 'useCard' },
+						filter: function (event, player) {
+							return event.player != player && event.card.name == 'tao';
+						},
+						forced: true,
+						locked: false,
+						content: function () {
+							player.draw();
+						},
+					},
+				},
+			},
+			hppshenzhen: {
+				audio: 1,
+				trigger: { player: 'phaseZhunbeiBegin' },
+				filter: function (event, player) {
+					return player.hasMark('hpp_jishi');
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					var map = {};
+					var list = [];
+					for (var i = 1; i <= player.countMark('hpp_jishi'); i++) {
+						var cn = get.cnNumber(i, true);
+						map[cn] = i;
+						list.push(cn);
+					}
+					list.push('cancel2');
+					event.map = map;
+					player.chooseControl(list).set('prompt', get.prompt2('hpp_shenzhen')).set('ai', function () {
+						var player = _status.event.player;
+						var num = Math.min(player.countMark('hpp_jishi'), Math.max(game.countPlayer(function (current) {
+							return get.attitude(player, current) > 0 && current.isDamaged() && get.recoverEffect(current, player, player) > 0;
+						}), game.countPlayer(function (current) {
+							return get.attitude(player, current) < 0;
+						})));
+						if (num > 0) return get.cnNumber(num, true);
+						return 'cancel2';
+					});
+					'step 1'
+					if (result.control != 'cancel2') {
+						player.logSkill('hpp_shenzhen');
+						var num = event.map[result.control] || 1;
+						event.num = num;
+						player.removeMark('hpp_jishi', num);
+						player.chooseControl('回血', '扣血').set('prompt', '请选择一种效果').set('ai', function (card) {
+							if (game.countPlayer(function (current) {
+								return get.attitude(player, current) > 0 && current.isDamaged() && get.recoverEffect(current, player, player) > 0;
+							}) >= game.countPlayer(function (current) {
+								return get.attitude(player, current) < 0;
+							})) return '回血';
+							return '扣血';
+						});
+					}
+					else event.finish();
+					'step 2'
+					event.control = result.control;
+					switch (result.control) {
+						case '回血':
+							player.chooseTarget('请选择回复体力的目标', [1, Math.min(num, game.countPlayer(function (current) {
+								return current.isDamaged();
+							}))], true, function (card, player, target) {
+								return target.isDamaged();
+							}).set('ai', function (target) {
+								var player = _status.event.player;
+								return get.recoverEffect(target, player, player);
+							});
+							break;
+						case '扣血':
+							player.chooseTarget('请选择失去体力的目标', [1, Math.min(num, game.countPlayer())], true).set('ai', function (target) {
+								var player = _status.event.player;
+								return -get.attitude(player, target);
+							});
+							break;
+					}
+					'step 3'
+					if (result.bool) {
+						result.targets.sortBySeat();
+						player.line(result.targets);
+						game.log(player, '选择了', result.targets);
+						if (event.control == '回血') for (var i of result.targets) i.recover();
+						else for (var i of result.targets) i.loseHp();
+					}
+				},
+				ai: {
+					threaten: 10,
+					combo: 'hpp_jishi',
+				},
+			},
 			// 72变
 			hpp72bian: {
 				onChooseToUse: function (event) {
