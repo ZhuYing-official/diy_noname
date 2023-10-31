@@ -96,7 +96,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 欢杀陆逊
 			hpp_re_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'hpp_lianying'], []],
 			// 欢杀吕布
-			hpp_re_lvbu: ['male', 'qun', 5, ['wushuang', 'hpp_shenwei'], []],
+			hpp_re_lvbu: ['male', 'qun', 5, ['wushuang', 'hpp_reshenwei'], []],
 		},
 		characterIntro: {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
@@ -2277,7 +2277,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			// 欢杀界吕布
-			hpp_shenwei: {
+			hpp_reshenwei: {
 				audio: 'shenwei',
 				unique: true,
 				trigger: { player: 'phaseDrawBegin' },
@@ -3060,6 +3060,117 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					combo: 'hpp_jishi',
 				},
 			},
+			hppshenwei: {
+				global: 'hpp_shenwei_damage',
+				audio: 2,
+				trigger: { player: 'phaseBegin' },
+				filter: function (event, player) {
+					return game.hasPlayer(function (current) {
+						return !current.hasMark('hpp_shenwei');
+					});
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					var num = (player.hp == 1 ? [1, 2] : 1);
+					player.chooseTarget(get.prompt2('hpp_shenwei'), function (card, player, target) {
+						return !target.hasMark('hpp_shenwei');
+					}, num).set('ai', function (target) {
+						var player = _status.event.player, num = 2;
+						if (target == player) num = 1;
+						return (get.attitude(player, target) - 4) * num;
+					});
+					'step 1'
+					if (result.bool) {
+						var target = result.targets[0];
+						player.logSkill('hpp_shenwei', target);
+						target.addMark('hpp_shenwei', 1);
+					}
+				},
+				marktext: '卫',
+				intro: { name2: '卫', content: 'mark' },
+				ai: {
+					expose: 0.25,
+					threaten: 4.8,
+				},
+				subSkill: {
+					damage: {
+						trigger: { player: 'damageBegin4' },
+						filter: function (event, player) {
+							return player.hasMark('hpp_shenwei') && game.hasPlayer(function (current) {
+								return current.hasSkill('hpp_shenwei');
+							});
+						},
+						direct: true,
+						content: function () {
+							'step 0'
+							player.chooseTarget(get.prompt('hpp_shenwei'), '将伤害转移给一名拥有〖神卫〗的角色', function (card, player, target) {
+								return target.hasSkill('hpp_shenwei');
+							}).set('ai', function (target) {
+								var player = _status.event.player, att = get.attitude(player, target);
+								if (att > 0 && player.hp > 1 && target.hp <= 1) return 0;
+								return -att + 114514;
+							});
+							'step 1'
+							if (result.bool) {
+								var target = result.targets[0];
+								player.logSkill('hpp_shenwei', target);
+								player.removeMark('hpp_shenwei', player.countMark('hpp_shenwei'));
+								event.trigger('removeShenWei');
+								trigger.player = target;
+							}
+						},
+					},
+				},
+			},
+			hppelai: {
+				audio: 2,
+				trigger: { global: 'removeShenWei' },
+				filter: function (event, player) {
+					return player.isDamaged() || game.hasPlayer(function (current) {
+						return current != player && player.inRange(current);
+					});
+				},
+				forced: true,
+				content: function () {
+					'step 0'
+					if (!game.hasPlayer(function (current) {
+						return current != player && player.inRange(current);
+					})) result.index = 0;
+					else if (player.isHealthy()) result.index = 1;
+					else player.chooseControl().set('choiceList', [
+						'回复1点体力',
+						'对攻击范围内的一名其他角色造成1点伤害'
+					]).set('ai', function () {
+						var num = 3;
+						if (player.hasSkill('hpp_kuangxi') && game.hasPlayer(function (current) {
+							return current.hasMark('hpp_shenwei');
+						})) num--;
+						if (player.hp >= num && game.hasPlayer(function (current) {
+							return current != player && get.damageEffect(current, player, player) > 0;
+						})) return 1;
+						return 0;
+					});
+					'step 1'
+					if (result.index == 0) {
+						player.recover();
+						event.finish();
+					}
+					else player.chooseTarget('请选择【恶来】的目标', '对一名攻击范围内的一名其他角色造成1点伤害', true, function (card, player, target) {
+						return target != player && player.inRange(target);
+					}).set('ai', function (target) {
+						var player = _status.event.player;
+						return get.damageEffect(target, player, player) + 114514;
+					});
+					'step 2'
+					if (result.bool) {
+						var target = result.targets[0];
+						player.line(target);
+						target.damage();
+					}
+				},
+				ai: { combo: 'hpp_shenwei' },
+			},
 			// 72变
 			hpp72bian: {
 				onChooseToUse: function (event) {
@@ -3512,8 +3623,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hpp_lianying: '连营',
 			hpp_lianying_info: '当你失去最后的手牌时，你可以摸至手牌上限。',
 			hpp_re_lvbu: '欢杀界吕布',
-			hpp_shenwei: '神威',
-			hpp_shenwei_info: '锁定技，摸牌阶段，你额外摸2张牌，你的手牌上限+2',
+			hpp_reshenwei: '神威',
+			hpp_reshenwei_info: '锁定技，摸牌阶段，你额外摸2张牌，你的手牌上限+2',
 
 			correction_history: '正史',
 			honor_of_kings: '王者荣耀',
