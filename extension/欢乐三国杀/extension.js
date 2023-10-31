@@ -935,12 +935,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神曹操
                             hpp_shen_caocao: ['male', 'shen', 3, ['hpp_guixin', 'feiying'], ['wei']],
                             // 神大小乔
+                            hpp_shen_daxiaoqiao: ['female', 'shen', 4, ['hpp_shuangshu', 'hpp_pingting', 'hpp_yizheng'], ['wu']],
                             // 神典韦
                             hpp_shen_dianwei: ['male', 'shen', 5, ['hpp_shenwei', 'hpp_elai', 'hpp_kuangxi'], ['wei']],
                             // 神貂蝉
                             hpp_shen_diaochan: ['female', 'shen', 3, ['hpp_meihun', 'hpp_huoxin'], ['qun']],
                             // 神甘宁
+                            hpp_shen_ganning: ['male', 'shen', '3/6', ['hpp_poxi', 'drlt_jieying'], ['wu']],
                             // 神关羽
+                            hpp_shen_guanyu: ['male', 'shen', 5, ['hpp_wushen', 'hpp_wuhun'], ['shu']],
                             // 神郭嘉
                             hpp_shen_guojia: ['male', 'shen', 3, ['reshuishi', 'hpp_gjtianyi', 'hpp_huishi'], ['wei']],
                             // 神华佗
@@ -948,6 +951,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神姜维
                             hpp_shen_jiangwei: ['male', 'shen', 4, ['tianren', 'jiufa', 'pingxiang'], ['shu']],
                             // 神刘备
+                            hpp_shen_liubei: ['male', 'shen', 6, ['hpp_longnu', 'hpp_jieying'], ['shu']],
                             // 神陆逊
                             hpp_shen_luxun: ["male", "shen", 4, ["hpp_junlue", "hpp_cuike", "hpp_zhanhuo"], ["wu"]],
                             // 神吕布
@@ -957,8 +961,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神司马懿
                             hpp_shen_simayi: ['male', 'shen', 3, ['hpp_renjie', 'hpp_jilve', 'lianpo'], ['wei']],
                             // 神孙策
+                            hpp_shen_sunce: ['male', 'shen', '1/6', ['yingba', 'scfuhai', 'pinghe'], ['wu']],
                             // 神孙权
+                            hpp_shen_sunquan: ['male', 'shen', 4, ['hpp_quanxue', 'hpp_shehu', 'hpp_dingli'], ['wu']],
                             // 神太史慈
+                            hpp_shen_taishici: ['male', 'shen', 4, ['hpp_dulie', 'hpp_chongwei', 'hpp_powei'], ['wu']],
                             // 神荀彧
                             hpp_shen_xunyu: ['male', 'shen', 3, ['tianzuo', 'lingce', 'dinghan'], ['wei', 'clan:颍川荀氏']],
                             // 神张飞
@@ -20288,6 +20295,376 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 神大小乔
+                            hpp_shuangshu: {
+                                audio: 'hppshuangshu',
+                                trigger: { player: 'phaseZhunbeiBegin' },
+                                frequent: true,
+                                content: function () {
+                                    var cards = get.cards(2), bool1 = false, bool2 = false;
+                                    game.cardsGotoOrdering(cards);
+                                    player.showCards(cards, get.translation(player) + '发动了【双姝】');
+                                    for (var i of cards) {
+                                        if (get.suit(i, false) == 'diamond') bool1 = true;
+                                        if (get.suit(i, false) == 'heart') bool2 = true;
+                                    }
+                                    if (bool1) {
+                                        game.log(player, '强化了技能', '#g【娉婷】');
+                                        player.addTempSkill('hpp_shuangshu_pingting');
+                                    }
+                                    if (bool2) {
+                                        game.log(player, '强化了技能', '#g【移筝】');
+                                        player.addTempSkill('hpp_shuangshu_yizheng');
+                                    }
+                                    if (!bool1 && !bool2) player.gain(cards, 'gain2');
+                                    else game.cardsDiscard(cards);
+                                },
+                                subSkill: {
+                                    pingting: {
+                                        charlotte: true,
+                                        mark: true,
+                                        marktext: '婷',
+                                        intro: { content: '本回合发动【双姝】可多选择一项' },
+                                    },
+                                    yizheng: {
+                                        charlotte: true,
+                                        mark: true,
+                                        marktext: '筝',
+                                        intro: { content: '本回合发动【移筝】可多选择一项' },
+                                    },
+                                },
+                            },
+                            hpp_pingting: {
+                                audio: 'hpppingting',
+                                trigger: { player: 'phaseUseBegin' },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseButton([
+                                        '###' + get.prompt('hpp_pingting') + '###' + '选择并于本阶段获得下列至多' + get.cnNumber(player.hasSkill('hpp_shuangshu_pingting') ? 3 : 2) + '项效果', [[
+                                            ['distance', '本阶段使用的第一张牌无距离限制'],
+                                            ['return', '本阶段使用第二张牌指定目标后获得此牌'],
+                                            ['draw', '本阶段使用的第三张牌结算完成后摸两张牌'],
+                                            ['reuse', '本阶段使用的第四张牌额外结算一次'],
+                                        ], 'textbutton']
+                                    ]).set('ai', function (button) {
+                                        var player = _status.event.player;
+                                        var num = player.countCards('hs', function (card) {
+                                            return player.hasUseTarget(card) && player.getUseValue(card) > 0;
+                                        });
+                                        switch (button.link) {
+                                            case 'distance': {
+                                                if (game.hasPlayer(function (target) {
+                                                    return player.hasCard('hs', function (card) {
+                                                        return player.canUse(card, target, false) && player.canUse(card, target) && get.effect(target, card, player, player) > 0;
+                                                    });
+                                                })) return 1;
+                                                return 0.5;
+                                                break;
+                                            }
+                                            case 'return': {
+                                                if (num >= 2) return 2;
+                                                return 0.6;
+                                                break;
+                                            }
+                                            case 'draw': {
+                                                if (num >= 3) return 4;
+                                                return 0.7;
+                                                break;
+                                            }
+                                            case 'reuse': {
+                                                if (num >= 4) return 3;
+                                                return 0.8;
+                                                break;
+                                            }
+                                        }
+                                    }).set('selectButton', [1, player.hasSkill('hpp_shuangshu_pingting') ? 3 : 2]);
+                                    'step 1'
+                                    if (result.bool) {
+                                        player.logSkill('hpp_pingting');
+                                        for (var i of result.links) player.addTempSkill('hpp_pingting_' + i, { player: 'phaseUseAfter' });
+                                    }
+                                },
+                                subSkill: {
+                                    distance: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        mark: true,
+                                        marktext: '①',
+                                        intro: { content: '本阶段使用的第一张牌无距离限制' },
+                                        //为适配联机进行的代码退化[doge]
+                                        mod: {
+                                            targetInRange: function (card, player, target) {
+                                                //if(game.online){
+                                                if (!player.storage.hpp_pingting_distance) return true;
+                                                //}
+                                                /*
+                                                else{
+                                                var evt=_status.event.getParent('phaseUse');
+                                                if(evt&&evt.name=='phaseUse'&&!player.getHistory('useCard',function(evt2){
+                                                return evt2.getParent('phaseUse')==evt;
+                                                }).length) return true;
+                                                }
+                                                */
+                                            },
+                                        },
+                                        trigger: { player: 'useCard1' },
+                                        filter: function (event, player) {
+                                            return !player.storage.hpp_pingting_distance/*&&player.isOnline()*/;
+                                        },
+                                        direct: true,
+                                        firstDo: true,
+                                        content: function () {
+                                            player.storage.hpp_pingting_distance = true;
+                                        },
+                                    },
+                                    return: {
+                                        charlotte: true,
+                                        mark: true,
+                                        marktext: '②',
+                                        intro: { content: '本阶段使用第二张牌指定目标后获得此牌' },
+                                        audio: 'hpp_pingting',
+                                        trigger: { player: 'useCardToPlayered' },
+                                        filter: function (event, player) {
+                                            if (!event.isFirstTarget) return false;
+                                            var evt = event.getParent('phaseUse');
+                                            return evt && evt.player == player && player.getHistory('useCard', function (evt2) {
+                                                return evt2.getParent('phaseUse') == evt;
+                                            }).indexOf(event.getParent()) == 1 && event.cards && event.cards.filterInD().length;
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            player.gain(trigger.cards.filterInD(), 'gain2');
+                                        },
+                                        ai: {
+                                            result: {
+                                                player: function (card, player, target) {
+                                                    var evt = _status.event.getParent('phaseUse');
+                                                    if (['equip', 'delay'].includes(get.type(card)) && evt && evt.player == player && player.getHistory('useCard', function (evt2) {
+                                                        return evt2.getParent('phaseUse') == evt;
+                                                    }).length == 1) return 0.3;
+                                                },
+                                            },
+                                        },
+                                    },
+                                    draw: {
+                                        charlotte: true,
+                                        mark: true,
+                                        marktext: '③',
+                                        intro: { content: '本阶段使用的第三张牌结算完成后摸两张牌' },
+                                        audio: 'hpp_pingting',
+                                        trigger: { player: 'useCardAfter' },
+                                        filter: function (event, player) {
+                                            var evt = event.getParent('phaseUse');
+                                            return evt && evt.player == player && player.getHistory('useCard', function (evt2) {
+                                                return evt2.getParent('phaseUse') == evt;
+                                            }).indexOf(event) == 2;
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            player.draw(2);
+                                        },
+                                    },
+                                    reuse: {
+                                        //group:'hpp_pingting_buff',
+                                        charlotte: true,
+                                        mark: true,
+                                        marktext: '④',
+                                        intro: { content: '本阶段使用的第四张牌额外结算一次' },
+                                        audio: 'hpp_pingting',
+                                        trigger: { player: 'useCard' },
+                                        filter: function (event, player) {
+                                            var evt = event.getParent('phaseUse');
+                                            return evt && evt.player == player && player.getHistory('useCard', function (evt2) {
+                                                return evt2.getParent('phaseUse') == evt;
+                                            }).indexOf(event) == 3 && event.targets/*&&!event.reuse_buff*/;
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            //trigger.reuse_buff=player;
+                                            trigger.effectCount++;
+                                            game.log(trigger.card, '额外结算一次');
+                                        },
+                                        ai: {
+                                            result: {
+                                                player: function (card, player, target) {
+                                                    var evt = _status.event.getParent('phaseUse');
+                                                    if (card.name == 'tiesuo' && evt && evt.player == player && player.getHistory('useCard', function (evt2) {
+                                                        return evt2.getParent('phaseUse') == evt;
+                                                    }).length == 3) return 'zerotarget';
+                                                },
+                                            },
+                                        },
+                                    },
+                                    /*
+                                    buff:{
+                                    charlotte:true,
+                                    trigger:{global:'useCardToTargeted'},
+                                    filter:function(event,player){
+                                    return event.parent.reuse_buff==player&&event.targets.length==event.parent.triggeredTargets4.length;
+                                    },
+                                    direct:true,
+                                    lastDo:true,
+                                    content:function(){
+                                    trigger.getParent().targets=trigger.getParent().targets.concat(trigger.targets);
+                                    trigger.getParent().triggeredTargets4=trigger.getParent().triggeredTargets4.concat(trigger.targets);
+                                    },
+                                    },
+                                    */
+                                },
+                            },
+                            hpp_yizheng: {
+                                canMove: function (type) {
+                                    return game.hasPlayer(function (target) {
+                                        return target.countCards('e', function (card) {
+                                            return game.hasPlayer(function (current) {
+                                                return current != target && current.canEquip(card) && get.subtype(card) == type;
+                                            });
+                                        });
+                                    });
+                                },
+                                audio: 'hppyizheng',
+                                trigger: { player: 'phaseUseEnd' },
+                                filter: function (event, player) {
+                                    if (!player.canMoveCard(null, true)) return false;
+                                    return [1, 2, 3, 4].some(num => lib.skill.hpp_yizheng.canMove('equip' + num));
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    var choiceList = [];
+                                    if (lib.skill.hpp_yizheng.canMove('equip1')) choiceList.push(['equip1', '移动一张武器牌']);
+                                    if ([3, 4].some(num => lib.skill.hpp_yizheng.canMove('equip' + num))) choiceList.push(['equip6', '移动一张坐骑牌']);
+                                    if (lib.skill.hpp_yizheng.canMove('equip2')) choiceList.push(['equip2', '移动一张防具牌']);
+                                    player.chooseButton([
+                                        '###' + get.prompt('hpp_yizheng') + '###' + '选择移动至多' + get.cnNumber(player.hasSkill('hpp_shuangshu_yizheng') ? 2 : 1) + '种副类别的装备牌', [choiceList, 'textbutton']
+                                    ]).set('ai', function (button) {
+                                        var player = _status.event.player, choice = [];
+                                        for (var i of ['equip2', 'equip6', 'equip1']) {
+                                            if (game.hasPlayer(function (target) {
+                                                return target.countCards('e', function (card) {
+                                                    return game.hasPlayer(function (current) {
+                                                        return current != target && current.canEquip(card) && get.subtype(card) == type && (get.attitude(player, target) * get.value(card, target) > 0 && get.attitude(player, current) * get.value(card, current) > 0);
+                                                    });
+                                                });
+                                            }) && !choice.includes(['equip3', 'equip4'].includes(i) ? 'equip6' : i)) choice.push(['equip3', 'equip4'].includes(i) ? 'equip6' : i);
+                                        }
+                                        if (choice.includes(button.link)) return 3 - choice.indexOf(button.link);
+                                        return -1;
+                                    }).set('selectButton', [1, player.hasSkill('hpp_shuangshu_yizheng') ? 2 : 1]);
+                                    'step 1'
+                                    if (result.bool) {
+                                        result.links.sort(function (a, b) {
+                                            return ['equip1', 'equip2', 'equip6'].indexOf(a) - ['equip1', 'equip2', 'equip6'].indexOf(b);
+                                        });
+                                        player.logSkill('hpp_yizheng');
+                                        event.choiceList = result.links;
+                                        event.count = 0;
+                                        event.list = [];
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    var subtype = event.choiceList.shift();
+                                    event.list.push(subtype);
+                                    if (subtype == 'equip6') {
+                                        event.list.addArray(['equip3', 'equip4']);
+                                        event.list.remove('equip6');
+                                    }
+                                    'step 3'
+                                    player.chooseTarget(2, function (card, player, target) {
+                                        if (ui.selected.targets.length) {
+                                            var from = ui.selected.targets[0];
+                                            return target != from && from.countCards('e', card => target.canEquip(card) && _status.event.list.includes(get.subtype(card)));
+                                        }
+                                        return _status.event.list.some(type => lib.skill.hpp_yizheng.canMove(type));
+                                    }).set('ai', function (target) {
+                                        var player = _status.event.player;
+                                        if (!ui.selected.targets.length) {
+                                            var getMoveValue = function (player, types) {
+                                                var cards = player.getCards('e', function (card) {
+                                                    return game.hasPlayer(function (current) {
+                                                        return current != player && current.canEquip(card) && types.includes(get.subtype(card));
+                                                    });
+                                                });
+                                                cards.sort((a, b) => get.value(b, player) - get.value(a, player));
+                                                return get.value(cards[0], player);
+                                            };
+                                            return (1 - get.sgn(get.attitude(player, target))) * getMoveValue(target, _status.event.list);
+                                        }
+                                        var from = ui.selected.targets[0];
+                                        var cards = from.getCards('e', function (card) {
+                                            return game.hasPlayer(function (current) {
+                                                return current != from && current.canEquip(card) && types.includes(get.subtype(card));
+                                            });
+                                        });
+                                        cards.sort((a, b) => get.value(b, from) - get.value(a, from));
+                                        return get.sgn(get.attitude(player, target)) * get.value(cards[0], target);
+                                    }).set('multitarget', true).set('targetprompt', ['被移走', '移动目标']).set('prompt', '请选择移动的目标').set('prompt2', '将一名角色装备区中的' + get.translation(event.list[0]) + '移动到另一名角色的装备区中').set('list', event.list);
+                                    'step 4'
+                                    if (result.bool) {
+                                        player.line2(result.targets, 'green');
+                                        event.targets = result.targets;
+                                    }
+                                    else event.goto(8);
+                                    'step 5'
+                                    game.delay();
+                                    'step 6'
+                                    var cards = targets[0].getCards('e', function (card) {
+                                        return event.list.includes(get.subtype(card)) && targets[1].canEquip(card);
+                                    });
+                                    if (cards.length == 1) event._result = { bool: true, links: cards };
+                                    else player.choosePlayerCard('e', true, targets[0]).set('filterButton', function (button) {
+                                        return _status.event.cards.includes(button.link);
+                                    }).set('ai', function (button) {
+                                        var player = _status.event.player;
+                                        var targets = _status.event.targets;
+                                        var from = targets[0], to = targets[1];
+                                        if (get.sgn(get.attitude(player, from)) * get.value(button.link, from) > 0) return 1 / 114514;
+                                        return get.sgn(get.attitude(player, to)) * get.value(button.link, to);
+                                    }).set('cards', cards).set('targets', result.targets);
+                                    'step 7'
+                                    if (result.bool) {
+                                        var link = result.links[0];
+                                        if (get.position(link) == 'e') {
+                                            event.count++;
+                                            targets[1].equip(link);
+                                            targets[0].$give(link, targets[1], false);
+                                        }
+                                        game.delay();
+                                    }
+                                    'step 8'
+                                    if (event.choiceList.length) {
+                                        event.list = [];
+                                        event.goto(2);
+                                    }
+                                    'step 9'
+                                    switch (event.count) {
+                                        case 1: player.recover(); break;
+                                        case 2: player.addTempSkill('hpp_yizheng_draw', { player: 'phaseBegin' }); break;
+                                    }
+                                },
+                                subSkill: {
+                                    draw: {
+                                        charlotte: true,
+                                        mark: true,
+                                        intro: { content: '失去一张牌后，摸一张牌' },
+                                        audio: 'hpp_yizheng',
+                                        trigger: {
+                                            player: 'loseAfter',
+                                            global: ['equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+                                        },
+                                        filter: function (event, player) {
+                                            var evt = event.getl(player);
+                                            if (!evt || !evt.cards2 || !evt.cards2.length) return false;
+                                            return true;
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            player.draw(trigger.getl(player).cards2.length);
+                                        },
+                                    },
+                                },
+                            },
+
                             // 神典韦
                             hpp_shenwei: {
                                 global: 'hpp_shenwei_damage',
@@ -20563,7 +20940,210 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             },
 
                             // 神甘宁
+                            hpp_poxi: {
+                                audio: 'drlt_poxi',
+                                enable: 'phaseUse',
+                                filterTarget: function (card, player, target) {
+                                    return target != player && target.countCards('h');
+                                },
+                                usable: 1,
+                                content: function () {
+                                    'step 0'
+                                    var chooseButton;
+                                    event.list1 = [];
+                                    event.list2 = [];
+                                    if (player.countCards('h')) chooseButton = player.chooseButton(3, ['你的手牌', player.getCards('h'), get.translation(target.name) + '的手牌', target.getCards('h')]);
+                                    else chooseButton = player.chooseButton(3, [get.translation(target.name) + '的手牌', target.getCards('h')]);
+                                    chooseButton.set('target', target);
+                                    chooseButton.set('ai', function (button) {
+                                        var player = _status.event.player;
+                                        var target = _status.event.target;
+                                        var ps = [];
+                                        var ts = [];
+                                        for (var i = 0; i < ui.selected.buttons.length; i++) {
+                                            var card = ui.selected.buttons[i].link;
+                                            if (target.getCards('h').includes(card)) ts.push(card);
+                                            else ps.push(card);
+                                        }
+                                        var card = button.link;
+                                        var owner = get.owner(card);
+                                        var val = get.value(card) || 1;
+                                        if (owner == target) {
+                                            if (ts.length > 1) return 0;
+                                            if (ts.length == 0 || player.hp > 3) return val;
+                                            return 2 * val;
+                                        }
+                                        return 7 - val;
+                                    });
+                                    chooseButton.set('filterButton', function (button) {
+                                        for (var i = 0; i < ui.selected.buttons.length; i++) {
+                                            if (get.suit(button.link) == get.suit(ui.selected.buttons[i].link)) return false;
+                                        };
+                                        return true;
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        var list = result.links;
+                                        for (var i = 0; i < list.length; i++) {
+                                            if (get.owner(list[i]) == player) event.list1.push(list[i]);
+                                            else event.list2.push(list[i]);
+                                        }
+                                        if (event.list1.length && event.list2.length) {
+                                            game.loseAsync({
+                                                lose_list: [
+                                                    [player, event.list1],
+                                                    [target, event.list2]
+                                                ],
+                                                discarder: player,
+                                            }).setContent('discardMultiple');
+                                        }
+                                        else if (event.list2.length) target.discard(event.list2).discarder = player;
+                                        else player.discard(event.list1);
+                                    };
+                                    'step 2'
+                                    if (event.list1.length + event.list2.length != 3) return;
+                                    if (event.list1.length == 0) player.loseMaxHp();
+                                    if (event.list1.length == 2) {
+                                        player.recover();
+                                        player.draw();
+                                    }
+                                    if (event.list1.length == 3) player.draw(3);
+                                },
+                                ai: {
+                                    order: 13,
+                                    result: { target: -1 },
+                                },
+                            },
+
                             // 神关羽
+                            hpp_wushen: {
+                                mod: {
+                                    cardnature: function (card) {
+                                        if (get.suit(card) == 'heart' && get.name(card) == 'sha') return false;
+                                    },
+                                    targetInRange: function (card) {
+                                        if (get.suit(card) == 'heart' && get.name(card) == 'sha') return true;
+                                    },
+                                },
+                                group: 'hpp_wushen_wusheng',
+                                audio: 'wushen',
+                                trigger: { source: 'damageBefore' },
+                                forced: true,
+                                locked: false,
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha' && get.suit(event.card) == 'heart';
+                                },
+                                content: function () {
+                                    trigger.num++;
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card, player, target, current) {
+                                            if (get.tag(card, 'respondSha') && current < 0) return 0.6
+                                        },
+                                    },
+                                    directHit_ai: true,
+                                    skillTagfilter: function (player, tag, arg) {
+                                        return arg.card.name == 'sha' && get.suit(arg.card) == 'heart';
+                                    },
+                                },
+                                subSkill: {
+                                    wusheng: {
+                                        audio: 'wushen',
+                                        enable: ['chooseToRespond', 'chooseToUse'],
+                                        filterCard: function (card, player) {
+                                            return get.suit(card) == 'heart';
+                                        },
+                                        position: 'hs',
+                                        viewAs: { name: 'sha' },
+                                        viewAsFilter: function (player) {
+                                            if (!player.countCards('hs', { suit: 'heart' })) return false;
+                                            return true;
+                                        },
+                                        prompt: '将一张红桃手牌当作杀使用或打出',
+                                        check: function (card) {
+                                            var val = get.value(card);
+                                            if (_status.event.name == 'chooseToRespond') return 1 / Math.max(0.1, val);
+                                            return 8 - val;
+                                        },
+                                        ai: {
+                                            respondSha: true,
+                                            skillTagFilter: function (player) {
+                                                if (!player.countCards('hs', { suit: 'heart' })) return false;
+                                                return true;
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_wuhun: {
+                                audio: 'wuhun2',
+                                group: ['hpp_wuhun_mark', 'hpp_wuhun_die', 'wuhun22', 'wuhun23'],
+                                trigger: { player: 'damageEnd' },
+                                forced: true,
+                                filter: function (event, player) {
+                                    return event.source != undefined;
+                                },
+                                content: function () {
+                                    trigger.source.addMark('hpp_wuhun_mark', trigger.num);
+                                },
+                                subSkill: {
+                                    die: {
+                                        audio: 'wuhun2',
+                                        skillAnimation: true,
+                                        animationColor: 'soil',
+                                        trigger: { player: ['die', 'dyingAfter'] },
+                                        filter: function (event, player) {
+                                            if (event.name == 'dying' && !player.isIn()) return false;
+                                            return game.hasPlayer(function (current) {
+                                                return current != player && current.hasMark('hpp_wuhun_mark');
+                                            });
+                                        },
+                                        forced: true,
+                                        forceDie: true,
+                                        content: function () {
+                                            'step 0'
+                                            var num = 0;
+                                            for (var i = 0; i < game.players.length; i++) {
+                                                var current = game.players[i];
+                                                if (current != player && current.countMark('hpp_wuhun_mark') > num) {
+                                                    num = current.countMark('hpp_wuhun_mark');
+                                                }
+                                            }
+                                            player.chooseTarget('请选择【武魂】的目标', true, function (card, player, target) {
+                                                return target != player && target.countMark('hpp_wuhun_mark') == _status.event.num;
+                                            }).set('ai', function (target) {
+                                                return -get.attitude(_status.event.player, target);
+                                            }).set('forceDie', true).set('num', num);
+                                            'step 1'
+                                            if (result.bool && result.targets && result.targets.length) {
+                                                var target = result.targets[0];
+                                                event.target = target;
+                                                player.line(target, { color: [255, 255, 0] });
+                                                game.delay(2);
+                                            }
+                                            'step 2'
+                                            target.judge(function (card) {
+                                                if (['tao', 'taoyuan'].includes(card.name)) return 10;
+                                                return -10;
+                                            });
+                                            'step 3'
+                                            if (!result.bool) target.loseHp(5);
+                                        },
+                                    },
+                                    mark: {
+                                        marktext: '魇',
+                                        intro: {
+                                            name: '梦魇',
+                                            content: 'mark',
+                                        },
+                                    },
+                                },
+                                ai: {
+                                    threaten: 0.1,
+                                    notemp: true,
+                                },
+                            },
 
                             // 神郭嘉
                             hpp_gjtianyi: {
@@ -20921,6 +21501,148 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 神姜维
                             // 神刘备
+                            hpp_longnu: {
+                                audio: 'nzry_longnu',
+                                trigger: { player: 'phaseUseBegin' },
+                                forced: true,
+                                content: function () {
+                                    'step 0'
+                                    var list = [
+                                        '失去1点体力并摸两张牌，本回合你的红色手牌均视为火杀且无距离限制',
+                                        '减1点体力上限，本回合你的黑色手牌均视为雷杀且无使用次数限制'
+                                    ];
+                                    player.chooseControl().set('choiceList', list).set('ai', function () {
+                                        if (player.countCards() <= 3 && player.maxHp - player.hp <= 1) return 0;
+                                        return 1;
+                                    });
+                                    'step 1'
+                                    if (result.index == 0) {
+                                        player.loseHp();
+                                        player.draw(2);
+                                        player.addTempSkill('hpp_longnu_1');
+                                    }
+                                    else {
+                                        player.loseMaxHp();
+                                        player.addTempSkill('hpp_longnu_2');
+                                    }
+                                },
+                                subSkill: {
+                                    '1': {
+                                        mod: {
+                                            cardname: function (card, player) {
+                                                if (get.color(card) == 'red') return 'sha';
+                                            },
+                                            cardnature: function (card, player) {
+                                                if (get.color(card) == 'red') return 'fire';
+                                            },
+                                            targetInRange: function (card) {
+                                                if (card.name == 'sha' && card.hasNature('fire')) return true;
+                                            },
+                                        },
+                                        ai: {
+                                            respondSha: true,
+                                            effect: {
+                                                target: function (card, player, target, current) {
+                                                    if (get.tag(card, 'respondSha') && current < 0) return 0.6
+                                                },
+                                            },
+                                        },
+                                    },
+                                    '2': {
+                                        mod: {
+                                            cardname: function (card, player) {
+                                                if (get.color(card) == 'black') return 'sha';
+                                            },
+                                            cardnature: function (card, player) {
+                                                if (get.color(card) == 'black') return 'thunder';
+                                            },
+                                            cardUsable: function (card, player) {
+                                                if (card.name == 'sha' && card.hasNature('thunder')) return Infinity;
+                                            },
+                                        },
+                                        ai: {
+                                            respondSha: true,
+                                            effect: {
+                                                target: function (card, player, target, current) {
+                                                    if (get.tag(card, 'respondSha') && current < 0) return 0.6
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                                ai: {
+                                    fireAttack: true,
+                                    halfneg: true,
+                                },
+                            },
+                            hpp_jieying: {
+                                audio: 'nzry_jieying',
+                                locked: true,
+                                global: 'hpp_jieying_all',
+                                group: ['hpp_jieying_1', 'hpp_jieying_2', 'hpp_jieying_3'],
+                                subSkill: {
+                                    '1': {
+                                        audio: 'nzry_jieying',
+                                        trigger: { player: ['linkBefore', 'enterGame'], global: 'phaseBefore' },
+                                        forced: true,
+                                        filter: function (event, player) {
+                                            if (event.name == 'link') return player.isLinked();
+                                            return (event.name != 'phase' || game.phaseNumber == 0) && !player.isLinked();
+                                        },
+                                        content: function () {
+                                            if (trigger.name != 'link') player.link(true);
+                                            else trigger.cancel();
+                                        },
+                                    },
+                                    '2': {
+                                        trigger: { player: 'phaseJieshuBegin' },
+                                        direct: true,
+                                        filter: function (event, player) {
+                                            return game.hasPlayer(function (current) {
+                                                return current != player && !current.isLinked();
+                                            });
+                                        },
+                                        content: function () {
+                                            'step 0'
+                                            player.chooseTarget(get.prompt('hpp_jieying'), '横置一名其他角色', function (card, player, target) {
+                                                return target != player && !target.isLinked();
+                                            }).ai = function (target) {
+                                                return 1 + Math.random();
+                                            };
+                                            'step 1'
+                                            if (result.bool) {
+                                                player.logSkill('hpp_jieying', result.targets[0]);
+                                                result.targets[0].link(true);
+                                            }
+                                            else event.finish();
+                                        },
+                                    },
+                                    '3': {
+                                        audio: 'nzry_jieying',
+                                        trigger: { player: 'damageBegin2' },
+                                        forced: true,
+                                        content: function () {
+                                            player.draw();
+                                        },
+                                    },
+                                    all: {
+                                        mod: {
+                                            maxHandcard: function (player, num) {
+                                                if (player.isLinked()) return num + 2 * game.countPlayer(function (current) {
+                                                    return current.hasSkill('hpp_jieying');
+                                                });
+                                            },
+                                        },
+                                    },
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card) {
+                                            if (card.name == 'tiesuo') return 'zeroplayertarget';
+                                        },
+                                    },
+                                },
+                            },
 
                             // 神陆逊
                             hpp_junlue: {
@@ -21471,7 +22193,311 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 神孙策
                             // 神孙权
+                            hpp_quanxue: {
+                                marktext: '学',
+                                intro: { content: 'mark', name2: '学' },
+                                audio: 'ext:活动武将/audio/skill:true',
+                                trigger: { player: 'phaseUseBegin' },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    game.addGlobalSkill('hpp_quanxue_remove');
+                                    player.chooseTarget(get.prompt2('hpp_quanxue'), [1, 2], lib.filter.notMe).set('ai', function (target) {
+                                        return !target.hasMark('hpp_quanxue') && -get.attitude(player, target);
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        var targets = result.targets.sortBySeat();
+                                        player.logSkill('hpp_quanxue', targets);
+                                        for (var i of targets) i.addMark('hpp_quanxue', 1);
+                                    }
+                                },
+                                ai: {
+                                    threaten: 4.5,
+                                    expose: 0.25,
+                                },
+                                subSkill: {
+                                    remove: {
+                                        charlotte: true,
+                                        trigger: { player: 'phaseBegin' },
+                                        filter: function (event, player) {
+                                            return player.hasMark('hpp_quanxue') && game.hasPlayer(function (current) {
+                                                return current.hasSkill('hpp_quanxue');
+                                            });
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            'step 0'
+                                            player.removeMark('hpp_quanxue', player.countMark('hpp_quanxue'));
+                                            'step 1'
+                                            player.chooseControl().set('choiceList', [
+                                                '本回合不能对其他角色使用牌',
+                                                '失去1点体力',
+                                            ]).set('ai', function () {
+                                                if ((player.countCards('h') < player.getHandcardLimit()) || player.hp <= 2) return 0;
+                                                return 1;
+                                            });
+                                            'step 2'
+                                            if (result.index == 0) player.addTempSkill('hpp_quanxue_block');
+                                            else player.loseHp();
+                                        },
+                                    },
+                                    block: {
+                                        mark: true,
+                                        intro: { content: '不能对其他角色使用牌' },
+                                        mod: {
+                                            playerEnabled: function (card, player, target) {
+                                                if (player != target) return false;
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_shehu: {
+                                trigger: { player: 'useCardToPlayer' },
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha' && event.target.hasMark('hpp_quanxue') && event.target.countCards('h');
+                                },
+                                forced: true,
+                                logTarget: 'target',
+                                content: function () {
+                                    player.discardPlayerCard('h', true, trigger.target);
+                                },
+                                ai: {
+                                    unequip_ai: true,
+                                    combo: 'hpp_quanxue',
+                                    skillTagFilter: function (player, tag, arg) {
+                                        if (arg && arg.name == 'sha' && arg.target && arg.target.hasMark('hpp_quanxue')) return true;
+                                        return false;
+                                    },
+                                },
+                            },
+                            hpp_dingli: {
+                                audio: 'ext:活动武将/audio/skill:2',
+                                trigger: { global: 'logSkill' },
+                                filter: function (event, player) {
+                                    return event.skill == 'hpp_quanxue_remove' && event.player != player;
+                                },
+                                check: function (event, player) {
+                                    if (event.player.hp >= player.hp && player.isHealthy()) return false;
+                                    return true;
+                                },
+                                round: 1,
+                                logTarget: 'player',
+                                content: function () {
+                                    if (trigger.player.hp >= player.hp) player.recover();
+                                    else player.draw(Math.min(2, player.hp - trigger.player.hp));
+                                },
+                                ai: { combo: 'hpp_quanxue' },
+                            },
+
                             // 神太史慈
+                            hpp_dulie: {
+                                audio: 'dulie',
+                                group: 'hpp_dulie_dying',
+                                trigger: { target: 'useCardToTarget' },
+                                forced: true,
+                                logTarget: 'player',
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha';
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.judge(function (result) {
+                                        if (get.suit(result) == 'heart') return 2;
+                                        return -1;
+                                    }).judge2 = function (result) {
+                                        return result.bool;
+                                    };
+                                    'step 1'
+                                    if (result.bool) {
+                                        trigger.targets.remove(player);
+                                        trigger.getParent().triggeredTargets2.remove(player);
+                                        trigger.untrigger();
+                                    }
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card, player, target, current, isLink) {
+                                            if (card.name == 'sha' && !isLink && player.hp > target.hp) return 0.5;
+                                        },
+                                    },
+                                },
+                                marktext: '围',
+                                intro: {
+                                    name: '破围(围)',
+                                    name2: '围',
+                                    content: 'mark',
+                                },
+                                subSkill: {
+                                    dying: {
+                                        audio: 'tspowei2',
+                                        trigger: { player: 'dying' },
+                                        filter: function (event, player) {
+                                            return num <= 0 && !player.storage.hpp_dulie_dying;
+                                        },
+                                        skillAnimation: true,
+                                        animationColor: 'fire',
+                                        direct: true,
+                                        content: function () {
+                                            player.storage.hpp_dulie_dying = true;
+                                            var num = game.countPlayer(current => current.hasMark('hpp_dulie'));
+                                            if (num) {
+                                                player.logSkill('hpp_dulie_dying');
+                                                player.recover(num - player.hp);
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_chongwei: {
+                                audio: 'tspowei3',
+                                forced: true,
+                                group: ['hpp_chongwei_init', 'hpp_chongwei_move', 'hpp_chongwei_use', 'hpp_chongwei_remove'],
+                                subSkill: {
+                                    remove: {
+                                        audio: 'tspowei3',
+                                        trigger: { global: 'damageEnd' },
+                                        filter: function (event, player) {
+                                            return event.player && event.player.isIn() && event.player.hasMark('hpp_dulie');
+                                        },
+                                        forced: true,
+                                        logTarget: 'player',
+                                        content: function () {
+                                            trigger.player.removeMark('hpp_dulie', trigger.player.countMark('hpp_dulie'));
+                                        },
+                                    },
+                                    use: {
+                                        audio: 'tspowei3',
+                                        trigger: { global: 'phaseBegin' },
+                                        filter: function (event, player) {
+                                            return event.player != player && event.player.hasMark('hpp_dulie') && (player.countCards('h') > 0 || player.hp >= event.player.hp && event.player.countCards('h') > 0);
+                                        },
+                                        direct: true,
+                                        content: function () {
+                                            'step 0'
+                                            var list = [], target = trigger.player, choiceList = [
+                                                '弃置一张牌并对其造成1点伤害',
+                                                '获得其一张手牌',
+                                            ];
+                                            event.target = target;
+                                            if (player.hasCard(function (card) {
+                                                return lib.filter.cardDiscardable(card, player, 'hpp_chongwei_use');
+                                            }, 'h')) list.push('选项一');
+                                            else choiceList[0] = '<span style="opacity:0.5">' + choiceList[0] + '</span>';
+                                            if (player.hp >= target.hp && target.countCards('h') > 0) list.push('选项二');
+                                            else choiceList[1] = '<span style="opacity:0.5">' + choiceList[1] + '</span>';
+                                            player.chooseControl(list, 'cancel2').set('prompt', get.prompt('hpp_chongwei', target)).set('choiceList', choiceList).set('ai', function () {
+                                                var evt = _status.event.getParent();
+                                                if (evt.player.hasCard(function (card) {
+                                                    return lib.filter.cardDiscardable(card, evt.player, 'hpp_chongwei_use') && get.value(card, evt.player) < 7;
+                                                }, 'h') && get.damageEffect(evt.target, evt.player, evt.player) > 0) return '选项一';
+                                                if (evt.player.hp >= evt.target.hp && evt.target.countCards('h') > 0 && get.attitude(evt.player, evt.target) <= 0 && !evt.target.hasSkillTag('noh')) return '选项二';
+                                                return 'cancel2';
+                                            });
+                                            'step 1'
+                                            if (result.control != 'cancel2') {
+                                                if (result.control == '选项二') {
+                                                    player.logSkill('hpp_chongwei_use', target);
+                                                    player.gainPlayerCard(target, 'h', true);
+                                                    event.goto(3);
+                                                }
+                                            }
+                                            else event.finish();
+                                            'step 2'
+                                            player.chooseToDiscard('h', true).logSkill = ['hpp_chongwei_use', target];
+                                            target.damage();
+                                            'step 3'
+                                            player.addTempSkill('tspowei_inRange');
+                                        },
+                                        ai: { expose: 0.2 },
+                                    },
+                                    init: {
+                                        audio: 'tspowei3',
+                                        trigger: { global: 'phaseBefore', player: 'enterGame' },
+                                        filter: function (event, player) {
+                                            if (!lib.skill.hpp_chongwei.subSkill.init.logTarget(event, player).length) return false;
+                                            return event.name != 'phase' || game.phaseNumber == 0;
+                                        },
+                                        logTarget: function (event, player) {
+                                            return game.filterPlayer((current) => current != player && !current.hasMark('hpp_dulie'));
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            var list = game.filterPlayer((current) => current != player && !current.hasMark('hpp_dulie')).sortBySeat();
+                                            for (var i of list) i.addMark('hpp_dulie', 1, false);
+                                        },
+                                    },
+                                    move: {
+                                        audio: 'tspowei3',
+                                        trigger: { player: 'phaseBegin' },
+                                        filter: function (event, player) {
+                                            return game.hasPlayer((current) => current != player && current.hasMark('hpp_dulie'));
+                                        },
+                                        forced: true,
+                                        content: function () {
+                                            var list = game.filterPlayer((current) => current != player && current.hasMark('hpp_dulie')).sortBySeat();
+                                            var map = {};
+                                            for (var i of list) {
+                                                var num = i.countMark('hpp_dulie');
+                                                i.removeMark('hpp_dulie', num);
+                                                map[i.playerid] = num;
+                                            }
+                                            for (var i of list) {
+                                                var next = i.next;
+                                                if (next == player) next = next.next;
+                                                next.addMark('hpp_dulie', map[i.playerid]);
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_powei: {
+                                unique: true,
+                                derivation: 'hpp_shenzhu',
+                                audio: 'tspowei1',
+                                trigger: { global: 'phaseEnd' },
+                                filter: function (event, player) {
+                                    return !game.hasPlayer(current => current.hasMark('hpp_dulie'));
+                                },
+                                forced: true,
+                                skillAnimation: true,
+                                animationColor: 'metal',
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_powei');
+                                    player.addSkillLog('hpp_shenzhu');
+                                    'step 1'
+                                    var num = 0;
+                                    game.countPlayer2(current => {
+                                        var history = current.actionHistory;
+                                        for (var i = history.length - 1; i >= 0; i--) {
+                                            num += history[i].useSkill.filter(evt => evt.skill == 'hpp_chongwei_remove').length;
+                                            if (history[i].isRound) break;
+                                        }
+                                    });
+                                    if (num) player.draw(num);
+                                },
+                            },
+                            hpp_shenzhu: {
+                                audio: 2,
+                                inherit: 'shenzhu',
+                                group: ['hpp_shenzhu_draw'],
+                                subSkill: {
+                                    draw: {
+                                        forced: true,
+                                        trigger: { player: 'phaseBegin' },
+                                        content: function () {
+                                            var card = get.cardPile(function (card) {
+                                                return card.name == 'sha';
+                                            });
+                                            if (card) player.draw(card, 'gain2');
+                                        },
+                                    }
+                                }
+
+                            },
+
                             // 神荀彧
 
                             // 神张角
@@ -23105,15 +24131,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_miao_zhurong: '#r捞德一评级:4.2',
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.5',
-                            hpp_shen_dianwei: '#r捞德一评级:4.0',
-                            hpp_shen_diaochan: '#r捞德一评级:4.1',
+                            hpp_shen_daxiaoqiao: '#r捞德一评级:4.4',
+                            hpp_shen_dianwei: '#r捞德一评级:4.1',
+                            hpp_shen_diaochan: '#r捞德一评级:4.5',
+                            hpp_shen_ganning: '#r捞德一评级:4.2',
+                            hpp_shen_guanyu: '#r捞德一评级:4.1',
                             hpp_shen_guojia: '#r捞德一评级:4.1',
                             hpp_shen_huatuo: '#r捞德一评级:4.7',
                             hpp_shen_jiangwei: '#r捞德一评级:4.7',
+                            hpp_shen_liubei: '#r捞德一评级:4.0',
                             hpp_shen_luxun: '#r捞德一评级:4.0',
                             hpp_shen_lvbu: '#r捞德一评级:4.0',
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
                             hpp_shen_simayi: '#r捞德一评级:4.4',
+                            hpp_shen_sunce: '#r捞德一评级:4.0',
+                            hpp_shen_sunquan: '#r捞德一评级:4.1',
+                            hpp_shen_taishici: '#r捞德一评级:4.1',
                             hpp_shen_xunyu: '#r捞德一评级:4.6',
                             hpp_shen_zhangfei: '#r捞德一评级:4.8',
                             hpp_shen_zhangjiao: '#r捞德一评级:4.7',
@@ -23901,7 +24934,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zuoding: '佐定',
                             hpp_zuoding_info: '任意角色在其出牌阶段内使用黑桃牌时，若没有角色受到过伤害，你可以令其中的一个目标角色摸一张牌。',
                             hpp_zhoucang: '欢杀周仓',
-                            hpp_zhongyong: '欢杀忠勇',
+                            hpp_zhongyong: '忠勇',
                             hpp_zhongyong_info: '当你使用的【杀】结算完毕后，你可以将此【杀】或目标角色使用的【闪】交给除该角色以外的一名其他角色，若其以此法获得的牌中有：红色，其可以对你攻击范围内的角色使用一张【杀】；黑色，你与其各摸一张牌。',
                             hpp_daopu: '刀仆',
                             hpp_daopu_info: '若你的你的装备区没有武器牌，视为装备【青龙偃月刀】；若你的装备区有【青龙偃月刀】，则你的红色【杀】伤害+1。',
@@ -24149,6 +25182,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guixin: '归心',
                             hpp_guixin_info: '当你受到1点伤害后，你可以随机获得每名其他角色区域里的一张牌，如果获得牌大于4张且你为正面，则翻面。',
                             hpp_shen_daxiaoqiao: '欢杀神大小乔',
+                            hpp_shuangshu: '双姝',
+                            hpp_shuangshu_pingting: '双姝·娉婷',
+                            hpp_shuangshu_yizheng: '双姝·移筝',
+                            hpp_shuangshu_info: '准备阶段，你可以展示牌堆顶的2张牌。若包含：方片：本回合“娉婷”可选择的选项个数+1；红桃：本回合“移筝”可选择的选项个数+1；只有黑色牌：你获得展示的牌。',
+                            hpp_pingting: '娉婷',
+                            hpp_pingting_info: '出牌阶段开始时，你可以至多选择以下选项中的两项：⒈你使用的第一张牌无距离限制。⒉你使用的第二张牌返还到你的手牌。⒊你使用的第三张牌结算后立即摸两张牌。⒋你使用的第四张牌额外执行1次效果。',
+                            hpp_yizheng: '移筝',
+                            hpp_yizheng_info: '你的出牌阶段结束时，你可至多选择以下选项中的至多一项：⒈移动场上的一张武器牌。⒉移动场上的一张坐骑牌。⒊移动场上的一张防具牌。若本回合你移动了一张牌：回复1点体力；两张牌：直到你的下回合开始，你失去一张牌时立即摸一张牌。',
                             hpp_shen_dianwei: '欢杀神典韦',
                             hpp_shenwei: '神卫',
                             hpp_shenwei_info: '回合开始时，你可以选择一名角色获得“卫”标记（当你的体力值为1时，改为至多两名）。该角色受到伤害时可以移除标记，然后本次伤害由你承受；每名角色只能拥有一个“卫”标记。',
@@ -24162,7 +25203,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_huoxin: '惑心',
                             hpp_huoxin_info: '出牌阶段限一次，你可以弃置一张牌并令两名有手牌的角色拼点，然后你可以声明1种花色，令没赢的角色交给你对应花色的所有牌或获得1个“魅惑”标记，有“魅惑”标记的角色不能使用和打出对应花色的牌。拥有“魅惑”标记的角色回合结束时，移除“魅惑”标记。',
                             hpp_shen_ganning: '欢杀神甘宁',
+                            hpp_poxi: '魄袭',
+                            hpp_poxi_info: '出牌阶段限一次，你可以观看一名其他角色的手牌，然后你可以弃置你与其手里共计三张不同花色的牌。若如此做，根据此次弃置你的牌数量执行以下效果：没有，体力上限减1；两张，回复1点体力并摸一张牌；三张，摸三张牌。',
                             hpp_shen_guanyu: '欢杀神关羽',
+                            hpp_wushen: '武神',
+                            hpp_wushen_info: '你的红桃手牌可以视为【杀】；你使用红桃【杀】无距离限制且伤害+1。',
+                            hpp_wuhun: '武魂',
+                            hpp_wuhun_info: '锁定技，当你受到1点伤害后，你令伤害来源获得1枚“梦魇”标记；当你脱离濒死状态或阵亡时，你令拥有最多“梦魇”标记的一名其他角色进行判定，若结果不为【桃】或【桃园结义】，则该角色流失5点体力。',
                             hpp_shen_guojia: '欢杀神郭嘉',
                             hpp_gjtianyi: '天翊',
                             hpp_gjtianyi_info: '觉醒技，准备阶段，若全场角色在本局游戏中均受到过伤害，你加2点体力上限，回复1点体力，然后令一名角色获得“佐幸”。',
@@ -24179,6 +25226,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shenzhen_info: '回合开始时，你可以弃置X枚“药”标记，然后选择一项：1.令X名角色各回复1点体力；2.令X名角色各失去1点体力。',
                             hpp_shen_jiangwei: '欢杀神姜维',
                             hpp_shen_liubei: '欢杀神刘备',
+                            hpp_longnu: '龙怒',
+                            hpp_longnu_info: '锁定技，出牌阶段开始时选择一项：1.失去1点体力并摸两张牌，然后本回合你的红色手牌均视为火【杀】且无距离限制；2.你减1点体力上限，然后本回合你的黑色手牌均视为雷【杀】且无次数限制。',
+                            hpp_jieying: '结营',
+                            hpp_jieying_info: '锁定技，你始终处于横置状态，受到伤害时摸一张牌；已横置的角色手牌上限+2；结束阶段，你可以横置一名其他角色。',
                             hpp_shen_luxun: '欢杀神陆逊',
                             hpp_junlue: '军略',
                             hpp_junlue_info: '锁定技，当你受到或造成1点伤害后，你获得一个“军略"标记。',
@@ -24212,7 +25263,21 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jilve_wansha_info: '锁定技，你的回合内，只有你才能使用【桃】。',
                             hpp_shen_sunce: '欢杀神孙策',
                             hpp_shen_sunquan: '欢杀神孙权',
+                            hpp_quanxue: '劝学',
+                            hpp_quanxue_info: '出牌阶段开始时，你可以选择至多两名其他角色各获得1个“学”；拥有“学”的角色回合开始时移除标记并选择一项：1.出牌阶段无法对其他角色使用牌；2.失去1点体力。',
+                            hpp_shehu: '射虎',
+                            hpp_shehu_info: '锁定技，当你对有“学”的角色使用杀时，弃置其一张手牌。',
+                            hpp_dingli: '鼎立',
+                            hpp_dingli_info: '每轮限一次，当其他角色移除学时，若其体力值大于等于你，你可以回复1点体力；若其体力值小于你，你可以摸X张牌（X为你与其体力值的差，且至多为2）。',
                             hpp_shen_taishici: '欢杀神太史慈',
+                            hpp_dulie: '笃烈',
+                            hpp_dulie_info: '锁定技，当你成为其他角色使用【杀】的目标时，你进行判定：若结果为红桃，取消之。你首次进入濒死状态时，若场上存在“围”标记，你将体力回复至X点（X为场上围标记的数目）。',
+                            hpp_chongwei: '重围',
+                            hpp_chongwei_info: '游戏开始时，令所有其他角色获得“围”标记。回合开始时，你令所有有“围”标记的角色将“围”标记移动到下家角色（若你获得“围”标记，则直接交给下家）。有“围”的角色受到伤害后，弃置其“围”标记。有“围”的角色回合开始时，你可以选择一项：⒈弃置一张手牌，对其造成1点伤害；⒉若其体力值不大于你，获得其一张手牌。若如此做，直到本回合结束，你视为在其攻击范围内。',
+                            hpp_powei: '破围',
+                            hpp_powei_info: '觉醒技，任意角色回合结束时，若场上没有“围”标记，你获得技能“神著”，并摸X张牌（X为本轮中被移除的“围”标记数）。',
+                            hpp_shenzhu: '神著',
+                            hpp_shenzhu_info: '锁定技，回合开始时摸一张【杀】，你使用非转化和非虚拟【杀】结算结束后，你须选择一项执行：1.摸一张牌，然后本回合可以额外使用一张【杀】；2.摸三张牌，然后本回合不能再使用【杀】。',
                             hpp_shen_xunyu: '欢杀神荀彧',
                             hpp_shen_zhangfei: '欢杀神张飞',
                             hpp_shen_zhangjiao: '欢杀神张角',
