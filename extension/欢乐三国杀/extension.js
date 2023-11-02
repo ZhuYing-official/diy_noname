@@ -456,7 +456,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 xian_sp: ['hpp_sp_jiangwei', 'hpp_sp_huangyueying', 'hpp_sp_taishici', 'hpp_sp_machao', 'hpp_sp_daqiao', 'hpp_sp_zhangfei', 'hpp_sp_zhaoyun', 'hpp_sp_sunshangxiang', 'hpp_sp_caiwenji', 'hpp_sp_xiaoqiao', 'hpp_sp_diaochan'],
                                 xian_sp2: ['hpp_sp_pangtong', 'hpp_sp_pangde', 'hpp_sp_menghuo', 'hpp_sp_jiaxu', 'hpp_sp_zhenji', 'hpp_sp_guanyu', 'hpp_sp_caoren', 'hpp_sp_zhangliao', 'hpp_sp_zhanghe'],
                                 xian_jin: ['hpp_guansuo', 'hpp_baosanniang', 'hpp_wenyang', 'hpp_liuzan', 'hpp_guozhao', 'hpp_fanyufeng', 'hpp_panshu', 'hpp_lvlingqi', 'hpp_zhangchangpu', 'hpp_zhangqiying', 'hpp_puyuan', 'hpp_xushao'],
-                                xian_xiu: ['hpp_yangwan', 'hpp_zhouyi', 'hpp_sunyi', 'hpp_fengyu', 'hpp_tenggongzhu', 'hpp_zhangxuan'],
+                                xian_xiu: ['hpp_yangwan', 'hpp_zhouyi', 'hpp_sunyi', 'hpp_fengyu', 'hpp_tenggongzhu', 'hpp_zhangxuan', 'hpp_luotong'],
                                 xian_miao: ['hpp_miao_caiwenji', 'hpp_miao_diaochan', 'hpp_miao_caifuren', 'hpp_miao_zhangxingcai', 'hpp_miao_zhurong', 'hpp_miao_huangyueying', 'hpp_miao_daqiao', 'hpp_miao_xiaoqiao', 'hpp_miao_sunshangxiang', 'hpp_miao_zhenji', 'hpp_miao_zhangchunhua', 'hpp_miao_wangyi'],
                                 shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia', 'hpp_shen_xunyu'],
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei', 'hpp_shen_zhangfei', 'hpp_shen_jiangwei'],
@@ -872,7 +872,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢杀祖茂
                             hpp_zumao: ['male', 'wu', 4, ['hpp_yinbing', 'hpp_juedi'], []],
                             // 欢杀左慈
-                            hpp_zuoci: ['male', 'qun', 3, ['hpp_shendao', 'hpp_xinsheng'], ['die_audio']],
+                            hpp_zuoci: ['male', 'qun', 3, ['hpp_shendao', 'hpp_xinsheng'], []],
 
                             // SP
                             // 欢杀SP蔡文姬
@@ -6015,6 +6015,29 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 usable: 1,
                                 content: function () {
                                     'step 0'
+                                    targets.forEach(target => {
+                                        target.gainMaxHp();
+                                        target.recover();
+                                    });
+                                    player.when('phaseBegin').vars({ targets: targets }).then(() => targets.forEach(target => target.loseMaxHp()));
+                                    'step 1'
+                                    if (targets.length > 1) player.chooseToDiscard(targets.length - 1, 'he', true);
+                                },
+                                ai: {
+                                    order: 1,
+                                    result: { target: 1 },
+                                },
+                            },
+                            old_hpp_qingnang: {
+                                audio: 'qingnang',
+                                enable: 'phaseUse',
+                                filterTarget: true,
+                                selectTarget: [1, Infinity],
+                                multitarget: true,
+                                multiline: true,
+                                usable: 1,
+                                content: function () {
+                                    'step 0'
                                     player.addSkill('hpp_qingnang_lose');
                                     for (var target of targets.sortBySeat(player)) {
                                         target.gainMaxHp();
@@ -9062,11 +9085,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 trigger: { global: 'useCardAfter', player: 'damageBegin3' },
                                 filter: function (event, player) {
                                     if (!event.card || event.card.name != 'sha') return false;
-                                    if (event.name == 'damage') return typeof get.number(event.card) == 'number' && ((_status.connectMode && player.countCards('he')) || player.getDiscardableCards(player, 'he').some(card => get.number(card, player) >= get.number(event.card)));
-                                    if (!event.cards.filterInD('d').length || event.player == player) return false;
+                                    if (event.name == 'damage') return typeof get.number(event.card) == 'number' && ((_status.connectMode && player.countCards('he')) || player.getDiscardableCards(player, 'he').some(card => {
+                                        if (typeof get.number(card, player) != 'number') return false;
+                                        return get.number(card, player) >= get.number(event.card);
+                                    }));
+                                    if (!event.cards || !event.cards.filterInD().length || event.player == player) return false;
                                     var evt = event.getParent('phaseUse');
                                     return evt && evt.player == event.player && event.player.getHistory('useCard', function (evt2) {
-                                        return evt2.getParent('phaseUse') == evt;
+                                        return evt2.card.name == 'sha' && evt2.getParent('phaseUse') == evt;
                                     }).indexOf(event) == 0;
                                 },
                                 direct: true,
@@ -9080,14 +9106,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             return get.number(card, player) >= _status.event.num;
                                         }).set('ai', function (card) {
                                             var player = _status.event.player;
-                                            return player.hp * player.hp - get.effect(card);
+                                            return player.hp * player.hp - get.value(card);
                                         }).set('num', num).logSkill = 'hpp_yongjue';
                                     }
                                     'step 1'
                                     if (result.bool) {
                                         if (trigger.name == 'useCard') {
                                             player.logSkill('hpp_yongjue');
-                                            player.gain(trigger.cards.filterInD('d'));
+                                            player.gain(trigger.cards.filterInD(), 'gain2');
                                         }
                                         else trigger.cancel();
                                     }
@@ -13641,6 +13667,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 complexCard: true,
                                 complexSelect: true,
                                 check: function (card) {
+                                    var player = _status.event.player;
                                     if (!ui.selected.cards.some(cardx => get.suit(card, player) == get.suit(cardx, player))) return 8 - get.value(card);
                                     return 0;
                                 },
@@ -13933,51 +13960,39 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guhuo: {
                                 audio: 'guhuo_guess',
                                 trigger: { player: 'useCardAfter' },
-                                frequent: true,
                                 filter: function (event, player) {
-                                    var bool = game.hasPlayer(function (current) {
-                                        return current.getHistory('damage', function (evt) {
-                                            return evt.card && evt.card == event.card;
-                                        }).length;
-                                    });
+                                    var bool = player.getHistory('sourceDamage', function (evt) {
+                                        return evt.card && evt.card == event.card;
+                                    }).length;
                                     if (bool && player.hasSkill('hpp_guhuo_silent')) return false;
                                     if (get.type(event.card) != 'trick' && event.card.name != 'sha') return false;
-                                    if (!get.tag(event.card, 'damage')) return false;
-                                    return true;
+                                    return get.tag(event.card, 'damage');
                                 },
                                 forced: true,
                                 content: function () {
-                                    var bool = game.hasPlayer(function (current) {
-                                        return current.getHistory('damage', function (evt) {
-                                            return evt.card && evt.card == trigger.card;
-                                        }).length;
-                                    }), cards = trigger.cards.filterInD();
-                                    if (!bool && cards.length) {
-                                        player.addTempSkill('hpp_guhuo_card');
-                                        game.cardsGotoSpecial(cards);
-                                        player.markAuto('hpp_guhuo_card', [cards]);
-                                        game.log(player, '将', trigger.cards, '移出了游戏');
+                                    'step 0'
+                                    var bool = player.getHistory('sourceDamage', function (evt) {
+                                        return evt.card && evt.card == trigger.card;
+                                    }).length, cards = trigger.cards.filterInD();
+                                    if (bool) player.addTempSkill('hpp_guhuo_silent');
+                                    else if (cards.length) {
+                                        player.addTempSkill('hpp_guhuo_card', 'phaseEnd');
+                                        player.addToExpansion(cards, 'gain2').gaintag.add('hpp_guhuo_card');
                                     }
-                                    else player.addTempSkill('hpp_guhuo_silent');
+                                    'step 1'
                                     player.draw();
                                 },
                                 subSkill: {
                                     silent: { charlotte: true },
                                     card: {
                                         charlotte: true,
-                                        onremove: true,
-                                        audio: 'guhuo_guess',
-                                        trigger: { global: 'phaseEnd' },
-                                        forced: true,
-                                        content: function () {
-                                            'step 0'
-                                            var cards = player.getStorage('hpp_guhuo_card');
-                                            player.unmarkSkill('hpp_guhuo_card', [cards]);
-                                            player.gain(cards);
-                                            player.$gain2(cards, false);
-                                            game.log(cards, '重新加入游戏');
-                                            'step 1'
-                                            player.removeSkill('hpp_guhuo_card');
+                                        intro: {
+                                            content: 'expansion',
+                                            markcount: 'expansion',
+                                        },
+                                        onremove: function (player, skill) {
+                                            var cards = player.getExpansions(skill);
+                                            if (cards.length) player.gain(cards, 'gain2');
                                         },
                                     },
                                 },
@@ -18446,7 +18461,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             'step 0'
                                             if (player.getExpansions('hpp_zhouxuan').length) {
                                                 player.logSkill('hpp_zhouxuan');
-                                                var bool = player.isMaxHandcard(true);
+                                                var bool = (!player.isMaxHandcard(true));
                                                 player.draw(bool ? player.getExpansions('hpp_zhouxuan').length : 1);
                                                 player.loseToDiscardpile(player.getExpansions('hpp_zhouxuan').randomGets(bool && player.getExpansions('hpp_zhouxuan').length > 1 ? 2 : 1));
                                                 event.finish();
@@ -18465,11 +18480,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         onremove: true,
                                         trigger: { player: 'useCardAfter' },
                                         filter: function (event, player) {
-                                            game.log(event.cards.filterInD('oej').length)
-                                            game.log(player.getStorage('hpp_zhouxuan_use2'))
-                                            game.log(event.cards)
-                                            game.log(player.getStorage('hpp_zhouxuan_use2').includes(event.cards))
-                                            return event.cards.filterInD('oej').length && player.getStorage('hpp_zhouxuan_use2').includes(event.cards);
+                                            return event.cards.filterInD('oej').length && player.getStorage('hpp_zhouxuan_use2').includes(event.card);
                                         },
                                         forced: true,
                                         popup: false,
@@ -19521,6 +19532,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 filter: function (event, player) {
                                     return !player.hasSkill('hpp_doumao') && lib.skill.sblijian.filter(event, player);
                                 },
+                                usable: 1,
                                 group: 'hpp_miaolijian_lijian',
                                 subSkill: {
                                     lijian: {
@@ -19529,6 +19541,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         filter: function (event, player) {
                                             return player.hasSkill('hpp_doumao') && lib.skill.sblijian.filter(event, player);
                                         },
+                                        usable: 1,
                                         selectCard: [0, Infinity],
                                         selectTarget: () => ui.selected.cards.length,
                                         filterOk: function () {
@@ -20541,9 +20554,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         var player = _status.event.player, choice = [];
                                         for (var i of ['equip2', 'equip6', 'equip1']) {
                                             if (game.hasPlayer(function (target) {
+                                                if (current == player || get.attitude(player, target) >= 0) return false;
                                                 return target.countCards('e', function (card) {
                                                     return game.hasPlayer(function (current) {
-                                                        return current != target && current.canEquip(card) && get.subtype(card) == type && (get.attitude(player, target) * get.value(card, target) > 0 && get.attitude(player, current) * get.value(card, current) > 0);
+                                                        return current.canEquip(card) && get.subtype(card) == i && get.value(card, target) > 0 && get.attitude(player, current) > 0 && get.value(card, current) > 0;
                                                     });
                                                 });
                                             }) && !choice.includes(['equip3', 'equip4'].includes(i) ? 'equip6' : i)) choice.push(['equip3', 'equip4'].includes(i) ? 'equip6' : i);
@@ -21027,11 +21041,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 group: 'hpp_wushen_wusheng',
                                 audio: 'wushen',
-                                trigger: { source: 'damageBefore' },
+                                trigger: { source: 'damageBegin1' },
                                 forced: true,
                                 locked: false,
                                 filter: function (event, player) {
-                                    return event.card.name == 'sha' && get.suit(event.card) == 'heart';
+                                    return event.card && event.card.name == 'sha' && get.suit(event.card) == 'heart';
                                 },
                                 content: function () {
                                     trigger.num++;
@@ -22294,6 +22308,34 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 神太史慈
                             hpp_dulie: {
                                 audio: 'dulie',
+                                inherit: 'dulie',
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha';
+                                },
+                                group: 'hpp_dulie_dying',
+                                subSkill: {
+                                    dying: {
+                                        audio: 'tspowei2',
+                                        trigger: { player: 'dying' },
+                                        filter: function (event, player) {
+                                            return num <= 0 && !player.storage.hpp_dulie_dying;
+                                        },
+                                        skillAnimation: true,
+                                        animationColor: 'fire',
+                                        direct: true,
+                                        content: function () {
+                                            player.storage.hpp_dulie_dying = true;
+                                            var num = game.countPlayer(current => current.hasMark('hpp_dulie'));
+                                            if (num) {
+                                                player.logSkill('hpp_dulie_dying');
+                                                player.recover(num - player.hp);
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                            old_hpp_dulie: {
+                                audio: 'dulie',
                                 group: 'hpp_dulie_dying',
                                 trigger: { target: 'useCardToTarget' },
                                 forced: true,
@@ -22480,17 +22522,16 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_shenzhu: {
-                                audio: 2,
+                                audio: 'shenzhu',
                                 inherit: 'shenzhu',
                                 group: ['hpp_shenzhu_draw'],
                                 subSkill: {
                                     draw: {
+                                        audio: 'dulie',
                                         forced: true,
                                         trigger: { player: 'phaseBegin' },
                                         content: function () {
-                                            var card = get.cardPile(function (card) {
-                                                return card.name == 'sha';
-                                            });
+                                            var card = get.cardPile(card => card.name == 'sha');
                                             if (card) player.draw(card, 'gain2');
                                         },
                                     }
