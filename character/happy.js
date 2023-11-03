@@ -2339,7 +2339,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			hpphuimou: {
-				audio: 2,
+				audio: 1,
 				trigger: { player: ['useCard', 'respond', 'hpp_tianxiangEnd'] },
 				filter: function (event, player) {
 					if (!game.hasPlayer(function (current) {
@@ -2730,6 +2730,164 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							'step 3'
 							if (result.bool) event.goto(1);
 						},
+					},
+				},
+			},
+			hpptuodao: {
+				audio: 2,
+				trigger: { player: ['useCard', 'respond'] },
+				filter: function (event, player) {
+					return event.card.name == 'shan';
+				},
+				forced: true,
+				content: function () {
+					player.addSkill('hpp_tuodao_mark');
+					player.addMark('hpp_tuodao_mark', 1, false);
+					player.when('useCard')
+						.filter((event, player) => event.card.name == 'sha')
+						.then(() => {
+							trigger.baseDamage += player.countMark('hpp_tuodao_mark');
+							player.removeSkill('hpp_tuodao_mark');
+						});
+				},
+				subSkill: {
+					mark: {
+						charlotte: true,
+						onremove: true,
+						intro: { content: '下一张【杀】的伤害基数+#' },
+					},
+				},
+			},
+			hppshenglun: {
+				audio: 1,
+				enable: 'phaseUse',
+				filterTarget: lib.filter.notMe,
+				selectTarget: [1, 2],
+				usable: 1,
+				content: function () {
+					var list = [
+						get.sgn(player.hp - target.hp),
+						get.sgn(player.countCards('h') - target.countCards('h')),
+						get.sgn(player.countCards('e', card => get.subtype(card) == 'equip1') - target.countCards('e', card => get.subtype(card) == 'equip1')),
+						get.sgn(player.countCards('e', card => get.subtype(card) == 'equip2') - target.countCards('e', card => get.subtype(card) == 'equip2')),
+						get.sgn(player.countCards('e', card => ['equip3', 'equip4'].includes(get.subtype(card))) - target.countCards('e', card => ['equip3', 'equip4'].includes(get.subtype(card)))),
+					], num = 0;
+					while (num < 5) {
+						game.log('第' + get.cnNumber(num + 1, true) + '局', list[num] > 0 ? '#g成功' : '#y失败');
+						player.addMark('hpp_shenglun_' + (list[num] > 0 ? 'win' : 'lose'), 1, false);
+						if (player.countMark('hpp_shenglun_win') >= 10 || player.countMark('hpp_shenglun_lose') >= 10) {
+							var next = game.createEvent('hpp_shenglun_result');
+							next.player = player;
+							next.setContent(lib.skill.hpp_shenglun.contentx);
+						}
+						num++;
+					}
+				},
+				ai: {
+					order: 1,
+					result: {
+						target: function (player, target) {
+							var att = get.attitude(player, target);
+							var num = get.sgn(att);
+							var ref = get.recoverEffect(player, player, player);
+							var def = game.filterPlayer.reduce((list, current) => {
+								return list.push(get.damageEffect(current, player, player));
+							}, []).sort((a, b) => b - a)[0];
+							var sum = get.sgn(player.hp - target.hp) + get.sgn(player.countCards('h') - target.countCards('h')) +
+								get.sgn(player.countCards('e', card => get.subtype(card) == 'equip1') - target.countCards('e', card => get.subtype(card) == 'equip1')) +
+								get.sgn(player.countCards('e', card => get.subtype(card) == 'equip2') - target.countCards('e', card => get.subtype(card) == 'equip2')) +
+								get.sgn(player.countCards('e', card => ['equip3', 'equip4'].includes(get.subtype(card))) - target.countCards('e', card => ['equip3', 'equip4'].includes(get.subtype(card))));
+							if (((ref - def) * sum) > 0) return 2 * num;
+							return num;
+						},
+					},
+				},
+				contentx: function () {
+					'step 0'
+					if (player.countMark('hpp_shenglun_win') > player.countMark('hpp_shenglun_lose')) {
+						player.recover();
+						event.goto(2);
+					}
+					else player.chooseTarget('请选择【胜论】的目标', '对一名角色造成1点伤害', true).set('ai', target => get.damageEffect(target, _status.event.player, _status.event.player));
+					'step 1'
+					if (result.bool) {
+						var target = result.targets[0];
+						player.line(target);
+						target.damage();
+					}
+					'step 2'
+					player.logSkill('hpp_yiji');
+					player.draw(2);
+					if (_status.connectMode) game.broadcastAll(function () { _status.noclearcountdown = true });
+					event.given_map = {};
+					event.num = 2;
+					'step 3'
+					player.chooseCardTarget({
+						filterCard: function (card) {
+							return get.itemtype(card) == 'card' && !card.hasGaintag('reyiji_tag');
+						},
+						filterTarget: lib.filter.notMe,
+						selectCard: [1, event.num],
+						prompt: '请选择要分配的卡牌和目标',
+						ai1: function (card) {
+							if (!ui.selected.cards.length) return 1;
+							return 0;
+						},
+						ai2: function (target) {
+							var player = _status.event.player, card = ui.selected.cards[0];
+							var val = target.getUseValue(card);
+							if (val > 0) return val * get.attitude(player, target) * 2;
+							return get.value(card, target) * get.attitude(player, target);
+						},
+					});
+					'step 4'
+					if (result.bool) {
+						var res = result.cards, target = result.targets[0].playerid;
+						player.addGaintag(res, 'reyiji_tag');
+						event.num -= res.length
+						if (!event.given_map[target]) event.given_map[target] = [];
+						event.given_map[target].addArray(res);
+						if (event.num > 0) event.goto(3);
+					}
+					else if (event.num == 2) {
+						if (_status.connectMode) game.broadcastAll(function () { delete _status.noclearcountdown; game.stopCountChoose() });
+						event.goto(6);
+					}
+					'step 5'
+					if (_status.connectMode) game.broadcastAll(function () { delete _status.noclearcountdown; game.stopCountChoose() });
+					var map = [], cards = [];
+					for (var i in event.given_map) {
+						var source = (_status.connectMode ? lib.playerOL : game.playerMap)[i];
+						player.line(source, 'green');
+						map.push([source, event.given_map[i]]);
+						cards.addArray(event.given_map[i]);
+					}
+					game.loseAsync({
+						gain_list: map,
+						player: player,
+						cards: cards,
+						giver: player,
+						animate: 'giveAuto',
+					}).setContent('gaincardMultiple');
+					'step 6'
+					if (player.countMark('hpp_shenglun_win') > player.countMark('hpp_shenglun_lose')) {
+						player.removeMark('hpp_shenglun_win', player.countMark('hpp_shenglun_win'), false);
+					}else{
+						player.removeMark('hpp_shenglun_lose', player.countMark('hpp_shenglun_lose'), false);
+					}
+				},
+				subSkill: {
+					win: {
+						charlotte: true,
+						onremove: true,
+						marktext: '胜',
+						intro: { content: '已胜利#次' },
+					},
+					lose: {
+						charlotte: true,
+						onremove: true,
+						marktext: '败',
+						intro: { content: '已失败#次' },
 					},
 				},
 			},
