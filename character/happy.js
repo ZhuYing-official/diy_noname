@@ -1599,7 +1599,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					if (result.bool) {
 						player.popup('猜对');
 						var card = get.cardPile(function (card) {
-							return get.suit(card, 'club') == 'club';
+							return get.suit(card) == 'club';
 						})
 						if (card) {
 							player.gain(card, 'gain2');
@@ -1619,7 +1619,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						content: function () {
 							var card = get.cardPile(function (card) {
-								return get.suit(card, 'club') == 'club';
+								return get.suit(card) == 'club';
 							})
 							if (card) {
 								player.gain(card, 'gain2');
@@ -2872,7 +2872,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 6'
 					if (player.countMark('hpp_shenglun_win') > player.countMark('hpp_shenglun_lose')) {
 						player.removeMark('hpp_shenglun_win', player.countMark('hpp_shenglun_win'), false);
-					}else{
+					} else {
 						player.removeMark('hpp_shenglun_lose', player.countMark('hpp_shenglun_lose'), false);
 					}
 				},
@@ -4105,8 +4105,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			shen_caozhi: '#r捞德一评级:4.3',
 			shen_dongzhuo: '#r捞德一评级:4.2',
 			shen_lusu: '#r捞德一评级:4.4',
-			hpp_re_luxun:'#b捞德一评级:3.5',
-			hpp_re_lvbu:'#b捞德一评级:3.7',
+			hpp_re_luxun: '#b捞德一评级:3.5',
+			hpp_re_lvbu: '#b捞德一评级:3.7',
 		},
 		translate: {
 			// 崔氏

@@ -58290,7 +58290,37 @@
 			return list;
 		},
 		numOf: (obj, item) => obj.filter(element => element == item).length,
-		connectNickname: () => typeof lib.config.connect_nickname == 'string' ? (lib.config.connect_nickname.slice(0, 12)) : "无名玩家",
+		connectNickname: function () {
+			if (lib.config.connect_nickname == '捞德num') {
+				var week = new Date().getDay();
+				switch (week) {
+					case 0:
+						lib.config.connect_nickname = '捞德日';
+						break;
+					case 1:
+						lib.config.connect_nickname = '捞德一';
+						break;
+					case 2:
+						lib.config.connect_nickname = '捞德二';
+						break;
+					case 3:
+						lib.config.connect_nickname = '捞德三';
+						break;
+					case 4:
+						lib.config.connect_nickname = '捞德四';
+						break;
+					case 5:
+						lib.config.connect_nickname = '捞德五';
+						break;
+					case 6:
+						lib.config.connect_nickname = '捞德六';
+						break;
+					default:
+						lib.config.connect_nickname = '捞德一';
+				}
+			}
+			return typeof lib.config.connect_nickname == 'string' ? (lib.config.connect_nickname.slice(0, 12)) : '无名玩家';
+		},
 		zhinangs: filter => {
 			var list = (_status.connectMode ? lib.configOL : lib.config).zhinang_tricks;
 			if (!list || !list.filter || !list.length) return get.inpile('trick', 'trick').randomGets(3);
