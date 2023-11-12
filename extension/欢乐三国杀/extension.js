@@ -1438,6 +1438,30 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: { basic: { equipValue: 4399 } },
                                 skills: ['hpp_ruyijingubang', 'hpp_ruyijingubang2'],
                             },
+                            hpp_dagongche: {
+                                fullskin: true,
+                                cardimage: 'dagongche',
+                                derivation: 'hpp_zhangfen',
+                                type: 'equip',
+                                subtype: 'equip1',
+                                distance: { attackFrom: -1 },
+                                skills: ['hpp_dagongche_skill'],
+                                cardPrompt: function (card) {
+                                    if (!card.storage) return '出牌阶段开始时，你可以视为使用一张【杀】，且当此【杀】对目标角色造成伤害后，你弃置其一张牌。若此【大攻车】未被强化，则其他角色无法弃置你装备区内的【大攻车】。当此牌离开你的装备区后，销毁之。';
+                                    var str = '出牌阶段开始时，你可以视为使用一张';
+                                    if (card.storage.大攻车选项一) str += '无距离限制且无视防具的';
+                                    str += '【杀】';
+                                    if (card.storage.大攻车选项二) str += ('（此【杀】的目标上限+' + card.storage.大攻车选项二 + '）');
+                                    str += '，且当此【杀】对目标角色造成伤害后，你弃置其';
+                                    var num = 1;
+                                    if (card.storage.大攻车选项三) num += card.storage.大攻车选项三;
+                                    str += get.cnNumber(num);
+                                    str += '张牌。当此牌离开你的装备区后，销毁之。';
+                                    return str;
+                                },
+                                destroy: true,
+                                ai: { basic: { equipValue: 9999999 } },
+                            },
                         },
                         skill: {
                             // 鲍三娘
@@ -2080,7 +2104,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 audio: 'yuanhu',
                                 enable: 'phaseUse',
                                 filter: function (event, player) {
-                                    return player.hasCard({ type: 'equip' }, 'eh');
+                                    return player.hasCard({ type: 'equip' }, 'he');
                                 },
                                 filterCard: { type: 'equip' },
                                 filterTarget: function (card, player, target) {
@@ -2523,7 +2547,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
-                            //曹节
+                            // 曹节
                             hpp_shouxi: {
                                 audio: 'shouxi',
                                 trigger: { target: 'useCardToTargeted' },
@@ -3760,9 +3784,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         return player.getExpansions('hpp_chunlao').length > 0;
                                     },
                                     save: true,
-                                    result: {
-                                        target: 3
-                                    },
+                                    result: { target: 1 },
                                 },
                             },
 
@@ -4600,10 +4622,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     if (result.control == 'hpp_benghuai_hp') player.loseHp();
                                     else player.loseMaxHp();
                                     player.draw();
-                                },
-                                ai: {
-                                    threaten: 0.7,
-                                    neg: true,
                                 },
                             },
                             hpp_baonue: {
@@ -5653,7 +5671,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     hpp_sp_guanyu: 'wusheng_jsp_guanyu',
                                     hpp_guansuo: 'wusheng_guansuo',
                                 },
-                                trigger: { player: 'phaseZhunbeiBegin' },
+                                trigger: { player: 'phaseBegin' },
                                 forced: true,
                                 locked: false,
                                 content: function () {
@@ -6047,7 +6065,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     threaten: 0.6,
                                 },
                             },
-                            bug_hpp_shenglun: {
+                            hpp_shenglun: {
                                 audio: 'hppshenglun',
                                 enable: 'phaseUse',
                                 filterTarget: lib.filter.notMe,
@@ -6098,9 +6116,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             var att = get.attitude(player, target);
                                             var num = get.sgn(att);
                                             var ref = get.recoverEffect(player, player, player);
-                                            var def = game.filterPlayer.reduce((list, current) => {
-                                                return list.push(get.damageEffect(current, player, player));
-                                            }, []).sort((a, b) => b - a)[0];
+                                            var def = get.damageEffect(target, player, player);
                                             var sum = get.sgn(player.hp - target.hp) + get.sgn(player.countCards('h') - target.countCards('h')) +
                                                 get.sgn(player.countCards('e', card => get.subtype(card) == 'equip1') - target.countCards('e', card => get.subtype(card) == 'equip1')) +
                                                 get.sgn(player.countCards('e', card => get.subtype(card) == 'equip2') - target.countCards('e', card => get.subtype(card) == 'equip2')) +
@@ -6112,7 +6128,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 content_yiji: function () {
                                     'step 0'
-                                    player.logSkill('new_reyiji');
+                                    player.logSkill('hpp_yiji');
                                     player.draw(2);
                                     if (_status.connectMode) game.broadcastAll(function () { _status.noclearcountdown = true });
                                     event.given_map = {};
@@ -6120,7 +6136,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     'step 1'
                                     player.chooseCardTarget({
                                         filterCard: function (card) {
-                                            return get.itemtype(card) == 'card' && !card.hasGaintag('reyiji_tag');
+                                            return get.itemtype(card) == 'card' && !card.hasGaintag('hpp_yiji_tag');
                                         },
                                         filterTarget: lib.filter.notMe,
                                         selectCard: [1, event.num],
@@ -6139,7 +6155,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     'step 2'
                                     if (result.bool) {
                                         var res = result.cards, target = result.targets[0].playerid;
-                                        player.addGaintag(res, 'reyiji_tag');
+                                        player.addGaintag(res, 'hpp_yiji_tag');
                                         event.num -= res.length
                                         if (!event.given_map[target]) event.given_map[target] = [];
                                         event.given_map[target].addArray(res);
@@ -6784,7 +6800,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.recover();
                                 },
                                 subSkill: {
-                                    mark: { charlotte: true, onremove: true },
                                     count: {
                                         trigger: { player: 'useCard1' },
                                         filter: function (event, player) {
@@ -6807,7 +6822,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         direct: true,
                                         priority: -15,
                                         content: function () {
-                                            player.addTempSkill('hpp_yangwei_mark', 'phaseUseAfter');
+                                            if (!player.storage.miniyangwei_mark) {
+                                                player.when('phaseUseAfter').then(() => delete player.storage.miniyangwei_mark);
+                                            }
                                             player.storage.hpp_yangwei_mark = trigger.card;
                                         },
                                     },
@@ -9728,18 +9745,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.awakenSkill('hpp_cunsi');
                                     target.addSkillLog('hpp_yongjue');
                                     'step 1'
+                                    player.storage.hpp_guixiu = true;
+                                    'step 2'
                                     var num = player.hp;
                                     player.loseHp(num);
                                     target.draw(num + 1);
-                                    'step 2'
-                                    player.storage.hpp_guixiu = true;
                                 },
                                 ai: {
                                     order: 4,
                                     expose: 0.5,
                                     result: {
                                         target: function (player, target) {
-                                            if (!player.countCards('hs', { name: ['tao', 'jiu'] })) return 0;
+                                            // if (!player.countCards('hs', { name: ['tao', 'jiu'] })) return 0;
                                             return lib.skill.cunsi.ai.result.target(player, target);
                                         },
                                     },
@@ -10461,9 +10478,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: {
                                     expose: 0.3,
                                     order: 10,
-                                    result: {
-                                        target: 5,
-                                    },
+                                    
+                                    result: { target: 1 },
                                 },
                             },
                             hpp_zhiba3: { charlotte: true },
@@ -13143,9 +13159,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             var next = choiceList.add(str);
                                             next.firstChild.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', ui.click.button);
                                             next.firstChild.link = i;
-                                            for (var j in lib.element.button) {
-                                                next[j] = lib.element.button[j];
-                                            }
+                                            //for(var j in lib.element.button){
+                                            //next[j]=lib.element.button[j];
+                                            //}
+                                            Object.setPrototypeOf(next, lib.element.Button.prototype);
                                             choiceList.buttons.add(next.firstChild);
                                         }
                                         return choiceList;
@@ -13179,21 +13196,33 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                                     return target == player;
                                                 },
                                             ][links[0]],
+                                            selectTarget: [1, -1][links[0]],
                                             index: links[0],
-                                            filterCard: true,
-                                            selectCard: [2, 0][links[0]],
+                                            filterCard: [
+                                                function (card, player) {
+                                                    return true;
+                                                },
+                                                function (card, player) {
+                                                    return false;
+                                                },
+                                            ][links[0]],
+                                            selectCard: [2, -1][links[0]],
                                             check: function (card) {
                                                 return 7 - get.value(card);
                                             },
-                                            position: 'h',
+                                            position: 'he',
                                             content: function () {
+                                                player.addTempSkill('miniquhu' + lib.skill[event.name].index)
                                                 target.damage('nocard');
                                                 if (target == player) player.draw();
                                             },
                                             ai: {
                                                 order: 7,
-                                                tag: { damage: 1.5 },
-                                                result: { target: -1 },
+                                                result: {
+                                                    target: function (player, target) {
+                                                        return get.damageEffect(target, player, player) * get.sgn(get.attitude(player, target));
+                                                    },
+                                                },
                                             },
                                         }
                                     },
@@ -15188,6 +15217,146 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 张郃
                             hpp_qiaobian: {
                                 audio: 'qiaobian',
+                                trigger: { player: ['phaseJudgeBefore', 'phaseDrawBefore', 'phaseUseBefore', 'phaseDiscardBefore', 'phaseJieshuBegin'] },
+                                filter: function (event, player) {
+                                    if (event.name == 'phaseJieshu') return player.getHistory('skipped').length >= 3;
+                                    return player.countCards('h') > 0;
+                                },
+                                direct: true,
+                                preHidden: true,
+                                content: function () {
+                                    'step 0'
+                                    if (trigger.name == 'phaseJieshu') {
+                                        player.logSkill('hpp_qiaobian');
+                                        player.draw(2);
+                                        event.finish();
+                                        return;
+                                    }
+                                    var check, str = '弃置一张手牌并跳过';
+                                    str += ['判定', '摸牌', '出牌', '弃牌'][lib.skill.hpp_qiaobian.trigger.player.indexOf(event.triggername)];
+                                    str += '阶段';
+                                    if (trigger.name == 'phaseDraw') str += '，然后可以获得至多两名角色各一张手牌';
+                                    if (trigger.name == 'phaseUse') str += '，然后可以移动场上的一张牌';
+                                    switch (trigger.name) {
+                                        case 'phaseJudge':
+                                            var list = player.getHistory('skipped'), num = list.length + 1;
+                                            if (player.countCards('j')) check = true;
+                                            if (num >= 3) check = false;
+                                            else {
+                                                if (player.countCards('h') > 1) {
+                                                    if (!list.includes('phaseDraw')) {
+                                                        var check1 = function () {
+                                                            var i, num = 0, num2 = 0, players = game.filterPlayer();
+                                                            for (i = 0; i < players.length; i++) {
+                                                                if (player != players[i] && players[i].countCards('h')) {
+                                                                    var att = get.attitude(player, players[i]);
+                                                                    if (att <= 0) num++;
+                                                                    if (att < 0) num2++;
+                                                                }
+                                                            }
+                                                            return num >= 2 && num2 > 0;
+                                                        };
+                                                        if (check1()) num++;
+                                                    }
+                                                    if (!list.includes('phaseUse')) {
+                                                        var check;
+                                                        if (!player.canMoveCard(true)) check = false;
+                                                        else {
+                                                            check = game.hasPlayer(function (current) {
+                                                                return get.attitude(player, current) > 0 && current.countCards('j');
+                                                            });
+                                                            if (!check) {
+                                                                if (player.countCards('h') > player.hp + 1) check = false;
+                                                                else if (player.countCards('h', { name: ['wuzhong'] })) check = false;
+                                                                else check = true;
+                                                            }
+                                                        }
+                                                        if (check) num++;
+                                                    }
+                                                    if (num == 2 && !list.includes('phaseDiscard')) num++;
+                                                    if (num == 3) check = true;
+                                                }
+                                            }
+                                            break;
+                                        case 'phaseDraw':
+                                            var i, num = 0, num2 = 0, players = game.filterPlayer();
+                                            for (i = 0; i < players.length; i++) {
+                                                if (player != players[i] && players[i].countCards('h')) {
+                                                    var att = get.attitude(player, players[i]);
+                                                    if (att <= 0) {
+                                                        num++;
+                                                    }
+                                                    if (att < 0) {
+                                                        num2++;
+                                                    }
+                                                }
+                                            }
+                                            check = (num >= 2 && num2 > 0);
+                                            break;
+                                        case 'phaseUse':
+                                            if (!player.canMoveCard(true)) {
+                                                check = false;
+                                            }
+                                            else {
+                                                check = game.hasPlayer(function (current) {
+                                                    return get.attitude(player, current) > 0 && current.countCards('j');
+                                                });
+                                                if (!check) {
+                                                    if (player.countCards('h') > player.hp + 1) {
+                                                        check = false;
+                                                    }
+                                                    else if (player.countCards('h', { name: ['wuzhong'] })) {
+                                                        check = false;
+                                                    }
+                                                    else {
+                                                        check = true;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 'phaseDiscard':
+                                            check = (player.needsToDiscard() || player.getHistory('skipped').length == 2);
+                                            break;
+                                    }
+                                    player.chooseToDiscard(get.prompt('hpp_qiaobian'), str, lib.filter.cardDiscardable).set('ai', card => {
+                                        if (!_status.event.check) return -1;
+                                        return 7 - get.value(card);
+                                    }).set('check', check).set('logSkill', 'hpp_qiaobian').setHiddenSkill('hpp_qiaobian');
+                                    'step 1'
+                                    if (result.bool) {
+                                        trigger.cancel();
+                                        game.log(player, '跳过了', '#y' + ['判定', '摸牌', '出牌', '弃牌'][lib.skill.hpp_qiaobian.trigger.player.indexOf(event.triggername)] + '阶段');
+                                        if (trigger.name == 'phaseUse') {
+                                            if (player.canMoveCard()) player.moveCard();
+                                            event.finish();
+                                        }
+                                        else if (trigger.name == 'phaseDraw') {
+                                            player.chooseTarget([1, 2], '获得至多两名角色各一张手牌', function (card, player, target) {
+                                                return target != player && target.countCards('h');
+                                            }).set('ai', function (target) {
+                                                return 1 - get.attitude(_status.event.player, target);
+                                            });
+                                        }
+                                        else event.finish();
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    if (result.bool) {
+                                        result.targets.sortBySeat();
+                                        player.line(result.targets, 'green');
+                                        event.targets = result.targets;
+                                        if (!event.targets.length) event.finish();
+                                    }
+                                    else event.finish();
+                                    'step 3'
+                                    player.gainMultiple(event.targets);
+                                    'step 4'
+                                    game.delay();
+                                },
+                                ai: { threaten: 3 },
+                            },
+                            old_hpp_qiaobian: {
+                                audio: 'qiaobian',
                                 group: ['hpp_qiaobian1', 'qiaobian2', 'qiaobian3', 'hpp_qiaobian4'],
                                 trigger: { player: 'phaseEnd' },
                                 filter: function (event, player) {
@@ -15199,7 +15368,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.draw(2);
                                 },
                             },
-                            hpp_qiaobian1: {
+                            old_hpp_qiaobian1: {
                                 trigger: { player: 'phaseJudgeBefore' },
                                 filter: function (event, player) {
                                     return player.countCards('h');
@@ -15250,7 +15419,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     if (result.bool) trigger.cancel();
                                 },
                             },
-                            hpp_qiaobian4: {
+                            old_hpp_qiaobian4: {
                                 trigger: { player: 'phaseDiscardBefore' },
                                 filter: function (event, player) {
                                     return player.countCards('h');
@@ -18402,7 +18571,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // SP曹仁
                             hpp_weikui: {
-                                audio: 'kuiwei',
+                                audio: 'weikui',
                                 enable: 'phaseUse',
                                 filterTarget: function (card, player, target) {
                                     return target != player && target.countCards('h');
@@ -18413,25 +18582,17 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.loseHp();
                                     player.viewHandcards(target);
                                     'step 1'
-                                    if (target.countCards('h', { name: 'shan' })) {
-                                        player.chooseButton(['伪溃：选择获得一张牌', target.getCards()], true);
-                                    }
+                                    if (target.countCards('h', { name: 'shan' })) player.gainPlayerCard(target, 'visible', true, 'h').set('ai', function (button) {
+                                        return get.value(button.link, _status.event.target);
+                                    });
                                     else {
-                                        player.discardPlayerCard(target, 'visible', true, 'h').set('ai', function (button) {
-                                            return get.value(button.link, _status.event.target);
-                                        });
                                         if (player.canUse({ name: 'sha', isCard: true }, target, false)) player.useCard({ name: 'sha', isCard: true }, target, false);
                                         player.storage.weikui2 = target;
                                         player.addTempSkill('weikui2');
                                         event.finish();
                                     }
                                     'step 2'
-                                    if (result.bool) {
-                                        var card = result.links[0];
-                                        if (lib.filter.canBeGained(card, player, target)) player.gain(card, target, 'giveAuto', 'bySelf');
-                                        else game.log('但', card, '不能被', player, '获得！');
-                                        player.recover();
-                                    }
+                                    player.recover();
                                 },
                                 ai: {
                                     order: 8,
@@ -18447,7 +18608,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_lizhan: {
-                                audio: 'yanzheng',
+                                audio: 'lizhan',
                                 trigger: { player: 'phaseJieshuBegin' },
                                 filter: function (event, player) {
                                     return game.hasPlayer(current => current.isDamaged());
@@ -18465,12 +18626,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     if (result.bool) {
                                         var targets = result.targets.sortBySeat();
                                         event.targets = targets;
-                                        player.logSkill('lizhan', targets);
+                                        player.logSkill('hpp_lizhan', targets);
                                         game.asyncDraw(targets);
                                     }
                                     else event.finish();
                                     'step 2'
-                                    var num = targets.filter(target => target.countCards('h') == target.getHp());
+                                    var num = targets.filter(target => target.countCards('h') == target.getHp()).length;
                                     if (num) player.draw(num);
                                     else game.delayx();
                                 },
@@ -18483,11 +18644,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 enable: 'phaseUse',
                                 filter: function (event, player) {
                                     return player.countCards('he', { suit: 'diamond' }) && game.hasPlayer(function (target) {
-                                        return target.canAddJudge({ name: 'hpp_yanxiao_card' }) && !target.hasJudge('hpp_yanxiao_card');
+                                        return target.canAddJudge({ name: 'hpp_yanxiao_card' });
                                     });
                                 },
                                 filterTarget: function (card, player, target) {
-                                    return target.canAddJudge({ name: 'hpp_yanxiao_card' }) && !target.hasJudge('hpp_yanxiao_card');
+                                    return target.canAddJudge({ name: 'hpp_yanxiao_card' });
                                 },
                                 filterCard: { suit: 'diamond' },
                                 check: function (card) {
@@ -18635,7 +18796,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     hpp_sp_guanyu: 'wusheng_jsp_guanyu',
                                     hpp_guansuo: 'wusheng_guansuo',
                                 },
-                                trigger: { player: 'phaseZhunbeiBegin' },
+                                trigger: { player: 'phaseBegin' },
                                 forced: true,
                                 locked: false,
                                 content: function () {
@@ -19652,87 +19813,67 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 audio: 'mubing',
                                 enable: 'phaseUse',
                                 usable: 1,
-                                content: function () {
-                                    'step 0'
-                                    event.cards = game.cardsGotoOrdering(get.cards(4)).cards;
-                                    game.log(player, '展示了', event.cards);
-                                    event.videoId = lib.status.videoId++;
-                                    game.broadcastAll(function (player, id, cards) {
-                                        var str = get.translation(player) + '发动了【募兵】';
-                                        var dialog = ui.create.dialog(str, cards);
-                                        dialog.videoId = id;
-                                    }, player, event.videoId, event.cards);
-                                    game.addVideo('showCards', player, [get.translation(player) + '发动了【募兵】', get.cardsInfo(event.cards)]);
-                                    game.delay(2);
-                                    'step 1'
-                                    var numa = 0;
-                                    cards.sort(function (a, b) {
-                                        return a.number - b.number;
-                                    });
-                                    for (var i of cards) {
-                                        if (get.value(i, player) > 0) numa += get.number(i);
+                                content: function* (event, map) {
+                                    var player = map.player;
+                                    var cards = get.cards(4, true);
+                                    var dialog = ['募兵：请选择你要获得的牌和弃置的牌'];
+                                    dialog.push('<div class="text center">牌堆顶（已选点数和：0）</div>');
+                                        dialog.push(cards);
+                                    if (player.countCards('h') > 0) {
+                                        dialog.push('<div class="text center">手牌（已选点数和：0）</div>');
+                                        dialog.push(player.getCards('h'));
                                     }
-                                    player.chooseToDiscard([1, Infinity], 'h').set('ai', function (card) {
+                                    var result = yield player.chooseButton(dialog).set('filterButton', button => {
+                                        return !get.owner(button.link) || lib.filter.cardDiscardable(button.link, _status.event.player);
+                                    }).set('ai', button => {
                                         var player = _status.event.player;
-                                        var numa = _status.event.numa;
+                                        if (get.owner(button.link)) {
+                                            var sum = _status.event.sum;
                                         var num = 0;
-                                        for (var i of ui.selected.cards) {
-                                            num += i.number;
+                                        for (var i of ui.selected.buttons) {
+                                            if (get.owner(i.link)) num += i.number;
                                         }
-                                        if (num >= numa) return 0;
-                                        if (card.number + num >= numa) return 15 - get.value(card);
-                                        if (!ui.selected.cards.length) {
+                                        if (num >= sum) return 0;
+                                        if (button.link.number + num >= sum) return 15 - get.value(button.link);
+                                        if (!ui.selected.buttons.some(but => get.owner(but.link))) {
                                             var min = _status.event.min;
-                                            if (card.number < min && !player.countCards('h', function (xcard) {
-                                                return xcard != card && card.number + xcard.number > min;
+                                            if (button.link.number < min && !player.countCards('h', function (card) {
+                                                return card != button.link && button.link.number + card.number > min;
                                             })) return 0;
-                                            return card.number;
+                                            return button.link.number;
                                         }
-                                        return Math.max(5 - get.value(card), card.number);
-                                    }).set('prompt', false).set('numa', numa).set('min', cards[0].number);
-                                    var func = function (id) {
-                                        var dialog = get.idDialog(id);
-                                        if (dialog) dialog.content.firstChild.innerHTML = '请选择要弃置的牌';
-                                    };
-                                    if (player == game.me) func(event.videoId);
-                                    else if (player.isOnline()) player.send(func, event.videoId);
-                                    'step 2'
-                                    if (!result.bool) { return; }
-                                    var numx = 0;
-                                    for (var i of result.cards) {
-                                        numx += get.number(i);
+                                        return Math.max(5 - get.value(button.link), button.link.number);
                                     }
-                                    event.numx = numx;
-                                    var next = player.chooseButton([0, num]);
-                                    next.set('dialog', event.videoId);
-                                    next.set('filterButton', function (button) {
-                                        var num = 0
-                                        for (var i = 0; i < ui.selected.buttons.length; i++) {
-                                            num += get.number(ui.selected.buttons[i].link);
+                                        return get.value(button.link, player);
+                                    }).set('sum', cards.reduce((num, card) => num += get.value(card, player) > 0 ? get.number(card, false) : 0, 0)).set('min', cards.find(card => {
+                                        return !cards.some(cardx => cardx != card && cardx.number < card.number);
+                                    }).number).set('filterOk', () => {
+                                        return ui.selected.buttons.reduce((num, but) => num += but.link.number * (get.owner(but.link) ? 1 : -1), 0) >= 0;
+                                    }).set('selectButton', () => {
+                                        var dialog = get.idDialog(event.videoId);
+                                        if (dialog) {
+                                            var num1 = 0, num2 = 0;
+                                            ui.selected.buttons.forEach(but => {
+                                                if (!get.owner(but.link)) num1 += but.link.number;
+                                                else num2 += but.link.number;
+                                            });
+                                            dialog.content.childNodes[1].innerHTML = '<div class="text center">牌堆顶（已选点数和：' + num1 + '）</div>';
+                                            if (dialog.content.childNodes[3]) dialog.content.childNodes[3].innerHTML = '<div class="text center">牌堆顶（已选点数和：' + num2 + '）</div>';
                                         }
-                                        return (num + get.number(button.link) <= _status.event.maxNum);
+                                        return [1, Infinity];
                                     });
-                                    next.set('maxNum', event.numx);
-                                    next.set('ai', function (button) {
-                                        return get.value(button.link, _status.event.player);
-                                    });
-                                    var func = function (id) {
-                                        var dialog = get.idDialog(id);
-                                        if (dialog) dialog.content.firstChild.innerHTML = '请选择要获得的牌';
-                                    };
-                                    if (player == game.me) func(event.videoId);
-                                    else if (player.isOnline()) player.send(func, event.videoId);
-                                    'step 3'
-                                    if (!result.bool) event.cards = [];
-                                    else event.cards = result.links;
-                                    'step 4'
-                                    game.broadcastAll('closeDialog', event.videoId);
-                                    game.addVideo('cardDialog', null, event.videoId);
-                                    if (!cards.length) {
-                                        event.finish();
-                                        return;
+                                    if (result.bool) {
+                                        var gain = result.links.filter(i => cards.includes(i));
+                                        var discard = result.links.filter(i => !cards.includes(i));
+                                        cards.removeArray(gain);
+                                        if (discard.length) player.discard(discard);
+                                        if (gain.length) player.gain(gain, 'gain2').gaintag.add('hpp_mubing');
+}
+                                    if (cards.length) {
+                                        player.$throw(cards, 1000);
+                                        game.cardsDiscard(cards);
+                                        game.log(cards, '被置入了弃牌堆');
                                     }
-                                    player.gain(cards, 'gain2').gaintag.add('hpp_mubing');
                                 },
                                 onremove: function (player) {
                                     player.removeGaintag('hpp_mubing');
@@ -19805,6 +19946,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     if (ui.selected.cards.some(cardx => Math.abs(get.number(cardx, player) - get.number(card, player)) <= 1)) return 10 - get.value(card);
                                     return 5 - get.value(card);
                                 },
+                                complexCard: true,
+                                complexSelect: true,
                                 discard: false,
                                 lose: false,
                                 delay: 0,
@@ -23474,7 +23617,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         audio: 'tspowei2',
                                         trigger: { player: 'dying' },
                                         filter: function (event, player) {
-                                            return num <= 0 && !player.storage.hpp_dulie_dying;
+                                            return !player.storage.hpp_dulie_dying;
                                         },
                                         skillAnimation: true,
                                         animationColor: 'fire',
@@ -25088,21 +25231,21 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         characterTitle: {
                             // g绿 b蓝 r红 p粉
                             // B
-                            hpp_baosanniang: '#r捞德一评级:4.5',
-                            hpp_beimihu: '#b捞德一评级:3.5',
-                            hpp_bulianshi: '#b捞德一评级:3.7',
+                            hpp_baosanniang: '#r捞德一评级:4.2',
+                            hpp_beimihu: '#b捞德一评级:3.9',
+                            hpp_bulianshi: '#b捞德一评级:3.6',
                             hpp_buzhi: '#b捞德一评级:3.7',
                             // C
                             hpp_caifuren: '#b捞德一评级:3.7',
                             hpp_caiwenji: '#b捞德一评级:3.8',
                             hpp_caoang: '#b捞德一评级:3.7',
                             hpp_caocao: '#b捞德一评级:3.5',
-                            hpp_caochong: '#g捞德一评级:2.7',
-                            hpp_caohong: '#b捞德一评级:3.7',
+                            hpp_caochong: '#g捞德一评级:2.8',
+                            hpp_caohong: '#b捞德一评级:3.8',
                             hpp_caohua: '#b捞德一评级:3.7',
                             hpp_caojie: '#b捞德一评级:3.8',
                             hpp_caojinyu: '#r捞德一评级:4.8',
-                            hpp_caomao: '#b捞德一评级:3.5',
+                            hpp_caomao: '#r捞德一评级:4.0',
                             hpp_caopi: '#g捞德一评级:2.9',
                             hpp_caoren: '#g捞德一评级:2.8',
                             hpp_caorui: '#g捞德一评级:2.9',
@@ -25110,15 +25253,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_caoxiu: '#b捞德一评级:3.7',
                             hpp_caoying: '#b捞德一评级:3.8',
                             hpp_caozhang: '#b捞德一评级:3.7',
-                            hpp_caozhen: '#g捞德一评级:2.8',
-                            hpp_caozhi: '#r捞德一评级:4.2',
-                            hpp_chendao: '#b捞德一评级:3.4',
-                            hpp_chengong: '#b捞德一评级:3.5',
+                            hpp_caozhen: '#b捞德一评级:3.0',
+                            hpp_caozhi: '#r捞德一评级:4.0',
+                            hpp_chendao: '#b捞德一评级:3.3',
+                            hpp_chengong: '#b捞德一评级:3.4',
                             hpp_chengpu: '#b捞德一评级:3.4',
                             hpp_chenqun: '#g捞德一评级:2.9',
                             hpp_chunyuqiong: '#b捞德一评级:3.4',
                             // D
-                            hpp_daqiao: '#b捞德一评级:3.5',
+                            hpp_daqiao: '#b捞德一评级:3.7',
                             hpp_dengai: '#b捞德一评级:3.4',
                             hpp_dianwei: '#b捞德一评级:3.1',
                             hpp_diaochan: '#b捞德一评级:3.7',
@@ -25126,36 +25269,36 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_dongbai: '#b捞德一评级:3.5',
                             hpp_dongyun: '#g捞德一评级:2.6',
                             hpp_dongzhuo: '#g捞德一评级:2.7',
-                            hpp_dufuren: '#b捞德一评级:3.9',
+                            hpp_dufuren: '#b捞德一评级:3.8',
                             // F
-                            hpp_fanyufeng: '#b捞德一评级:3.9',
+                            hpp_fanyufeng: '#b捞德一评级:3.8',
                             hpp_fazheng: '#g捞德一评级:2.5',
                             hpp_fengyu: '#b捞德一评级:3.7',
-                            hpp_fuhuanghou: '#b捞德一评级:3.8',
+                            hpp_fuhuanghou: '#b捞德一评级:3.7',
                             // G
-                            hpp_ganfuren: '#r捞德一评级:4.4',
-                            hpp_ganning: '#b捞德一评级:3.8',
+                            hpp_ganfuren: '#r捞德一评级:4.6',
+                            hpp_ganning: '#b捞德一评级:3.7',
                             hpp_gaoshun: '#b捞德一评级:3.6',
                             hpp_gongsunyuan: '#b捞德一评级:3.7',
                             hpp_gongsunzan: '#b捞德一评级:3.6',
                             hpp_guanping: '#g捞德一评级:2.7',
                             hpp_guansuo: '#r捞德一评级:4.9',
                             hpp_guanyinping: '#b捞德一评级:3.2',
-                            hpp_guanyu: '#r捞德一评级:4.4',
+                            hpp_guanyu: '#r捞德一评级:4.3',
                             hpp_guohuai: '#b捞德一评级:3.7',
-                            hpp_guohuanghou: '#b捞德一评级:3.8',
-                            hpp_guojia: '捞德一评级:1.2',
+                            hpp_guohuanghou: '#b捞德一评级:3.9',
+                            hpp_guojia: '捞德一评级:3.8',
                             hpp_guotupangji: '#b捞德一评级:3.5',
                             hpp_guozhao: '#b捞德一评级:3.8',
                             // H
                             hpp_handang: '#g捞德一评级:2.5',
                             hpp_haozhao: '#g捞德一评级:2.8',
                             hpp_hetaihou: '#g捞德一评级:2.4',
-                            hpp_huaman: '#r捞德一评级:4.5',
+                            hpp_huaman: '#r捞德一评级:4.2',
                             hpp_huanggai: '#b捞德一评级:3.5',
                             hpp_huangyueying: '#b捞德一评级:3.5',
                             hpp_huangzhong: '#g捞德一评级:2.9',
-                            hpp_huatuo: '#b捞德一评级:3.5',
+                            hpp_huatuo: '#b捞德一评级:3.7',
                             hpp_huaxiong: '#g捞德一评级:2.9',
                             // J
                             hpp_jiangwei: '#b捞德一评级:3.5',
@@ -25166,7 +25309,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_kuailiangkuaiyue: '#b捞德一评级:3.7',
                             // L
                             hpp_liangxing: '#b捞德一评级:3.5',
-                            hpp_liaohua: '#b捞德一评级:3.5',
+                            hpp_liaohua: '#b捞德一评级:3.7',
                             hpp_lidian: '#b捞德一评级:3.5',
                             hpp_lijue: '#b捞德一评级:3.7',
                             hpp_lingtong: '#b捞德一评级:3.8',
@@ -25178,20 +25321,20 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_liushan: '#g捞德一评级:2.9',
                             hpp_liuxie: '#b捞德一评级:3.2',
                             hpp_liuyan: '#b捞德一评级:3.7',
-                            hpp_liuzan: '#b捞德一评级:3.7',
+                            hpp_liuzan: '#b捞德一评级:3.8',
                             hpp_liuzhang: '#b捞德一评级:3.7',
                             hpp_liyan: '#b捞德一评级:3.3',
                             hpp_liyong: '#b捞德一评级:3.7',
                             hpp_luji: '#g捞德一评级:2.8',
-                            hpp_lukang: '#b捞德一评级"3.9',
+                            hpp_lukang: '#b捞德一评级"3.8',
                             hpp_lusu: '#g捞德一评级:2.4',
-                            hpp_luotong: '#b捞德一评级:3.8',
+                            hpp_luotong: '#r捞德一评级:4.4',
                             hpp_luxun: '捞德一评级:1.4',
-                            hpp_luyi: '#r捞德一评级:4.0',
-                            hpp_luyusheng: '#r捞德一评级:4.1',
+                            hpp_luyi: '#r捞德一评级:4.1',
+                            hpp_luyusheng: '#b捞德一评级:3.9',
                             hpp_lvbu: '#g捞德一评级:2.0',
                             hpp_lvkai: '#b捞德一评级:3.5',
-                            hpp_lvlingqi: '#r捞德一评级:4.2',
+                            hpp_lvlingqi: '#b捞德一评级:3.9',
                             hpp_lvmeng: '#g捞德一评级:2.6',
                             // M
                             hpp_machao: '#b捞德一评级:3.7',
@@ -25199,7 +25342,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_masu: '#b捞德一评级:3.8',
                             hpp_mayunlu: '#b捞德一评级:3.5',
                             hpp_menghuo: '#g捞德一评级:2.7',
-                            hpp_mifuren: '#b捞德一评级:3.4',
+                            hpp_mifuren: '#b捞德一评级:3.8',
                             hpp_mizhu: '#b捞德一评级:3.5',
                             // P
                             hpp_panfeng: '#b捞德一评级:3.7',
@@ -25217,31 +25360,31 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunce: '#b捞德一评级:3.7',
                             hpp_sundeng: '#r捞德一评级:4.0',
                             hpp_sunhao: '#b捞德一评级:3.8',
-                            hpp_sunjian: '#b捞德一评级:3.8',
+                            hpp_sunjian: '#b捞德一评级:3.7',
                             hpp_sunliang: '#b捞德一评级:3.6',
                             hpp_sunluban: '#b捞德一评级:3.5',
                             hpp_sunluyu: '#b捞德一评级:3.7',
                             hpp_sunqian: '#b捞德一评级:3.5',
-                            hpp_sunquan: '#b捞德一评级:3.8',
+                            hpp_sunquan: '#b捞德一评级:3.7',
                             hpp_sunshangxiang: '#b捞德一评级:3.5',
-                            hpp_sunyi: '#r捞德一评级:4.1',
+                            hpp_sunyi: '#r捞德一评级:4.2',
                             // T
                             hpp_taishici: '#b捞德一评级:3.5',
-                            hpp_tangji: '#b捞德一评级:3.8',
-                            hpp_tenggongzhu: '#r捞德一评级:4.0',
+                            hpp_tangji: '#r捞德一评级:4.1',
+                            hpp_tenggongzhu: '#b捞德一评级:3.9',
                             // W
                             hpp_wangji: '#b捞德一评级:3.4',
-                            hpp_wanglang: '#b捞德一评级:3.8',
+                            hpp_wanglang: '#b捞德一评级:4.0',
                             hpp_wangping: '#b捞德一评级:3.6',
                             hpp_wangrong: '#b捞德一评级:3.6',
                             hpp_wangyi: '#g捞德一评级:2.3',
-                            hpp_wanniangongzhu: '#g捞德一评级:2.8',
+                            hpp_wanniangongzhu: '#b捞德一评级:3.8',
                             hpp_weiyan: '#b捞德一评级:3.0',
                             hpp_wenqin: '#b捞德一评级:3.4',
-                            hpp_wenyang: '#b捞德一评级:3.8',
+                            hpp_wenyang: '#b捞德一评级:3.7',
                             hpp_wuguotai: '#g捞德一评级:2.9',
                             hpp_wuxian: '#b捞德一评级:3.0',
-                            hpp_wuyi: '#g捞德一评级:2.8',
+                            hpp_wuyi: '#b捞德一评级:3.7',
                             // X
                             hpp_xiahouba: '#b捞德一评级:3.3',
                             hpp_xiahoudun: '#g捞德一评级:2.4',
@@ -25251,21 +25394,21 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_xiahouyuan: '#b捞德一评级:3.4',
                             hpp_xiaoqiao: '#g捞德一评级:2.6',
                             hpp_xinxianying: '#b捞德一评级:3.7',
-                            hpp_xizhicai: '#b捞德一评级:3.8',
+                            hpp_xizhicai: '#b捞德一评级:3.9',
                             hpp_xuhuang: '#b捞德一评级:3.7',
                             hpp_xunyou: '#b捞德一评级:3.6',
                             hpp_xunyu: '#b捞德一评级:3.2',
                             hpp_xurong: '#b捞德一评级:3.0',
                             hpp_xushao: '#r捞德一评级:4.8',
                             hpp_xusheng: '#g捞德一评级:2.7',
-                            hpp_xushi: '#r捞德一评级:4.2',
+                            hpp_xushi: '#r捞德一评级:4.0',
                             hpp_xushu: '#g捞德一评级:2.6',
                             hpp_xuyou: '#b捞德一评级:3.3',
                             hpp_xuzhu: '#g捞德一评级:2.8',
                             // Y
-                            hpp_yanfuren: '#b捞德一评级:3.9',
-                            hpp_yangwan: '#b捞德一评级:3.9',
-                            hpp_yangxiu: '#b捞德一评级:3.7',
+                            hpp_yanfuren: '#b捞德一评级:3.8',
+                            hpp_yangwan: '#b捞德一评级:3.8',
+                            hpp_yangxiu: '#b捞德一评级:3.8',
                             hpp_yanjun: '#b捞德一评级:3.3',
                             hpp_yanliangwenchou: '#g捞德一评级:2.5',
                             hpp_yanyan: '#b捞德一评级:3.7',
@@ -25281,19 +25424,19 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangfei: '#b捞德一评级:3.5',
                             hpp_zhanghe: '#b捞德一评级:3.4',
                             hpp_zhangji: '#b捞德一评级:3.0',
-                            hpp_zhangjiao: '#b捞德一评级:3.8',
-                            hpp_zhangliang: '#b捞德一评级:3.7',
+                            hpp_zhangjiao: '#b捞德一评级:3.7',
+                            hpp_zhangliang: '#b捞德一评级:3.5',
                             hpp_zhangliao: '#b捞德一评级:3.6',
                             hpp_zhangqiying: '#b捞德一评级:3.8',
-                            hpp_zhangsong: '#b捞德一评级:3.2',
+                            hpp_zhangsong: '#b捞德一评级:3.8',
                             hpp_zhangxingcai: '#b捞德一评级:3.1',
                             hpp_zhangxiu: '#b捞德一评级:3.0',
                             hpp_zhangxuan: '#r捞德一评级:4.1',
-                            hpp_zhangyao: '#b捞德一评级:3.5',
+                            hpp_zhangyao: '#b捞德一评级:3.7',
                             hpp_zhangzhaozhanghong: '#g捞德一评级:2.8',
-                            hpp_zhaoxiang: '#r捞德一评级:4.3',
+                            hpp_zhaoxiang: '#r捞德一评级:4.1',
                             hpp_zhaoyan: '#b捞德一评级:3.7',
-                            hpp_zhaoyun: '#b捞德一评级:3.5',
+                            hpp_zhaoyun: '#b捞德一评级:3.7',
                             hpp_zhenji: '#g捞德一评级:2.7',
                             hpp_zhonghui: '#b捞德一评级:3.7',
                             hpp_zhongyao: '#g捞德一评级:2.7',
@@ -25301,7 +25444,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhoufang: '#b捞德一评级:3.5',
                             hpp_zhoufei: '#g捞德一评级:2.7',
                             hpp_zhoutai: '#b捞德一评级:3.5',
-                            hpp_zhouyi: '#r捞德一评级:4.2',
+                            hpp_zhouyi: '#r捞德一评级:4.1',
                             hpp_zhouyu: '#b捞德一评级:3.2',
                             hpp_zhugeguo: '#b捞德一评级:3.6',
                             hpp_zhugejin: '#b捞德一评级:3.7',
@@ -25310,14 +25453,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhugezhan: '#g捞德一评级:2.8',
                             hpp_zhuhuan: '#b捞德一评级:3.5',
                             hpp_zhuran: '#b捞德一评级:3.7',
-                            hpp_zhurong: '#b捞德一评级:3.8',
+                            hpp_zhurong: '#b捞德一评级:3.9',
                             hpp_zhuzhi: '#b捞德一评级:3.6',
                             hpp_zumao: '#b捞德一评级:3.7',
                             hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
                             hpp_sp_caiwenji: '#r捞德一评级:4.0',
                             hpp_sp_caoren: '#b捞德一评级:3.8',
-                            hpp_sp_daqiao: '#b捞德一评级:3.9',
+                            hpp_sp_daqiao: '#b捞德一评级:3.8',
                             hpp_sp_diaochan: '#b捞德一评级:3.6',
                             hpp_sp_guanyu: '#b捞德一评级:3.8',
                             hpp_sp_huangyueying: '#b捞德一评级:3.5',
@@ -25328,53 +25471,53 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_pangde: '#b捞德一评级:3.1',
                             hpp_sp_pangtong: '#b捞德一评级:3.8',
                             hpp_sp_sunshangxiang: '#b捞德一评级:3.8',
-                            hpp_sp_taishici: '#r捞德一评级:4.0',
+                            hpp_sp_taishici: '#b捞德一评级:3.9',
                             hpp_sp_xiaoqiao: '#b捞德一评级:3.8',
-                            hpp_sp_zhangfei: '#b捞德一评级:3.8',
+                            hpp_sp_zhangfei: '#b捞德一评级:3.9',
                             hpp_sp_zhanghe: '#b捞德一评级:3.8',
                             hpp_sp_zhangliao: '#b捞德一评级:3.7',
-                            hpp_sp_zhaoyun: '#g捞德一评级:2.6',
-                            hpp_sp_zhenji: '#b捞德一评级:3.8',
-                            hpp_sp_zhugeliang: '#b捞德一评级:3.9',
+                            hpp_sp_zhaoyun: '#g捞德一评级:2.8',
+                            hpp_sp_zhenji: '#r捞德一评级:4.1',
+                            hpp_sp_zhugeliang: '#b捞德一评级:3.7',
                             // 喵
-                            hpp_miao_caifuren: '#r捞德一评级:4.1',
-                            hpp_miao_caiwenji: '#r捞德一评级:4.3',
-                            hpp_miao_daqiao: '#r捞德一评级:4.2',
-                            hpp_miao_diaochan: '#r捞德一评级:4.2',
-                            hpp_miao_huangyueying: '#r捞德一评级:4.3',
-                            hpp_miao_sunshangxiang: '#r捞德一评级:4.0',
-                            hpp_miao_wangyi: '#r捞德一评级:4.1',
-                            hpp_miao_xiaoqiao: '#r捞德一评级:4.5',
-                            hpp_miao_zhangchunhua: '#r捞德一评级:4.1',
+                            hpp_miao_caifuren: '#r捞德一评级:4.2',
+                            hpp_miao_caiwenji: '#r捞德一评级:4.0',
+                            hpp_miao_daqiao: '#r捞德一评级:4.0',
+                            hpp_miao_diaochan: '#r捞德一评级:4.0',
+                            hpp_miao_huangyueying: '#r捞德一评级:4.1',
+                            hpp_miao_sunshangxiang: '#r捞德一评级:4.2',
+                            hpp_miao_wangyi: '#r捞德一评级:4.0',
+                            hpp_miao_xiaoqiao: '#r捞德一评级:4.0',
+                            hpp_miao_zhangchunhua: '#r捞德一评级:4.0',
                             hpp_miao_zhangxingcai: '#r捞德一评级:4.0',
                             hpp_miao_zhenji: '#r捞德一评级:4.1',
                             hpp_miao_zhurong: '#r捞德一评级:4.2',
                             // 神
-                            hpp_shen_caocao: '#r捞德一评级:4.5',
-                            hpp_shen_daxiaoqiao: '#r捞德一评级:4.4',
+                            hpp_shen_caocao: '#r捞德一评级:4.3',
+                            hpp_shen_daxiaoqiao: '#r捞德一评级:4.1',
                             hpp_shen_dianwei: '#r捞德一评级:4.1',
-                            hpp_shen_diaochan: '#r捞德一评级:4.5',
-                            hpp_shen_ganning: '#r捞德一评级:4.2',
-                            hpp_shen_guanyu: '#r捞德一评级:4.1',
+                            hpp_shen_diaochan: '#r捞德一评级:4.2',
+                            hpp_shen_ganning: '#r捞德一评级:4.1',
+                            hpp_shen_guanyu: '#r捞德一评级:4.0',
                             hpp_shen_guojia: '#r捞德一评级:4.1',
-                            hpp_shen_huatuo: '#r捞德一评级:4.7',
-                            hpp_shen_jiangwei: '#r捞德一评级:4.7',
+                            hpp_shen_huatuo: '#r捞德一评级:4.8',
+                            hpp_shen_jiangwei: '#r捞德一评级:4.8',
                             hpp_shen_liubei: '#r捞德一评级:4.0',
                             hpp_shen_luxun: '#r捞德一评级:4.0',
                             hpp_shen_lvbu: '#r捞德一评级:4.0',
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
-                            hpp_shen_simayi: '#r捞德一评级:4.4',
+                            hpp_shen_simayi: '#r捞德一评级:4.2',
                             hpp_shen_sunce: '#r捞德一评级:4.0',
                             hpp_shen_sunquan: '#r捞德一评级:4.1',
-                            hpp_shen_taishici: '#r捞德一评级:4.1',
-                            hpp_shen_xunyu: '#r捞德一评级:4.6',
+                            hpp_shen_taishici: '#r捞德一评级:4.6',
+                            hpp_shen_xunyu: '#r捞德一评级:4.8',
                             hpp_shen_zhangfei: '#r捞德一评级:4.8',
                             hpp_shen_zhangjiao: '#r捞德一评级:4.7',
                             hpp_shen_zhangliao: '#r捞德一评级:4.0',
                             hpp_shen_zhaoyun: '#r捞德一评级:4.2',
                             hpp_shen_zhenji: '#r捞德一评级:4.1',
                             hpp_shen_zhouyu: '#r捞德一评级:4.0',
-                            hpp_shen_zhugeliang: '#r捞德一评级:4.1',
+                            hpp_shen_zhugeliang: '#r捞德一评级:4.0',
                             // 斗地主
                             hpp_change: '#r地主专属' + '<br/>' + '捞德一评级:4.2',
                             hpp_dalanmao: '#b地主专属' + '<br/>' + '捞德一评级:3.8',
@@ -25642,6 +25785,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_tiandu_info: '当你的判定牌生效后，你可以获得此牌。',
                             hpp_yiji: '遗计',
                             hpp_yiji_info: '当你受到1点伤害后，你可以摸两张牌，然后将至多两张手牌交给任意其他角色。',
+                            hpp_yiji_tag:'遗计已分配',
                             hpp_shenglun: '胜论',
                             hpp_shenglun_info: '出牌阶段限1次，你可以选择至多2名其他角色，然后你与其分别比较血量、手牌、武器、防具、坐骑数量；当胜或败累计达到10次，胜：你立即回复1点体力，败：对1名角色造成1点伤害。然后发动1次遗计并重置对应的胜败次数。',
                             hpp_guotupangji: '欢杀郭图逢纪',
