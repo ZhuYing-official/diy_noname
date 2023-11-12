@@ -9091,20 +9091,23 @@
 								//lib.init.onload=backup_onload;
 								_status.evaluatingExtension = false;
 							}
-							else if (lib.config.mode != 'connect' || (!localStorage.getItem(lib.configprefix + 'directstart') && show_splash)) {
+							else if (lib.config.mode != 'connect' || get.config('extensions_enable', 'connect') || (!localStorage.getItem(lib.configprefix + 'directstart') && show_splash)) {
 								extensionlist.push(lib.config.extensions[i]);
 							}
 						}
 					}
 					else {
-						if (lib.config.mode != 'connect' || (!localStorage.getItem(lib.configprefix + 'directstart') && show_splash)) {
+						// if(lib.config.mode!='connect'||(!localStorage.getItem(lib.configprefix+'directstart')&&show_splash)){
+						if (lib.config.mode != 'connect' || get.config('extensions_enable', 'connect')) {
 							var alerted = false;
+							alert(0)
 							for (var i = 0; i < lib.config.extensions.length; i++) {
 								if (window.bannedExtensions.contains(lib.config.extensions[i])) {
 									//if(!alerted) alert('读取某些扩展时出现问题。');
 									alerted = true;
 									continue;
 								}
+								alert(lib.config.extensions[i])
 								game.import('extension', { name: lib.config.extensions[i] });
 							}
 						}
@@ -9234,8 +9237,7 @@
 					var styleLoaded = gnc.of(function* () {
 						--styleToLoad;
 						if (styleToLoad == 0) {
-							if (extensionlist.length && (lib.config.mode != 'connect' || show_splash)) {
-								_status.extensionLoading = [];
+							if (extensionlist.length && (lib.config.mode != 'connect' || get.config('extensions_enable', 'connect'))) {
 								let extToLoad = extensionlist.length;
 								const extLoaded = gnc.of(function* () {
 									--extToLoad;
