@@ -1099,25 +1099,50 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			// 孙悟空
 			hok_qitian: {
-				audio: 2,
-				forced: true,
-				trigger: {
-					player: ['chooseToRespond', 'chooseToUse'],
-				},
 				mod: {
-					cardname: function (card, player) {
-						if (['trick', 'delay'].contains(lib.card[card.name].type)) return 'sha';
-					},
-					cardnature: function (card, player) {
-						if (['trick', 'delay'].contains(lib.card[card.name].type) && get.color(card) == 'red') return 'fire';
-						if (['trick', 'delay'].contains(lib.card[card.name].type) && get.color(card) == 'black') return 'thunder';
-					},
+					// 	cardname: function (card, player) {
+					// 		if (['trick', 'delay'].contains(lib.card[card.name].type)) return 'sha';
+					// 	},
+					// 	cardnature: function (card, player) {
+					// 		if (['trick', 'delay'].contains(lib.card[card.name].type) && get.color(card) == 'red') return 'fire';
+					// 		if (['trick', 'delay'].contains(lib.card[card.name].type) && get.color(card) == 'black') return 'thunder';
+					// 	},
 					targetInRange: function (card, player) {
 						if (card.name == 'sha' && (card.hasNature('fire') || card.hasNature('thunder'))) return true;
 					},
 				},
-				group: 'hok_qitian_shan',
+				group: ['hok_qitian_fire', 'hok_qitian_thunder', 'hok_qitian_shan'],
 				subSkill: {
+					fire: {
+						enable: ['chooseToRespond', 'chooseToUse'],
+						filterCard: function (card) {
+							return ((lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay') && get.color(card) == 'red');
+						},
+						viewAs: { name: 'sha', nature: 'fire' },
+						viewAsFilter: function (player) {
+							if ((!player.countCards('h', { suit: 'heart' }) && !player.countCards('h', { suit: 'diamond' }))
+								|| (!player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' }))) {
+								return false;
+							}
+						},
+						position: 'h',
+						prompt: '将一张红色锦囊当火杀使用或打出',
+					},
+					thunder: {
+						enable: ['chooseToRespond', 'chooseToUse'],
+						filterCard: function (card) {
+							return ((lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay') && get.color(card) == 'black');
+						},
+						viewAs: { name: 'sha', nature: 'thunder' },
+						viewAsFilter: function (player) {
+							if ((!player.countCards('h', { suit: 'spade' }) && !player.countCards('h', { suit: 'club' }))
+								|| (!player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' }))) {
+								return false;
+							}
+						},
+						position: 'h',
+						prompt: '将一张黑色锦囊当雷杀使用或打出',
+					},
 					shan: {
 						enable: ['chooseToRespond', 'chooseToUse'],
 						filterCard: function (card) {
@@ -1126,8 +1151,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						viewAs: { name: 'shan' },
 						viewAsFilter: function (player) {
-							if (!player.countCards('h', { suit: 'heart' }) && !player.countCards('h', { suit: 'diamond' })
-								&& !player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' })
+							if ((!player.countCards('h', { suit: 'heart' }) && !player.countCards('h', { suit: 'diamond' })
+								|| !player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' }))
 								&& !player.countCards('h', { name: 'sha', nature: 'fire' })) {
 								return false;
 							}
@@ -1161,6 +1186,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					source: 'damageBefore',
 				},
 				filter: function (event, player) {
+					if (!event.card || event.card.name != 'sha') return false;
 					return event.num > 0 && player.countCards('hes') > 0;
 				},
 				content: function () {
@@ -1225,10 +1251,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.recover(player.storage.hok_houmao2 - player.hp);
 					player.discard(player.getCards('j'));
 					var card = get.cardPile(function (card) {
-						switch (Math.floor(Math.random() * 5)) {
-							case 0: case 2: return get.name(card, 'leisha') == 'leisha';
-							case 1: case 3: return get.name(card, 'huosha') == 'huosha';
-							case 4: return get.name(card, 'sha') == 'sha';
+						switch (Math.floor(Math.random() * 2)) {
+							case 0: return get.name(card, 'leisha') == 'leisha';
+							case 1: return get.name(card, 'huosha') == 'huosha';
 						}
 					})
 					if (card) {
@@ -1273,9 +1298,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				enable: 'phaseUse',
 				skillAnimation: true,
 				animationColor: 'metal',
-				filter: function (event, player) {
-					return player.countCards('hs') >= 3;
-				},
 				content: function () {
 					player.awakenSkill('hok_naogong');
 					player.addTempSkill('hok_naogong_effect');
@@ -4257,13 +4279,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 孙悟空
 			hok_sunwukong: '王者孙悟空',
 			hok_qitian: '齐天',
-			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌视为【火杀】，黑色锦囊牌视为【雷杀】，你的【火杀】可以当做【闪】。',
+			hok_qitian_fire: '齐天·火',
+			hok_qitian_thunder: '齐天·雷',
+			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌可以当做【火杀】，黑色锦囊牌可以当做【雷杀】，你的【火杀】可以当做【闪】。',
 			hok_shengbang: '圣棒',
 			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2（最大为3）；若为黑色，你摸一张牌。',
 			hok_houmao: '猴毛',
-			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，弃置你判定区的牌，随机获得一张杀/雷杀/火杀。',
+			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，弃置你判定区的牌，随机获得一张雷杀/火杀。',
 			hok_naogong: '闹宫',
-			hok_naogong_info: '限定技，出牌阶段当你的手牌区数量不小于3时，令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
+			hok_naogong_info: '限定技，出牌阶段你可以令你的杀的次数为3，出牌阶段结束时弃置所有手牌。',
 			// 武则天
 			hok_wuzetian: '王者武则天',
 			hok_dihui: '帝辉',
