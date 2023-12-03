@@ -21,6 +21,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_shen_luxun',
                             'hpp_shen_lvbu',
                             'hpp_shen_lvmeng',
+                            'hpp_shen_machao',
                             'hpp_shen_simayi',
                             'hpp_shen_sunce',
                             'hpp_shen_sunquan',
@@ -137,6 +138,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_menghuo',
                             'hpp_mifuren',
                             'hpp_mizhu',
+                            'hpp_nanhualaoxian',
                             'hpp_panfeng',
                             'hpp_pangde',
                             'hpp_pangtong',
@@ -165,7 +167,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_wanglang',
                             'hpp_wangping',
                             'hpp_wangrong',
+                            'hpp_wangtao',
                             'hpp_wangyi',
+                            'hpp_wangyue',
                             'hpp_wanniangongzhu',
                             'hpp_weiyan',
                             'hpp_wenqin',
@@ -198,6 +202,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_yanjun',
                             'hpp_yanliangwenchou',
                             'hpp_yanyan',
+                            'hpp_yiji',
                             'hpp_yinfuren',
                             'hpp_yuanshao',
                             'hpp_yuanshu',
@@ -207,6 +212,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhangchangpu',
                             'hpp_zhangchunhua',
                             'hpp_zhangfei',
+                            'hpp_zhangfen',
                             'hpp_zhanghe',
                             'hpp_zhangji',
                             'hpp_zhangjiao',
@@ -216,10 +222,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhangsong',
                             'hpp_zhangxingcai',
                             'hpp_zhangxiu',
+                            'hpp_zhangxuan',
                             'hpp_zhangyao',
                             'hpp_zhangzhaozhanghong',
                             'hpp_zhaoxiang',
-                            'hpp_zhangxuan',
                             'hpp_zhaoyan',
                             'hpp_zhaoyun',
                             'hpp_zhenji',
@@ -237,6 +243,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhugeliang',
                             'hpp_zhugezhan',
                             'hpp_zhuhuan',
+                            'hpp_zhujun',
                             'hpp_zhuran',
                             'hpp_zhurong',
                             'hpp_zhuzhi',
@@ -275,6 +282,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_miao_zhangxingcai',
                             'hpp_miao_zhenji',
                             'hpp_miao_zhurong',
+
+                            'hpp_sb_huanggai',
 
                             'hpp_change',
                             'hpp_dalanmao',
@@ -461,12 +470,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_yanyan', 'hpp_wangping', 'hpp_chendao', 'hpp_zhoucang', 'hpp_caohong', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
                                 huo_yi: ['hpp_taishici', 'hpp_luji', 'hpp_lingtong', 'hpp_xusheng', 'hpp_gaoshun', 'hpp_zhuran', 'hpp_zhuhuan', 'hpp_zhuzhi',],
                                 huo_bi: ['hpp_zhonghui', 'hpp_gongsunyuan', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
-                                huo_yong: ['hpp_liangxing', 'hpp_caoxing', 'hpp_xiahoujie', 'hpp_wenqin', 'hpp_dingfeng'],
+                                huo_yong: ['hpp_zhujun', 'hpp_liangxing', 'hpp_caoxing', 'hpp_xiahoujie', 'hpp_wenqin', 'hpp_dingfeng'],
                                 shan_zhen: ['hpp_fuhuanghou', 'hpp_caojie', 'hpp_mayunlu', 'hpp_xushi', 'hpp_dufuren', 'hpp_tangji', 'hpp_xiahoulingnv', 'hpp_wangrong', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
                                 shan_si: ['hpp_liushan', 'hpp_zhugezhan', 'hpp_guanping', 'hpp_liufeng', 'hpp_zhangxingcai', 'hpp_guanyinping', 'hpp_zhaoxiang', 'hpp_liuyong'],
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
                                 shan_ce: ['hpp_sp_zhugeliang', 'hpp_xunyou', 'hpp_jianyong', 'hpp_chenqun', 'hpp_guotupangji', 'hpp_buzhi', 'hpp_yanjun', 'hpp_panjun', 'hpp_mizhu', 'hpp_zhoufang', 'hpp_yangxiu', 'hpp_lvkai'],
-                                shan_ji: ['hpp_lukang', 'hpp_liuchen', 'hpp_sundeng', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng',],
+                                shan_ji: ['hpp_lukang', 'hpp_liuchen', 'hpp_sundeng', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng', 'hpp_zhangfen'],
                                 shan_xian: ['hpp_yinfuren', 'hpp_mifuren'],
                                 ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu', 'hpp_wanniangongzhu', 'hpp_zhangyao', 'hpp_ganfuren'],
                                 ming_ru: ['hpp_kuailiangkuaiyue', 'hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xushu', 'hpp_liuzhang', 'hpp_yijie'],
@@ -479,8 +488,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 xian_jin: ['hpp_guansuo', 'hpp_baosanniang', 'hpp_wenyang', 'hpp_liuzan', 'hpp_guozhao', 'hpp_fanyufeng', 'hpp_panshu', 'hpp_lvlingqi', 'hpp_zhangchangpu', 'hpp_zhangqiying', 'hpp_puyuan', 'hpp_xushao'],
                                 xian_xiu: ['hpp_wanglang', 'hpp_yangwan', 'hpp_zhouyi', 'hpp_caojinyu', 'hpp_luyi', 'hpp_sunyi', 'hpp_fengyu', 'hpp_tenggongzhu', 'hpp_zhaoyan', 'hpp_zhangxuan', 'hpp_luotong'],
                                 xian_miao: ['hpp_miao_caiwenji', 'hpp_miao_diaochan', 'hpp_miao_caifuren', 'hpp_miao_zhangxingcai', 'hpp_miao_zhurong', 'hpp_miao_huangyueying', 'hpp_miao_daqiao', 'hpp_miao_xiaoqiao', 'hpp_miao_sunshangxiang', 'hpp_miao_zhenji', 'hpp_miao_zhangchunhua', 'hpp_miao_wangyi'],
+                                xian_mou: ['hpp_sb_huanggai'],
                                 shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia', 'hpp_shen_xunyu'],
-                                shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei', 'hpp_shen_zhangfei', 'hpp_shen_jiangwei'],
+                                shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei', 'hpp_shen_zhangfei', 'hpp_shen_jiangwei', 'hpp_shen_machao'],
                                 shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce', 'hpp_shen_daxiaoqiao', 'hpp_shen_taishici'],
                                 shen_qun: ['hpp_shen_lvbu', 'hpp_shen_huatuo', 'hpp_shen_zhenji', 'hpp_shen_zhangjiao', 'hpp_shen_diaochan'],
                                 doudizhu: ['hpp_change', 'hpp_dalanmao', 'hpp_libai', 'hpp_sunwukong'],
@@ -870,6 +880,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangchunhua: ['female', 'wei', 3, ['hpp_jueqing', 'hpp_shangshi'], []],
                             // 欢杀张飞
                             hpp_zhangfei: ['male', 'shu', 4, ['new_repaoxiao', 'hpp_tishen'], []],
+                            // 欢杀张奋
+                            hpp_zhangfen: ['male', 'wu', 4, ['hpp_wanglu', 'hpp_xianzhu', 'hpp_chaixie'], []],
                             // 欢杀张郃
                             hpp_zhanghe: ['male', 'wei', 4, ['hpp_qiaobian'], []],
                             // 欢杀张济
@@ -919,7 +931,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢杀周瑜
                             hpp_zhouyu: ['male', 'wu', 3, ['hpp_yingzi', 'hpp_fanjian'], []],
                             // 欢杀诸葛果
-                            hpp_zhugeguo: ['female', 'shu', 3, ['hpp_qirang', 'hpp_yuhua','hpp_rende'], []],
+                            hpp_zhugeguo: ['female', 'shu', 3, ['hpp_qirang', 'hpp_yuhua', 'hpp_rende'], []],
                             // 欢杀诸葛瑾
                             hpp_zhugejin: ['male', 'wu', 3, ['huanshi', 'hpp_hongyuan', 'mingzhe'], []],
                             // 欢杀诸葛恪
@@ -930,6 +942,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhugezhan: ['male', 'shu', 3, ['hpp_zuilun', 'xinfu_fuyin'], []],
                             // 欢杀朱桓
                             hpp_zhuhuan: ['male', 'wu', 4, ['hpp_fenli', 'hpp_pingkou'], []],
+                            // 欢杀朱儁
+                            hpp_zhujun: ['male', 'qun', 4, ['hpp_gongjian', 'kuimang', 'jsrgjuxiang'], []],
                             // 欢杀朱然
                             hpp_zhuran: ['male', 'wu', 4, ['hpp_danshou'], []],
                             // 欢杀祝融
@@ -986,18 +1000,32 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sp_zhugeliang: ['male', 'shu', 3, ['hpp_bazhen', 'hpp_huoji', 'hpp_kanpo'], []],
 
                             // 喵
+                            // 喵蔡文姬
                             hpp_miao_caiwenji: ['female', 'qun', 3, ['hpp_miaobeige', 'hpp_miaoduanchang', 'hpp_doumao'], []],
+                            // 喵貂蝉
                             hpp_miao_diaochan: ['female', 'qun', 3, ['hpp_miaolijian', 'hpp_miaobiyue', 'hpp_doumao'], []],
+                            // 喵蔡夫人
                             hpp_miao_caifuren: ['female', 'qun', 3, ['hpp_miaoqieting', 'hpp_miaoxianzhou', 'hpp_doumao'], []],
+                            // 喵张星彩
                             hpp_miao_zhangxingcai: ['female', 'shu', 3, ['hpp_miaoshenxian', 'hpp_miaoqiangwu', 'hpp_doumao'], []],
+                            // 喵祝融
                             hpp_miao_zhurong: ['female', 'shu', 4, ['hpp_miaojuxiang', 'hpp_miaolieren', 'hpp_doumao'], []],
+                            // 喵黄月英
                             hpp_miao_huangyueying: ['female', 'shu', 3, ['hpp_miaojizhi', 'hpp_miaoqicai', 'hpp_doumao'], []],
+                            // 喵大乔
                             hpp_miao_daqiao: ['female', 'wu', 3, ['hpp_miaoguose', 'hpp_miaoliuli', 'hpp_doumao'], []],
+                            // 喵王异
                             hpp_miao_wangyi: ['female', 'wei', 4, ['hpp_miaozhenlie', 'hpp_miaomiji', 'hpp_doumao'], []],
+                            // 喵张春华
                             hpp_miao_zhangchunhua: ['female', 'wei', 3, ['hpp_miaojueqing', 'hpp_miaoshangshi', 'hpp_doumao'], []],
+                            // 喵甄姬
                             hpp_miao_zhenji: ['female', 'wei', 3, ['hpp_miaoluoshen', 'hpp_miaoqingguo', 'hpp_doumao'], []],
+                            // 喵孙尚香
                             hpp_miao_sunshangxiang: ['female', 'wu', 3, ['hpp_miaojieyi', 'hpp_miaoxiaoji', 'hpp_doumao'], []],
+                            // 喵小乔
                             hpp_miao_xiaoqiao: ['female', 'wu', 3, ['hpp_miaotianxiang', 'hpp_miaohongyan', 'hpp_doumao'], []],
+
+                            // 谋
 
                             // 神
                             // 神曹操
@@ -1026,6 +1054,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_lvbu: ['male', 'shen', 6, ['hpp_wuqian', 'hpp_shenfen'], ['qun']],
                             // 神吕蒙
                             hpp_shen_lvmeng: ['male', 'shen', 3, ['hpp_shelie', 'hpp_gongxin'], ['wu']],
+                            // 神马超
+                            hpp_shen_machao: ['male', 'shen', 4, ['shouli', 'hengwu'], ['shu']],
                             // 神司马懿
                             hpp_shen_simayi: ['male', 'shen', 3, ['hpp_renjie', 'hpp_jilve', 'lianpo'], ['wei']],
                             // 神孙策
@@ -1112,6 +1142,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_luxun: '本名陆议，字伯言，吴郡吴县人。历任东吴大都督、丞相。吴大帝孙权兄孙策之婿，世代为江东大族。以谦逊之书麻痹关羽，夺取荆州，又有火烧连营大破蜀军。',
                             hpp_shen_lvbu: '字奉先，五原郡九原县人。三国第一猛将，曾独力战刘关张三人，其武力世之无双。时人语曰：“人中有吕布，马中有赤兔。”',
                             hpp_shen_lvmeng: '吕蒙，字子明，汝南富陂人，东吴名将，原有“吴下阿蒙”之贬称，后受孙权劝说，奋发读书，最终成就一代名将。',
+                            hpp_shen_machao: '字孟起，扶风茂陵人。面如冠玉，目如流星，虎体猿臂，彪腹狼腰，声雄力猛。因衣着讲究，举止非凡，故人称“锦马超”。麾铁骑，捻金枪。',
                             hpp_shen_simayi: '晋宣帝，字仲达，河内温人。曾任职过曹魏的大都督，太尉，太傅。少有奇节，聪明多大略，博学洽闻，伏膺儒教，世之鬼才也。',
                             hpp_shen_sunce: '字伯符，吴郡富春人。孙坚长子，孙权长兄。东汉末年割据江东一带的军阀，汉末群雄之一，三国时期吴国的奠基者。三国演义中绰号“小霸王”，统一江东。在一次狩猎中为刺客所伤，不久后身亡，年仅二十六岁。其弟孙权接掌孙策势力，并于称帝后，追谥孙策为长沙桓王。',
                             hpp_shen_sunquan: '吴大帝，字仲谋，吴郡富春县人。统领吴与蜀魏三足鼎立，制衡天下。',
@@ -1321,6 +1352,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhangchangpu: ['hpp_zhangchangpu', 'ol_zhangchangpu', 'zhangchangpu', 'sp_zhangchangpu'],
                             zhangchunhua: ['hpp_zhangchunhua', 're_zhangchunhua', 'zhangchunhua', 'mini_zhangchunhua'],
                             zhangfei: ['hpp_zhangfei', 're_zhangfei', 'tw_zhangfei', 'xin_zhangfei', 'old_zhangfei', 'zhangfei'],
+                            zhangfen: ['hpp_zhangfen', 'zhangfen'],
                             zhanghe: ['hpp_zhanghe', 're_zhanghe', 'zhanghe'],
                             zhangji: ['hpp_zhangji', 'zhangji', 'ns_zhangji'],
                             zhangjiao: ['hpp_zhangjiao', 're_zhangjiao', 'sp_zhangjiao', 'zhangjiao'],
@@ -1351,6 +1383,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhugeliang: ['hpp_zhugeliang', 're_zhugeliang', 'zhugeliang'],
                             zhugezhan: ['hpp_zhugezhan', 'zhugezhan', 'old_zhugezhan'],
                             zhuhuan: ['hpp_zhuhuan', 're_zhuhuan', 'xin_zhuhuan', 'zhuhuan', 'old_zhuhuan'],
+                            zhujun: ['hpp_zhujun', 'ol_zhujun', 'zhujun', 'sp_zhujun', 'jsrg_zhujun'],
                             zhuran: ['hpp_zhuran', 're_zhuran', 'xin_zhuran', 'zhuran', 'old_zhuran'],
                             zhurong: ['hpp_zhurong', 're_zhurong', 'ol_zhurong', 'zhurong'],
                             zhuzhi: ['hpp_zhuhzi', 're_zhuzhi', 'zhuzhi', 'xin_zhuzhi', 'old_zhuzhi'],
@@ -1386,6 +1419,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             shen_luxun: ['hpp_shen_luxun', 'shen_luxun'],
                             shen_lvbu: ['hpp_shen_lvbu', 'shen_lvbu'],
                             shen_lvmeng: ['hpp_shen_lvmeng', 'tw_shen_lvmeng', 'shen_lvmeng'],
+                            shen_machao: ['hpp_shen_machao', 'shen_machao', 'ps_shen_machao'],
                             shen_simayi: ['hpp_shen_simayi', 'shen_simayi'],
                             shen_sunce: ['hpp_shen_sunce', 'shen_shunce'],
                             shen_sunquan: ['hpp_shen_sunquan', 'shen_sunquan', 'junk_sunquan'],
@@ -5048,6 +5082,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         trigger.player.addTempSkill('hpp_zhuikong_distance');
                                         trigger.player.storage.hpp_zhuikong_distance.push(player);
                                     }
+                                },
+                                ai: {
+                                    expose: 0.2,
                                 },
                                 subSkill: {
                                     distance: {
@@ -15722,6 +15759,284 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 张奋
+                            hpp_wanglu: {
+                                derivation: 'hpp_wanglu_faq',
+                                audio: 'dcwanglu',
+                                trigger: { player: 'phaseZhunbeiBegin' },
+                                forced: true,
+                                content: function () {
+                                    if (!player.hasEquipableSlot(5) || player.getEquip('hpp_dagongche')) {
+                                        var next = player.phaseUse();
+                                        event.next.remove(next);
+                                        trigger.getParent().next.push(next);
+                                    }
+                                    else {
+                                        var card = game.createCard('hpp_dagongche', 'spade', 9);
+                                        player.$gain2(card);
+                                        game.delayx();
+                                        player.equip(card);
+                                    }
+                                },
+                                broadcast: function (player) {
+                                    var card = player.getEquip('hpp_dagongche');
+                                    if (card) game.broadcast(function (card, storage) {
+                                        card.storage = storage;
+                                    }, card, card.storage);
+                                },
+                                ai: {
+                                    effect: {
+                                        target: function (card, player, target) {
+                                            if (target == player && get.type(card) == 'equip' && get.subtype(card) == 'equip1') return 'zerotarget';
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_xianzhu: {
+                                derivation: 'hpp_xianzhu_faq',
+                                audio: 'dcxianzhu',
+                                trigger: { source: 'damageSource' },
+                                filter: function (event, player) {
+                                    if (!event.card || event.card.name != 'sha') return false;
+                                    var card = player.getEquip('hpp_dagongche');
+                                    if (!card) return false;
+                                    var num = 0;
+                                    for (var i = 1; i <= 3; i++) {
+                                        var key = '大攻车选项' + get.cnNumber(i, true);
+                                        if (card.storage[key]) num += card.storage[key];
+                                    }
+                                    return num < 5;
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    var choiceList = [
+                                        '令【杀】无视距离及防具',
+                                        '令【杀】增加目标数',
+                                        '令【杀】命中后的弃牌数',
+                                    ];
+                                    var list = [];
+                                    var card = player.getEquip('hpp_dagongche');
+                                    for (var i = 1; i <= 3; i++) {
+                                        var key = '大攻车选项' + get.cnNumber(i, true);
+                                        var num = card.storage[key];
+                                        if (i == 1) {
+                                            if (!num) list.push('选项一');
+                                            else choiceList[0] = ('<span style="opacity:0.5; ">' + choiceList[0] + '（已强化）</span>');
+                                        }
+                                        else {
+                                            list.push('选项' + get.cnNumber(i, true));
+                                            if (num) choiceList[i - 1] += ('（已强化' + num + '次）');
+                                        }
+                                    }
+                                    player.chooseControl(list, 'cancel2').set('prompt', '是否发动【陷筑】强化【大攻车】？').set('choiceList', choiceList).set('ai', function () {
+                                        var player = _status.event.player, controls = _status.event.controls.slice(0);
+                                        var getval = function (choice) {
+                                            var card = player.getEquip('hpp_dagongche');
+                                            if (choice == '选项一') {
+                                                card.storage.大攻车选项一 = 1;
+                                                var goon = false;
+                                                if (game.hasPlayer(function (current) {
+                                                    var eff1 = 0, eff2 = 0;
+                                                    var cardx = { name: 'sha', isCard: true };
+                                                    if (player.canUse(cardx, current)) eff1 = get.effect(current, cardx, player, player);
+                                                    cardx.storage = { hpp_dagongche: true };
+                                                    if (player.canUse(cardx, current)) eff2 = get.effect(current, cardx, player, player);
+                                                    return (eff2 > eff1);
+                                                })) goon = true;
+                                                delete card.storage.大攻车选项一;
+                                                if (goon) return 5;
+                                                return 0;
+                                            }
+                                            else if (choice == '选项二') {
+                                                var num = 1;
+                                                if (card.storage.大攻车选项二) num += card.storage.大攻车选项二;
+                                                var cardx = { name: 'sha', isCard: true };
+                                                if (game.countPlayer(function (current) {
+                                                    return player.canUse(cardx, current) && get.effect(current, cardx, player, player) > 0;
+                                                }) > num) return 2;
+                                            }
+                                            else if (choice == '选项三') return 1;
+                                            return 0;
+                                        };
+                                        var eff = 0, current = 'cancel2';
+                                        for (var i of controls) {
+                                            var effx = getval(i);
+                                            if (effx > eff) {
+                                                eff = effx;
+                                                current = i;
+                                            }
+                                        }
+                                        return current;
+                                    });
+                                    'step 1'
+                                    if (result.control != 'cancel2') {
+                                        player.logSkill('hpp_xianzhu');
+                                        var card = player.getEquip('hpp_dagongche'), key = '大攻车' + result.control;
+                                        if (!card.storage[key]) card.storage[key] = 0;
+                                        card.storage[key]++;
+                                        lib.skill.hpp_wanglu.broadcast(player);
+                                    }
+                                },
+                                group: 'hpp_xianzhu_sha',
+                                subSkill: {
+                                    sha: {
+                                        audio: 'dcxianzhu',
+                                        enable: 'phaseUse',
+                                        filter: function (event, player) {
+                                            return /*player.getCardUsable('sha')>0&&*/game.hasPlayer(target => player.canUse({ name: 'sha' }, target, false)) && player.countCards('h', card => lib.skill.hpp_xianzhu.subSkill.sha.filterCard(card, player));
+                                        },
+                                        filterCard: function (card, player) {
+                                            return get.type(card) == 'equip' && get.subtype(card) == 'equip1';
+                                        },
+                                        filterTarget: function (card, player, target) {
+                                            return player.canUse({ name: 'sha', isCard: true }, target, false);
+                                        },
+                                        usable: 1,
+                                        check: (card) => 1 / (get.value(card) || 0.5),
+                                        prompt: '弃置手中的一张武器牌，视为对场上的一名角色使用了一张【杀】（无视距离且不计入次数）',
+                                        content: function () {
+                                            player.useCard({ name: 'sha', isCard: true }, target, false);
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_chaixie: {
+                                audio: 'dcchaixie',
+                                trigger: {
+                                    player: ['loseAfter'],
+                                    global: ['equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+                                },
+                                forced: true,
+                                filter: function (event, player) {
+                                    var evt = event.getl(player);
+                                    if (!evt || !evt.es || !evt.es.length) return false;
+                                    for (var card of evt.es) {
+                                        if (card.name == 'hpp_dagongche') {
+                                            for (var i = 1; i <= 3; i++) {
+                                                if (card.storage['大攻车选项' + get.cnNumber(i, true)]) return true;
+                                            }
+                                        }
+                                    }
+                                    return false;
+                                },
+                                content: function () {
+                                    var num = 0;
+                                    var evt = trigger.getl(player);
+                                    for (var card of evt.es) {
+                                        if (card.name == 'hpp_dagongche') {
+                                            for (var i = 1; i <= 3; i++) {
+                                                var key = '大攻车选项' + get.cnNumber(i, true);
+                                                if (card.storage[key]) num += card.storage[key];
+                                            }
+                                        }
+                                    }
+                                    player.draw(num);
+                                },
+                            },
+                            hpp_dagongche_skill: {
+                                equipSkill: true,
+                                mod: {
+                                    targetInRange: function (card, player, target) {
+                                        if (card.name == 'sha' && player.getEquip('hpp_dagongche').storage.大攻车选项一) return true;
+                                    },
+                                },
+                                trigger: {
+                                    player: 'useCardToPlayered',
+                                },
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha' && player.getEquip('hpp_dagongche').storage.大攻车选项一;
+                                },
+                                forced: true,
+                                logTarget: 'target',
+                                content: function () {
+                                    trigger.target.addTempSkill('qinggang2');
+                                    trigger.target.storage.qinggang2.add(trigger.card);
+                                    trigger.target.markSkill('qinggang2');
+                                },
+                                ai: {
+                                    unequip_ai: true,
+                                    skillTagFilter: function (player, tag, arg) {
+                                        if (arg && arg.name == 'sha') return true;
+                                        return false;
+                                    }
+                                },
+                                group: ['hpp_dagongche_skill_discard', 'hpp_dagongche_skill_sha'],
+                                subSkill: {
+                                    sha: {
+                                        trigger: { player: 'phaseUseBegin' },
+                                        direct: true,
+                                        filter: function (event, player) {
+                                            var cardx = {
+                                                name: 'sha',
+                                                isCard: true,
+                                                storage: { hpp_dagongche: true },
+                                            };
+                                            return player.hasUseTarget(cardx);
+                                        },
+                                        equipSkill: true,
+                                        content: function () {
+                                            var card = {
+                                                name: 'sha',
+                                                isCard: true,
+                                                storage: { hpp_dagongche: true },
+                                            };
+                                            lib.skill.hpp_wanglu.broadcast(player);
+                                            player.chooseUseTarget(card, '大攻车：是否视为使用【杀】？', false).logSkill = 'hpp_dagongche_skill';
+                                        },
+                                        mod: {
+                                            targetInRange: function (card, player, target) {
+                                                if (card.storage && card.storage.hpp_dagongche) {
+                                                    var cardx = player.getEquip('hpp_dagongche');
+                                                    if (cardx && cardx.storage.大攻车选项一) return true;
+                                                }
+                                            },
+                                            selectTarget: function (card, player, range) {
+                                                if (card.storage && card.storage.hpp_dagongche && range[1] != -1) {
+                                                    var cardx = player.getEquip('hpp_dagongche');
+                                                    if (cardx && cardx.storage.大攻车选项二) range[1] += cardx.storage.大攻车选项二;
+                                                }
+                                            },
+                                            canBeDiscarded: function (card) {
+                                                if (card.name == 'hpp_dagongche' && get.position(card) == 'e') {
+                                                    for (var i = 1; i <= 3; i++) {
+                                                        if (card.storage['大攻车选项' + get.cnNumber(i, true)]) return;
+                                                    }
+                                                    return false;
+                                                }
+                                            },
+                                        },
+                                        ai: {
+                                            unequip: true,
+                                            skillTagFilter: function (player, tag, arg) {
+                                                if (!arg || !arg.card || !arg.card.storage || !arg.card.storage.hpp_dagongche) return false;
+                                                var card = player.getEquip('hpp_dagongche');
+                                                if (!card || !card.storage.大攻车选项一) return false;
+                                            },
+                                        },
+                                    },
+                                    discard: {
+                                        trigger: { source: 'damageSource' },
+                                        equipSkill: true,
+                                        forced: true,
+                                        filter: function (event, player) {
+                                            if (!event.card || !event.card.storage || !event.card.storage.hpp_dagongche) return false;
+                                            if (event.getParent().type != 'card') return false;
+                                            return event.player.hasCard(function (card) {
+                                                return lib.filter.canBeDiscarded(card, event.player, player);
+                                            }, 'he');
+                                        },
+                                        logTarget: 'player',
+                                        content: function () {
+                                            var num = 1;
+                                            var cardx = player.getEquip('hpp_dagongche');
+                                            if (cardx && cardx.storage.大攻车选项三) num += cardx.storage.大攻车选项三;
+                                            player.discardPlayerCard(trigger.player, true, num, 'he');
+                                        },
+                                    },
+                                },
+                            },
+
                             // 张郃
                             hpp_qiaobian: {
                                 audio: 'qiaobian',
@@ -18488,6 +18803,36 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             if (card.name == 'lebu' || card.name == 'bingliang') return 0.5;
                                         },
                                     },
+                                },
+                            },
+
+                            // 朱儁
+                            hpp_gongjian: {
+                                audio: 'gongjian',
+                                inherit: 'gongjian',
+                                content: function () {
+                                    'step 0'
+                                    event.targets = trigger.parent.gongjian_targets.filter(function (target) {
+                                        return trigger.targets.includes(target);
+                                    });
+                                    event.num = 0;
+                                    'step 1'
+                                    var target = targets[num];
+                                    player.discardPlayerCard(target, true, 'he', [1, 2]).set('forceAuto', true);
+                                    'step 2'
+                                    event.num++;
+                                    if (event.num < targets.length) event.goto(1);
+                                    else {
+                                        var cards = [];
+                                        game.getGlobalHistory('cardMove', function (evt) {
+                                            if (evt.player && evt.hs && evt.type == 'discard' && evt.getParent(3) == event) {
+                                                for (var i of evt.hs) {
+                                                    if (get.type(i, evt.player) == 'basic' && get.position(i, true) == 'd') cards.add(i);
+                                                }
+                                            }
+                                        });
+                                        if (cards.length) player.gain(cards, 'gain2');
+                                    }
                                 },
                             },
 
@@ -23785,6 +24130,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: { expose: 0.25 },
                             },
 
+                            // 神马超
+
                             // 神司马懿
                             hpp_renjie: {
                                 unique: true,
@@ -26014,6 +26361,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangchangpu: '#b捞德一评级:3.8',
                             hpp_zhangchunhua: '#g捞德一评级:2.5',
                             hpp_zhangfei: '#b捞德一评级:3.5',
+                            hpp_zhangfen: '#r捞德一评级:4.2',
                             hpp_zhanghe: '#b捞德一评级:3.4',
                             hpp_zhangji: '#b捞德一评级:3.0',
                             hpp_zhangjiao: '#b捞德一评级:3.7',
@@ -26044,6 +26392,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhugeliang: '#b捞德一评级:3.2',
                             hpp_zhugezhan: '#g捞德一评级:2.8',
                             hpp_zhuhuan: '#b捞德一评级:3.5',
+                            hpp_zhujun: '#b捞德一评级:3.7',
                             hpp_zhuran: '#b捞德一评级:3.7',
                             hpp_zhurong: '#b捞德一评级:3.9',
                             hpp_zhuzhi: '#b捞德一评级:3.6',
@@ -26098,6 +26447,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shen_luxun: '#r捞德一评级:4.0',
                             hpp_shen_lvbu: '#r捞德一评级:4.0',
                             hpp_shen_lvmeng: '#r捞德一评级:4.0',
+                            hpp_shen_machao: '#r捞德一评级:4.1',
                             hpp_shen_simayi: '#r捞德一评级:4.2',
                             hpp_shen_sunce: '#r捞德一评级:4.0',
                             hpp_shen_sunquan: '#r捞德一评级:4.1',
@@ -26884,6 +27234,20 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhangfei: '欢杀张飞',
                             hpp_tishen: '替身',
                             hpp_tishen_info: '回合外，获得所有对你使用且未对你造成伤害的【杀】。出牌阶段你使用的杀被闪抵消后，则你本阶段使用的下一张【杀】不可被响应且造成的伤害+1。',
+                            hpp_zhangfen: '欢杀张奋',
+                            hpp_wanglu: '望橹',
+                            hpp_wanglu_info: '锁定技，准备阶段，你将【大攻车】置入你的装备区，若你的装备区已有【大攻车】，则你执行一个额外的出牌阶段；',
+                            hpp_wanglu_faq: '关于大攻车',
+                            hpp_wanglu_faq_info: '<br><li>花色：♠<br><li>点数：9<br><li>类别：武器<br><li>攻击范围：2<br><li>装备效果：出牌阶段开始时，你可视为使用一张【杀】（不计入次数），若以此法造成伤害，你弃置目标一张牌。若此牌未升级过，此牌无法被弃置。此牌离开装备区时销毁。<br><li>升级效果包括：【杀】无视距离及防具（装备【大攻车】后所有的杀）、增加目标数、增加命中后的弃牌数。',
+                            hpp_xianzhu: '陷筑',
+                            hpp_xianzhu_info: '出牌阶段限一次，你可以弃置手中的一张武器牌，然后视为对场上的一名角色使用了一张【杀】（无视距离且不计入次数）。当你的【杀】造成伤害后，你可升级【大攻车】（每个【大攻车】最多升级5次）。',
+                            hpp_xianzhu_faq: '关于强化大攻车',
+                            hpp_xianzhu_faq_info: '<br>从以下选项中任选一项：<br><li>【杀】无视距离及防具（装备【大攻车】后所有的杀）；<br><li>【杀】增加目标数<br><li>【杀】增加命中后的弃牌数。',
+                            hpp_chaixie: '拆械',
+                            hpp_chaixie_info: '锁定技。当【大攻车】销毁后，你摸X张牌（X为该【大攻车】的升级次数）。',
+                            hpp_dagongche: '大攻车',
+                            hpp_dagongche_skill: '大攻车',
+                            hpp_dagongche_info: '出牌阶段开始时，你可视为使用一张【杀】（不计入次数），若以此法造成伤害，你弃置目标一张牌。若此牌未升级过，此牌无法被弃置。此牌离开装备区时销毁。',
                             hpp_zhanghe: '欢杀张郃',
                             hpp_qiaobian: '巧变',
                             hpp_qiaobian_info: '你可以弃置一张手牌并跳过一个阶段（准备阶段和结束阶段除外）：若跳过摸牌阶段，你可以获得至多两名角色的各一张手牌；若跳过出牌阶段，你可以移动场上的一张牌。回合结束时，若你跳过了至少三个阶段，则你摸两张牌。',
@@ -27009,6 +27373,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_fenli_info: '若你的手牌数为全场最多，你可以跳过判定和摸牌阶段；若你的体力值为全场最多，你可以跳过出牌阶段；若你的装备区的牌数量为全场最多，你可以跳过弃牌阶段。',
                             hpp_pingkou: '平寇',
                             hpp_pingkou_info: '回合结束时，你可以对至多X名其他角色各造成1点伤害（X为你本回合跳过的阶段数）。若你跳过的阶段数大于你选择的角色数，则你获得其中一名角色装备区的一张牌。',
+                            hpp_zhujun: '欢杀朱儁',
+                            hpp_gongjian: '攻坚',
+                            hpp_gongjian_info: '每回合限一次，当一名角色使用【杀】指定目标后，若此【杀】与上一张【杀】有相同的目标，则你可以弃置目标角色至多两张牌，并获得其中的基本牌。',
                             hpp_zhuran: '欢杀朱然',
                             hpp_danshou: '胆守',
                             hpp_danshou_info: '每个回合限一次，当你成为基本牌或锦囊牌的目标后，你可以摸X张牌（X为你本回合成为牌的目标的次数）；当前回合角色的结束阶段，若你本回合没有以此法摸牌，你可以弃置与其手牌数相同的牌数对其造成1点伤害。',
@@ -27280,6 +27647,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shelie_info: '锁定技，摸牌阶段，改为亮出牌堆顶的五张牌，然后获得其中每种花色的牌各一张。',
                             hpp_gongxin: '攻心',
                             hpp_gongxin_info: '当你使用牌指定唯一目标或成为其他角色使用牌的唯一目标后，你可以观看目标角色的手牌，然后你可以展示其中一张红色牌，获得此牌或将此牌置于牌堆顶（每回合限触发一次）。',
+                            hpp_shen_machao: '欢杀神马超',
                             hpp_shen_simayi: '欢杀神司马懿',
                             hpp_renjie: '忍戒',
                             hpp_renjie_info: '锁定技，游戏开始时，你获得1枚‘忍’标记，当你受到伤害后，或于弃牌阶段内弃置手牌后，你获得X枚‘忍’标记（X为伤害值或弃置手牌数）。',
