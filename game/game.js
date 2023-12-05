@@ -37615,6 +37615,23 @@
 					}
 				}
 			},
+			hok_anyueNode: function (player, bool) {
+				//Powered by 升麻
+				if (bool) {
+					if (!player.node.jiu && lib.config.jiu_effect) {
+						player.node.jiu = ui.create.div('.hok_anyue', player.node.avatar);
+						player.node.jiu2 = ui.create.div('.hok_anyue', player.node.avatar2);
+					}
+				}
+				else {
+					if (player.node.jiu) {
+						player.node.jiu.delete();
+						player.node.jiu2.delete();
+						delete player.node.jiu;
+						delete player.node.jiu2;
+					}
+				}
+			},
 			init: function (players) {
 				if (game.chess) return;
 				if (lib.config.mode == 'versus') {
