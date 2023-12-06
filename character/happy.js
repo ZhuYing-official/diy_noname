@@ -397,14 +397,18 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					return false;
 				},
 				content: function () {
-					if (trigger.num > 1 && !player.isMaxHp()) {
+					if (trigger.num > 1) {
 						trigger.num--;
 					}
-					for (let target of game.players) {
-						if (target.isMaxHp() && target != player) {
-							trigger.source.line(target);
-							target.damage('fire', trigger.source);
-							// target.damage('fire');
+					if (player.isMaxHp()) {
+						trigger.num++;
+					} else {
+						for (let target of game.players) {
+							if (target.isMaxHp() && target != player) {
+								trigger.source.line(target);
+								target.damage('fire', trigger.source);
+								// target.damage('fire');
+							}
 						}
 					}
 				},
@@ -5214,11 +5218,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			tengbing: '藤兵',
 			tengbing_info: '锁定技。游戏开始时，你将游戏外的一张【藤甲】置入装备区。你手牌区内的防具牌均视为【南蛮入侵】，且你不是防具牌的合法目标。当你即将失去【藤甲】或即将废除防具栏时，取消之。你不能将装备区内的【藤甲】当做其他牌使用或打出。',
 			ranwang: '燃亡',
-			ranwang_info: '锁定技。当你受到火焰伤害时减少1点伤害（至少1点），然后减1点体力上限。',
+			ranwang_info: '锁定技。当你受到火焰伤害时减少1点火焰伤害（至少受到1点），然后减1点体力上限。',
 			// 奚泥
 			xini: '奚泥',
 			ranyong: '燃勇',
-			ranyong_info: '锁定技，当你受到火焰伤害时减少1点伤害（至少1点），全场体力值最多的角色同样受到1点火焰伤害。',
+			ranyong_info: '锁定技，当你受到火焰伤害时全场体力值最多的角色（优先自己）分摊1点火焰伤害（至少受到1点）。',
 
 			// 妲己
 			hok_daji: '王者妲己',
