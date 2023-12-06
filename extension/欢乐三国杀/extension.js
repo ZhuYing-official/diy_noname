@@ -12473,7 +12473,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 }
                             },
 
-                            //王悦
+                            // 王悦
                             hpp_huguan: {
                                 audio: 'huguan',
                                 audioname2: { hpp_wangyue: 'huguan_wangyue' },

@@ -61,7 +61,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		connect: true,
 		characterSort: {
 			happy: {
-				correction_history: ['cuishi', 'liucong', 'xini'],
+				correction_history: ['cuishi', 'liucong', 'tuanxini', 'tuan', 'xini'],
 				honor_of_kings: ['hok_daji', 'hok_lixin', 'hok_makeboluo', 'hok_mingshiyin', 'hok_miyue', 'hok_sunwukong', 'hok_wuzetian', 'hok_sp_lixin', 'hok_sp_mingshiyin'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
 				hpp_hpp: ['hpp_re_luxun', 'hpp_re_lvbu'],
@@ -72,8 +72,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			cuishi: ['female', 'wei', 3, ['reluoshen', 'pianwan', 'huashang']],
 			// 刘琮
 			liucong: ['male', 'qun', 3, ['decadezongshi', 'tunquan', 'rexianzhou', 'quxiang']],
+			// 土安奚泥
+			tuanxini: ['male', 'qun', '8/15', ['tengbing', 'ranwang', 'ranyong']],
+			// 土安
+			tuan: ['male', 'qun', '4/8', ['tengbing', 'ranwang']],
 			// 奚泥
-			xini: ['male', 'qun', 8 / 12, ['tengbing']],
+			xini: ['male', 'qun', '4/7', ['tengbing', 'ranyong']],
 
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
@@ -107,6 +111,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterIntro: {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
 			liucong: '刘琮（？-？），山阳高平（今山东微山两城乡）人。东汉末年荆州牧刘表次子，刘琦之弟。刘表死后继承刘表官爵，当曹操大军南下之时，他在蔡瑁等人的劝说之下举荆州而降，被曹操封为青州刺史，后迁谏议大夫，爵封列侯。',
+			tuanxini: '带来洞主曰：“此去东南七百里，有一国，名乌戈国。国主兀突骨，身长丈二，不食五谷，以生蛇恶兽为饭；身有鳞甲，刀箭不能侵。其手下军士，俱穿藤甲；其藤生于山涧之中，盘于石壁之上；国人采取，浸于油中，半年方取出晒之；晒干复浸，凡十余遍，却才造成铠甲；穿在身上，渡江不沉，经水不湿，刀箭皆不能入：因此号为‘藤甲军’。今大王可往求之。若得彼相助，擒诸葛亮如利刀破竹也。”孟获大喜，遂投乌戈国，来见兀突骨。其洞无宇舍，皆居土穴之内。孟获入洞，再拜哀告前事。兀突骨曰：“吾起本洞之兵，与汝报仇。”获欣然拜谢。于是兀突骨唤两个领兵俘长：一名土安，一名奚泥，起三万兵，皆穿藤甲，离乌戈国望东北而来。曾经大败蜀军，后被诸葛施计引入盘蛇谷中，尽烧其众，无所生还。',
+			tuan: '土安，《三国演义》里的人物，长乌戈国主兀突骨手下的一个藤甲领兵长，身穿藤甲，后被诸葛施计引入盘蛇谷中阵亡。',
 			xini: '小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
 			hok_lixin: '李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
@@ -292,6 +298,132 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							}
 						},
 					},
+				},
+			},
+			// 土安
+			tengbing: {
+				trigger: {
+					global: 'phaseBefore',
+					player: 'enterGame',
+				},
+				forced: true,
+				filter: function (event, player) {
+					return (event.name != 'phase' || game.phaseNumber == 0) && player.hasEquipableSlot(1) && !player.getEquips('tengjia').length;
+				},
+				content: function () {
+					var card = game.createCard2('tengjia', 'spade', 1 + Math.floor(Math.random() * 12));
+					player.$gain2(card, false);
+					game.delayx();
+					player.equip(card);
+				},
+				mod: {
+					canBeGained: function (card, source, player) {
+						if (player.getEquips('tengjia').contains(card)) return false;
+					},
+					canBeDiscarded: function (card, source, player) {
+						if (player.getEquips('tengjia').contains(card)) return false;
+					},
+					canBeReplaced: function (card, player) {
+						if (player.getEquips('tengjia').contains(card)) return false;
+					},
+					cardname: function (card) {
+						if (get.subtype(card, false) == 'equip2') return 'nanman';
+					},
+					cardnature: function (card) {
+						if (get.subtypes(card, false).contains('equip2')) return false;
+					},
+					cardDiscardable: function (card, player) {
+						if (player.getEquips('tengjia').contains(card)) return false;
+					},
+					cardEnabled2: function (card, player) {
+						if (player.getEquips('tengjia').contains(card)) return false;
+					},
+				},
+				group: ['tengbing_blocker'],
+				subSkill: {
+					blocker: {
+						trigger: { player: ['loseBefore', 'disableEquipBefore'] },
+						forced: true,
+						filter: function (event, player) {
+							if (event.name == 'disableEquip') return (event.slots.contains('equip2'));
+							var cards = player.getEquips('tengjia');
+							return event.cards.some(card => cards.contains(card));
+						},
+						content: function () {
+							if (trigger.name == 'lose') {
+								trigger.cards.removeArray(player.getEquips('tengjia'));
+							}
+							else {
+								while (trigger.slots.contains('equip2')) trigger.slots.remove('equip2');
+							}
+						},
+					},
+				},
+			},
+			ranwang: {
+				trigger: { player: 'damageBegin4' },
+				filter: function (event, player) {
+					return event.hasNature('fire');
+				},
+				forced: true,
+				check: function () {
+					return false;
+				},
+				content: function () {
+					if (trigger.num > 1) {
+						trigger.num--;
+					}
+					player.loseMaxHp();
+				},
+				ai: {
+					effect: {
+						target: function (card, player, target, current) {
+							if (card.name == 'sha') {
+								if (game.hasNature(card, 'fire') || player.hasSkill('zhuque_skill')) return 2;
+							}
+							if (get.tag(card, 'fireDamage') && current < 0) return 2;
+						}
+					}
+				},
+			},
+			// 奚泥
+			ranyong: {
+				trigger: { player: 'damageBegin4' },
+				filter: function (event, player) {
+					return event.hasNature('fire');
+				},
+				forced: true,
+				check: function () {
+					return false;
+				},
+				content: function () {
+					if (trigger.num > 1 && !player.isMaxHp()) {
+						trigger.num--;
+					}
+					for (let target of game.players) {
+						if (target.isMaxHp() && target != player) {
+							trigger.source.line(target);
+							target.damage('fire', trigger.source);
+							// target.damage('fire');
+						}
+					}
+				},
+				ai: {
+					effect: {
+						target: function (card, player, target, current) {
+							if (player.isMaxHp()) {
+								if (card.name == 'sha') {
+									if (game.hasNature(card, 'fire') || player.hasSkill('zhuque_skill')) return 2;
+								}
+								if (get.tag(card, 'fireDamage') && current < 0) return 2;
+							} else {
+								if (card.name == 'sha') {
+									if (game.hasNature(card, 'fire') || player.hasSkill('zhuque_skill')) return 1.3;
+								}
+								if (get.tag(card, 'fireDamage') && current < 0) return 1.3;
+							}
+						}
+					}
 				},
 			},
 
@@ -5043,13 +5175,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// g绿 b蓝 r红 p粉
 			cuishi: '#g捞德一评级:2.4',
 			liucong: '#g捞德一评级:2.1',
+			tuanxini: '#rUNICRON评级:4.0',
+			tuan: '#b捞德一评级:3.5',
+			xini: '#b捞德一评级:3.0',
 			hok_daji: '#b捞德一评级:3.7',
 			hok_lixin: '#b捞德一评级:3.7',
 			hok_makeboluo: '#b捞德一评级:3.9',
 			hok_mingshiyin: '#b捞德一评级:3.8',
 			hok_miyue: '#b捞德一评级:3.8',
 			hok_sunwukong: '#r捞德一评级:4.0',
-			hok_wuzetian: '#bUNICRON评级:3.9',
+			hok_wuzetian: '#b捞德一评级:3.9',
 			hok_sp_lixin: '#r捞德一评级:4.0',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 			shen_caozhi: '#r捞德一评级:4.3',
@@ -5073,10 +5208,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			quxiang_info: '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。',
 			quxiang_rewrite: '屈降·改',
 			quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你1张手牌。',
+			// 土安
+			tuanxini: '土安奚泥',
+			tuan: '土安',
+			tengbing: '藤兵',
+			tengbing_info: '锁定技。游戏开始时，你将游戏外的一张【藤甲】置入装备区。你手牌区内的防具牌均视为【南蛮入侵】，且你不是防具牌的合法目标。当你即将失去【藤甲】或即将废除防具栏时，取消之。你不能将装备区内的【藤甲】当做其他牌使用或打出。',
+			ranwang: '燃亡',
+			ranwang_info: '锁定技。当你受到火焰伤害时减少1点伤害（至少1点），然后减1点体力上限。',
 			// 奚泥
 			xini: '奚泥',
-			tengbing: '藤兵',
-			tengbing_info: '锁定技，你将一张【藤甲】加入游戏，你始终装备着藤甲。当你受到火焰伤害时，改为受到1点伤害并减1体力上限。',
+			ranyong: '燃勇',
+			ranyong_info: '锁定技，当你受到火焰伤害时减少1点伤害（至少1点），全场体力值最多的角色同样受到1点火焰伤害。',
 
 			// 妲己
 			hok_daji: '王者妲己',

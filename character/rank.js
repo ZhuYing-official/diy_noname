@@ -768,7 +768,7 @@ window.noname_character_rank = {
 		'zhangyan',
 		'jsrg_huangzhong',
 		'jsrg_zhangchu',
-'ol_dingshangwan',
+		'ol_dingshangwan',
 		'ol_liwan',
 		'chengjichengcui',
 		'xin_zhangliang',
@@ -1057,7 +1057,7 @@ window.noname_character_rank = {
 		'feiyao',
 		'jsrg_xiahouen',
 		'old_shen_zhaoyun',
-'sb_qiaoxiao',
+		'sb_qiaoxiao',
 		're_simalang',
 		'laimin',
 		'baoxin',
@@ -1254,7 +1254,7 @@ window.noname_character_rank = {
 		'huanfan',
 		'jsrg_xugong',
 		'old_xiaoqiao',
-'old_guanyu',
+		'old_guanyu',
 	],
 	c: [
 		'xiahoudun',
@@ -1318,7 +1318,7 @@ window.noname_character_rank = {
 		'ol_huban',
 		'sb_menghuo',
 		'old_caocao',
-'sb_yl_luzhi',
+		'sb_yl_luzhi',
 	],
 	d: [
 		'lvmeng',
@@ -1483,6 +1483,7 @@ window.noname_character_rank = {
 			'dc_xujing',
 
 			//捞德一
+			'tuanxini',
 			'hok_sp_lixin',
 			'hok_sp_mingshiyin',
 			'hok_sunwukong',
@@ -1970,7 +1971,8 @@ window.noname_character_rank = {
 			'yj_zhoubuyi',
 
 			//捞德一
-			'cuishi',
+			'tuan',
+			'xini',
 			'hok_daji',
 			'hok_lixin',
 			'hok_makeboluo',
@@ -2400,6 +2402,7 @@ window.noname_character_rank = {
 			'ol_liwan',
 
 			// 捞德一
+			'cuishi',
 			'liucong',
 		],
 		common: [
