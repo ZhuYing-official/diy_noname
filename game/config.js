@@ -159,7 +159,7 @@ window.config = {
 	modeconfig: false,
 	gameconfig: false,
 	appearence: false,
-	video: '0',
+	video: '20',
 	coin: 0,
 
 	intro: 'i',
@@ -202,6 +202,8 @@ window.config = {
 				['zhu', 'zhong', 'nei', 'fan', 'fan', 'fan'],
 				['zhu', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan'],
 				['zhu', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan', 'fan'],
+['zhu', 'zhong', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan', 'fan'],
+				['zhu', 'zhong', 'zhong', 'zhong', 'nei', 'nei', 'fan', 'fan', 'fan', 'fan'],
 			],
 			choice: {
 				zhu: 3,
@@ -209,11 +211,7 @@ window.config = {
 				nei: 5,
 				fan: 3,
 			},
-			choice_zhu: '4',
-			choice_zhong: '5',
-			choice_fan: '4',
-			choice_nei: '6',
-			show_identity: true,
+						show_identity: true,
 			difficulty: 'normal',
 			dierestart: true
 		},

@@ -61,7 +61,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		connect: true,
 		characterSort: {
 			happy: {
-				correction_history: ['cuishi', 'liucong'],
+				correction_history: ['cuishi', 'liucong', 'xini'],
 				honor_of_kings: ['hok_daji', 'hok_lixin', 'hok_makeboluo', 'hok_mingshiyin', 'hok_miyue', 'hok_sunwukong', 'hok_wuzetian', 'hok_sp_lixin', 'hok_sp_mingshiyin'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
 				hpp_hpp: ['hpp_re_luxun', 'hpp_re_lvbu'],
@@ -72,6 +72,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			cuishi: ['female', 'wei', 3, ['reluoshen', 'pianwan', 'huashang']],
 			// 刘琮
 			liucong: ['male', 'qun', 3, ['decadezongshi', 'tunquan', 'rexianzhou', 'quxiang']],
+			// 奚泥
+			xini: ['male', 'qun', 8 / 12, ['tengbing']],
 
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
@@ -105,6 +107,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterIntro: {
 			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
 			liucong: '刘琮（？-？），山阳高平（今山东微山两城乡）人。东汉末年荆州牧刘表次子，刘琦之弟。刘表死后继承刘表官爵，当曹操大军南下之时，他在蔡瑁等人的劝说之下举荆州而降，被曹操封为青州刺史，后迁谏议大夫，爵封列侯。',
+			xini: '小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
 			hok_lixin: '李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
 			hok_makeboluo: '马可波罗，中古时期的威尼斯商人。其父亲和叔叔，都曾到东方经商，而他本人，则在元世祖忽必烈的时代，来到中国。他穿越沙漠和帕米尔高原，经河西走廊来到元大都，游历了许多城市，据说还见过忽必烈，接受过元朝的官职。回到威尼斯之后，因带回的东方珍宝而成为巨富。后来参与威尼斯与热那亚的战争中被俘，在狱中，向同牢的作家口述了他的东方见闻，遂成著名的《马可波罗游记》。《马可波罗游记》极大地开拓了欧洲人的东方视野，丰富了他们关于东方的想象，激起了欧洲人向往东方的雄心。但也有人质疑游记的真实性，比如游记没有提到著名的长城，不过，作为一个口述游记，记录长城作用几乎完全消失的元代的事情，缺失长城也是可以理解的。',
@@ -611,11 +614,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.removeMark('hok_guangan', 3);
 					player.addSkill('hok_guangzhan_effect');
 				},
-				ai:{
-					result:{
-						player:function(player,target){
-							if(player.inRange(target)&&get.attitude(player, target)<0){
-								return 1-get.damageEffect(target, player, player, 'thunder');
+				ai: {
+					result: {
+						player: function (player, target) {
+							if (player.inRange(target) && get.attitude(player, target) < 0) {
+								return 1 - get.damageEffect(target, player, player, 'thunder');
 							}
 							return 0;
 						}
@@ -5070,6 +5073,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			quxiang_info: '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。',
 			quxiang_rewrite: '屈降·改',
 			quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你1张手牌。',
+			// 奚泥
+			xini: '奚泥',
+			tengbing: '藤兵',
+			tengbing_info: '锁定技，你将一张【藤甲】加入游戏，你始终装备着藤甲。当你受到火焰伤害时，改为受到1点伤害并减1体力上限。',
 
 			// 妲己
 			hok_daji: '王者妲己',
