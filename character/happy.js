@@ -148,20 +148,20 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 				filter: function (event, player) {
-					let flag = true;
+					let flag = 4;
 					if (player.countCards('h', { suit: 'heart' }) === 0) {
-						flag = false;
+						flag -= 1;
 					}
 					if (flag && player.countCards('h', { suit: 'diamond' }) === 0) {
-						flag = false;
+						flag -= 1;
 					}
 					if (flag && player.countCards('h', { suit: 'club' }) === 0) {
-						flag = false;
+						flag -= 1;
 					}
 					if (flag && player.countCards('h', { suit: 'spade' }) === 0) {
-						flag = false;
+						flag -= 1;
 					}
-					return !player.isEmpty(2) && flag;
+					return !player.isEmpty(2) && flag >= 3;
 				},
 				unique: true,
 				juexingji: true,
@@ -5177,7 +5177,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		},
 		characterTitle: {
 			// g绿 b蓝 r红 p粉
-			cuishi: '#g捞德一评级:2.4',
+			cuishi: '#g捞德一评级:3.3',
 			liucong: '#g捞德一评级:2.1',
 			tuanxini: '#rUNICRON评级:4.0',
 			tuan: '#b捞德一评级:3.5',
@@ -5203,7 +5203,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			pianwan: '翩婉',
 			pianwan_info: '锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
 			huashang: '华裳',
-			huashang_info: '觉醒技，结束阶段时，当你的手牌花色有四种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
+			huashang_info: '觉醒技，结束阶段时，当你的手牌花色有三种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
 			// 刘琮
 			liucong: '刘琮',
 			tunquan: '豚犬',

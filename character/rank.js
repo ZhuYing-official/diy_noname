@@ -1971,6 +1971,7 @@ window.noname_character_rank = {
 			'yj_zhoubuyi',
 
 			//捞德一
+			'cuishi',
 			'tuan',
 			'xini',
 			'hok_daji',
@@ -2402,7 +2403,6 @@ window.noname_character_rank = {
 			'ol_liwan',
 
 			// 捞德一
-			'cuishi',
 			'liucong',
 		],
 		common: [
