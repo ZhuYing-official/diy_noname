@@ -3826,6 +3826,110 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			hppjuezhu: {
+				audio: 1,
+				limited: true,
+				enable: 'phaseUse',
+				direct: true,
+				filter: function (event, player) {
+					return player.hasEnabledSlot(3) || player.hasEnabledSlot(4);
+				},
+				skillAnimation: true,
+				animationColor: 'water',
+				content: function () {
+					'step 0'
+					player.chooseTarget(get.prompt2('hpp_juezhu'), [1, 2], function (card, player, target) {
+						return player != target && !ui.selected.targets.length && !target.hasSkill('feiying');
+					}).set('promptbar', 'none').set('ai', function (target) {
+						if (player.hasUnknown()) return false;
+						return get.attitude(player, target);
+					});
+					'step 1'
+					if (result.bool) {
+						event.target = result.targets[0];
+						var list = [];
+						if (player.hasEnabledSlot(3)) list.push('equip3');
+						if (player.hasEnabledSlot(4)) list.push('equip4');
+						if (list.length == 1) event._result = { control: list[0] };
+						else player.chooseControl(list).set('prompt', '选择废除一个坐骑栏');
+					}
+					else event.finish();
+					'step 2'
+					player.logSkill('hpp_juezhu', target);
+					player.awakenSkill('hpp_juezhu');
+					player.disableEquip(result.control);
+					target.disableJudge();
+					player.markAuto('hpp_juezhu_restore', [[target, result.control]]);
+					player.addSkill('hpp_juezhu_restore');
+					target.addSkill('feiying');
+				},
+				subSkill: {
+					restore: {
+						trigger: { global: 'die' },
+						forced: true,
+						charlotte: true,
+						filter: function (event, player) {
+							for (var i of player.getStorage('hpp_juezhu_restore')) {
+								if (i[0] == event.player && player.hasDisabledSlot(i[1])) return true;
+							}
+							return false;
+						},
+						content: function () {
+							var list = [];
+							for (var i of player.getStorage('hpp_juezhu_restore')) {
+								if (i[0] == trigger.player && player.hasDisabledSlot(i[1])) list.push(i[1]);
+							}
+							player.enableEquip(list);
+							player.addSkill('feiying');
+						},
+					},
+				},
+				derivation: 'feiying',
+			},
+			hppzjjuxiang: {
+				audio:1,
+				inherit: 'jsrgjuxiang',
+				checkx: function (event, player) {
+					var target = _status.currentPhase;
+					if (!target || get.attitude(player, target) <= 0) return false;
+					var evt = event.getParent('phaseDiscard'), evt2 = event.getParent('phaseJieshu');
+					if (evt && evt.name == 'phaseDiscard' || evt2 && evt.name == 'phaseJieshu') return false;
+					if (target.getCardUsable({ name: 'sha' }) >= target.countCards('hs', 'sha')) return false;
+					if (!target.hasValueTarget({ name: 'sha' })) return false;
+					return true;
+				},
+				direct: true,
+				content: function () {
+					'step 0'
+					var target = _status.currentPhase;
+					var str = '弃置任意张此次获得的牌';
+					if (target && target.isIn()) {
+						event.target = target;
+						str += '，令' + get.translation(target) + '本回合使用【杀】的次数+X（X为你以此法弃置的花色数）';
+					}
+					player.chooseToDiscard(get.prompt('hpp_zjjuxiang'), str, (card, player) => _status.event.cards.includes(card)).set('ai', card => {
+						if (!_status.event.goon) return 0;
+						var player = _status.event.player, target = _status.currentPhase;
+						if (ui.selected.cards.some(cardx => get.suit(cardx, player) == get.suit(card, player))) return 0;
+						var num = target.countCards('hs', card => card.name == 'sha') - target.getCardUsable({ name: 'sha' });
+						if (ui.selected.cards.length < num) return 7 - get.value(card);
+						return 0;
+					}).set('cards', trigger.getg(player).filter(i => player.getCards('h').includes(i))).set('complexCard', true).set('goon', lib.skill.hpp_zjjuxiang.checkx(trigger, player)).logSkill = 'hpp_zjjuxiang';
+					'step 1'
+					if (result.bool) {
+						if (target && target.isIn()) {
+							var num = result.cards.reduce((list, card) => list.add(get.suit(card, player)), []).length;
+							target.addTempSkill('jsrgjuxiang_sha');
+							target.addMark('jsrgjuxiang_sha', num, false);
+							var evt = trigger.getParent('phaseUse');
+							if (evt && evt.name == 'phaseUse' && !evt.skill) {
+								evt.player.addTempSkill('jsrgjuxiang_buff', 'phaseUseAfter');
+								evt.player.addMark('jsrgjuxiang_buff', num, false);
+							}
+						}
+					}
+				},
+			},
 			hppjinghong: {
 				audio: 2,
 				trigger: { player: 'phaseZhunbeiBegin' },
@@ -5098,6 +5202,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					result: { player: 1 },
 				},
 			},
+			// 奔月
 			hppbenyue: {
 				unique: true,
 				derivation: 'hpp_guanghan',
@@ -5129,6 +5234,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.addSkillLog('hpp_guanghan');
 				},
 			},
+			// 广寒
 			hppguanghan: {
 				audio: 2,
 				trigger: { global: 'damageEnd' },
@@ -5161,6 +5267,113 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					if (event.targets.length) event.goto(1);
 				},
 				ai: { threaten: 5 },
+			},
+			// 补天
+			hppbutian: {
+				audio: 2,
+				trigger: {
+					source: 'damageSource',
+					global: ['roundStart', 'phaseBefore'],
+					player: ['damageEnd', 'changeHp', 'gainMaxHpEnd', 'loseMaxHpEnd', 'enterGame'],
+				},
+				filter: function (event, player, name) {
+					var num = Math.floor(player.getDamagedHp() / 5);
+					if (name == 'damageEnd') return num > 0;
+					if (name == 'roundStart') return game.roundNumber > 1 && num > 0;
+					if (name == 'damageSource') return event.player != player && player.isDamaged() && num > 0;
+					if (name == 'phaseBefore' && game.phaseNumber > 0) return false;
+					return player.isHealthy();
+				},
+				forced: true,
+				content: function () {
+					var num = Math.floor(player.getDamagedHp() / 5);
+					var name = event.triggername;
+					if (name == 'damageSource') player.recover(num);
+					else if (name == 'damageEnd' || name == 'roundStart') player.loseHp(num);
+					else if (name == 'damageEnd' || name == 'roundEnd') player.loseHp(num);
+					else {
+						player.$fullscreenpop('补天', 'fire');
+						var targets = game.filterPlayer(current => current != player).sortBySeat();
+						if (targets.length) {
+							targets.forEach(target => {
+								player.line(target);
+								target.die();
+							});
+						}
+					}
+				},
+			},
+			hpplianshi: {
+				mod: { maxHandcardBase: (player, num) => 5 },
+				audio: 2,
+				trigger: {
+					player: 'loseAfter',
+					global: ['cardsDiscardAfter', 'loseAsyncAfter'],
+				},
+				filter: function (event, player) {
+					if (event.name.indexOf('lose') == 0) return event.type == 'discard' && event.getl(player).cards2.filter(card => get.position(card, true) == 'd' && !player.getStorage('hpp_lianshi').includes(get.suit(card, player))).length > 0;
+					if (!event.cards.filterInD('d').some(card => !player.getStorage('hpp_lianshi').includes(get.suit(card, player)))) return false;
+					var evt = event.getParent();
+					if (evt.name != 'orderingDiscard') return false;
+					var evtx = (evt.relatedEvent || evt.getParent());
+					var history = player.getHistory('useCard').concat(player.getHistory('respond'));
+					return evtx.player == player && history.some(evtxx => evtx.getParent() == (evtxx.relatedEvent || evtxx.getParent()));
+				},
+				forced: true,
+				content: function () {
+					'step 0'
+					var cards;
+					if (trigger.name.indexOf('lose') == 0) cards = trigger.getl(player).cards2.filter(card => get.position(card, true) == 'd');
+					else cards = trigger.cards.filterInD('d');
+					event.cards = cards;
+					var suits = cards.reduce((list, card) => list.add(get.suit(card, player)), []);
+					suits = suits.filter(suit => !player.getStorage('hpp_lianshi').includes(suit));
+					player.markAuto('hpp_lianshi', suits);
+					player.storage.hpp_lianshi.sort((a, b) => lib.suit.indexOf(b) - lib.suit.indexOf(a));
+					'step 1'
+					if (player.getStorage('hpp_lianshi').length >= 4) {
+						player.draw();
+						if (player.isDamaged()) player.recover(get.number(cards[cards.length - 1], player));
+						player.unmarkSkill('hpp_lianshi');
+						delete player.storage.hpp_lianshi;
+					}
+				},
+				intro: {
+					markcount: (storage) => {
+						return storage.length;
+					},
+					content: '已记录花色：$',
+				},
+			},
+			hpptuantu: {
+				audio: 2,
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					return player.countCards('h') && ui.discardPile.childElementCount > 0;
+				},
+				usable: 1,
+				content: function () {
+					var names = player.getCards('h').reduce((list, card) => list.add(get.name(card)), []);
+					var cards = [];
+					names.forEach(name => {
+						var card = get.discardPile(card => !cards.includes(card) && card.name == name);
+						if (card) cards.push(card);
+					});
+					if (cards.length) player.gain(cards, 'gain2');
+					else player.chat('无牌可得？！');
+				},
+				ai: {
+					order: function (item, player) {
+						var names = player.getCards('h').reduce((list, card) => list.add(get.name(card)), []);
+						var cards = [];
+						names.forEach(name => {
+							var card = get.discardPile(card => !cards.includes(card) && card.name == name);
+							if (card) cards.push(card);
+						});
+						return cards.length;
+					},
+					result: { player: 1 },
+				},
 			},
 		},
 		dynamicTranslate: {
