@@ -62,7 +62,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterSort: {
 			happy: {
 				correction_history: ['cuishi', 'liucong', 'tuanxini', 'tuan', 'xini'],
-				honor_of_kings: ['hok_daji', 'hok_lixin', 'hok_makeboluo', 'hok_mingshiyin', 'hok_miyue', 'hok_sunwukong', 'hok_wuzetian', 'hok_sp_lixin', 'hok_sp_mingshiyin'],
+				honor_of_kings_clashlane: ['hok_lixin', 'hok_miyue', 'hok_sp_lixin'],
+				honor_of_kings_jungling: ['hok_bailixuance', 'hok_sunwukong'],
+				honor_of_kings_midlane: ['hok_daji', 'hok_wuzetian'],
+				honor_of_kings_roaming: ['hok_mingshiyin', 'hok_yao', 'hok_sp_mingshiyin'],
+				honor_of_kings_farmlane: ['hok_ailin', 'hok_makeboluo'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
 				hpp_hpp: ['hpp_re_luxun', 'hpp_re_lvbu'],
 			},
@@ -79,6 +83,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 奚泥
 			xini: ['male', 'qun', '4/7', ['tengbing', 'ranyong']],
 
+			// 艾琳
+			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
+			// 百里玄策
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
 			// 李信
@@ -93,6 +100,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_sunwukong: ['male', 'shen', 4, ['hok_qitian', 'hok_shengbang', 'hok_houmao', 'hok_naogong'], ['qun']],
 			// 武则天
 			hok_wuzetian: ['female', 'qun', 3, ['hok_dihui', 'hok_diwei', 'hok_shaduo', 'hok_nvdi'], ['zhu']],
+			// 瑶
+			hok_yao: ['female', 'jin', 3, ['hok_shangui', 'hok_bailu']],
 			// SP李信
 			hok_sp_lixin: ['male', 'shen', 4, ['hok_wangming', 'hok_dengshen',], ['qun']],
 			// SP明世隐
@@ -114,6 +123,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			tuanxini: '带来洞主曰：“此去东南七百里，有一国，名乌戈国。国主兀突骨，身长丈二，不食五谷，以生蛇恶兽为饭；身有鳞甲，刀箭不能侵。其手下军士，俱穿藤甲；其藤生于山涧之中，盘于石壁之上；国人采取，浸于油中，半年方取出晒之；晒干复浸，凡十余遍，却才造成铠甲；穿在身上，渡江不沉，经水不湿，刀箭皆不能入：因此号为‘藤甲军’。今大王可往求之。若得彼相助，擒诸葛亮如利刀破竹也。”孟获大喜，遂投乌戈国，来见兀突骨。其洞无宇舍，皆居土穴之内。孟获入洞，再拜哀告前事。兀突骨曰：“吾起本洞之兵，与汝报仇。”获欣然拜谢。于是兀突骨唤两个领兵俘长：一名土安，一名奚泥，起三万兵，皆穿藤甲，离乌戈国望东北而来。曾经大败蜀军，后被诸葛施计引入盘蛇谷中，尽烧其众，无所生还。',
 			tuan: '土安，《三国演义》里的人物，长乌戈国主兀突骨手下的一个藤甲领兵长，身穿藤甲，后被诸葛施计引入盘蛇谷中阵亡。',
 			xini: '小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
+			hok_ailin: '艾琳是黄金森林的在逃精灵公主，日落圣殿的不速之客。公主艾琳天性机灵活泼，对一切未知充满好奇心与探索欲。然而“继承人”的责任始终压在她的肩膀上，她被要求收起不稳重的一面，遵循精灵族舞蹈的优雅与绝对的秩序，做好一个“真正的公主”。成年仪式前夕，艾琳决定打破族群禁令，逃去森林外的“危险古怪的人类世界”开启一场自由的冒险。旅程却并没有想象中那样顺遂，人类对精灵同样存在“不详邪恶”的重重误解。越是未知，越是有趣，越是困难，越有斗志。她以舞蹈为表达自我的“语言”，与红头发的法师小女孩成为密友，给圣殿严肃守序的骑士团带来了诸多意外麻烦，甚至组成了圣殿小分队在西方大陆的各个地方冒险……',
+			hok_bailixuance: '玄策不会忘记那个日子：来历不明的马贼冲破边关的城镇，然而齐心协力的守卫军和民众守住城门。率先进入城镇的马贼走投无路，挟持了无力反抗的老弱们作为逃离的砝码。那时候自己多么害怕啊。可哭喊声刺痛小小男子汉的心灵，他推倒藏身的水缸，冲了出去。之后的记忆已不太清晰……那些不是普通的马贼……他们最后都死于首领之手……哥哥没有赶到，谁也没有赶到。他被首领选中，作为祭品去唤醒某种强大的东西。所有人四散逃窜，在绝望和恐惧中，少年眼睁睁看着无名剑士代替自己卷入邪恶迷雾。直到周围一切归于寂静，圆月安静照耀着亘古不变的戈壁，那个男人带走了他。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
 			hok_lixin: '李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
 			hok_makeboluo: '马可波罗，中古时期的威尼斯商人。其父亲和叔叔，都曾到东方经商，而他本人，则在元世祖忽必烈的时代，来到中国。他穿越沙漠和帕米尔高原，经河西走廊来到元大都，游历了许多城市，据说还见过忽必烈，接受过元朝的官职。回到威尼斯之后，因带回的东方珍宝而成为巨富。后来参与威尼斯与热那亚的战争中被俘，在狱中，向同牢的作家口述了他的东方见闻，遂成著名的《马可波罗游记》。《马可波罗游记》极大地开拓了欧洲人的东方视野，丰富了他们关于东方的想象，激起了欧洲人向往东方的雄心。但也有人质疑游记的真实性，比如游记没有提到著名的长城，不过，作为一个口述游记，记录长城作用几乎完全消失的元代的事情，缺失长城也是可以理解的。',
@@ -121,6 +132,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_miyue: '史称芈八子，秦昭襄王时的秦宣太后。在《史记》和《战国策》里都有关于芈月的零星记载，她本是秦惠文王的妃子，惠文王死后，秦武王继位，不久即举鼎而死，芈八子的儿子昭襄王继位，芈八子作为太后辅政。在她辅政期间，秦国得到了长足的发展，但功劳未必都是她一个人的。',
 			hok_sunwukong: '孙悟空生性桀骜，厌恶被管辖和拘束，更憎恶那些虚伪神灵铐在魔种身上的枷锁。黑暗的时代里，他俨然成为反抗的领袖，带领魔种们为自由奋起。起义以失败告终，神灵以绝对的力量击溃了乌合之众，将他封印在某座山脚……然而他的意志没有熄灭，某位路过的僧侣帮助孙悟空冲破束缚重生，齐天大圣的名号再度威震八方。',
 			hok_wuzetian: '武曌[zhào]（624年－705年12月16日），即武则天，并州文水（今山西省文水县）人。唐朝至武周时期政治家，武周开国君主（690年－705年在位），也是中国历史上唯一的正统女皇帝、即位年龄最大（67岁）及寿命最长的皇帝之一（82岁）。',
+			hok_yao: '鹿女阿瑶年幼时不小心闯入东神之城的边缘地带，受到那里村民的围攻。村民想杀掉她，同供品一起献祭给东神。东神使者云中君放她离去。当阿瑶再次出现在东神之城，已经是十五六岁的少女，其谎话轻易就能骗过任何一个成人，其恶作剧变幻多端，总是弄哭孩子。然而比起阿瑶引起的恐慌，东神更关注她带来的讯息。原来在连串事件中，她留下的是鬼谷子欲向他传递的符号与密码：楚汉纷争因奇迹异动而加剧，铁骑或许又将践踏至大河流域，寻找失落的力量为己所用。阿瑶对世界的困惑却远不止大人之间谈论的这些事。比起云梦泽的将来，她更关心自己的过去。越接近东神宫殿，如梦般的记忆残片便越是纷涌而来：她是一只幼鹿，与一只同样无所依靠的孤鸟结伴生活，某天，军队与厮杀声涌入森林，它们想要躲避却被席卷其中……一边为东神传递讯息，阿瑶一边试图在宫殿所在找到伙伴的线索，却不明白羁绊就在跟她作对的人手中——云中君是多么讨厌的人啊。幼年时她居然迷恋过他！',
 			hok_sp_lixin: 'SP李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
 			hok_sp_mingshiyin: '明算万物的卦象，摄人心魂的牡丹，风度翩翩的举止……这位突然出现在长安、被尊称牡丹方士的男人仿佛是"神秘"二字的代名词。没有人知道他从何而来，但他对未来的精准预测令人惊叹，甚至连女帝都深信不疑。而面对那位治安官的冷眼与戒备，方士本人仅以一笑付之，深藏心中执念：那座古老巍峨的长城，和其脚下长眠的友人。',
 			shen_caozhi: '字子建，沛国谯人，三国曹魏著名文学家，建安文学代表人物。魏武帝曹操之子，魏文帝曹丕之弟，生前曾为陈王，去世后谥号“思”，因此又称陈思王。南朝宋文学家谢灵运更有“天下才有一石，曹子建独占八斗”的评价。王士祯尝论汉魏以来二千年间诗家堪称“仙才”者，曹植、李白、苏轼三人耳。',
@@ -431,6 +443,175 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 
+			// 王者公共技
+			hok_yinshen: {
+				charlotte: true,
+				locked: false,
+				forced: true,
+				marktext: '隐',
+				intro: {
+					name: '隐身',
+					content: '不能成为【杀】和目标数为1的锦囊牌的目标',
+				},
+				mod: {
+					targetEnabled: function (card, player, target) {
+						if (card.name == 'sha') {
+							return false;
+						}
+						if (card.name == 'wuzhong' || card.name == 'lebu' || card.name == 'bingliang' || card.name == 'shandian'
+							|| card.name == 'guohe' || card.name == 'shunshou' || card.name == 'juedou' || card.name == 'huogong' || card.name == 'qizhengxiangsheng') {
+							return false;
+						}
+					}
+				},
+				trigger: { player: 'useCard' },
+				filter: function (event) {
+					return (get.type(event.card) == 'trick' || get.type(event.card) == 'delay' || event.card.name == 'sha');
+				},
+				content: function () {
+					player.removeMark('hok_yinshen', 1);
+					player.removeSkill('hok_yinshen');
+				},
+			},
+			hok_temp_hp: {
+				charlotte: true,
+				marktext: '体',
+				intro: {
+					name: '临时体力',
+					content: 'mark',
+				},
+				forced: true,
+				trigger: { player: 'damageEnd' },
+				content: function () {
+					'step 0'
+					player.removeMark('hok_temp_hp', 'trigger.num');
+					'step 1'
+					player.loseMaxHp('trigger.num');
+				}
+			},
+			// 艾琳
+			hok_lingwu: {
+				trigger: {
+					global: 'phaseBefore',
+					player: 'enterGame',
+				},
+				forced: true,
+				filter: function (event, player) {
+					return game.phaseNumber == 0;
+				},
+				content: function () {
+					player.expandEquip(1);
+					var card = get.cardPile(function(card){
+						return get.subtype(card)=='equip1';
+					});
+					player.$gain2(card, false);
+					game.delayx();
+					player.equip(card);
+				},
+			},
+			hok_yewu: {
+				derivation: 'hok_yueguishengfang',
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: lib.filter.notMe,
+				content: function () {
+					if (player.countMark('hok_yueguishengfang') <= 18) {
+						player.addMark('hok_yueguishengfang', 2);
+					}
+					var cards = target.getCards('h', function (card) {
+						return lib.filter.cardDiscardable(card, player, 'hok_yewu');
+					});
+					if (cards.length > 0) target.discard(cards.randomGet());
+				},
+				ai: {
+					result: {
+						target: function (player, target) {
+							return -1;
+						}
+					},
+					threaten: 1,
+					order: 9,
+					expose: 0.2,
+				}
+			},
+			hok_xuanwu: {
+				derivation: 'hok_yueguishengfang',
+				locked: false,
+				forced: true,
+				trigger: {
+					player: ['useCardAfter', 'respondAfter'],
+				},
+				filter: function (event, player) {
+					if (player.hasSkill('hok_xuanwu_turn')) {
+						return false;
+					}
+					return event.card && event.card.name == 'sha';
+				},
+				content: function () {
+					player.draw();
+					if (player.countMark('hok_yueguishengfang') <= 18) {
+						player.addMark('hok_yueguishengfang', 1);
+					}
+				},
+				subSkill: {
+					turn: { charlotte: true },
+				}
+			},
+			hok_yueguishengfang: {
+				marktext: '月',
+				intro: {
+					name: '月桂',
+					content: 'mark',
+				},
+				usable: 1,
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					return player.countMark('hok_yueguishengfang') >= 6;
+				},
+				content: function () {
+					'step 0'
+					event.sum = Math.floor(player.countMark('hok_yueguishengfang') / 3);
+					event.num = 0;
+					player.addSkill('hok_xuanwu_turn');
+					'step 1'
+					event.num++;
+					player.chooseUseTarget({
+						name: 'sha',
+						nature: 'thunder',
+						isCard: true,
+					}, '请选择雷【杀】的目标（' + event.num + '/' + event.sum + '）', false);
+					'step 2'
+					if (result.bool) {
+						player.removeMark('hok_yueguishengfang', 3);
+					}
+					'step 3'
+					if (result.bool && event.num < event.sum) {
+						event.goto(1);
+					}
+					'step 4'
+					player.removeSkill('hok_xuanwu_turn');
+				},
+				ai: {
+					order: function () {
+						return get.order({
+							name: 'sha',
+							nature: 'thunder',
+							isCard: true,
+						});
+					},
+					result: {
+						player: function (player) {
+							if (player.hasValueTarget({
+								name: 'sha',
+								nature: 'thunder',
+								isCard: true,
+							})) return 1;
+							return 0;
+						},
+					},
+				},
+			},
+			// 百里玄策
 			// 妲己
 			hok_meixin: {
 				enable: 'phaseUse',
@@ -644,9 +825,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.chooseControl('统御', '狂暴').set('prompt', '统狂：请选择一项').set('choiceList', [
 						'统御<br/>\
 						烈华：出牌阶段开始前，你可以跳过出牌阶段，下回合出牌阶段开始时视为使用2张雷杀。<br/>\
-						光斩：你的攻击范围+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并跳过出牌阶段，下回合开始时弃置你判定区的牌并选择攻击范围内至多3名其他角色，对每名目标角色造成2点雷电伤害。',
+						光斩：你的攻击范围+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并跳过出牌阶段，下回合开始时弃置你判定区的牌并选择攻击范围内至多2名其他角色，对每名目标角色造成2点雷电伤害。',
 						'狂暴<br/>\
-						暴冲：出牌阶段开始前，你可以跳过出牌阶段和弃牌并摸2张牌，下回合开始时弃置你判定区的牌并回复1点体力。<br/>\
+						暴冲：出牌阶段开始前，你可以跳过出牌阶段和弃牌阶段，下回合开始时弃置你判定区的牌并回复1点体力。<br/>\
 						残撕：摸牌阶段，你的摸牌数+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并选择攻击范围的其他角色，弃置其2张牌，令你本回合杀的次数+1。'
 					]).set('ai', function () {
 						return '统御';
@@ -664,6 +845,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						player.popup('狂暴');
 					}
 				},
+				ai: {
+					order: 3,
+					result: {
+						player: 1,
+					},
+				}
 			},
 			hok_liehua: {
 				trigger: { player: 'phaseUseBefore' },
@@ -769,7 +956,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						content: function () {
 							'step 0'
 							player.discard(player.getCards('j'));
-							player.chooseTarget(get.prompt('hok_guangzhan'), '选择攻击范围内至多3名其他角色，依次对这些角色造成2点雷电伤害', [1, 3], function (card, player, target) {
+							player.chooseTarget(get.prompt('hok_guangzhan'), '选择攻击范围内至多2名其他角色，依次对这些角色造成2点雷电伤害', [1, 2], function (card, player, target) {
 								return player.inRange(target);
 							}).set('ai', target => {
 								var player = _status.event.player;
@@ -827,7 +1014,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				content: function () {
 					trigger.cancel();
 					player.skip('phaseDiscard');
-					player.draw(2);
 					player.addTempSkill('hok_baochong_effect', { player: 'phaseZhunbeiBegin' });
 				},
 				subSkill: {
@@ -1155,7 +1341,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						content: function () {
 							player.storage.hok_lingua2.chooseToDiscard('hes', '弃置1张牌').set('ai', function (card) {
 								return 8 - get.value(card);
-							});;
+							});
 						}
 					},
 					3: {
@@ -1999,6 +2185,146 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						player.draw(num);
 					}
 				},
+			},
+			// 瑶
+			hok_shangui: {
+				derivation: 'hok_yinshen',
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: lib.filter.notMe,
+				content: function () {
+					if (target.hasMark('hok_yinshen')) {
+						target.removeMark('hok_yinshen', 1);
+						target.removeSkill('hok_yinshen');
+					}
+					target.chooseToDiscard('h', true).set('ai', function (card) {
+						return 6 - get.value(card);
+					});
+				},
+				ai: {
+					result: {
+						target: function (player, target) {
+							return -1;
+						}
+					},
+					threaten: 1,
+					order: 9,
+					expose: 0.2,
+				}
+			},
+			hok_bailu: {
+				derivation: 'hok_temp_hp',
+				usable: 1,
+				enable: 'phaseUse',
+				filter: function (event, player) {
+					if (player.hasSkill('hok_bailu_round')) {
+						return false;
+					}
+					return !game.hasPlayer(function (current) {
+						return current.countMark('hok_bailu_2');
+					});
+				},
+				filterTarget: lib.filter.notMe,
+				content: function () {
+					player.addTempSkill('hok_bailu_round', 'roundStart');
+					player.addSkill('hok_bailu_effect');
+					target.addMark('hok_bailu_2', 1);
+					target.addSkill('hok_bailu_2');
+					target.maxHp += 2;
+					// target.maxHp++;
+					target.recover(2);
+					target.addMark('hok_temp_hp', 2);
+					target.addSkill('hok_temp_hp');
+				},
+				group: 'hok_bailu_remove',
+				subSkill: {
+					round: { charlotte: true },
+					effect: {
+						forced: true,
+						firstDo: true,
+						mark: true,
+						intro: {
+							name: '鹿灵',
+							content: '不能成为牌的目标，且不能使用杀和锦囊牌',
+						},
+						mod: {
+							targetEnabled: function (card, player, target) {
+								if (card.name != 'tao') {
+									return false;
+								}
+							},
+							cardEnabled: function (card) {
+								if (card.name == 'sha' || get.type(card) == 'trick' || get.type(card) == 'delay') return false;
+							}
+						}
+					},
+					2: {
+						marktext: '鹿',
+						intro: {
+							name: '白鹿',
+							content: 'mark',
+						},
+						forced: true,
+						trigger: { player: 'damageAfter' },
+						filter: function (event, player) {
+							return player.countMark('hok_temp_hp') == 0;
+						},
+						content: function () {
+							'step 0'
+							player.removeMark('hok_bailu_2', 1);
+							'step 1'
+							player.removeSkill('hok_temp_hp');
+							var hok_luling = game.filterPlayer(function (current) {
+								return current.hasSkill('hok_bailu_effect');
+							})[0];
+							hok_luling.removeSkill('hok_bailu_effect');
+							hok_luling.addTempSkill('hok_bailu_round', 'roundStart');
+							'step 2'
+							player.removeSkill('hok_bailu_2');
+						}
+					},
+					remove: {
+						usable: 1,
+						enable: 'phaseUse',
+						filter: function (event, player) {
+							if (player.hasSkill('hok_bailu_round')) {
+								return false;
+							}
+							return game.hasPlayer(function (current) {
+								return current.countMark('hok_bailu_2');
+							});
+						},
+						content: function () {
+							'step 0'
+							player.addTempSkill('hok_bailu_round', 'roundStart');
+							player.draw();
+							player.storage.hok_bailu_target = game.filterPlayer(current => {
+								return current.countMark('hok_bailu_2');
+							})[0];
+							'step 1'
+							player.storage.hok_bailu_target.removeMark('hok_bailu_2', 1);
+							player.storage.hok_bailu_target.loseHp(player.storage.hok_bailu_target.countMark('hok_temp_hp'));
+							'step 2'
+							player.storage.hok_bailu_target.loseMaxHp(player.storage.hok_bailu_target.countMark('hok_temp_hp'));
+							'step 3'
+							player.storage.hok_bailu_target.removeMark('hok_temp_hp', player.storage.hok_bailu_target.countMark('hok_temp_hp'));
+							player.storage.hok_bailu_target.removeSkill('hok_temp_hp');
+							player.removeSkill('hok_bailu_effect');
+							player.storage.hok_bailu_target.removeSkill('hok_bailu_2');
+						},
+					}
+				},
+				ai: {
+					result: {
+						target: function (player, target) {
+							if (get.threaten(target) > 3) return get.threaten(target);
+							return -1;
+						},
+					},
+					order: 10,
+					threaten: 1,
+					expose: 0.25,
+				}
 			},
 			// SP李信
 			hok_wangming: {
@@ -3887,7 +4213,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				derivation: 'feiying',
 			},
 			hppzjjuxiang: {
-				audio:1,
+				audio: 1,
 				inherit: 'jsrgjuxiang',
 				checkx: function (event, player) {
 					var target = _status.currentPhase;
@@ -5395,13 +5721,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			tuanxini: '#rUNICRON评级:4.0',
 			tuan: '#b捞德一评级:3.5',
 			xini: '#b捞德一评级:3.0',
+			hok_ailin: '#b捞德一评级:3.5',
+			hok_bailixuance: '#b捞德一评级:3.7',
 			hok_daji: '#b捞德一评级:3.7',
-			hok_lixin: '#b捞德一评级:3.7',
+			hok_lixin: '#b捞德一评级:3.8',
 			hok_makeboluo: '#b捞德一评级:3.9',
 			hok_mingshiyin: '#b捞德一评级:3.8',
 			hok_miyue: '#b捞德一评级:3.8',
 			hok_sunwukong: '#r捞德一评级:4.0',
 			hok_wuzetian: '#b捞德一评级:3.9',
+			hok_yao: '#b捞德一评级:3.7',
 			hok_sp_lixin: '#r捞德一评级:4.0',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 			shen_caozhi: '#r捞德一评级:4.3',
@@ -5437,6 +5766,23 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			ranyong: '燃勇',
 			ranyong_info: '锁定技，当你受到火焰伤害时全场体力值最多的角色（优先自己）分摊1点火焰伤害（至少受到1点）。',
 
+			// 王者公共技
+			hok_yinshen: '隐身',
+			hok_yinshen_info: '当你拥有此标记时，你不能成为杀和目标数为1的锦囊牌的目标。当你使用杀或锦囊牌时，你失去此标记。',
+			hok_temp_hp: '临时体力',
+			hok_temp_hp_info: '锁定技，当你受到伤害时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
+			// 艾琳
+			hok_ailin: '王者艾琳',
+			hok_lingwu: '灵舞',
+			hok_lingwu_info: '锁定技。游戏开始时，你获得一个额外的武器栏，你从牌堆中获得一张武器牌装备之。',
+			hok_yewu: '叶舞',
+			hok_yewu_info: '出牌阶段限一次，你选择一名其他角色，随机弃置其一张手牌，你的“月桂”标记不大于18时，你获得2枚“月桂”标记。',
+			hok_xuanwu: '旋舞',
+			hok_xuanwu_info: '当你使用或打出【杀】后，摸一张牌且你的“月桂”标记不大于18时，你获得1枚“月桂”标记。',
+			hok_yueguishengfang: '月桂盛放',
+			hok_yueguishengfang_info: '出牌阶段限一次，当你的“月桂”标记大于等于6时，你可以使用X张不计入次数的雷【杀】（X为“月桂”数/3向下取整，每使用一次失去3枚“月桂”）。',
+			// 百里玄策
+			hok_bailixuance: '王者百里玄策',
 			// 妲己
 			hok_daji: '王者妲己',
 			hok_meixin: '魅心',
@@ -5454,15 +5800,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_tongkuang: '统狂',
 			hok_tongkuang_info: '限定技，当你的“信”大于等于3时，你可以失去“灰刃”和“强斩”，选择“统御”或“狂暴”。（统御：烈华、光斩；狂暴：暴冲、残撕）',
 			hok_tongyu_faq: '统御',
-			hok_tongyu_faq_info: '<br><li>烈华：出牌阶段开始前，你可以跳过出牌阶段，下回合出牌阶段开始时视为使用2张雷杀。<br><li>光斩：你的攻击范围+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并跳过出牌阶段，下回合开始时弃置你判定区的牌并选择攻击范围内至多3名其他角色，对每名目标角色造成2点雷电伤害。',
+			hok_tongyu_faq_info: '<br><li>烈华：出牌阶段开始前，你可以跳过出牌阶段，下回合出牌阶段开始时视为使用2张雷杀。<br><li>光斩：你的攻击范围+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并跳过出牌阶段，下回合开始时弃置你判定区的牌并选择攻击范围内至多2名其他角色，对每名目标角色造成2点雷电伤害。',
 			hok_kuangbao_faq: '狂暴',
-			hok_kuangbao_faq_info: '<br><li>暴冲：出牌阶段开始前，你可以跳过出牌阶段和弃牌并摸2张牌，下回合开始时弃置你判定区的牌并回复1点体力。<br><li>残撕：摸牌阶段，你的摸牌数+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并选择攻击范围的其他角色，弃置其2张牌，令你本回合杀的次数+1。',
+			hok_kuangbao_faq_info: '<br><li>暴冲：出牌阶段开始前，你可以跳过出牌阶段和弃牌阶段，下回合开始时弃置你判定区的牌并回复1点体力。<br><li>残撕：摸牌阶段，你的摸牌数+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并选择攻击范围的其他角色，弃置其2张牌，令你本回合杀的次数+1。',
 			hok_liehua: '烈华',
 			hok_liehua_info: '出牌阶段开始前，你可以跳过出牌阶段，下回合出牌阶段开始时视为使用2张雷杀。',
 			hok_guangzhan: '光斩',
-			hok_guangzhan_info: '你的攻击范围+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并跳过出牌阶段，下回合开始时弃置你判定区的牌并选择攻击范围内至多3名其他角色，对每名目标角色造成2点雷电伤害。',
+			hok_guangzhan_info: '你的攻击范围+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并跳过出牌阶段，下回合开始时弃置你判定区的牌并选择攻击范围内至多2名其他角色，对每名目标角色造成2点雷电伤害。',
 			hok_baochong: '暴冲',
-			hok_baochong_info: '出牌阶段开始前，你可以跳过出牌阶段和弃牌并摸2张牌，下回合开始时弃置你判定区的牌并回复1点体力。',
+			hok_baochong_info: '出牌阶段开始前，你可以跳过出牌阶段和弃牌阶段，下回合开始时弃置你判定区的牌并回复1点体力。',
 			hok_cansi: '残撕',
 			hok_cansi_info: '摸牌阶段，你的摸牌数+1。出牌阶段开始前，若你的“信”标记大于等于3，你可以弃置3枚“信”标记并选择攻击范围的其他角色，弃置其2张牌，令你本回合杀的次数+1。',
 			// 马克波罗
@@ -5516,6 +5862,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_shaduo_info: '限定技，出牌阶段，若游戏轮数大于等于4你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置2张牌。',
 			hok_nvdi: '女帝',
 			hok_nvdi_info: '主公技，结束阶段，若你未于出牌阶段内使用或打出过【杀】和锦囊牌，你可以摸X张牌（X为场上存活的群势力角色数）。',
+			// 瑶
+			hok_yao: '王者瑶',
+			hok_shangui: '山鬼',
+			hok_shangui_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记并弃置1张手牌。',
+			hok_bailu: '白鹿',
+			hok_bailu_info: '1.每轮限一次，出牌阶段，若没有角色拥有“白鹿”标记，你可以选择一名其他角色获得“白鹿”标记（获得“白鹿”标记的角色体力上限临时+2并临时回复2点体力，直到该角色累计受到2点伤害，该角色失去此标记，你本轮不可使用此技能）；若有角色拥有“白鹿”标记，你可以摸一张牌令该角色失去“白鹿”标记。2.若有角色拥有“白鹿”标记，你不能成为除【桃】以外牌的目标，你不能使用杀和锦囊牌。',
+
 			// SP李信
 			hok_sp_lixin: '王者SP李信',
 			hok_wangming: '王命',
@@ -5587,7 +5940,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hpp_reshenwei_info: '锁定技，摸牌阶段，你额外摸2张牌，你的手牌上限+2',
 
 			correction_history: '正史',
-			honor_of_kings: '王者荣耀',
+			honor_of_kings_clashlane: '王者荣耀·对抗',
+			honor_of_kings_jungling: '王者荣耀·打野',
+			honor_of_kings_midlane: '王者荣耀·中路',
+			honor_of_kings_roaming: '王者荣耀·辅助',
+			honor_of_kings_farmlane: '王者荣耀·发育',
 			happy_kings: '娱乐神将',
 			hpp_hpp: '欢乐三国杀·捞',
 		},

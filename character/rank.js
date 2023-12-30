@@ -1586,7 +1586,9 @@ window.noname_character_rank = {
 			'hpp_jianyong',
 			'hpp_jiaxu',
 			'hpp_jushou',
+			'hpp_kongrong',
 			'hpp_kuailiangkuaiyue',
+			'hpp_laiyinger',
 			'hpp_liangxing',
 			'hpp_liaohua',
 			'hpp_lidian',
@@ -1737,6 +1739,7 @@ window.noname_character_rank = {
 			'hpp_zhuzhi',
 			'hpp_zumao',
 			'hpp_zuoci',
+
 			'hpp_sp_caiwenji',
 			'hpp_sp_caoren',
 			'hpp_sp_daqiao',
@@ -1982,12 +1985,16 @@ window.noname_character_rank = {
 			'cuishi',
 			'tuan',
 			'xini',
+
+			'hok_ailin',
+			'hok_bailixuance',
 			'hok_daji',
 			'hok_lixin',
 			'hok_makeboluo',
 			'hok_mingshiyin',
 			'hok_miyue',
 			'hok_wuzetian',
+			'hok_yao',
 			// 欢乐三国杀
 		],
 		rare: [

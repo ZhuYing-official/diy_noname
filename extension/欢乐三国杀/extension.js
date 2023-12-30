@@ -103,7 +103,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_jianyong',
                             'hpp_jiaxu',
                             'hpp_jushou',
+                            'hpp_kongrong',
                             'hpp_kuailiangkuaiyue',
+                            'hpp_laiyinger',
                             'hpp_liangxing',
                             'hpp_liaohua',
                             'hpp_lidian',
@@ -254,6 +256,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhuzhi',
                             'hpp_zumao',
                             'hpp_zuoci',
+
                             'hpp_sp_caiwenji',
                             'hpp_sp_caoren',
                             'hpp_sp_daqiao',
@@ -291,6 +294,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             'hpp_sb_caocao',
                             'hpp_sb_huanggai',
+                            'hpp_sb_huangzhong',
 
                             'hpp_change',
                             'hpp_dalanmao',
@@ -365,9 +369,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
                                 shan_ce: ['hpp_sp_zhugeliang', 'hpp_xunyou', 'hpp_jianyong', 'hpp_chenqun', 'hpp_guotupangji', 'hpp_buzhi', 'hpp_yanjun', 'hpp_panjun', 'hpp_mizhu', 'hpp_zhoufang', 'hpp_yangxiu', 'hpp_lvkai'],
                                 shan_ji: ['hpp_lukang', 'hpp_liuchen', 'hpp_sunxiu', 'hpp_sundeng', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng', 'hpp_zhangfen'],
-                                shan_xian: ['hpp_wangtao', 'hpp_wangyue', 'hpp_yinfuren', 'hpp_mifuren'],
+                                shan_xian: ['hpp_laiyinger', 'hpp_wangtao', 'hpp_wangyue', 'hpp_yinfuren', 'hpp_mifuren'],
                                 ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu', 'hpp_wanniangongzhu', 'hpp_zhangyao', 'hpp_ganfuren'],
-                                ming_ru: ['hpp_kuailiangkuaiyue', 'hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xuezong', 'hpp_xushu', 'hpp_liuzhang', 'hpp_xf_yiji'],
+                                ming_ru: ['hpp_kuailiangkuaiyue', 'hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xuezong', 'hpp_xushu', 'hpp_liuzhang', 'hpp_xf_yiji', 'hpp_kongrong'],
                                 ming_cao: ['hpp_caopi', 'hpp_caozhi', 'hpp_caozhang', 'hpp_caochong', 'hpp_caozhen', 'hpp_caorui', 'hpp_caoxiu', 'hpp_caoang', 'hpp_caoying', 'hpp_caomao', 'hpp_caohua'],
                                 ming_han: ['hpp_haozhao', 'hpp_zhangxiu', 'hpp_madai', 'hpp_chengpu', 'hpp_handang', 'hpp_wuyi', 'hpp_liyan', 'hpp_xurong', 'hpp_lijue', 'hpp_zhangji', 'hpp_chunyuqiong'],
                                 ming_qi: ['hpp_xizhicai', 'hpp_zhangliang', 'hpp_zhangbao', 'hpp_nanhualaoxian', 'hpp_beimihu', 'hpp_wolongfengchu'],
@@ -377,7 +381,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 xian_jin: ['hpp_guansuo', 'hpp_baosanniang', 'hpp_wenyang', 'hpp_liuzan', 'hpp_guozhao', 'hpp_fanyufeng', 'hpp_panshu', 'hpp_lvlingqi', 'hpp_zhangchangpu', 'hpp_zhangqiying', 'hpp_puyuan', 'hpp_xushao'],
                                 xian_xiu: ['hpp_wanglang', 'hpp_yangwan', 'hpp_zhouyi', 'hpp_caojinyu', 'hpp_luyi', 'hpp_sunyi', 'hpp_fengyu', 'hpp_tenggongzhu', 'hpp_zhaoyan', 'hpp_zhangxuan', 'hpp_sunru', 'hpp_luotong'],
                                 xian_miao: ['hpp_miao_caiwenji', 'hpp_miao_diaochan', 'hpp_miao_caifuren', 'hpp_miao_zhangxingcai', 'hpp_miao_zhurong', 'hpp_miao_huangyueying', 'hpp_miao_daqiao', 'hpp_miao_xiaoqiao', 'hpp_miao_sunshangxiang', 'hpp_miao_zhenji', 'hpp_miao_zhangchunhua', 'hpp_miao_wangyi'],
-                                xian_mou: ['hpp_sb_caocao', 'hpp_sb_huanggai'],
+                                xian_mou: ['hpp_sb_huangzhong', 'hpp_sb_caocao', 'hpp_sb_huanggai'],
                                 shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia', 'hpp_shen_xunyu'],
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei', 'hpp_shen_zhangfei', 'hpp_shen_jiangwei', 'hpp_shen_machao'],
                                 shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce', 'hpp_shen_daxiaoqiao', 'hpp_shen_taishici'],
@@ -12693,6 +12697,76 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // 王悦
                             hpp_huguan: {
+                                audio: 'huguan',
+                                audioname2: { hpp_wangyue: 'huguan_wangyue' },
+                                trigger: { global: 'useCard' },
+                                filter: function (event, player) {
+                                    if (get.color(event.card) != 'red') return false;
+                                    var evt = event.getParent('phaseUse');
+                                    if (!evt || evt.player != event.player) return false;
+                                    return event.player.getHistory('useCard', function (evtx) {
+                                        return get.color(evtx.card) == 'red' && evtx.getParent('phaseUse') == evt;
+                                    }).indexOf(event) == 0;
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseControl(lib.suit, 'cancel2').set('prompt', get.prompt2('hpp_huguan', trigger.player)).set('ai', function () {
+                                        var player = _status.event.player, target = _status.event.getTrigger().player;
+                                        var list = lib.suit.slice(0);
+                                        var att = get.attitude(player, trigger.player);
+                                        if (att == 0) return 'cancel2';
+                                        list.removeArray(target.getStorage(att > 0 ? 'hpp_huguan_1' : 'hpp_huguan_2'));
+                                        if (list.length) return list.randomGet();
+                                        return 'cancel2';
+                                    });
+                                    'step 1'
+                                    if (result.control != 'cancel2') {
+                                        var target = trigger.player;
+                                        event.target = target;
+                                        player.logSkill('hpp_huguan', target);
+                                        game.log(player, '选择了', '#g' + get.translation(result.control), '花色');
+                                        event.suit = result.control;
+                                        var str = get.translation(target);
+                                        var suit = get.translation(event.suit);
+                                        player.chooseControl().set('choiceList', [
+                                            '令' + str + '本回合' + suit + '牌不计入手牌上限',
+                                            '令' + str + '本回合不能弃置' + suit + '牌',
+                                        ]).set('ai', () => _status.event.att > 0 ? 0 : 1).set('att', get.attitude(player, target));
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    var skill = 'hpp_huguan_' + (result.index == 0 ? '1' : '2');
+                                    target.addTempSkill(skill);
+                                    target.markAuto(skill, [event.suit]);
+                                },
+                                subSkill: {
+                                    1:{
+                                        charlotte:true,
+                                        onremove:true,
+                                        mod:{
+                                            ignoredHandcard:function(card,player){
+                                                if(player.getStorage('hpp_huguan_1').contains(get.suit(card,player))) return true;
+                                            },
+                                            cardDiscardable:function(card,player,name){
+                                                if(name=='phaseDiscard'&&player.getStorage('hpp_huguan_1').contains(get.suit(card,player))) return false;
+                                            }
+                                        },
+                                        intro:{content:'本回合$花色的牌不计入手牌上限'},
+                                    },
+                                    2: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        mod: {
+                                            cardDiscardable: function (card, player) {
+                                                if (player.getStorage('hpp_huguan_2').includes(get.suit(card, player)) && get.position(card) == 'h') return false;
+                                            }
+                                        },
+                                        intro: { content: '本回合不能弃置$花色的手牌' },
+                                    },
+                                },
+                            },
+                            old_hpp_huguan: {
                                 audio: 'huguan',
                                 audioname2: { hpp_wangyue: 'huguan_wangyue' },
                                 trigger: { global: 'useCard' },
@@ -27671,7 +27745,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sunluyu: '#b捞德一评级:3.7',
                             hpp_sunqian: '#b捞德一评级:3.5',
                             hpp_sunquan: '#b捞德一评级:3.7',
-                            hpp_sunru: '#b捞德一评级:4.2',
+                            hpp_sunru: '#r捞德一评级:4.2',
                             hpp_sunshangxiang: '#b捞德一评级:3.5',
                             hpp_sunxiu: '#b捞德一评级:3.9',
                             hpp_sunyi: '#r捞德一评级:4.1',
@@ -27681,7 +27755,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_tenggongzhu: '#b捞德一评级:3.9',
                             // W
                             hpp_wangji: '#b捞德一评级:3.4',
-                            hpp_wanglang: '#b捞德一评级:4.0',
+                            hpp_wanglang: '#r捞德一评级:4.0',
                             hpp_wangping: '#b捞德一评级:3.6',
                             hpp_wangrong: '#b捞德一评级:3.8',
                             hpp_wangtao: '#b捞德一评级:3.7',
@@ -27728,7 +27802,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yuanshao: '#b捞德一评级:3.7',
                             hpp_yuanshu: '#g捞德一评级:2.4',
                             hpp_yuji: '#b捞德一评级:3.0',
-                            hpp_yujin: '#b捞德一评级:2.8',
+                            hpp_yujin: '#g捞德一评级:2.8',
                             // Z
                             hpp_zhangbao: '#b捞德一评级:3.5',
                             hpp_zhangchangpu: '#b捞德一评级:3.8',
@@ -29179,7 +29253,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shixian_xinglunan: '行路难',
                             hpp_shixian_xingluBuff: '行路难',
                             hpp_shixian_xinglunan_info: '你的回合外，当你成为其他角色使用的【杀】的目标，且结束完毕后，直到你的回合开始，其他角色计算与你的距离时+1。',
-                            hpp_nvwa:'欢杀女娲',
+                            hpp_nvwa: '欢杀女娲',
                             hpp_butian: '补天',
                             hpp_butian_info: '锁定技，你对其他角色造成伤害后，回复X点体力。若你的体力值等于体力上限，则会使其他所有角色立刻死亡。受到伤害和每轮结束时，额外失去X点体力（X为你已损失体力值的20%，向下取整）。',
                             hpp_lianshi: '炼石',
