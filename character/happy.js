@@ -86,6 +86,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 艾琳
 			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
 			// 百里玄策
+			hok_bailixuance: ['male', 'shu', 4, ['hok_rexue', 'hok_yangou', 'hok_lianshan']],
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
 			// 李信
@@ -501,8 +502,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					player.expandEquip(1);
-					var card = get.cardPile(function(card){
-						return get.subtype(card)=='equip1';
+					var card = get.cardPile(function (card) {
+						return get.subtype(card) == 'equip1';
 					});
 					player.$gain2(card, false);
 					game.delayx();
@@ -612,6 +613,148 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			// 百里玄策
+			hok_rexue: {
+				trigger: { source: 'dieAfter' },
+				forced: true,
+				locked: false,
+				content: function () {
+					player.draw(2);
+				},
+			},
+			hok_yangou: {
+				derivation: 'hok_yangou_lock',
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: lib.filter.notMe,
+				content: function () {
+					'step 0'
+					target.judge(function (card) {
+						if (get.number(card) > 4) return 2;
+						return -2;
+					}).judge2 = function (result) {
+						return result.bool;
+					};
+					'step 1'
+					if (result.bool) {
+						target.addTempSkill('hok_yangou_effect');
+					}
+				},
+				group: ['hok_yangou_lock'],
+				subSkill: {
+					effect: {
+						charlotte: true,
+						mark: true,
+						intro: {
+							name: '魇钩',
+							content: '不能使用和打出【闪】',
+						},
+						mod: {
+							cardEnabled2: function (card, player) {
+								if (card.name == 'shan') return false;
+							},
+						},
+						ai: {
+							effect: {
+								target: function (card, player, target) {
+									if (get.tag(card, 'damage')) return [0, -999999];
+								},
+							},
+						},
+					},
+					lock: {
+						usable: 1,
+						enable: 'phaseUse',
+						filter: function (event, player) {
+							return game.hasPlayer(function (current) {
+								return current.hasSkill('hok_yangou_effect');
+							});
+						},
+						content: function () {
+							var target = game.filterPlayer(function (current) {
+								return current.hasSkill('hok_yangou_effect');
+							})[0];
+							var playerSeatNum = player.getSeatNum();
+							var targetSeatNum = target.getSeatNum();
+							var farthestSeatNum = (playerSeatNum + game.countPlayer() / 2) % game.countPlayer();
+							var swapPlayer = player;
+							if ((playerSeatNum < farthestSeatNum && (targetSeatNum < playerSeatNum || targetSeatNum > farthestSeatNum)) || (playerSeatNum > farthestSeatNum && (targetSeatNum < playerSeatNum && targetSeatNum > farthestSeatNum))) {
+								swapPlayer = player.next;
+							}
+							// if (farthestSeatNum % 1 != 0 && targetSeatNum == farthestSeatNum + 0.5) {
+							// swapPlayer = player.next;
+							// }
+							// game.swapSeat(target, swapPlayer, null, true);
+							game.broadcastAll(function (target1, target2) {
+								game.swapSeat(target1, target2, null, true);
+							}, target, swapPlayer);
+							var equip3 = target.getCards('e', { subtype: 'equip3' })
+							if (equip3) {
+								target.discard(equip3);
+							}
+						},
+					},
+				},
+				ai: {
+					result: {
+						target: function (player, target) {
+							return -1;
+						}
+					},
+					threaten: 1.5,
+					order: 9,
+					expose: 0.3,
+				}
+			},
+			hok_lianshan: {
+				derivation: 'hok_yangou_lock',
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: function (card, player, target) {
+					if (target == player) {
+						return false;
+					}
+					return get.distance(player, target) <= 1 || target.hasSkill('hok_yangou_effect');
+				},
+				content: function () {
+					if (target.hasSkill('hok_yangou_effect')) {
+						player.addTempSkill('hok_lianshan_effect');
+
+						var playerSeatNum = player.getSeatNum();
+						player.storage.hok_seat = player.next;
+						var targetSeatNum = target.getSeatNum();
+						var farthestSeatNum = (targetSeatNum + game.countPlayer() / 2) % game.countPlayer();
+						var swapPlayer = target;
+						if ((targetSeatNum < farthestSeatNum && (playerSeatNum < targetSeatNum || playerSeatNum > farthestSeatNum)) || (targetSeatNum > farthestSeatNum && (playerSeatNum < targetSeatNum && playerSeatNum > farthestSeatNum))) {
+							swapPlayer = target.next;
+						}
+						game.broadcastAll(function (target1, target2) {
+							game.swapSeat(target1, target2, null, true);
+						}, player, swapPlayer);
+						target.damage('nocard');
+					} else {
+						if (game.hasPlayer(current => {
+							return current.hasSkill('hok_yangou_effect');
+						})) {
+							var tar = game.filterPlayer(current => {
+								return current.hasSkill('hok_yangou_effect');
+							})[0];
+							tar.removeSkill('hok_yangou_effect');
+						}
+						target.addTempSkill('hok_yangou_effect');
+					}
+				},
+				subSkill: {
+					effect: {
+						forced: true,
+						trigger: { player: 'phaseEnd' },
+						content: function () {
+							game.broadcastAll(function (target1, target2) {
+								game.swapSeat(target1, target2, null, true);
+							}, player, player.storage.hok_seat);
+						}
+					}
+				},
+			},
 			// 妲己
 			hok_meixin: {
 				enable: 'phaseUse',
@@ -804,7 +947,23 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				content: function () {
 					player.useCard({ name: 'sha', isCard: true }, target, false);
 				},
-
+				ai: {
+					order: function () {
+						return get.order({
+							name: 'sha',
+							isCard: true,
+						});
+					},
+					result: {
+						player: function (player) {
+							if (player.hasValueTarget({
+								name: 'sha',
+								isCard: true,
+							})) return 1.5;
+							return 0.5;
+						},
+					},
+				},
 			},
 			hok_tongkuang: {
 				unique: true,
@@ -5783,6 +5942,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_yueguishengfang_info: '出牌阶段限一次，当你的“月桂”标记大于等于6时，你可以使用X张不计入次数的雷【杀】（X为“月桂”数/3向下取整，每使用一次失去3枚“月桂”）。',
 			// 百里玄策
 			hok_bailixuance: '王者百里玄策',
+			hok_rexue: '热血',
+			hok_rexue_info: '你击杀任意角色时，摸2张牌。',
+			hok_yangou: '魇钩',
+			hok_yangou_info: '出牌阶段限一次，你可以指定一名其他角色进行判定，若点数大于4：其获得场上唯一的“魇钩”标记，直到回合结束，你解锁“魇钩·锁”。（“魇钩”标记：不能使用和打出【闪】）',
+			hok_yangou_lock: '魇钩·锁',
+			hok_yangou_lock_info: '出牌阶段限一次，你可以将“魇钩”成功的目标座位移至你座位后，弃置其防具马。',
+			hok_lianshan: '镰闪',
+			hok_lianshan_info: '出牌阶段限一次，你可以选择：1.“魇钩”标记的角色，你可以将你座位移至其座位后直到回合结束，对其造成一点伤害；2.你距离为1的无“魇钩”标记的角色，令其获得场上唯一的“魇钩”标记，直到回合结束，你解锁“魇钩·锁”。（“魇钩”标记：不能使用和打出手牌）',
 			// 妲己
 			hok_daji: '王者妲己',
 			hok_meixin: '魅心',
