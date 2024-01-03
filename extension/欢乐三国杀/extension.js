@@ -2868,7 +2868,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                                 if (target.hp > 1) return [1, 0.5];
                                             }
                                         }
-                                    }
+                                    },
+                                    expose: 0.2,
                                 },
                             },
 
@@ -4417,7 +4418,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     if (!result.bool) player.draw(2);
                                 },
                                 ai: {
-                                    order: 3,
+                                    order: 5,
                                     expose: 0.2,
                                     result: {
                                         target: function (player, target) {
@@ -4775,6 +4776,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         target.addSkill('yise_damage');
                                     }
                                 },
+                                ai: {
+                                    expose: 0.25,
+                                }
                             },
                             hpp_shunshi: {
                                 audio: 'shunshi',
@@ -5107,7 +5111,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         targets[1].draw();
                                     }
                                 },
-                                ai: { threaten: 0.8 },
+                                ai: {
+                                    threaten: 0.8,
+                                    expose: 0.3,
+                                },
                                 subSkill: {
                                     draw: {
                                         trigger: { player: 'recoverAfter' },
@@ -5206,6 +5213,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         player.discardPlayerCard(result.targets[0], 'he', true);
                                     }
                                 },
+                                ai: {
+                                    expose: 0.1,
+                                }
                             },
                             hpp_fenwei: {
                                 audio: 'fenwei',
@@ -10077,7 +10087,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             card: arg.card
                                         }));
                                         return arg.target.storage.hpp_qianxi2 == 'black';
-                                    }
+                                    },
+                                    expose: 0.2,
                                 },
                             },
                             hpp_qianxi2: {
@@ -10655,6 +10666,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     event.next.remove(next);
                                     trigger.getParent('phase').next.push(next);
                                 },
+                                ai: {
+                                    expose: 0.25,
+                                }
                             },
                             hpp_gongqing: {
                                 audio: 'xinfu_gongqing',
@@ -11407,6 +11421,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         else for (var target of targets) target.damage();
                                     }
                                 },
+                                ai: {
+                                    expose: 0.2,
+                                }
                             },
                             hpp_chezheng: {
                                 audio: 'nzry_zhizheng',
@@ -12741,18 +12758,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     target.markAuto(skill, [event.suit]);
                                 },
                                 subSkill: {
-                                    1:{
-                                        charlotte:true,
-                                        onremove:true,
-                                        mod:{
-                                            ignoredHandcard:function(card,player){
-                                                if(player.getStorage('hpp_huguan_1').contains(get.suit(card,player))) return true;
+                                    1: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        mod: {
+                                            ignoredHandcard: function (card, player) {
+                                                if (player.getStorage('hpp_huguan_1').contains(get.suit(card, player))) return true;
                                             },
-                                            cardDiscardable:function(card,player,name){
-                                                if(name=='phaseDiscard'&&player.getStorage('hpp_huguan_1').contains(get.suit(card,player))) return false;
+                                            cardDiscardable: function (card, player, name) {
+                                                if (name == 'phaseDiscard' && player.getStorage('hpp_huguan_1').contains(get.suit(card, player))) return false;
                                             }
                                         },
-                                        intro:{content:'本回合$花色的牌不计入手牌上限'},
+                                        intro: { content: '本回合$花色的牌不计入手牌上限' },
                                     },
                                     2: {
                                         charlotte: true,
@@ -13388,7 +13405,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         if (list.length > 0) target.enableEquip(list);
                                     }
                                     'step 2'
-                                    player.drawTo(6);
+                                    // player.drawTo(6);
                                     trigger.player.drawTo(6);
                                     'step 3'
                                     player.storage.hpp_youlong2 = [];
@@ -14514,7 +14531,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 audio: 'zhiyu',
                                 trigger: { player: 'damageEnd' },
                                 preHidden: true,
-                                frequent: true,
                                 content: function () {
                                     'step 0'
                                     player.draw(2);
@@ -18870,6 +18886,9 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         if (result.targets[0] != player) player.addExpose(0.2);
                                     }
                                 },
+                                ai: {
+                                    expose: 0.2,
+                                }
                             },
 
                             // 周仓
@@ -19868,6 +19887,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 subSkill: { as: { sub: true } },
                                 ai: {
                                     threaten: 0.6,
+                                    expose: 0.25,
                                     effect: {
                                         target: function (card, player, target, current) {
                                             if (typeof card != 'object' || target.hasSkill('hpp_danshou_as') || !['basic', 'trick'].contains(get.type(card, 'trick'))) return;
@@ -21363,7 +21383,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             return get.effect(target, { name: 'guohe_copy2' }, player, target);
                                         },
                                     },
-                                    expose: 0.25,
+                                    expose: 0.3,
                                 },
                                 subSkill: {
                                     hand: {

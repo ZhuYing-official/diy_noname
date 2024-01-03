@@ -61,27 +61,33 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		connect: true,
 		characterSort: {
 			happy: {
-				correction_history: ['cuishi', 'liucong', 'tuanxini', 'tuan', 'xini'],
+				correction_history: ['lao_caofang', 'lao_caohuan', 'lao_caoyu', 'lao_cuishi', 'lao_liucong', 'lao_tuanxini', 'lao_tuan', 'lao_xini'],
 				honor_of_kings_clashlane: ['hok_lixin', 'hok_miyue', 'hok_sp_lixin'],
 				honor_of_kings_jungling: ['hok_bailixuance', 'hok_sunwukong'],
 				honor_of_kings_midlane: ['hok_daji', 'hok_wuzetian'],
 				honor_of_kings_roaming: ['hok_mingshiyin', 'hok_yao', 'hok_sp_mingshiyin'],
 				honor_of_kings_farmlane: ['hok_ailin', 'hok_makeboluo'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
-				hpp_hpp: ['hpp_re_luxun', 'hpp_re_lvbu'],
+				hpp_hpp: ['hpp_re_zuoci'],
 			},
 		},
 		character: {
+			// 曹芳
+			lao_caofang: ['male', 'wei', 4, ['lao_shouwei', 'lao_shengbai'], ['zhu']],
+			// 曹奂
+			lao_caohuan: ['male', 'wei', 3, ['lao_zunqian', 'lao_yishan', 'lao_chongjia'], ['zhu']],
+			// 曹宇
+			lao_caoyu: ['male', 'wei', 4, ['lao_renlun', 'lao_gongci']],
 			// 崔氏
-			cuishi: ['female', 'wei', 3, ['reluoshen', 'pianwan', 'huashang']],
+			lao_cuishi: ['female', 'wei', 3, ['reluoshen', 'lao_pianwan', 'lao_huashang']],
 			// 刘琮
-			liucong: ['male', 'qun', 3, ['decadezongshi', 'tunquan', 'rexianzhou', 'quxiang']],
+			lao_liucong: ['male', 'qun', 3, ['decadezongshi', 'lao_tunquan', 'rexianzhou', 'lao_quxiang']],
 			// 土安奚泥
-			tuanxini: ['male', 'qun', '8/15', ['tengbing', 'ranwang', 'ranyong']],
+			lao_tuanxini: ['male', 'qun', '8/15', ['lao_tengbing', 'lao_ranwang', 'lao_ranyong']],
 			// 土安
-			tuan: ['male', 'qun', '4/8', ['tengbing', 'ranwang']],
+			lao_tuan: ['male', 'qun', '4/8', ['lao_tengbing', 'lao_ranwang']],
 			// 奚泥
-			xini: ['male', 'qun', '4/7', ['tengbing', 'ranyong']],
+			lao_xini: ['male', 'qun', '4/7', ['lao_tengbing', 'lao_ranyong']],
 
 			// 艾琳
 			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
@@ -109,21 +115,24 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_sp_mingshiyin: ['male', 'shu', 4, ['hok_sptaigua', 'hok_minggua', 'hok_minggua2', 'hok_biangua']],
 
 			// 神曹植
-			shen_caozhi: ['male', 'shen', 3, ['caigao', 'badou', 'qibu', 'chengshi'], ['wei']],
+			shen_caozhi: ['male', 'shen', 3, ['lao_caigao', 'lao_badou', 'lao_qibu', 'lao_chengshi'], ['wei']],
 			// 神董卓
-			shen_dongzhuo: ['male', 'shen', 5, ['cannue', 'xiehan', 'huidu'], ['qun']],
+			shen_dongzhuo: ['male', 'shen', 5, ['lao_cannue', 'lao_xiehan', 'lao_huidu'], ['qun']],
 			// 神鲁肃
-			shen_lusu: ['male', 'shen', 3, ['diying', 'fusheng', 'chiyan', 'lianmeng'], ['wu']],
+			shen_lusu: ['male', 'shen', 3, ['diying', 'lao_fusheng', 'lao_chiyan', 'lao_lianmeng'], ['wu']],
 
 			// 欢杀陆逊
-			hpp_re_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'hpp_lianying'], []],
+			hpp_re_zuoci: ['male', 'qun', 3, ['hpp_re_xinsheng'], []],
 		},
 		characterIntro: {
-			cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
-			liucong: '刘琮（？-？），山阳高平（今山东微山两城乡）人。东汉末年荆州牧刘表次子，刘琦之弟。刘表死后继承刘表官爵，当曹操大军南下之时，他在蔡瑁等人的劝说之下举荆州而降，被曹操封为青州刺史，后迁谏议大夫，爵封列侯。',
-			tuanxini: '带来洞主曰：“此去东南七百里，有一国，名乌戈国。国主兀突骨，身长丈二，不食五谷，以生蛇恶兽为饭；身有鳞甲，刀箭不能侵。其手下军士，俱穿藤甲；其藤生于山涧之中，盘于石壁之上；国人采取，浸于油中，半年方取出晒之；晒干复浸，凡十余遍，却才造成铠甲；穿在身上，渡江不沉，经水不湿，刀箭皆不能入：因此号为‘藤甲军’。今大王可往求之。若得彼相助，擒诸葛亮如利刀破竹也。”孟获大喜，遂投乌戈国，来见兀突骨。其洞无宇舍，皆居土穴之内。孟获入洞，再拜哀告前事。兀突骨曰：“吾起本洞之兵，与汝报仇。”获欣然拜谢。于是兀突骨唤两个领兵俘长：一名土安，一名奚泥，起三万兵，皆穿藤甲，离乌戈国望东北而来。曾经大败蜀军，后被诸葛施计引入盘蛇谷中，尽烧其众，无所生还。',
-			tuan: '土安，《三国演义》里的人物，长乌戈国主兀突骨手下的一个藤甲领兵长，身穿藤甲，后被诸葛施计引入盘蛇谷中阵亡。',
-			xini: '小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
+			lao_caofang: '曹芳（232年－274年），字兰卿，沛国谯县（今安徽省亳州市）人。三国时期曹魏第三位皇帝（239年1月22日－254年10月17日在位），疑为魏武帝曹操曾孙，任城威王曹彰之孙，任城王曹楷之子。太和六年（232年），生于任城王府。青龙三年（235年），选为魏明帝曹叡养子，册封齐王。景初三年（239年），立为皇太子，同日魏明帝曹叡病死，曹芳正式即位，由大将军曹爽和太尉司马懿共同辅政。正始十年，经历高平陵之变，曹爽倒台，政权落入司马氏手中。嘉平六年（254年），中书令李丰和光禄大夫张缉图谋废掉司马师，改立夏侯玄为大将军。司马师平定叛乱后，将曹芳废为齐王，拥戴高贵乡公曹髦继位。西晋建立后，册封邵陵县公。泰始十年（274年），曹芳病逝，终年四十三岁，谥号为厉。',
+			lao_caohuan: '曹奂（246年～302年），原名曹璜，以名讳难避，改名奂，字景明，三国时期曹魏末代皇帝。魏武帝曹操之孙，燕王曹宇之子，奉魏明帝曹叡之祀。曹奂出生于燕王宫。甘露三年（258年），被封为常道乡公。甘露五年（260年）五月，魏帝曹髦被杀，司马昭与众臣商议，立曹奂为帝，同年六月初二曹奂即皇帝位，改年号为景元。咸熙元年（264年），以曹奂为皇帝的魏国朝廷，宣布废除屯田官，以均政役。次年，司马炎篡夺魏国政权，建立西晋，史称晋武帝，魏国自此灭亡。十一月十七日，晋武帝封曹奂为陈留王。太安元年（302年），曹奂去世，谥号为元。曹奂在任期间，推行了君臣罢屯田均政役，给历时七十年的屯田制度画上了句号，是在新形势下调整统治政策的举措，对缓和当时的社会矛盾，促进经济发展均起到了一定的作用。',
+			lao_caoyu: '曹宇（？－278年），字彭祖，沛国谯县（今安徽亳州）人。三国时期魏国宗室，魏武帝曹操与环夫人之子，邓哀王曹冲同母兄弟。太和六年，封为燕王。魏明帝病危，欲以大将军辅政，不果。其子常道乡公曹奂，是魏国末代皇帝，史称魏元帝。晋朝建立后，降封燕公。咸宁四年（278年），曹宇去世。',
+			lao_cuishi: '崔妃（？-？），清河郡东武城县（今河北故城）人，崔妃出身河北高门士族清河崔氏，崔妃的叔叔为名士崔琰。之后出嫁权臣曹操之子曹植为妻。因衣装过于华美，曹操登台看到后，认为她违反了穿着朴素的禁令，回家后崔妃就被赐死了。',
+			lao_liucong: '刘琮（？-？），山阳高平（今山东微山两城乡）人。东汉末年荆州牧刘表次子，刘琦之弟。刘表死后继承刘表官爵，当曹操大军南下之时，他在蔡瑁等人的劝说之下举荆州而降，被曹操封为青州刺史，后迁谏议大夫，爵封列侯。',
+			lao_tuanxini: '带来洞主曰：“此去东南七百里，有一国，名乌戈国。国主兀突骨，身长丈二，不食五谷，以生蛇恶兽为饭；身有鳞甲，刀箭不能侵。其手下军士，俱穿藤甲；其藤生于山涧之中，盘于石壁之上；国人采取，浸于油中，半年方取出晒之；晒干复浸，凡十余遍，却才造成铠甲；穿在身上，渡江不沉，经水不湿，刀箭皆不能入：因此号为‘藤甲军’。今大王可往求之。若得彼相助，擒诸葛亮如利刀破竹也。”孟获大喜，遂投乌戈国，来见兀突骨。其洞无宇舍，皆居土穴之内。孟获入洞，再拜哀告前事。兀突骨曰：“吾起本洞之兵，与汝报仇。”获欣然拜谢。于是兀突骨唤两个领兵俘长：一名土安，一名奚泥，起三万兵，皆穿藤甲，离乌戈国望东北而来。曾经大败蜀军，后被诸葛施计引入盘蛇谷中，尽烧其众，无所生还。',
+			lao_tuan: '土安，《三国演义》里的人物，长乌戈国主兀突骨手下的一个藤甲领兵长，身穿藤甲，后被诸葛施计引入盘蛇谷中阵亡。',
+			lao_xini: '小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
 			hok_ailin: '艾琳是黄金森林的在逃精灵公主，日落圣殿的不速之客。公主艾琳天性机灵活泼，对一切未知充满好奇心与探索欲。然而“继承人”的责任始终压在她的肩膀上，她被要求收起不稳重的一面，遵循精灵族舞蹈的优雅与绝对的秩序，做好一个“真正的公主”。成年仪式前夕，艾琳决定打破族群禁令，逃去森林外的“危险古怪的人类世界”开启一场自由的冒险。旅程却并没有想象中那样顺遂，人类对精灵同样存在“不详邪恶”的重重误解。越是未知，越是有趣，越是困难，越有斗志。她以舞蹈为表达自我的“语言”，与红头发的法师小女孩成为密友，给圣殿严肃守序的骑士团带来了诸多意外麻烦，甚至组成了圣殿小分队在西方大陆的各个地方冒险……',
 			hok_bailixuance: '玄策不会忘记那个日子：来历不明的马贼冲破边关的城镇，然而齐心协力的守卫军和民众守住城门。率先进入城镇的马贼走投无路，挟持了无力反抗的老弱们作为逃离的砝码。那时候自己多么害怕啊。可哭喊声刺痛小小男子汉的心灵，他推倒藏身的水缸，冲了出去。之后的记忆已不太清晰……那些不是普通的马贼……他们最后都死于首领之手……哥哥没有赶到，谁也没有赶到。他被首领选中，作为祭品去唤醒某种强大的东西。所有人四散逃窜，在绝望和恐惧中，少年眼睁睁看着无名剑士代替自己卷入邪恶迷雾。直到周围一切归于寂静，圆月安静照耀着亘古不变的戈壁，那个男人带走了他。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
@@ -148,8 +157,339 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 		},
 		skill: {
+			// 曹芳
+			lao_shouwei: {
+				trigger: { player: 'damageAfter' },
+				frequent: true,
+				filter: function (event, player) {
+					return (event.num > 0);
+				},
+				content: function () {
+					var drawX = Math.floor(_status.currentPhase.getHp() / 2);
+					player.draw(drawX > 2 ? 2 : drawX);
+					player.addSkill('lao_shouwei_effect');
+				},
+				subSkill: {
+					effect: {
+						forced: true,
+						trigger: { global: 'phaseAfter' },
+						content: function () {
+							var drawY = trigger.player.getDamagedHp();
+							player.draw(drawY > 3 ? 3 : drawY);
+							player.removeSkill('lao_shouwei_effect');
+						}
+					}
+				},
+				ai: {
+					maixie: true,
+					maixie_hp: true,
+					effect: {
+						target: function (card, player, target) {
+							if (player.hasSkillTag('jueqing', false, target)) return [1, -1];
+							if (get.tag(card, 'damage')) return [1, 0.55];
+						}
+					}
+				}
+			},
+			lao_shengbai: {
+				skillAnimation: true,
+				animationColor: 'thunder',
+				trigger: { player: 'dying' },
+				zhuSkill: true,
+				filter: function (event, player) {
+					if (player.hp > 0) return false;
+					if (!player.hasZhuSkill('lao_shengbai')) return false;
+					return game.hasPlayer(function (current) {
+						return current != player && current.group == 'wei';
+					});
+				},
+				mark: true,
+				unique: true,
+				limited: true,
+				content: function () {
+					'step 0'
+					player.awakenSkill('lao_shengbai');
+					var targets = game.filterPlayer();
+					targets.remove(player);
+					event.targets = targets;
+					event.damages = [];
+					event.lao_shengbai_target = trigger.source;
+					'step 1'
+					if (event.targets.length) {
+						var current = event.targets.shift();
+						if (current.group == 'wei' && current.isIn() && event.lao_shengbai_target.isIn()) {
+							event.current = current;
+							current.chooseBool('是否受到1点伤害，视为对' + get.translation(event.lao_shengbai_target) + '使用杀？').set('ai', function () {
+								return get.effect(event.lao_shengbai_target, { name: 'sha' }, current, current) > 1;
+							});
+						}
+						else {
+							event.redo();
+						}
+					}
+					else {
+						event.goto(3);
+					}
+					'step 2'
+					if (result.bool) {
+						event.damages.push(event.current);
+						event.current.useCard({ name: 'sha', isCard: true }, event.lao_shengbai_target, false);
+					}
+					if (event.targets.length) {
+						event.goto(1);
+					}
+					'step 3'
+					if (event.damages.length) {
+						var next = game.createEvent('lao_shengbai_next');
+						trigger.after.push(next);
+						next.targets = event.damages;
+						next.setContent(function () {
+							for (var target of targets) {
+								target.damage();
+							}
+						});
+					}
+				}
+			},
+			// 曹奂
+			lao_zunqian: {
+				trigger: { target: 'useCardToTargeted' },
+				check: function (event, player) {
+					var cards = player.getCards('h');
+					if (cards.length <= 2) {
+						for (var i = 0; i < cards.length; i++) {
+							if (cards[i].name == 'shan' || cards[i].name == 'tao') return false;
+						}
+					}
+					return true;
+				},
+				filter: function (event, player) {
+					return event.card.name == 'sha';
+				},
+				content: function () {
+					'step 0'
+					player.chooseToDiscard(2, true, 'he');
+					player.draw(2);
+					var players = game.filterPlayer();
+					players.sort(function (a, b) {
+						return b.countCards('h') - a.countCards('h');
+					});
+					if (players[0].countCards('h') > players[1].countCards('h') && players[0] != player) {
+						players[0].chooseBool(get.prompt2('lao_zunqian'));
+						event.player = players[0];
+					}
+					else {
+						event.finish();
+					}
+					'step 1'
+					if (result.bool) {
+						player.chooseToDiscard(2, true, 'he');
+						player.draw(2);
+					}
+				},
+				ai: {
+					effect: {
+						target: function (card, player, target, current) {
+							if (card.name == 'sha') return [1, 0.5];
+						}
+					}
+				}
+			},
+			lao_yishan: {
+				trigger: { player: 'damageAfter' },
+				frequent: true,
+				filter: function (event, player) {
+					return (event.num > 0) && player.countCards('h', function (card) {
+						return card.name == 'sha';
+					}) > 0;
+				},
+				content: function () {
+					'step 0'
+					player.chooseBool(get.prompt2('lao_yishan', trigger.source));
+					'step 1'
+					if (result.bool) {
+						var cards = player.getCards('h', function (card) {
+							return card.name == 'sha';
+						});
+						if (cards.length > 0) player.discard(cards);
+						player.draw(cards.length);
+						trigger.source.draw(cards.length);
+					}
+				},
+			},
+			lao_chongjia: {
+				skillAnimation: true,
+				animationColor: 'thunder',
+				unique: true,
+				juexingji: true,
+				zhuSkill: true,
+				keepSkill: true,
+				derivation: ['lao_gongci', 'twzhuiting'],
+				trigger: { player: 'phaseZhunbeiBegin' },
+				forced: true,
+				filter: function (event, player) {
+					if (!player.hasZhuSkill('lao_chongjia')) return false;
+					return player.isMinHp();
+				},
+				content: function () {
+					'step 0'
+					player.awakenSkill('lao_chongjia');
+					player.gainMaxHp();
+					'step 1'
+					if (player.hp < 3) player.recover(3 - player.hp);
+					player.addSkillLog('lao_gongci');
+					player.addSkillLog('twzhuiting');
+					'step 2'
+					if (player.isZhu2()) event.trigger('zhuUpdate');
+				}
+			},
+			// 曹宇
+			lao_renlun: {
+				trigger: { player: 'damageAfter' },
+				frequent: true,
+				filter: function (event) {
+					return (event.num > 0)
+				},
+				content: function () {
+					'step 0'
+					player.draw(2);
+					'step 1'
+					if (!player.countCards('h')) event.finish();
+					else player.showHandcards();
+					'step 2'
+					player.chooseCardTarget({
+						filterCard: function (card) {
+							var num = 0;
+							for (var i = 0; i < ui.selected.cards.length; i++) {
+								num += get.number(ui.selected.cards[i]);
+							}
+							return get.number(card) + num <= 13;
+						},
+						selectCard: function () {
+							var num = 0;
+							for (var i = 0; i < ui.selected.cards.length; i++) {
+								num += get.number(ui.selected.cards[i]);
+							}
+							if (num == 13) return ui.selected.cards.length;
+							return ui.selected.cards.length + 2;
+						},
+						filterTarget: function (card, player, target) {
+							return player != target;
+						},
+						ai1: function (card) {
+							var player = _status.event.player;
+							if (player.maxHp - player.hp == 1 && card.name == 'du') return 30;
+							var check = _status.event.check;
+							if (check < 1) return 0;
+							if (player.hp > 1 && check < 2) return 0;
+							return get.unuseful(card) + 9;
+						},
+						ai2: function (target) {
+							var att = get.attitude(_status.event.player, target);
+							if (ui.selected.cards.length == 1 && ui.selected.cards[0].name == 'du') return 1 - att;
+							return att - 2;
+						},
+						prompt: '令一名其他角色获得点数之和等于13的牌',
+					}).set('check', check);
+					'step 3'
+					if (result.bool) {
+						player.give(result.cards, result.targets[0]);
+						player.line(result.targets, 'green');
+					}
+				},
+				ai: {
+					maixie: true,
+					maixie_hp: true,
+					effect: {
+						target: function (card, player, target) {
+							if (get.tag(card, 'damage')) {
+								if (player.hasSkillTag('jueqing', false, target)) return [1, -2];
+								if (!target.hasFriend()) return;
+								var num = 1;
+								if (get.attitude(player, target) > 0) {
+									if (player.needsToDiscard()) {
+										num = 0.7;
+									}
+									else {
+										num = 0.5;
+									}
+								}
+								if (target.hp >= 4) return [1, num * 2];
+								if (target.hp == 3) return [1, num * 1.5];
+								if (target.hp == 2) return [1, num * 0.5];
+							}
+						}
+					}
+				}
+			},
+			lao_gongci: {
+				trigger: { player: 'phaseDiscardBegin' },
+				filter: function (event, player) {
+					return player.countCards('h') > player.getHandcardLimit() - 1;
+				},
+				content: function () {
+					'step 0'
+					player.chooseTarget('恭辞：你可以选择一名其他角色，然后令你本回合手牌上限-1，你此阶段弃置的牌在进入弃牌堆前其获得其中不同花色的牌。', function (card, player, target) {
+						return target != player;
+					}).set('ai', function (target) {
+						var att = get.attitude(_status.event.player, target);
+						if (att < 0) {
+							return att;
+						}
+						else if (att > 0) {
+							if (target.hasSkill('remingjian') || target.hasSkill('xinfu_falu')) {
+								return att / 2;
+							}
+							return att / (1 + target.countCards('h'));
+						}
+						else {
+							return att / 100;
+						}
+					}).set('enemy', get.value(event.togive[0], player, 'raw') < 0);
+					'step 1'
+					if (result.bool) {
+						player.addTempSkill('lao_gongci_effect');
+						result.targets[0].addTempSkill('lao_gongci_gain');
+					}
+				},
+				subSkill: {
+					effect: {
+						mod: {
+							maxHandcard: function (player, num) {
+								return num - 1;
+							},
+						},
+					},
+					gain: {
+						trigger: { global: 'loseAfter' },
+						filter: function (event, player) {
+							var evt = event.getParent(3);
+							return event.type == 'discard' && evt.name == 'phaseDiscard' && evt.player == event.player && evt.player != player && event.cards2 && event.cards2.filterInD('d').length > 0;
+						},
+						locked: false,
+						forced: true,
+						content: function () {
+							"step 0"
+							event.cards = trigger.cards2.filterInD('d');
+							"step 1"
+							var next = player.chooseCardButton('选择获得不同花色的牌', event.cards, [1, event.cards.length]).set('ai', function (button) {
+								return get.value(button.link, player);
+							}).set('filterButton', function (button) {
+								for (var i = 0; i < ui.selected.buttons.length; i++) {
+									if (get.suit(ui.selected.buttons[i].link) == get.suit(button.link)) return false;
+								}
+								return true;
+							});
+							"step 2"
+							if (result.bool) {
+								player.gain(result.links, 'gain2', 'log');
+							}
+						},
+					}
+				},
+			},
 			// 崔氏
-			huashang: {
+			lao_huashang: {
 				forced: true,
 				audio: 2,
 				trigger: {
@@ -188,7 +528,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.addSkill('shenfu');
 				}
 			},
-			pianwan: {
+			lao_pianwan: {
 				audio: 'reqingguo',
 				mod: {
 					aiValue: function (player, card, num) {
@@ -240,7 +580,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			// 刘琮
-			tunquan: {
+			lao_tunquan: {
 				audio: 2,
 				skillAnimation: true,
 				animationColor: 'gray',
@@ -261,27 +601,27 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					return false;
 				},
 				content: function () {
-					player.awakenSkill('tunquan');
-					player.storage.quxiang_rewrite = true;
+					player.awakenSkill('lao_tunquan');
+					player.storage.lao_quxiang_rewrite = true;
 				}
 			},
-			quxiang: {
+			lao_quxiang: {
 				audio: 2,
-				derivation: 'quxiang_rewrite',
-				group: 'quxiang_rewrite',
+				derivation: 'lao_quxiang_rewrite',
+				group: 'lao_quxiang_rewrite',
 				usable: 1,
 				trigger: { player: 'damageBegin2' },
 				filter: function (event, player) {
-					return player.countCards('h') > 0 && !player.storage.quxiang_rewrite == true;
+					return player.countCards('h') > 0 && !player.storage.lao_quxiang_rewrite == true;
 				},
 				content: function () {
 					'step 0'
 					player.line(trigger.source, 'green');
-					player.storage.quxiangCards = player.getCards('h');
-					player.give(player.storage.quxiangCards, trigger.source);
+					player.storage.lao_quxiangCards = player.getCards('h');
+					player.give(player.storage.lao_quxiangCards, trigger.source);
 					trigger.cancel();
 					'step 1'
-					var repayCards = player.storage.quxiangCards.length > 1 ? 2 : 1;
+					var repayCards = player.storage.lao_quxiangCards.length > 1 ? 2 : 1;
 					var str = '交给' + get.translation(player) + repayCards + '张手牌';
 					trigger.source.chooseCard('h', repayCards, true, str);
 					'step 2'
@@ -295,7 +635,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						usable: 1,
 						trigger: { player: 'damageBegin4' },
 						filter: function (event, player) {
-							return player.countCards('h') > 0 && player.storage.quxiang_rewrite == true;
+							return player.countCards('h') > 0 && player.storage.lao_quxiang_rewrite == true;
 						},
 						content: function () {
 							'step 0'
@@ -314,7 +654,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			// 土安
-			tengbing: {
+			lao_tengbing: {
 				trigger: {
 					global: 'phaseBefore',
 					player: 'enterGame',
@@ -352,7 +692,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						if (player.getEquips('tengjia').contains(card)) return false;
 					},
 				},
-				group: ['tengbing_blocker'],
+				group: ['lao_tengbing_blocker'],
 				subSkill: {
 					blocker: {
 						trigger: { player: ['loseBefore', 'disableEquipBefore'] },
@@ -373,7 +713,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
-			ranwang: {
+			lao_ranwang: {
 				trigger: { player: 'damageBegin4' },
 				filter: function (event, player) {
 					return event.hasNature('fire');
@@ -400,7 +740,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			// 奚泥
-			ranyong: {
+			lao_ranyong: {
 				trigger: { player: 'damageBegin4' },
 				filter: function (event, player) {
 					return event.hasNature('fire');
@@ -689,20 +1029,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							}, target, swapPlayer);
 							var equip3 = target.getCards('e', { subtype: 'equip3' })
 							if (equip3) {
-								target.discard(equip3);
+								target.discard(equip3).discarder = player;
 							}
 						},
+						ai: {
+							result: { player: 1 },
+							order: 11,
+						}
 					},
 				},
 				ai: {
-					result: {
-						target: function (player, target) {
-							return -1;
-						}
-					},
+					result: { target: -1 },
 					threaten: 1.5,
-					order: 9,
-					expose: 0.3,
+					order: 11.5,
 				}
 			},
 			hok_lianshan: {
@@ -754,6 +1093,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					}
 				},
+				ai: {
+					result: {
+						target: function (player, target) {
+							return -1;
+						}
+					},
+					threaten: 1.5,
+					order: 11.1,
+					expose: 0.3,
+				}
 			},
 			// 妲己
 			hok_meixin: {
@@ -1402,10 +1751,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				usable: 1,
 				filterTarget: lib.filter.notMe,
 				content: function () {
+					player.removeSkill('hok_lingua2');
 					player.logSkill('hok_lingua');
 					player.line('hok_lingua', target);
 					player.storage.hok_lingua2 = target;
 					player.addSkill('hok_lingua2');
+					if (player.hasSkill('hok_lingua_2') || player.hasSkill('hok_lingua_4')) {
+						player.popup('目标弃牌');
+					} else {
+						player.popup('目标摸牌');
+					}
 				},
 				group: ['hok_lingua_yang', 'hok_lingua_yin'],
 				subSkill: {
@@ -1439,10 +1794,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							if (result.control == '选项一') {
 								player.addSkill('hok_lingua_3');
 								game.log('目标角色造成伤害后摸1张牌');
+								player.popup('目标摸牌');
 							}
 							else {
 								player.addSkill('hok_lingua_4');
 								game.log('目标角色造成伤害后随机弃置1张手牌');
+								player.popup('目标弃牌');
 							}
 						}
 					},
@@ -1476,10 +1833,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							if (result.control == '选项一') {
 								player.addSkill('hok_lingua_1');
 								game.log(get.translation(player.name) + '回合结束时，目标角色摸1张牌');
+								player.popup('目标摸牌');
 							}
 							else {
 								player.addSkill('hok_lingua_2');
 								game.log(get.translation(player.name) + '回合结束时，目标角色弃置1张牌');
+								player.popup('目标弃牌');
 							}
 						}
 					},
@@ -3046,15 +3405,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 
 			// 神曹植
-			caigao: {
+			lao_caigao: {
 				audio: 'reluoying',
 				forced: true,
 				unique: true,
-				derivation: 'caigao_rewrite',
-				group: 'caigao_rewrite',
+				derivation: 'lao_caigao_rewrite',
+				group: 'lao_caigao_rewrite',
 				trigger: { global: 'gainEnd' },
 				filter: function (event, player) {
-					return player != event.player && event.player != _status.currentPhase && !player.storage.caigao_rewrite == true;
+					return player != event.player && event.player != _status.currentPhase && !player.storage.lao_caigao_rewrite == true;
 				},
 				content: function () {
 					'step 0'
@@ -3093,7 +3452,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						forced: true,
 						trigger: { global: 'gainEnd' },
 						filter: function (event, player) {
-							return player != event.player && event.player != _status.currentPhase && player.storage.caigao_rewrite == true;
+							return player != event.player && event.player != _status.currentPhase && player.storage.lao_caigao_rewrite == true;
 						},
 						content: function () {
 							var card = get.cardPile(function (card) {
@@ -3106,10 +3465,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				},
 			},
-			badou: {
+			lao_badou: {
 				audio: 'rejiushi',
 				unique: true,
-				group: ['badou2', 'badou3'],
+				group: ['lao_badou2', 'lao_badou3'],
 				frequent: true,
 				trigger: { player: ['useCard', 'respond'] },
 				filter: function (event, player) {
@@ -3125,7 +3484,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				},
 			},
-			badou2: {
+			lao_badou2: {
 				audio: 'rejiushi',
 				usable: 1,
 				enable: ['chooseToRespond', 'chooseToUse'],
@@ -3142,7 +3501,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				prompt: '将一张梅花手牌当酒使用或打出',
 			},
-			badou3: {
+			lao_badou3: {
 				audio: 'rejiushi',
 				mod: {
 					cardname: function (card, player, name) {
@@ -3171,7 +3530,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				},
 			},
-			qibu: {
+			lao_qibu: {
 				audio: 2,
 				unique: true,
 				mark: true,
@@ -3185,13 +3544,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				filter: function (event, player) {
 					let flag = false;
 					flag = (get.type(event.card) == 'trick' && event.card.isCard);
-					return (flag && player.countMark('qibu') < 7);
+					return (flag && player.countMark('lao_qibu') < 7);
 				},
 				content: function () {
-					player.addMark('qibu', 1);
+					player.addMark('lao_qibu', 1);
 				},
 			},
-			chengshi: {
+			lao_chengshi: {
 				audio: 'chengzhang',
 				trigger: { global: 'phaseUseEnd' },
 				forced: true,
@@ -3200,15 +3559,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				skillAnimation: true,
 				animationColor: 'water',
 				filter: function (event, player) {
-					return player.countMark('qibu') >= 7;
+					return player.countMark('lao_qibu') >= 7;
 				},
 				content: function () {
 					'step 0'
 					player.awakenSkill(event.name);
-					player.removeSkill('qibu');
+					player.removeSkill('lao_qibu');
 					player.recover();
 					player.addSkill('douqi');
-					player.storage.caigao_rewrite = true;
+					player.storage.lao_caigao_rewrite = true;
 
 					'step 1'
 					var maxValueDou = 0;
@@ -3280,30 +3639,30 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			// 神董卓
-			cannue: {
+			lao_cannue: {
 				audio: 'olbaonue',
 				forced: true,
 				unique: true,
-				group: ['cannue2', 'cannue3', 'cannue4'],
+				group: ['lao_cannue2', 'lao_cannue3', 'lao_cannue4'],
 				marktext: '虐',
 				trigger: {
 					source: 'damageSource',
 				},
 				filter: function (event, player) {
-					return event.num > 0 && player.countMark('cannue') < 9;
+					return event.num > 0 && player.countMark('lao_cannue') < 9;
 				},
 				intro: {
 					name: '残虐',
 					content: 'mark',
 				},
 				content: function () {
-					player.addMark('cannue', (trigger.num + player.countMark('cannue') > 9 ? 9 - player.countMark('cannue') : trigger.num));
+					player.addMark('lao_cannue', (trigger.num + player.countMark('lao_cannue') > 9 ? 9 - player.countMark('lao_cannue') : trigger.num));
 				},
 				ai: {
 					threaten: 1,
 				}
 			},
-			cannue2: {
+			lao_cannue2: {
 				audio: 2,
 				forced: true,
 				unique: true,
@@ -3318,7 +3677,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				prompt: '[五谷丰登]视为[南蛮入侵]',
 			},
-			cannue3: {
+			lao_cannue3: {
 				audio: 2,
 				forced: true,
 				unique: true,
@@ -3333,7 +3692,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				prompt: '[桃园结义]视为[万箭齐发]',
 			},
-			cannue4: {
+			lao_cannue4: {
 				audio: 2,
 				trigger: { player: 'useCardToPlayered', target: 'useCardToTargeted' },
 				forced: true,
@@ -3361,9 +3720,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
-			xiehan: {
+			lao_xiehan: {
 				forced: true,
-				group: ['xiehan2', 'xiehan3'],
+				group: ['lao_xiehan2', 'lao_xiehan3'],
 				trigger: { global: 'drawBegin' },
 				filter: function (event, player) {
 					return player != event.player && event.player != _status.currentPhase && event.num > 1;
@@ -3375,15 +3734,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					threaten: 1.2
 				}
 			},
-			xiehan2: {
+			lao_xiehan2: {
 				forced: true,
 				trigger: { global: 'dieAfter' },
 				filter: function (event, player) {
-					return player.countMark('cannue') >= 1;
+					return player.countMark('lao_cannue') >= 1;
 				},
 				content: function () {
-					player.removeMark('cannue', 1);
-					// player.syncStorage('cannue');
+					player.removeMark('lao_cannue', 1);
+					// player.syncStorage('lao_cannue');
 					player.gainMaxHp();
 					player.draw(2);
 					// player.recover();
@@ -3392,7 +3751,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					threaten: 1.5
 				}
 			},
-			xiehan3: {
+			lao_xiehan3: {
 				forced: true,
 				trigger: { global: 'phaseUseBegin' },
 				filter: function (event, player) {
@@ -3427,7 +3786,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							if (get.tag(event, 'damage')) {
 								if (player.hasSkillTag('jueqing', false, target)) return [0, -1];
 								if (player.hp == 1) return [0, -1.5];
-								if (player.hasSkill('cannue', false, target) && player.hasSkill('xiehan', false, target)) {
+								if (player.hasSkill('lao_cannue', false, target) && player.hasSkill('lao_xiehan', false, target)) {
 									if (player.hp == 2) return [0, -0.5];
 									return [0, 2];
 								}
@@ -3437,7 +3796,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				}
 			},
-			huidu: {
+			lao_huidu: {
 				audio: 'olbaonue',
 				forced: true,
 				unique: true,
@@ -3446,11 +3805,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				skillAnimation: true,
 				animationColor: 'metal',
 				filter: function (event, player) {
-					return player.countMark('cannue') >= 6;
+					return player.countMark('lao_cannue') >= 6;
 				},
 				content: function () {
 					player.awakenSkill(event.name);
-					player.removeMark('cannue', 6);
+					player.removeMark('lao_cannue', 6);
 
 					var cards = [];
 					while (cards.length < 70) {
@@ -3594,7 +3953,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					threaten: 1,
 				}
 			},
-			fusheng: {
+			lao_fusheng: {
 				audio: 2,
 				trigger: { target: 'useCardToBefore' },
 				forced: true,
@@ -3613,7 +3972,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 				},
 			},
-			chiyan: {
+			lao_chiyan: {
 				audio: 2,
 				trigger: { player: 'phaseDiscardEnd' },
 				direct: true,
@@ -3626,7 +3985,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					"step 0"
-					player.chooseTarget(get.prompt('chiyan'), '对一名其他角色造成1点火属性伤害').set('ai', target => {
+					player.chooseTarget(get.prompt('lao_chiyan'), '对一名其他角色造成1点火属性伤害').set('ai', target => {
 						var player = _status.event.player;
 						return get.damageEffect(target, player, player, 'fire');
 					});
@@ -3642,7 +4001,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					threaten: 2
 				}
 			},
-			lianmeng: {
+			lao_lianmeng: {
 				audio: 'oldimeng',
 				enable: 'phaseUse',
 				usable: 1,
@@ -3768,6 +4127,203 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return current + 2;
 					}
 				}
+			},
+			// 欢杀界左慈
+			hpp_re_xinsheng: {
+				getList: function () {
+					return Object.keys(lib.characterPack.happykill).filter(function (i) {
+						if (!lib.characterPack.happykill[i][4]) return true;
+						return !lib.characterPack.happykill[i][4].contains('unseen');
+					});
+				},
+				init: function (player) {
+					player.addSkill('hpp_re_xinsheng_remove');
+					if (!player.storage.hpp_re_xinsheng_remove) player.storage.hpp_re_xinsheng_remove = {};
+				},
+				group: 'hpp_re_xinsheng_use',
+				initList: function () {
+					var list = [];
+					for (var i in lib.character) {
+						var bool = (lib.skill.hpp_re_xinsheng.getList()).contains(i);
+						if (!bool || i.indexOf('xushao') != -1 || (i.indexOf('zuoci') != -1 && i != 'hpp_zuoci')) continue;
+						if (!list.contains(i)) list.push(i);
+					}
+					game.countPlayer2(function (current) {
+						list.remove(current.name);
+						list.remove(current.name1);
+						list.remove(current.name2);
+					});
+					_status.happyList = list;
+				},
+				audio: 'pingjian',
+				trigger: { player: ['damageEnd', 'phaseJieshuBegin', 'phaseBegin'] },
+				frequent: true,
+				content: function () {
+					'step 0'
+					lib.skill.hpp_re_xinsheng.initList();
+					var list = [], skills = [], map = [];
+					_status.happyList.randomSort();
+					var name2 = event.triggername;
+					for (var i = 0; i < _status.happyList.length; i++) {
+						var name = _status.happyList[i];
+						var skills2 = lib.character[name][3];
+						for (var j = 0; j < skills2.length; j++) {
+							if (player.getStorage('hpp_re_xinsheng').contains(skills2[j])) continue;
+							if (skills.contains(skills2[j])) {
+								list.add(name);
+								if (!map[name]) map[name] = [];
+								map[name].push(skills2[j]);
+								skills.add(skills2[j]);
+								continue;
+							}
+							var list2 = [skills2[j]];
+							game.expandSkills(list2);
+							for (var k = 0; k < list2.length; k++) {
+								var info = lib.skill[list2[k]];
+								if (!info || !info.trigger || !info.trigger.player || info.silent || info.limited || info.juexingji || info.hiddenSkill ||
+									info.dutySkill || info.groupSkill || (info.priority && typeof info.priority == 'number') || info.firstDo || info.lastDo) continue;
+								if (info.trigger.player == name2 || Array.isArray(info.trigger.player) && info.trigger.player.contains(name2)) {
+									if (/*info.init||info.onChooseToUse||*/info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) continue;
+									if (info.init) info.init(player, list2[k]);
+									if (info.filter) {
+										try {
+											var bool = info.filter(trigger, player, name2);
+											if (!bool) continue;
+										}
+										catch (e) {
+											continue;
+										}
+									}
+									list.add(name);
+									if (!map[name]) map[name] = [];
+									map[name].push(skills2[j]);
+									skills.add(skills2[j]);
+									break;
+								}
+							}
+						}
+						if (list.length > 2) break;
+					}
+					if (skills.length) player.chooseControl(skills).set('dialog', ['请选择要发动的技能', [list, 'character']]);
+					else event.finish();
+					'step 1'
+					// player.markAuto('hpp_re_xinsheng', [result.control]);
+					player.addTempSkill(result.control);
+					player.storage.hpp_re_xinsheng_remove[result.control] = (trigger.name == 'damage' ? trigger : 'phaseJieshu');
+					if (trigger.name == 'damage' && (lib.translate[result.control + '_info'].indexOf('1点伤害') != -1 || lib.translate[result.control + '_info'].indexOf('一点伤害') != -1)) trigger.num = 1;
+				},
+			},
+			hpp_re_xinsheng_use: {
+				audio: 'pingjian',
+				enable: 'phaseUse',
+				usable: 1,
+				content: function () {
+					'step 0'
+					lib.skill.hpp_re_xinsheng.initList();
+					var list = [], skills = [], map = [];
+					_status.happyList.randomSort();
+					for (var i = 0; i < _status.happyList.length; i++) {
+						var name = _status.happyList[i];
+						var skills2 = lib.character[name][3];
+						for (var j = 0; j < skills2.length; j++) {
+							if (player.getStorage('hpp_re_xinsheng').contains(skills2[j])) continue;
+							var info = lib.translate[skills2[j] + '_info'];
+							if (skills.contains(skills2[j]) || (info && info.indexOf('当你于出牌阶段') != -1)) {
+								list.add(name);
+								if (!map[name]) map[name] = [];
+								map[name].push(skills2[j]);
+								skills.add(skills2[j]);
+								continue;
+							}
+							var list2 = [skills2[j]];
+							game.expandSkills(list2);
+							for (var k = 0; k < list2.length; k++) {
+								var info = lib.skill[list2[k]];
+								if (!info || !info.enable || info.charlotte || info.limited || info.juexingji || info.hiddenSkill || info.dutySkill || info.groupSkill) continue;
+								if ((info.enable == 'phaseUse' || (Array.isArray(info.enable) && info.enable.contains('phaseUse'))) ||
+									(info.enable == 'chooseToUse' || (Array.isArray(info.enable) && info.enable.contains('chooseToUse')))) {
+									if (/*info.init||info.onChooseToUse||*/info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) continue;
+									var evt = event.getParent(2);
+									if (info.init) info.init(player, list2[k]);
+									if (info.onChooseToUse) info.onChooseToUse(evt);
+									if (info.filter) {
+										try {
+											var bool = info.filter(evt, player);
+											if (!bool) continue;
+										}
+										catch (e) {
+											continue;
+										}
+									}
+									else if (info.viewAs && typeof info.viewAs != 'function') {
+										try {
+											if (evt.filterCard && !evt.filterCard(info.viewAs, player, evt)) continue;
+											if (info.viewAsFilter && info.viewAsFilter(player) == false) continue;
+										}
+										catch (e) {
+											continue;
+										}
+									}
+									list.push(name);
+									if (!map[name]) map[name] = [];
+									map[name].push(skills2[j]);
+									skills.add(skills2[j]);
+									break;
+								}
+							}
+						}
+						if (list.length > 2) break;
+					}
+					if (skills.length) player.chooseControl(skills).set('dialog', ['请选择要发动的技能', [list, 'character']]);
+					else event.finish();
+					'step 1'
+					// player.markAuto('hpp_re_xinsheng', [result.control]);
+					player.addTempSkill(result.control);
+					player.storage.hpp_re_xinsheng_remove[result.control] = 'phaseUse';
+				},
+				ai: {
+					order: 12,
+					result: { player: 1 },
+				},
+			},
+			hpp_re_xinsheng_remove: {
+				group: 'hpp_re_xinsheng_skill',
+				charlotte: true,
+				trigger: { player: ['phaseUseEnd', 'damageEnd', 'phaseJieshuBegin'] },
+				filter: function (event, player) {
+					return Object.keys(player.storage.hpp_re_xinsheng_remove).find(function (skill) {
+						if (event.name != 'damage') return player.storage.hpp_re_xinsheng_remove[skill] == event.name;
+						return player.storage.hpp_re_xinsheng_remove[skill] == event;
+					});
+				},
+				direct: true,
+				lastDo: true,
+				priority: -Infinity,
+				content: function () {
+					var skills = Object.keys(player.storage.hpp_re_xinsheng_remove).filter(function (skill) {
+						if (trigger.name != 'damage') return player.storage.hpp_re_xinsheng_remove[skill] == trigger.name;
+						return player.storage.hpp_re_xinsheng_remove[skill] == trigger;
+					});
+					player.removeSkill(skills);
+					for (var skill of skills) delete player.storage.hpp_re_xinsheng_remove[skill];
+				},
+			},
+			hpp_re_xinsheng_skill: {
+				charlotte: true,
+				trigger: { player: ['useSkill', 'logSkillBegin'] },
+				filter: function (event, player) {
+					if (get.info(event.skill).charlotte) return false;
+					var skill = event.sourceSkill || event.skill;
+					return player.storage.hpp_re_xinsheng_remove[skill];
+				},
+				direct: true,
+				firstDo: true,
+				priority: Infinity,
+				content: function () {
+					var skill = trigger.sourceSkill || trigger.skill;
+					player.removeSkill(skill);
+					delete player.storage.hpp_re_xinsheng_remove[skill];
+				},
 			},
 
 			// others
@@ -5863,67 +6419,89 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		},
 		dynamicTranslate: {
 			// 屈降
-			quxiang: function (player) {
-				if (player.storage.quxiang_rewrite) return '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你一张手牌。';
+			lao_quxiang: function (player) {
+				if (player.storage.lao_quxiang_rewrite) return '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你一张手牌。';
 				return '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。';
 			},
 			// 才高
-			caigao: function (player) {
-				if (player.storage.caigao_rewrite) return '锁定技，当其他角色于回合外获得牌时，你获得一张梅花牌。';
+			lao_caigao: function (player) {
+				if (player.storage.lao_caigao_rewrite) return '锁定技，当其他角色于回合外获得牌时，你获得一张梅花牌。';
 				return '锁定技，当其他角色于回合外获得牌时，你进行判定，你猜测此判定牌的颜色，猜中后你获得一张梅花牌。';
 			},
 		},
 		characterTitle: {
 			// g绿 b蓝 r红 p粉
-			cuishi: '#b捞德一评级:3.3',
-			liucong: '#g捞德一评级:2.1',
-			tuanxini: '#rUNICRON评级:4.0',
-			tuan: '#b捞德一评级:3.5',
-			xini: '#b捞德一评级:3.0',
-			hok_ailin: '#b捞德一评级:3.5',
-			hok_bailixuance: '#b捞德一评级:3.7',
+			lao_caofang: '#b捞德一评级:3.0',
+			lao_caohuan: '#g捞德一评级:2.7',
+			lao_caoyu: '#b捞德一评级:3.5',
+			lao_cuishi: '#b捞德一评级:3.3',
+			lao_liucong: '#g捞德一评级:2.1',
+			lao_tuanxini: '#rUNICRON评级:4.0',
+			lao_tuan: '#b捞德一评级:3.5',
+			lao_xini: '#b捞德一评级:3.0',
+			hok_ailin: '#b捞德一评级:3.6',
+			hok_bailixuance: '#b捞德一评级:3.8',
 			hok_daji: '#b捞德一评级:3.7',
 			hok_lixin: '#b捞德一评级:3.8',
 			hok_makeboluo: '#b捞德一评级:3.9',
 			hok_mingshiyin: '#b捞德一评级:3.8',
 			hok_miyue: '#b捞德一评级:3.8',
 			hok_sunwukong: '#r捞德一评级:4.0',
-			hok_wuzetian: '#b捞德一评级:3.9',
+			hok_wuzetian: '#b捞德一评级:3.8',
 			hok_yao: '#b捞德一评级:3.7',
 			hok_sp_lixin: '#r捞德一评级:4.0',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 			shen_caozhi: '#r捞德一评级:4.3',
 			shen_dongzhuo: '#r捞德一评级:4.2',
 			shen_lusu: '#r捞德一评级:4.4',
-			hpp_re_luxun: '#b捞德一评级:3.5',
-			hpp_re_lvbu: '#b捞德一评级:3.7',
+			hpp_re_zuoci: '#r捞德一评级:4.8',
 		},
 		translate: {
+			// 曹芳
+			lao_caofang: '曹芳',
+			lao_shouwei: '受位',
+			lao_shouwei_info: '当你受到伤害后，摸X张牌（X为当前回合角色体力值/2向下取整，至多为2），你于当前角色回合结束后，摸Y张牌（Y为该角色已损体力值，至多为3）。',
+			lao_shengbai: '盛败',
+			lao_shengbai_info: '主公技，限定技。当你进入濒死状态时，其他魏势力角色可依次对令你进入濒死的角色使用一张【杀】。',
+			// 曹奂
+			lao_caohuan: '曹奂',
+			lao_zunqian: '遵前',
+			lao_zunqian_info: '当你成为【杀】的目标时，你可以弃置两张牌（不足则全弃，无牌则不弃），然后摸两张牌；若此时全场手牌最多的角色仅有一名且不是你，该角色也可以如此做。',
+			lao_yishan: '揖禅',
+			lao_yishan_info: '当你受到伤害时，你可以弃置手牌中所有的【杀】，你和伤害来源摸X张牌（X为你弃置的【杀】的数量）。',
+			lao_chongjia: '宠加',
+			lao_chongjia_info: '主公技，觉醒技，准备阶段，若你的体力值为全场最少，则你加1点体力上限，将体力回复至3点，然后获得技能“恭辞”和“坠廷”。',
+			// 曹宇
+			lao_caoyu: '曹宇',
+			lao_renlun: '仁论',
+			lao_renlun_info: '你受到伤害后，你摸2张牌并展示所有手牌。然后可以令一名其他角色获得点数之和等于13的任意张牌。',
+			lao_gongci: '恭辞',
+			lao_gongci_info: '弃牌阶段开始时，你可以选择一名其他角色，然后令你本回合手牌上限-1，你此阶段弃置的牌在进入弃牌堆前其获得其中不同花色的牌。',
 			// 崔氏
-			cuishi: '崔氏',
-			pianwan: '翩婉',
-			pianwan_info: '锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
-			huashang: '华裳',
-			huashang_info: '觉醒技，结束阶段时，当你的手牌花色大于等于三种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
+			lao_cuishi: '崔氏',
+			lao_pianwan: '翩婉',
+			lao_pianwan_info: '锁定技，在你的回合外你可以弃置手牌中的一张梅花牌视为打出一张梅花闪。',
+			lao_huashang: '华裳',
+			lao_huashang_info: '觉醒技，结束阶段时，当你的手牌花色大于等于三种且装备防具时，崔氏获得技能[神赋]，失去技能[洛神]，体力上限改为3。你的手牌上限至少为3。',
 			// 刘琮
-			liucong: '刘琮',
-			tunquan: '豚犬',
-			tunquan_info: '觉醒技，准备阶段开始时，当场上有曹操时，你修改屈降。',
-			quxiang: '屈降',
-			quxiang_info: '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。',
-			quxiang_rewrite: '屈降·改',
-			quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你1张手牌。',
+			lao_liucong: '刘琮',
+			lao_tunquan: '豚犬',
+			lao_tunquan_info: '觉醒技，准备阶段开始时，当场上有曹操时，你修改屈降。',
+			lao_quxiang: '屈降',
+			lao_quxiang_info: '当你受到伤害时，你可以将所有手牌交给伤害来源免疫此伤害，然后若你给出的手牌大于1其给你2张手牌，否则其给你1张手牌。',
+			lao_quxiang_rewrite: '屈降·改',
+			lao_quxiang_rewrite_info: '当你受到伤害时，你可以将所有手牌交给伤害来源来源免疫此伤害，然后其给你1张手牌。',
 			// 土安
-			tuanxini: '土安奚泥',
-			tuan: '土安',
-			tengbing: '藤兵',
-			tengbing_info: '锁定技。游戏开始时，你将游戏外的一张【藤甲】置入装备区。你手牌区内的防具牌均视为【南蛮入侵】，且你不是防具牌的合法目标。当你即将失去【藤甲】或即将废除防具栏时，取消之。你不能将装备区内的【藤甲】当做其他牌使用或打出。',
-			ranwang: '燃亡',
-			ranwang_info: '锁定技。当你受到火焰伤害时减少1点火焰伤害（至少受到1点），然后减1点体力上限。',
+			lao_tuanxini: '土安奚泥',
+			lao_tuan: '土安',
+			lao_tengbing: '藤兵',
+			lao_tengbing_info: '锁定技。游戏开始时，你将游戏外的一张【藤甲】置入装备区。你手牌区内的防具牌均视为【南蛮入侵】，且你不是防具牌的合法目标。当你即将失去【藤甲】或即将废除防具栏时，取消之。你不能将装备区内的【藤甲】当做其他牌使用或打出。',
+			lao_ranwang: '燃亡',
+			lao_ranwang_info: '锁定技。当你受到火焰伤害时减少1点火焰伤害（至少受到1点），然后减1点体力上限。',
 			// 奚泥
-			xini: '奚泥',
-			ranyong: '燃勇',
-			ranyong_info: '锁定技，当你受到火焰伤害时全场体力值最多的角色（优先自己）分摊1点火焰伤害（至少受到1点）。',
+			lao_xini: '奚泥',
+			lao_ranyong: '燃勇',
+			lao_ranyong_info: '锁定技，当你受到火焰伤害时全场体力值最多的角色（优先自己）分摊1点火焰伤害（至少受到1点）。',
 
 			// 王者公共技
 			hok_yinshen: '隐身',
@@ -6067,44 +6645,48 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 			// 神曹植
 			shen_caozhi: '神曹植',
-			caigao: '才高',
-			caigao_info: '锁定技，当其他角色于回合外获得牌时，你进行判定，你猜测此判定牌的颜色，猜中后你获得一张梅花牌。',
-			caigao_rewrite: '才高·觉醒',
-			caigao_rewrite_info: '锁定技，当其他角色于回合外获得牌时，你获得一张梅花牌。',
-			badou: '八斗',
-			badou2: '八斗',
-			badou3: '八斗',
-			badou_info: '你手牌中的梅花牌可以视为酒，每名角色的回合限一次。当你使用酒时，你获得一张普通锦囊牌。你的梅花诸葛连弩视为无色酒，无次数限制；当你使用无色酒时，你额外获得一张普通锦囊牌。',
-			qibu: '七步',
-			qibu_info: '当你使用普通锦囊牌时，你的“七步”标记不超过7，获得标记“七步”。',
-			chengshi: '成诗',
-			chengshi_info: '觉醒技，一名角色出牌阶段结束时，当你的“七步”标记为7时，你的“才高”觉醒、回复1点体力并且获得“豆”标记（豆：手牌上限+1），你可以选择一名其他角色获得相同的效果。',
+			lao_caigao: '才高',
+			lao_caigao_info: '锁定技，当其他角色于回合外获得牌时，你进行判定，你猜测此判定牌的颜色，猜中后你获得一张梅花牌。',
+			lao_caigao_rewrite: '才高·觉醒',
+			lao_caigao_rewrite_info: '锁定技，当其他角色于回合外获得牌时，你获得一张梅花牌。',
+			lao_badou: '八斗',
+			lao_badou2: '八斗',
+			lao_badou3: '八斗',
+			lao_badou_info: '你手牌中的梅花牌可以视为酒，每名角色的回合限一次。当你使用酒时，你获得一张普通锦囊牌。你的梅花诸葛连弩视为无色酒，无次数限制；当你使用无色酒时，你额外获得一张普通锦囊牌。',
+			lao_qibu: '七步',
+			lao_qibu_info: '当你使用普通锦囊牌时，你的“七步”标记不超过7，获得标记“七步”。',
+			lao_chengshi: '成诗',
+			lao_chengshi_info: '觉醒技，一名角色出牌阶段结束时，当你的“七步”标记为7时，你的“才高”觉醒、回复1点体力并且获得“豆”标记（豆：手牌上限+1），你可以选择一名其他角色获得相同的效果。',
 			// 神董卓
 			shen_dongzhuo: '神董卓',
-			cannue: '残虐',
-			cannue_info: '锁定技，你的[五谷丰登]视为[南蛮入侵]，你的[桃园结义]视为[万箭齐发]。当你你的“残虐”标记小于9，你造成1点伤害后，获得1枚“残虐”标记。你对其他角色、其他角色对你使用【杀】时,都需连续多使用一张【闪】才能抵消。',
-			xiehan: '挟汉',
-			xiehan_info: '锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你的“残虐”标记不小于1，你失去1枚“残虐”，你增加一点体力上限并摸2张牌。一名角色出牌阶段开始时，该角色选择一项：1.摸一张牌，视为使用了一张【酒】，你对其（包括自己）造成一点伤害；2.弃置一张牌。',
-			huidu: '毁都',
-			huidu_info: '觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少4点体力上限。',
+			lao_cannue: '残虐',
+			lao_cannue_info: '锁定技，你的[五谷丰登]视为[南蛮入侵]，你的[桃园结义]视为[万箭齐发]。当你你的“残虐”标记小于9，你造成1点伤害后，获得1枚“残虐”标记。你对其他角色、其他角色对你使用【杀】时,都需连续多使用一张【闪】才能抵消。',
+			lao_xiehan: '挟汉',
+			lao_xiehan_info: '锁定技，当其他角色于回合外每次摸牌的数量大于1，你令其此次摸牌数-1。当一名角色死亡后，你的“残虐”标记不小于1，你失去1枚“残虐”，你增加一点体力上限并摸2张牌。一名角色出牌阶段开始时，该角色选择一项：1.摸一张牌，视为使用了一张【酒】，你对其（包括自己）造成一点伤害；2.弃置一张牌。',
+			lao_huidu: '毁都',
+			lao_huidu_info: '觉醒技，你的回合结束时，当你的“残虐”标记不小于6时，你失去6枚“残虐”，将视为使用牌堆中全部锦囊牌，每一张牌的使用者与目标随机选择，最后你减少4点体力上限。',
 			// 神鲁肃
 			shen_lusu: '神鲁肃',
 			diying: '帝迎',
 			diying_info: '出牌阶段限一次，你选择一名角色，令其获得〖弘德〗〖弼政〗〖博图〗〖诫训〗〖缔盟〗〖决堰〗中的一个，直到其回合结束。',
-			fusheng: '赴圣',
-			fusheng_info: '锁定技，红桃杀对你无效。',
-			chiyan: '赤炎',
-			chiyan_info: '弃牌阶段结束时，若你于此阶段内弃置过两张或更多的牌，则你可以视为对一名角色造成一点火属性伤害。',
-			lianmeng: '联盟',
-			lianmeng_info: '出牌阶段限一次，你可以选择两张手牌交给一名其他角色，你摸三张牌。',
+			lao_fusheng: '赴圣',
+			lao_fusheng_info: '锁定技，红桃杀对你无效。',
+			lao_chiyan: '赤炎',
+			lao_chiyan_info: '弃牌阶段结束时，若你于此阶段内弃置过两张或更多的牌，则你可以视为对一名角色造成一点火属性伤害。',
+			lao_lianmeng: '联盟',
+			lao_lianmeng_info: '出牌阶段限一次，你可以选择两张手牌交给一名其他角色，你摸三张牌。',
 
-			// 欢杀界陆逊
+			// 欢杀界
 			hpp_re_luxun: '欢杀界陆逊',
 			hpp_lianying: '连营',
 			hpp_lianying_info: '当你失去最后的手牌时，你可以摸至手牌上限。',
 			hpp_re_lvbu: '欢杀界吕布',
 			hpp_reshenwei: '神威',
 			hpp_reshenwei_info: '锁定技，摸牌阶段，你额外摸2张牌，你的手牌上限+2',
+			hpp_re_zuoci: '欢杀界左慈',
+			hpp_re_xinsheng: '新生',
+			hpp_re_xinsheng_use: '新生',
+			hpp_re_xinsheng_info: '你可以于以下时机发动“新生”：回合开始时；出牌阶段限一次；结束阶段开始时；当你受到伤害后。从你的已开通武将中随机出现三张拥有此时机可发动技能的武将牌，你选择其中一个武将并发动其技能。',
 
 			correction_history: '正史',
 			honor_of_kings_clashlane: '王者荣耀·对抗',

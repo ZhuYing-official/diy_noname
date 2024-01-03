@@ -1483,7 +1483,7 @@ window.noname_character_rank = {
 			'dc_xujing',
 
 			//捞德一
-			'tuanxini',
+			'lao_tuanxini',
 			'hok_sp_lixin',
 			'hok_sp_mingshiyin',
 			'hok_sunwukong',
@@ -1982,9 +1982,11 @@ window.noname_character_rank = {
 			'yj_zhoubuyi',
 
 			//捞德一
-			'cuishi',
-			'tuan',
-			'xini',
+			'lao_caofang',
+			'lao_caoyu',
+			'lao_cuishi',
+			'lao_tuan',
+			'lao_xini',
 
 			'hok_ailin',
 			'hok_bailixuance',
@@ -2418,7 +2420,8 @@ window.noname_character_rank = {
 			'ol_liwan',
 
 			// 捞德一
-			'liucong',
+			'lao_caohuan',
+			'lao_liucong',
 		],
 		common: [
 			// 捞德一
