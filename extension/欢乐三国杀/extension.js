@@ -612,7 +612,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 欢杀鲁肃
                             hpp_lusu: ['male', 'wu', 3, ['hpp_haoshi', 'hpp_dimeng'], []],
                             // 欢杀陆逊
-                            hpp_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'lianying'], []],
+                            hpp_luxun: ['male', 'wu', 3, ['hpp_qianxun', 'hpp_lianying'], []],
                             // 欢杀卢弈
                             hpp_luyi: ['female', 'qun', 3, ['hpp_yaoyi', 'hpp_fuxue'], []],
                             // 欢杀陆郁生
@@ -9314,17 +9314,76 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 陆逊
                             hpp_qianxun: {
                                 audio: 'reqianxun',
-                                trigger: { target: 'useCardToBegin' },
+                                trigger: { target: 'useCardToBegin', player: 'judgeBefore' },
                                 filter: function (event, player) {
-                                    if (event.targets && event.targets.length > 1) return false;
-                                    return event.card && (get.type(event.card) == 'trick' || get.type(event.card) == 'delay');
+                                    if (!player.countCards('h') || !player.getHp()) return false;
+                                    if (event.name == 'judge') return event.getParent().name == 'phaseJudge';
+                                    if(event.targets&&event.targets.length>1) return false;
+                                    if (event.card && get.type(event.card) == 'trick') return true;
                                 },
+                                direct: true,
+                                content: function* (event, map) {
+                                    var player = map.player;
+                                    var num = Math.min(player.countCards('h'), player.getHp());
+                                    var result = yield player.chooseCard(get.prompt('hpp_qianxun'), '将至多' + get.cnNumber(num) + '张手牌置于武将牌上', [1, num]).set('ai', card => 1 / (get.value(card) || 0.5));
+                                    if (result.bool) {
+                                        var cards = result.cards;
+                                        player.logSkill('hpp_qianxun');
+                                        player.addSkill('hpp_qianxun2');
+                                        player.addToExpansion(cards, 'giveAuto', player).gaintag.add('hpp_qianxun2');
+                                    }
+                                },
+                                ai: {
+                                    effect: function (card, player, target) {
+                                        if (!target.hasFriend()) return;
+                                        var type = get.type(card);
+                                        var nh = Math.min(target.countCards(), game.countPlayer(i => get.attitude(target, i) > 0));
+                                        if (type == 'trick') {
+                                            if (!get.tag(card, 'multitarget') || get.info(card).singleCard) {
+                                                if (get.tag(card, 'damage')) return [1.5, nh - 1];
+                                                return [1, nh];
+                                            }
+                                        }
+                                        else if (type == 'delay') return [0.5, 0.5];
+                                    },
+                                },
+                            },
+                            hpp_qianxun2: {
+                                charlotte: true,
+                                audio: 'reqianxun',
+                                trigger: { global: 'phaseEnd' },
                                 forced: true,
                                 content: function () {
+                                    var cards = player.getExpansions('hpp_qianxun2');
+                                    if (cards.length) player.gain(cards, 'draw');
+                                    player.removeSkill('hpp_qianxun2');
+                                },
+                                intro: {
+                                    mark: function (dialog, storage, player) {
+                                        var cards = player.getExpansions('hpp_qianxun2');
+                                        if (player.isUnderControl(true)) dialog.addAuto(cards);
+                                        else return '共有' + get.cnNumber(cards.length) + '张牌';
+                                    },
+                                    markcount: 'expansion',
+                                },
+                            },
+                            hpp_lianying: {
+                                audio: 'relianying',
+                                trigger: {
+                                    player: 'loseAfter',
+                                    global: ['equipAfter', 'addJudgeAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+                                },
+                                filter: function (event, player) {
+                                    if (player.countCards('h')) return false;
+                                    var evt = event.getl(player);
+                                    return evt && evt.hs && evt.hs.length;
+                                },
+                                frequent: true,
+                                content: function () {
                                     'step 0'
-                                    player.draw();
+                                    player.draw(2);
                                     player.chooseCardTarget({
-                                        prompt: '谦逊：是否将一张手牌交给一名其他角色？',
+                                        prompt: '连营：是否将一张手牌交给一名其他角色？',
                                         filterCard: true,
                                         filterTarget: lib.filter.notMe,
                                         ai1: function (card) {
@@ -9347,6 +9406,15 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         player.line(result.targets[0]);
                                         result.targets[0].gain(result.cards, player, 'giveAuto');
                                     }
+                                },
+                                ai: {
+                                    threaten: 0.8,
+                                    effect: {
+                                        target: function (card) {
+                                            if (card.name == 'guohe' || card.name == 'liuxinghuoyu') return 0.5;
+                                        },
+                                    },
+                                    noh: true,
                                 },
                             },
 
@@ -22490,8 +22558,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                         check: function (card) { return 8 - get.value(card) },
                                     },
                                 },
-                                ai:{
-                                    expose:0.15,
+                                ai: {
+                                    expose: 0.15,
                                 },
                             },
 
@@ -28122,7 +28190,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_lukang: '#b捞德一评级:3.9',
                             hpp_lusu: '#g捞德一评级:2.4',
                             hpp_luotong: '#r捞德一评级:4.4',
-                            hpp_luxun: '捞德一评级:1.4',
+                            hpp_luxun: '#b捞德一评级:3.0',
                             hpp_luyi: '#r捞德一评级:4.2',
                             hpp_luyusheng: '#r捞德一评级:4.1',
                             hpp_lvbu: '#b捞德一评级:3.8',
@@ -28742,7 +28810,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_dimeng_info: '出牌阶段限一次，你可以选择两名其他角色并弃置X张牌（X为这两名角色手牌数的差），然后令这两名角色交换手牌。',
                             hpp_luxun: '欢杀陆逊',
                             hpp_qianxun: '谦逊',
-                            hpp_qianxun_info: '锁定技，当你成为锦囊的唯一目标时，你摸一张牌，然后可以将一张手牌交给其他角色。',
+                            hpp_qianxun2: '谦逊',
+                            hpp_qianxun_info: '当一张锦囊牌对你生效时，若你是此牌唯一目标，你可以将至多X张手牌扣置于武将牌上（X为你的体力值），此回合结束时，你获得这些牌。',
+                            hpp_lianying: '连营',
+                            hpp_lianying_info: '当你失去手牌后，若你没有手牌，你可以摸2张牌，然后可以将一张手牌交给一名其他角色。',
                             hpp_luyi: '欢杀卢弈',
                             hpp_yaoyi: '邀弈',
                             hpp_yaoyi_info: '锁定技，游戏开始时，给全场没有转换技的角色增加技能“手谈”。你发动“手谈”无需弃置牌且无次数限制。所有角色使用牌只能指定自己及与自己转换状态不同的角色为目标。',
