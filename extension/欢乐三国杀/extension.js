@@ -37,6 +37,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             'hpp_baosanniang',
                             'hpp_beimihu',
+                            'hpp_bianfuren',
                             'hpp_bulianshi',
                             'hpp_buzhi',
                             'hpp_caifuren',
@@ -244,6 +245,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             'hpp_zhoutai',
                             'hpp_zhouyi',
                             'hpp_zhouyu',
+                            'hpp_zhugedan',
                             'hpp_zhugeguo',
                             'hpp_zhugejin',
                             'hpp_zhugeke',
@@ -393,7 +395,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
                                 shan_ce: ['hpp_sp_zhugeliang', 'hpp_xunyou', 'hpp_jianyong', 'hpp_yufan', 'hpp_chenqun', 'hpp_guotupangji', 'hpp_buzhi', 'hpp_yanjun', 'hpp_panjun', 'hpp_mizhu', 'hpp_zhoufang', 'hpp_yangxiu', 'hpp_lvkai'],
                                 shan_ji: ['hpp_lukang', 'hpp_liuchen', 'hpp_sunxiu', 'hpp_sundeng', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng', 'hpp_zhangfen'],
-                                shan_xian: ['hpp_laiyinger', 'hpp_wangtao', 'hpp_wangyue', 'hpp_yinfuren', 'hpp_mifuren'],
+                                shan_xian: ['hpp_laiyinger', 'hpp_wangtao', 'hpp_wangyue', 'hpp_yinfuren', 'hpp_bianfuren', 'hpp_mifuren'],
                                 ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu', 'hpp_wanniangongzhu', 'hpp_zhangyao', 'hpp_ganfuren'],
                                 ming_ru: ['hpp_kuailiangkuaiyue', 'hpp_fazheng', 'hpp_chengong', 'hpp_liru', 'hpp_jushou', 'hpp_zhugejin', 'hpp_qinmi', 'hpp_xuezong', 'hpp_xushu', 'hpp_liuzhang', 'hpp_xf_yiji', 'hpp_kongrong'],
                                 ming_cao: ['hpp_caopi', 'hpp_caozhi', 'hpp_caozhang', 'hpp_caochong', 'hpp_caozhen', 'hpp_caorui', 'hpp_caoxiu', 'hpp_caoang', 'hpp_caoying', 'hpp_caomao', 'hpp_caohua'],
@@ -961,6 +963,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_miao_xiaoqiao: ['female', 'wu', 3, ['hpp_miaotianxiang', 'hpp_miaohongyan', 'hpp_doumao'], []],
 
                             // 谋
+                            hpp_sb_huangzhong: ['male', 'shu', 4, ['sbliegong'], []],
                             hpp_sb_huanggai: ['male', 'wu', 4, ['hpp_sbkurou', 'hpp_sbzhaxiang'], []],
                             hpp_sb_caocao: ['male', 'wei', 4, ['hpp_sbjianxiong', 'hpp_sbqingzheng', 'sbhujia'], ['zhu']],
 
@@ -1360,6 +1363,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             sp_zhaoyun: ['hpp_sp_zhaoyun', 'sp_zhaoyun', 'jsp_zhaoyun'],
                             sp_zhugeliang: ['hpp_sp_zhugeliang', 'ol_sp_zhugeliang', 're_sp_zhugeliang', 'sp_zhugeliang'],
                             // 谋
+                            sb_huangzhong: ['hpp_sb_huangzhong', 'sb_huangzhong'],
                             sb_caocao: ['hpp_sb_caocao', 'sb_caocao'],
                             sb_huanggai: ['hpp_sb_huanggai', 'sb_huanggai'],
                             // 神
@@ -9318,7 +9322,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 filter: function (event, player) {
                                     if (!player.countCards('h') || !player.getHp()) return false;
                                     if (event.name == 'judge') return event.getParent().name == 'phaseJudge';
-                                    if(event.targets&&event.targets.length>1) return false;
+                                    if (event.targets && event.targets.length > 1) return false;
                                     if (event.card && get.type(event.card) == 'trick') return true;
                                 },
                                 direct: true,
@@ -28367,6 +28371,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 谋
                             hpp_sb_caocao: '#b捞德一评级:3.8',
                             hpp_sb_huanggai: '#r捞德一评级:4.2',
+                            hpp_sb_huangzhong: '#r捞德一评级:4.5',
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.3',
                             hpp_shen_daxiaoqiao: '#r捞德一评级:4.3',
@@ -29568,6 +29573,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sbkurou_info: '出牌阶段限一次，你可以失去1点体力并令你手牌上限和体力值上限+1，直到下回合开始。当你使用【桃】后，苦肉视为未发动过。',
                             hpp_sbzhaxiang: '诈降',
                             hpp_sbzhaxiang_info: '锁定技，当你失去1点体力后，你摸3张牌；回合结束时，摸X张牌，你于每回合使用的前X张【杀】无距离限制、不计入次数且不能被响应（X为你已损失的体力值的一半，向上取整）。',
+                            hpp_sb_huangzhong:'欢杀谋黄忠',
                             // 神
                             hpp_shen_caocao: '欢杀神曹操',
                             hpp_guixin: '归心',

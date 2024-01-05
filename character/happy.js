@@ -2499,6 +2499,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						player.addTempSkill('hok_dihui_sha', 'phaseUseAfter');
 					};
 				},
+				ai: {
+					threaten: 1.0,
+				},
 				subSkill: {
 					sha: {
 						usable: 1,
@@ -2835,8 +2838,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					result: {
 						target: function (player, target) {
-							if (get.threaten(target) > 3) return get.threaten(target);
-							return -1;
+							// if (get.threaten(target) > 3 && get.attitude(player, target) > 0) {
+							// 	return get.threaten(target);
+							// }
+							if(get.attitude(player, target) > 0) return 1;
+							return 0;
 						},
 					},
 					order: 10,
