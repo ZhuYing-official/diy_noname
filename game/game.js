@@ -5200,6 +5200,8 @@ new Promise(resolve => {
 						init: 'normal',
 						item: {
 							normal: '标准',
+							// 捞
+							normal_team: '标准开黑',
 							zhong: '明忠',
 							stratagem: '谋攻',
 							purple: '3v3v2',
@@ -53801,7 +53803,9 @@ new Promise(resolve => {
 				ui.updateConnectPlayerPositions();
 				game.connectPlayers = [];
 				const configOL = lib.configOL;
-				const numberOfPlayers = parseInt(configOL.player_number) || configOL.number;
+				// const numberOfPlayers = parseInt(configOL.player_number) || configOL.number;
+				// 捞
+				const numberOfPlayers = configOL.identity_mode == 'normal_team' ? parseInt(parseInt(configOL.player_number) / 2 || configOL.number / 2) : parseInt(configOL.player_number) || configOL.number;
 				for (let position = 0; position < numberOfPlayers; position++) {
 					const player = ui.create.player(ui.window);
 					player.dataset.position = position;
@@ -58586,6 +58590,10 @@ new Promise(resolve => {
 			if (typeof numberOfPlayers != 'number') {
 				const configOL = lib.configOL;
 				numberOfPlayers = parseInt(configOL.player_number) || configOL.number;
+				// 捞
+				if (configOL.identity_mode == 'normal_team') {
+					numberOfPlayers = parseInt(Math.floor(numberOfPlayers / 2));
+				}
 			}
 			if (!numberOfPlayers) return;
 			const playerPositions = ui.playerPositions;

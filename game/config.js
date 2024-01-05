@@ -201,7 +201,7 @@ window.config = {
 				['zhu', 'zhong', 'nei', 'fan', 'fan', 'fan'],
 				['zhu', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan'],
 				['zhu', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan', 'fan'],
-['zhu', 'zhong', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan', 'fan'],
+				['zhu', 'zhong', 'zhong', 'zhong', 'nei', 'fan', 'fan', 'fan', 'fan'],
 				['zhu', 'zhong', 'zhong', 'zhong', 'nei', 'nei', 'fan', 'fan', 'fan', 'fan'],
 			],
 			choice: {
@@ -210,7 +210,7 @@ window.config = {
 				nei: 5,
 				fan: 3,
 			},
-						show_identity: true,
+			show_identity: true,
 			difficulty: 'normal',
 			dierestart: true
 		},

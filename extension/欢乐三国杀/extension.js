@@ -362,12 +362,12 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 lin_xiong: ['hpp_sunliang', 'hpp_sunjian', 'hpp_gongsunzan', 'hpp_dongzhuo', 'hpp_liuyan'],
                                 huo_zhong: ['hpp_zhangzhaozhanghong', 'hpp_yanyan', 'hpp_wangping', 'hpp_chendao', 'hpp_zhoucang', 'hpp_caohong', 'hpp_dianwei', 'hpp_jiangwei', 'hpp_xunyu', 'hpp_dongyun', 'hpp_zumao'],
                                 huo_yi: ['hpp_taishici', 'hpp_luji', 'hpp_lingtong', 'hpp_xusheng', 'hpp_gaoshun', 'hpp_zhuran', 'hpp_zhuhuan', 'hpp_zhuzhi',],
-                                huo_bi: ['hpp_zhonghui', 'hpp_gongsunyuan', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
+                                huo_bi: ['hpp_zhonghui', 'hpp_gongsunyuan', 'hpp_zhugedan', 'hpp_liuxie', 'hpp_panfeng', 'hpp_quyi', 'hpp_yanliangwenchou', 'hpp_yuanshao', 'hpp_xuyou', 'hpp_yuanshu'],
                                 huo_yong: ['hpp_zhujun', 'hpp_liangxing', 'hpp_caoxing', 'hpp_xiahoujie', 'hpp_wenqin', 'hpp_dingfeng'],
                                 shan_zhen: ['hpp_fuhuanghou', 'hpp_caojie', 'hpp_mayunlu', 'hpp_xushi', 'hpp_dufuren', 'hpp_tangji', 'hpp_xiahoulingnv', 'hpp_wangrong', 'hpp_caiwenji', 'hpp_wangyi', 'hpp_zhangchunhua', 'hpp_bulianshi'],
                                 shan_si: ['hpp_liushan', 'hpp_zhugezhan', 'hpp_guanping', 'hpp_liufeng', 'hpp_zhangxingcai', 'hpp_guanyinping', 'hpp_zhaoxiang', 'hpp_liuyong'],
                                 shan_liang: ['hpp_xuhuang', 'hpp_dengai', 'hpp_zhanghe', 'hpp_yujin', 'hpp_lidian'],
-                                shan_ce: ['hpp_sp_zhugeliang', 'hpp_xunyou', 'hpp_jianyong', 'hpp_chenqun', 'hpp_guotupangji', 'hpp_buzhi', 'hpp_yanjun', 'hpp_panjun', 'hpp_mizhu', 'hpp_zhoufang', 'hpp_yangxiu', 'hpp_lvkai'],
+                                shan_ce: ['hpp_sp_zhugeliang', 'hpp_xunyou', 'hpp_jianyong', 'hpp_yufan', 'hpp_chenqun', 'hpp_guotupangji', 'hpp_buzhi', 'hpp_yanjun', 'hpp_panjun', 'hpp_mizhu', 'hpp_zhoufang', 'hpp_yangxiu', 'hpp_lvkai'],
                                 shan_ji: ['hpp_lukang', 'hpp_liuchen', 'hpp_sunxiu', 'hpp_sundeng', 'hpp_zhugeguo', 'hpp_sunhao', 'hpp_zhugeke', 'hpp_xiahouba', 'hpp_luyusheng', 'hpp_zhangfen'],
                                 shan_xian: ['hpp_laiyinger', 'hpp_wangtao', 'hpp_wangyue', 'hpp_yinfuren', 'hpp_mifuren'],
                                 ming_shu: ['hpp_zhoufei', 'hpp_wuguotai', 'hpp_sunluban', 'hpp_xiahoushi', 'hpp_wuxian', 'hpp_guohuanghou', 'hpp_xinxianying', 'hpp_dongbai', 'hpp_sunluyu', 'hpp_wanniangongzhu', 'hpp_zhangyao', 'hpp_ganfuren'],
@@ -22555,7 +22555,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     if (target.hasSkill('hpp_doumao')) player.chooseToDiscard(true, 'he', '国色：请弃置一张牌');
                                 },
                                 ai: {
-                                    order: 9,
+                                    order: 9.1,
                                     result: {
                                         target: function (player, target) {
                                             var num = (target.hasSkill('hpp_doumao') ? 2 : 1);
