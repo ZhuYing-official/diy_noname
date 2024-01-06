@@ -348,7 +348,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 ruleSkill: true,
                 trigger: { global: 'phaseBefore' },
                 filter: function (event, player) {
-                    if (!lib.config.extension_活动武将_ShowSeatNum) return false;
+                    if (!lib.config.extension_欢乐三国杀_ShowSeatNum) return false;
                     return !game.firstPlayer && game.phaseNumber == 0;
                 },
                 direct: true,
@@ -356,13 +356,13 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 content: function () {
                     game.firstPlayer = true;
                     game.players.forEach(i => {
-                        if (i.getSeatNum() != 0) i.setNickname(get.cnNumber(i.getSeatNum(), true) + '号位');
+                        if (i.getSeatNum() != 0) i.setNickname((i.nickname ? i.nickname : get.translation(i.name)) + ' ' + get.cnNumber(i.getSeatNum(), true) + '号位');
                     });
                     var originSwapSeat = game.swapSeat;
                     game.swapSeat = function (player1, player2, prompt, behind, noanimate) {
                         originSwapSeat.apply(this, arguments);
-                        if (player1.getSeatNum() != 0) player1.setNickname(get.cnNumber(player1.getSeatNum(), true) + '号位');
-                        if (player2.getSeatNum() != 0) player2.setNickname(get.cnNumber(player2.getSeatNum(), true) + '号位');
+                        if (player1.getSeatNum() != 0) player1.setNickname((player1.nickname ? player1.nickname : get.translation(player1.name)) + ' ' + get.cnNumber(player1.getSeatNum(), true) + '号位');
+                        if (player2.getSeatNum() != 0) player2.setNickname((player2.nickname ? player2.nickname : get.translation(player2.name)) + ' ' + get.cnNumber(player2.getSeatNum(), true) + '号位');
                     };
                 },
             };
@@ -867,6 +867,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhouyi: ['female', 'wu', 3, ['zhukou', 'mengqing'], []],
                             // 欢杀周瑜
                             hpp_zhouyu: ['male', 'wu', 3, ['hpp_yingzi', 'hpp_fanjian'], []],
+                            // 欢杀诸葛诞
+                            hpp_zhugedan: ['male', 'wei', 4, ['hpp_gongao', 'hpp_juyi'], []],
                             // 欢杀诸葛果
                             hpp_zhugeguo: ['female', 'shu', 3, ['hpp_qirang', 'hpp_yuhua'], []],
                             // 欢杀诸葛瑾
@@ -1330,6 +1332,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             zhoutai: ['hpp_zhoutai', 'zhoutai', 'xin_zhoutai', 'old_zhoutai'],
                             zhouyi: ['hpp_zhouyi', 'zhouyi'],
                             zhouyu: ['hpp_zhouyu', 're_zhouyu', 'zhouyu'],
+                            zhugedan: ['hpp_zhugedan', 're_zhugedan', 'zhugedan'],
                             zhugeguo: ['hpp_zhugeguo', 'tw_zhugeguo', 'zhugeguo'],
                             zhugejin: ['hpp_zhugejin', 'zhugejin'],
                             zhugeke: ['hpp_zhugeke', 'zhugeke'],
@@ -19512,6 +19515,35 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 诸葛诞
+                            hpp_gongao: {
+                                audio: 'gongao',
+                                inherit: 'regongao',
+                                filter: function (event, player) {
+                                    return event.player != player;
+                                },
+                            },
+                            hpp_juyi: {
+                                audio: 'juyi',
+                                inherit: 'rejuyi',
+                                filter: function (event, player) {
+                                    return player.maxHp > game.countPlayer();
+                                },
+                                forced: false,
+                                juexingji: false,
+                                limited: true,
+                                content: function () {
+                                    'step 0'
+                                    player.awakenSkill('hpp_juyi');
+                                    'step 1'
+                                    player.drawTo(player.maxHp);
+                                    'step 2'
+                                    player.addSkillLog('hpp_benghuai');
+                                    player.addSkillLog('reweizhong');
+                                },
+                                derivation: ['hpp_benghuai', 'reweizhong'],
+                            },
+
                             // 诸葛果
                             hpp_qirang: {
                                 group: 'hpp_qirang_gain',
@@ -28321,6 +28353,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zhoutai: '#b捞德一评级:3.5',
                             hpp_zhouyi: '#b捞德一评级:3.9',
                             hpp_zhouyu: '#b捞德一评级:3.2',
+                            hpp_zhugedan: '#r捞德一评级:4.3',
                             hpp_zhugeguo: '#b捞德一评级:3.6',
                             hpp_zhugejin: '#b捞德一评级:3.7',
                             hpp_zhugeke: '#b捞德一评级:3.8',
@@ -29329,6 +29362,11 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_yingzi_info: '锁定技，摸牌阶段，你多摸一张牌；你的手牌上限等于你的体力上限。',
                             hpp_fanjian: '反间',
                             hpp_fanjian_info: '出牌阶段开始时，你可以选择一名其他角色，令其摸一张牌然后对其造成1点伤害。',
+                            hpp_zhugedan:'欢杀诸葛诞',
+                            hpp_gongao: '功獒',
+                            hpp_gongao_info: '锁定技，一名其他角色濒死时，你加1点体力上限，然后回复1点体力。',
+                            hpp_juyi: '举义',
+                            hpp_juyi_info: '限定技，准备阶段，若你体力上限大于全场角色数，你可以将手牌摸至等同于体力上限的张数，然后获得“崩坏”和“威重”。',
                             hpp_zhugeguo: '欢杀诸葛果',
                             hpp_qirang: '祈禳',
                             hpp_qirang_info: '当你使用一张装备牌时，你可以从牌堆里获得一张锦囊牌，你使用非延时锦囊牌指定唯一目标时，可以额外增加一个目标。',
@@ -29573,7 +29611,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sbkurou_info: '出牌阶段限一次，你可以失去1点体力并令你手牌上限和体力值上限+1，直到下回合开始。当你使用【桃】后，苦肉视为未发动过。',
                             hpp_sbzhaxiang: '诈降',
                             hpp_sbzhaxiang_info: '锁定技，当你失去1点体力后，你摸3张牌；回合结束时，摸X张牌，你于每回合使用的前X张【杀】无距离限制、不计入次数且不能被响应（X为你已损失的体力值的一半，向上取整）。',
-                            hpp_sb_huangzhong:'欢杀谋黄忠',
+                            hpp_sb_huangzhong: '欢杀谋黄忠',
                             // 神
                             hpp_shen_caocao: '欢杀神曹操',
                             hpp_guixin: '归心',
@@ -29864,7 +29902,71 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                 if (!lib.config.characters.contains("happykill")) lib.config.characters.push("happykill");
                 lib.translate["happykill_character_config"] = "欢乐三国杀";
             }
-        }, help: {}, config: {}, package: {
+        }, help: {}, config: {
+            /*
+            //总有一天会维护好的功能
+            FenJieXianE:{
+            clear:true,
+            name:'<li>在线更新',
+            },
+            Huodong_Update: {
+            clear:true,
+            intro:'点击检查扩展更新',
+            name:'<button type="button">检查扩展更新</button>',
+            onclick:function(){
+            },
+            },
+            */
+            ShowSeatNum: {
+                name: '座位号显示',
+                intro: '开启此选项后，游戏开始时，所有角色显示号位（实时生效）',
+                init: false,
+            },
+            clearFavoriteCharacter: {
+                name: '一键清除已收藏武将',
+                clear: true,
+                onclick: function () {
+                    if (this.innerHTML == '<span>确认清除</span>') {
+                        var list = [];
+                        for (var i = 0; i < lib.config.favouriteCharacter.length; i++) {
+                            var favname = lib.config.favouriteCharacter[i];
+                            if (lib.character[favname]) list.push(favname);
+                        }
+                        lib.config.favouriteCharacter.removeArray(list);
+                        game.saveConfig('favouriteCharacter', lib.config.favouriteCharacter);
+                        game.uncheck();
+                        game.check();
+                        alert('已清除所有收藏武将');
+                    }
+                    else {
+                        this.innerHTML = '<span>确认清除</span>';
+                        var that = this;
+                        setTimeout(function () {
+                            that.innerHTML = '<span>一键清除已收藏武将</span>';
+                        }, 1000);
+                    }
+                },
+            },
+            clearRecentCharacter: {
+                name: '一键清除最近使用武将记录',
+                clear: true,
+                onclick: function () {
+                    if (this.innerHTML == '<span>确认清除</span>') {
+                        game.saveConfig('recentCharacter', [], true);
+                        game.uncheck();
+                        game.check();
+                        alert('已清除本模式所有最近使用武将记录');
+                    }
+                    else {
+                        this.innerHTML = '<span>确认清除</span>';
+                        var that = this;
+                        setTimeout(function () {
+                            that.innerHTML = '<span>清除最近使用武将记录</span>';
+                        }, 1000);
+                    }
+                },
+            },
+        }, package: {
             character: {
                 character: {},
                 translate: {}
