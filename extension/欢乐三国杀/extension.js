@@ -568,10 +568,14 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jushou: ['male', 'qun', 3, ['jianying', 'hpp_shibei'], []],
 
                             // K
+                            // 欢杀孔融
+                            hpp_kongrong: ['male', 'qun', 3, ['hpp_lirang', 'hpp_zhengyi'], []],
                             // 欢杀蒯良蒯越
                             hpp_kuailiangkuaiyue: ['male', 'wei', 3, ['nzry_jianxiang', 'hpp_shenshi'], []],
 
                             // L
+                            // 欢杀来莺儿
+                            hpp_laiyinger: ['female', 'qun', 3, ['hpp_xiaowu', 'huaping'], []],
                             // 欢杀梁兴
                             hpp_liangxing: ['male', 'qun', 4, ['hpp_lulue', 'lxzhuixi'], []],
                             // 欢杀廖化
@@ -1184,8 +1188,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             jiaxu: ['hpp_jiaxu', 're_jiaxu', 'jiaxu', 'ns_jiaxu'],
                             yj_jushou: ['hpp_jushou', 're_jushou', 'xin_jushou', 'yj_jushou'],
                             // K
+                            kongrong: ['hpp_kongrong', 'sp_kongrong', 'jsrg_kongrong', 'kongrong'],
                             kuailiangkuaiyue: ['hpp_kuailiangkuaiyue', 'kuailiangkuaiyue'],
                             // L
+                            laiyinger: ['hpp_laiyinger', 'laiyinger'],
                             liangxing: ['hpp_liangxing', 'liangxing'],
                             liaohua: ['hpp_liaohua', 'xin_liaohua', 're_liaohua', 'liaohua'],
                             re_lidian: ['hpp_lidian', 're_lidian', 'old_re_lidian', 'junk_lidian'],
@@ -7179,6 +7185,92 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 }
                             },
 
+                            // 孔融
+                            hpp_lirang: {
+                                audio: 'splirang',
+                                trigger: { global: 'phaseBefore', player: ['enterGame', 'phaseZhunbeiBegin'] },
+                                filter: function (event, player) {
+                                    var target = player.storage.hpp_lirang;
+                                    if (target && target.isIn()) return false;
+                                    return event.name != 'phase' || game.phaseNumber == 0;
+                                },
+                                direct: true,
+                                content: function () {
+                                    'step 0'
+                                    player.chooseTarget(get.prompt('hpp_lirang'), '选择一名其他角色，其摸牌阶段额外摸一张牌，你获得其弃牌阶段弃置的牌', lib.filter.notMe).set('ai', target => get.attitude(_status.event.player, target));
+                                    'step 1'
+                                    if (result.bool) {
+                                        var target = result.targets[0];
+                                        player.logSkill('hpp_lirang', target);
+                                        player.storage.hpp_lirang = target;
+                                        player.markSkill('hpp_lirang');
+                                        player.when({ global: 'die' }).filter((event, player) => event.player == player.storage.hpp_lirang).then(() => {
+                                            player.unmarkSkill('hpp_lirang');
+                                            delete player.storage.hpp_lirang;
+                                        });
+                                        player.addExpose(0.3);
+                                    }
+                                },
+                                group: ['hpp_lirang_yingzi', 'hpp_lirang_guzheng'],
+                                intro: { content: '已指定$为“礼让”角色' },
+                                subSkill: {
+                                    yingzi: {
+                                        audio: 'splirang',
+                                        trigger: { global: 'phaseDrawBegin2' },
+                                        filter: function (event, player) {
+                                            var target = player.storage.hpp_lirang;
+                                            return target && target == event.player && !event.numFixed;
+                                        },
+                                        forced: true,
+                                        locked: false,
+                                        logTarget: 'player',
+                                        content: function () {
+                                            trigger.num++;
+                                        },
+                                    },
+                                    guzheng: {
+                                        audio: 'splirang',
+                                        trigger: { global: 'phaseDiscardEnd' },
+                                        filter: function (event, player) {
+                                            var target = player.storage.hpp_lirang;
+                                            return target && target == event.player && lib.skill.twlijian.getCards(event).length;
+                                        },
+                                        frequent: true,
+                                        logTarget: 'player',
+                                        content: function () {
+                                            player.gain(lib.skill.twlijian.getCards(trigger), 'gain2');
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_zhengyi: {
+                                audio: 'spmingshi',
+                                trigger: { global: 'damageBegin4' },
+                                filter: function (event, player) {
+                                    var target = player.storage.hpp_lirang;
+                                    if (!target || !target.isIn()) return false;
+                                    var list = event.hpp_zhengyi || [];
+                                    var list2 = [player, target];
+                                    return list2.includes(event.player) && list2.some(current => event.player != current && !list.includes(current));
+                                },
+                                direct: true,
+                                content: function* (event, map) {
+                                    var player = map.player, trigger = map.trigger;
+                                    var target = player.storage.hpp_lirang;
+                                    var current = trigger.player == player ? target : player;
+                                    var result = yield current.chooseBool('争义：是否代替' + get.translation(trigger.player) + '承受本次伤害并摸一张牌？').set('choice', lib.skill.twgonghuan.check(trigger, current));
+                                    if (result.bool) {
+                                        current.logSkill('hpp_zhengyi', trigger.player);
+                                        game.log(current, '为', trigger.player, '承受了此次伤害');
+                                        var list = trigger.hpp_zhengyi ? trigger.hpp_zhengyi.slice() : [];
+                                        list.addArray([player, target]);
+                                        trigger.cancel();
+                                        current.draw();
+                                        current.damage(trigger.source ? trigger.source : 'nosource', trigger.nature, trigger.num).set('card', trigger.card).set('cards', trigger.cards).hpp_zhengyi = list;
+                                    }
+                                },
+                            },
+
                             // 蒯良蒯越
                             hpp_shenshi: {
                                 audio: 'nzry_shenshi_1',
@@ -7271,6 +7363,22 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             player.drawTo(4);
                                         },
                                     },
+                                },
+                            },
+
+                            // 来莺儿
+                            hpp_xiaowu: {
+                                audio: 'xiaowu',
+                                inherit: 'xiaowu',
+                                contentAfter: function () {
+                                    var targetsx = event.getParent()._xiaowu_targets;
+                                    var num1 = targets.length - targetsx.length;
+                                    var num2 = num1 - targetsx.length;
+                                    if (num1 > 0) player.addMark('shawu', Math.ceil(num1 / 2));
+                                    if (num2 < 0) {
+                                        player.line(targetsx, 'fire');
+                                        for (var i of targetsx) i.damage();
+                                    }
                                 },
                             },
 
@@ -28351,7 +28459,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_dongzhuo: '#g捞德一评级:2.7',
                             hpp_dufuren: '#b捞德一评级:3.8',
                             // F
-                            hpp_fanyufeng: '#b捞德一评级:3.8',
+                            hpp_fanyufeng: '#r捞德一评级:4.1',
                             hpp_fazheng: '#g捞德一评级:2.5',
                             hpp_fengyu: '#b捞德一评级:3.7',
                             hpp_fuhuanghou: '#b捞德一评级:3.7',
@@ -28386,8 +28494,10 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_jiaxu: '#g捞德一评级:2.4',
                             hpp_jushou: '#b捞德一评级:3.8',
                             // K
+                            hpp_kongrong: '#b捞德一评级:3.7',
                             hpp_kuailiangkuaiyue: '#b捞德一评级:3.7',
                             // L
+                            hpp_laiyinger: '#r捞德一评级:4.2',
                             hpp_liangxing: '#b捞德一评级:3.5',
                             hpp_liaohua: '#b捞德一评级:3.8',
                             hpp_lidian: '#b捞德一评级:3.5',
@@ -28946,10 +29056,18 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_shibei: '矢北',
                             hpp_shibei_info: '锁定技，你每回合第一次受到伤害后，回复1点体力并摸一张牌。然后你本回合每次受到伤害后均失去1点体力。',
                             // K
+                            hpp_kongrong: '欢杀孔融',
+                            hpp_lirang: '礼让',
+                            hpp_lirang_info: '游戏开始时，你可以选择一名其他角色，其摸牌阶段摸牌数+1，然后其弃牌阶段结束时，你可以获得其于此阶段因弃置进入弃牌堆的牌。若场上没有“礼让”角色，则你在准备阶段可以重新选择一名其他角色。',
+                            hpp_zhengyi: '争义',
+                            hpp_zhengyi_info: '当你受到伤害时，“礼让”角色可以选择替你承担此伤害；“礼让”角色受到伤害时，你可以选择替其承担此伤害。如若此做，发动争义的角色摸一张牌。',
                             hpp_kuailiangkuaiyue: '欢杀蒯良蒯越',
                             hpp_shenshi: '审时',
                             hpp_shenshi_info: '出牌阶段限一次，你可以将一张牌交给一名其他角色，然后对其造成1点伤害。若该角色因此死亡，则你可以令一名角色将手牌摸至四张。其他角色对你造成伤害后，你可以观看该角色的手牌，然后交给其一张牌，当该角色失去此牌时，你将手牌摸至四张。',
                             // L
+                            hpp_laiyinger:'欢杀来莺儿',
+                            hpp_xiaowu: '绡舞',
+                            hpp_xiaowu_info: '出牌阶段限一次，你可以从你的上家或下家起选择任意名相邻座位的其他角色，令这些角色依次选择一项：1.令你摸一张牌；2.摸一张牌。选择完成后，你获得X个“沙”（X为选择选项1的角色数的一半，向上取整），若选择选项2的角色数较多，你对选择选项2的角色各造成1点伤害。',
                             hpp_liangxing: '欢杀梁兴',
                             hpp_lulue: '掳掠',
                             hpp_lulue_info: '出牌阶段开始时，你可以选择1名有手牌且手牌数小于等于你的角色，然后其选择1项：1.将所有手牌交给你，然后你将武将牌翻面；2.将武将牌翻面，然后视为对你使用1张【杀】。',
