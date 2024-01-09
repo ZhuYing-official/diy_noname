@@ -6457,24 +6457,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				mod: { maxHandcardBase: (player, num) => 5 },
 				audio: 2,
 				trigger: {
-					player: 'loseAfter',
-					global: ['cardsDiscardAfter', 'loseAsyncAfter'],
+					player: ['useCard', 'respond', 'loseAfter'],
+					global: ['loseAsyncAfter'],
 				},
 				filter: function (event, player) {
 					if (event.name.indexOf('lose') == 0) return event.type == 'discard' && event.getl(player).cards2.filter(card => get.position(card, true) == 'd' && !player.getStorage('hpp_lianshi').includes(get.suit(card, player))).length > 0;
-					if (!event.cards.filterInD('d').some(card => !player.getStorage('hpp_lianshi').includes(get.suit(card, player)))) return false;
-					var evt = event.getParent();
-					if (evt.name != 'orderingDiscard') return false;
-					var evtx = (evt.relatedEvent || evt.getParent());
-					var history = player.getHistory('useCard').concat(player.getHistory('respond'));
-					return evtx.player == player && history.some(evtxx => evtx.getParent() == (evtxx.relatedEvent || evtxx.getParent()));
+					return event.cards && event.cards.some(card => !player.getStorage('hpp_lianshi').includes(get.suit(card, player)) && lib.suit.includes(get.suit(card, player)));
 				},
 				forced: true,
 				content: function () {
 					'step 0'
 					var cards;
 					if (trigger.name.indexOf('lose') == 0) cards = trigger.getl(player).cards2.filter(card => get.position(card, true) == 'd');
-					else cards = trigger.cards.filterInD('d');
+					else cards = trigger.cards;
 					event.cards = cards;
 					var suits = cards.reduce((list, card) => list.add(get.suit(card, player)), []);
 					suits = suits.filter(suit => !player.getStorage('hpp_lianshi').includes(suit));

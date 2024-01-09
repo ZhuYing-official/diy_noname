@@ -1491,6 +1491,7 @@ window.noname_character_rank = {
 			'shen_dongzhuo',
 			'shen_lusu',
 			'shen_xusheng',
+
 			// 欢乐三国杀
 			'hpp_shen_caocao',
 			'hpp_shen_daxiaoqiao',
@@ -1521,6 +1522,7 @@ window.noname_character_rank = {
 
 			'hpp_baosanniang',
 			'hpp_beimihu',
+			'hpp_bianfuren',
 			'hpp_bulianshi',
 			'hpp_buzhi',
 			'hpp_caifuren',
@@ -1697,6 +1699,7 @@ window.noname_character_rank = {
 			'hpp_yinfuren',
 			'hpp_yuanshao',
 			'hpp_yuanshu',
+			'hpp_yufan',
 			'hpp_yuji',
 			'hpp_yujin',
 			'hpp_zhangbao',
@@ -1728,6 +1731,7 @@ window.noname_character_rank = {
 			'hpp_zhoutai',
 			'hpp_zhouyi',
 			'hpp_zhouyu',
+			'hpp_zhugedan',
 			'hpp_zhugeguo',
 			'hpp_zhugejin',
 			'hpp_zhugeke',
@@ -1778,6 +1782,7 @@ window.noname_character_rank = {
 
 			'hpp_sb_caocao',
 			'hpp_sb_huanggai',
+			'hpp_sb_huangzhong',
 
 			'hpp_change',
 			'hpp_dalanmao',
