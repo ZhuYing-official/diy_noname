@@ -10553,7 +10553,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     order: 10,
                                     result: { target: 1 },
                                 },
-                                derivation: ['hpp_leiji', 'hpp_biyue', 'new_retuxi', 'hpp_mingce', 'xinzhiyan', 'nhyinbing', 'nhhuoqi', 'nhguizhu', 'nhxianshou', 'nhlundao', 'nhguanyue', 'nhyanzheng'],
+                                derivation: ['hpp_leiji', 'hpp_biyue', 'new_retuxi', 'hpp_mingce', 'hpp_zhiyan', 'nhyinbing', 'nhhuoqi', 'nhguizhu', 'nhxianshou', 'nhlundao', 'nhguanyue', 'nhyanzheng'],
                             },
 
                             // 潘凤
@@ -28367,7 +28367,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_guanyu: '#r捞德一评级:4.6',
                             hpp_guohuai: '#b捞德一评级:3.7',
                             hpp_guohuanghou: '#b捞德一评级:3.8',
-                            hpp_guojia: '捞德一评级:3.8',
+                            hpp_guojia: '#b捞德一评级:3.8',
                             hpp_guotupangji: '#b捞德一评级:3.5',
                             hpp_guozhao: '#b捞德一评级:3.8',
                             // H
@@ -28588,7 +28588,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             // 谋
                             hpp_sb_caocao: '#b捞德一评级:3.8',
                             hpp_sb_huanggai: '#r捞德一评级:4.2',
-                            hpp_sb_huangzhong: '#r捞德一评级:4.5',
+                            hpp_sb_huangzhong: '#r捞德一评级:4.2',
                             // 神
                             hpp_shen_caocao: '#r捞德一评级:4.3',
                             hpp_shen_daxiaoqiao: '#r捞德一评级:4.3',

@@ -67,7 +67,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				honor_of_kings_midlane: ['hok_daji', 'hok_wuzetian'],
 				honor_of_kings_roaming: ['hok_mingshiyin', 'hok_yao', 'hok_sp_mingshiyin'],
 				honor_of_kings_farmlane: ['hok_ailin', 'hok_makeboluo'],
-				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu'],
+				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu', 'shen_xusheng'],
 				hpp_hpp: ['hpp_re_zuoci'],
 			},
 		},
@@ -120,6 +120,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			shen_dongzhuo: ['male', 'shen', 5, ['lao_cannue', 'lao_xiehan', 'lao_huidu'], ['qun']],
 			// 神鲁肃
 			shen_lusu: ['male', 'shen', 3, ['diying', 'lao_fusheng', 'lao_chiyan', 'lao_lianmeng'], ['wu']],
+			// 神徐盛
+			shen_xusheng: ['male', 'shen', 4, ['kuijun'], ['wu']],
 
 			// 欢杀陆逊
 			hpp_re_zuoci: ['male', 'qun', 3, ['hpp_re_xinsheng'], []],
@@ -2435,9 +2437,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								- player.countCards('hs', { name: 'shan' })
 								- player.countCards('hs', { name: 'tao' })
 								- player.countCards('hs', { name: 'jiu' }));
-							var natureSha = player.countCards('hs', { name: 'sha', nature: ['fire', 'thunder', 'ice'] })
-								// + player.countCards('hs', { name: 'sha', nature: 'thunder' })
-								// + player.countCards('hs', { name: 'sha', nature: 'ice' })
+							var natureSha = player.countCards('hs', { type: 'trick' })
 								+ qitianTrick;
 							if (player.hp < 2 && natureSha >= 1) return 1;
 							if (player.countCards('hs') >= 3 && natureSha >= 2 && game.hasPlayer(function (current) {
@@ -2841,7 +2841,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							// if (get.threaten(target) > 3 && get.attitude(player, target) > 0) {
 							// 	return get.threaten(target);
 							// }
-							if(get.attitude(player, target) > 0) return 1;
+							if (get.attitude(player, target) > 0) return 1;
 							return 0;
 						},
 					},
@@ -4085,6 +4085,109 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					},
 					threaten: 0.8
+				},
+			},
+			// 神徐盛
+			kuijun: {
+				audio: 'decadepojun',
+				trigger: { player: 'useCardToPlayered' },
+				direct: true,
+				filter: function (event, player) {
+					return event.card.name == 'sha' && event.target.countCards('h') > 0;
+				},
+				content: function () {
+					trigger.target.addTempSkill('fengyin');
+					trigger.target.showHandcards();
+					var cards = trigger.target.getCards('h');
+					if (cards.length > player.hp) {
+						trigger.directHit.add(trigger.target);
+					}
+				},
+				group: ['kuijun_effect', 'kuijun_double'],
+				ai: {
+					unequip_ai: true,
+					directHit_ai: true,
+					threaten:0.5,
+					skillTagFilter: function (player, tag, arg) {
+						if (get.attitude(player, arg.target) > 0) return false;
+						if (tag == 'directHit_ai') return player.hp < arg.target.countCards('h');
+						return false;
+					}
+				},
+				subSkill: {
+					double: {
+						trigger: { player: 'useCard2' },
+						filter: function (event, player) {
+							if (event.card.name != 'sha') return false;
+							return game.hasPlayer(function (current) {
+								return !event.targets.contains(current) && current.getEquips(2).length > 0 && current != player;
+							});
+						},
+						direct: true,
+						content: function () {
+							'step 0'
+							player.chooseTarget(get.prompt('kuijun'), '为' + get.translation(trigger.card) + '增加一个目标', function (card, player, target) {
+								return !_status.event.sourcex.contains(target) && target.getEquips(2).length > 0 && player != target;
+							}).set('sourcex', trigger.targets).set('ai', function (target) {
+								var player = _status.event.player;
+								return get.effect(target, _status.event.card, player, player);
+							}).set('card', trigger.card);
+							'step 1'
+							if (result.bool) {
+								if (!event.isMine() && !event.isOnline()) game.delayx();
+								event.target = result.targets[0];
+							}
+							else {
+								event.finish();
+							}
+							'step 2'
+							player.logSkill('kuijun', event.target);
+							trigger.targets.push(event.target);
+						},
+						ai: {
+							effect: {
+								player: function (card, player, target, current, isLink) {
+									if (!isLink && card.name == 'sha') {
+										if (player._kuijuntmp) return;
+										player._kuijuntmp = true;
+										if (get.effect(target, card, player, player) <= 0) {
+											delete player._kuijuntmp;
+											return;
+										}
+										if (game.hasPlayer(function (current) {
+											return current != target && current.getEquips(2).length > 0 &&
+												player.canUse(card, current) && get.effect(current, card, player, player) > 0;
+										})) {
+											delete player._kuijuntmp;
+											return [1, 1];
+										}
+										delete player._kuijuntmp;
+									}
+								}
+							}
+						}
+					},
+					effect: {
+						audio: 'repojun',
+						trigger: { source: 'damageBegin1' },
+						forced: true,
+						locked: false,
+						logTarget: 'player',
+						filter: function (event, player) {
+							var target = event.player;
+							return event.getParent().name == 'sha' && target.countCards('h') > 0;
+						},
+						content: function () {
+							var cards = trigger.player.getCards('h');
+							for (let i = 0; i < cards.length; i++) {
+								if (get.suit(cards[i], false) == get.suit(trigger.card, false)) {
+									if (trigger.num < trigger.player.maxHp) {
+										trigger.num++;
+									}
+								}
+							}
+						},
+					}
 				},
 			},
 
@@ -6460,6 +6563,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			shen_caozhi: '#r捞德一评级:4.3',
 			shen_dongzhuo: '#r捞德一评级:4.2',
 			shen_lusu: '#r捞德一评级:4.4',
+			shen_xusheng: '#r捞德一评级:4.2',
 			hpp_re_zuoci: '#r捞德一评级:4.8',
 		},
 		translate: {
@@ -6681,6 +6785,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_chiyan_info: '弃牌阶段结束时，若你于此阶段内弃置过两张或更多的牌，则你可以视为对一名角色造成一点火属性伤害。',
 			lao_lianmeng: '联盟',
 			lao_lianmeng_info: '出牌阶段限一次，你可以选择两张手牌交给一名其他角色，你摸三张牌。',
+			// 神徐盛
+			shen_xusheng: '神徐盛',
+			kuijun: '溃军',
+			kuijun_info: '当你使用【杀】可以多选择一名装备区有防具牌的角色为目标，指定目标后令其非锁定技失效并展示其所有手牌，若其手牌数大于你的体力值，则不可以响应此【杀】，此【杀】伤害+X（X为其与此【杀】花色相同的手牌数，至多为其体力上限）。',
 
 			// 欢杀界
 			hpp_re_luxun: '欢杀界陆逊',

@@ -1490,6 +1490,7 @@ window.noname_character_rank = {
 			'shen_caozhi',
 			'shen_dongzhuo',
 			'shen_lusu',
+			'shen_xusheng',
 			// 欢乐三国杀
 			'hpp_shen_caocao',
 			'hpp_shen_daxiaoqiao',
