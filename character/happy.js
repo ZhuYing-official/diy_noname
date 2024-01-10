@@ -3072,9 +3072,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			hok_minggua: {
-				auto: 2,
 				forced: true,
-				group: 'hok_minggua3',
+				group: ['hok_minggua3'],
 				trigger: {
 					player: 'damageBegin2',
 				},
@@ -3160,9 +3159,32 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					game.delay(0.5);
 					// event.dialog.close();
 				},
+				mark: true,
+				intro: {
+					content: function (storage, player) {
+						if (gua1 && guaList.indexOf('大吉') >= 0) {
+							guaList.splice(guaList.indexOf('大吉'), 1);
+						}
+						if (gua2 && guaList.indexOf('中吉') >= 0) {
+							guaList.splice(guaList.indexOf('中吉'), 1);
+						}
+						if (gua3 && guaList.indexOf('小吉') >= 0) {
+							guaList.splice(guaList.indexOf('小吉'), 1);
+						}
+						if (gua4 && guaList.indexOf('小凶') >= 0) {
+							guaList.splice(guaList.indexOf('小凶'), 1);
+						}
+						if (gua5 && guaList.indexOf('中凶') >= 0) {
+							guaList.splice(guaList.indexOf('中凶'), 1);
+						}
+						if (gua6 && guaList.indexOf('大凶') >= 0) {
+							guaList.splice(guaList.indexOf('大凶'), 1);
+						}
+						return '<div class="text center"><span class=thundertext>' + guaList + '</span></div>'
+					},
+				},
 			},
 			hok_minggua2: {
-				auto: 2,
 				forced: true,
 				trigger: {
 					source: 'damageBegin2',
@@ -3261,6 +3283,74 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					'step 0'
+					if (gua1 && guaList.indexOf('大吉') >= 0) {
+						guaList.splice(guaList.indexOf('大吉'), 1);
+					}
+					if (gua2 && guaList.indexOf('中吉') >= 0) {
+						guaList.splice(guaList.indexOf('中吉'), 1);
+					}
+					if (gua3 && guaList.indexOf('小吉') >= 0) {
+						guaList.splice(guaList.indexOf('小吉'), 1);
+					}
+					if (gua4 && guaList.indexOf('小凶') >= 0) {
+						guaList.splice(guaList.indexOf('小凶'), 1);
+					}
+					if (gua5 && guaList.indexOf('中凶') >= 0) {
+						guaList.splice(guaList.indexOf('中凶'), 1);
+					}
+					if (gua6 && guaList.indexOf('大凶') >= 0) {
+						guaList.splice(guaList.indexOf('大凶'), 1);
+					} else {
+						return;
+					}
+					'step 1'
+					event.guaTarget = game.filterPlayer(function (target) {
+						return target.hasSkill('hok_biangua');
+					})[0];
+					player.chooseControl(guaList, 'cancel2').set('ai', function (event, player) {
+						var goodGua = !gua1 + !gua2 + !gua3;
+						var badGua = !gua4 + !gua5 + !gua6;
+						if (get.attitude(_status.event.player, event.guaTarget) <= 0) {
+							if (goodGua == 0) {
+								return '取消';
+							}
+							return guaList[0];
+						} else {
+							if (badGua == 0) {
+								return '取消';
+							}
+							return guaList[guaList.length - 1];
+						}
+					});
+					'step 2'
+					switch (result.control) {
+						case '大吉':
+							gua1 = true;
+							break;
+						case '中吉':
+							gua2 = true;
+							break;
+						case '小吉':
+							gua3 = true;
+							break;
+						case '小凶':
+							gua4 = true;
+							break;
+						case '中凶':
+							gua5 = true;
+							break;
+						case '大凶':
+							gua6 = true;
+							break;
+						default:
+					}
+					result.control = result.control == 'cancel2' ? '取消' : result.control;
+					var str = get.translation(player) + '选择了：#y' + result.control;
+					// event.dialog = ui.create.dialog(str);
+					player.popup(result.control);
+					game.log(str);
+					player.markSkill('hok_minggua');
+					'step 3'
 					player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
 						return target.maxHp >= player.maxHp;
 					}).set('forceDie', true).set('ai', function (target) {
@@ -3277,21 +3367,20 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 						return 2;
 					});
-					'step 1'
+					'step 4'
 					if (result.bool) {
 						var target = result.targets[0];
 						event.target = target;
 						player.logSkill('hok_minggua', target);
 					}
 					else event.finish();
-					'step 2'
+					'step 5'
 					target.addSkillLog('hok_minggua');
 					target.addSkill('hok_minggua2');
 				},
 			},
 			hok_biangua: {
 				global: ['hok_biangua2', 'hok_biangua3'],
-				audio: 2,
 				filter: function (event, player) {
 					let tar = game.filterPlayer(function (target) {
 						return target.hasSkill('hok_biangua');
@@ -3300,7 +3389,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				}
 			},
 			hok_biangua2: {
-				audio: 2,
 				mark: true,
 				marktext: '卦',
 				frequent: true,
@@ -3310,7 +3398,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			hok_biangua3: {
-				audio: 2,
 				usable: 1,
 				enable: 'phaseUse',
 				filter: function (event, player) {
@@ -3392,11 +3479,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.popup(result.control);
 					game.log(str);
 					if (!player.hasSkill('hok_biangua')) {
-						game.filterPlayer(function (target) {
+						var guaPlayer =game.filterPlayer(function (target) {
 							return target.hasSkill('hok_biangua');
-						})[0].removeMark('hok_biangua2', 8);
+						})[0];
+						guaPlayer.removeMark('hok_biangua2', 8);
+						guaPlayer.markSkill('hok_minggua');
 					} else {
 						player.removeMark('hok_biangua2', 8);
+						player.markSkill('hok_minggua');
 					}
 					'step 3'
 					game.delay(1);
@@ -4107,7 +4197,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					unequip_ai: true,
 					directHit_ai: true,
-					threaten:0.5,
+					threaten: 0.5,
 					skillTagFilter: function (player, tag, arg) {
 						if (get.attitude(player, arg.target) > 0) return false;
 						if (tag == 'directHit_ai') return player.hp < arg.target.countCards('h');
@@ -6735,7 +6825,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_sptaigua: '泰卦',
 			hok_sptaigua_info: '出牌阶段限两次，你对自己造成1点伤害，然后令一名角色回复1点体力。',
 			hok_minggua: '命卦',
-			hok_minggua_info: '①当你死亡时，你可以选择一名体力上限大于等于你的其他角色获得〖命卦〗。\
+			hok_minggua_info: '①当你死亡时，你可以将你卦象中的一种效果移除然后选择一名体力上限大于等于你的其他角色获得〖命卦〗。\
 				②锁定技，当你造成/受到伤害时，进行一次占卜，根据卦象获得以下效果：<br/>\
 				1.大吉/大凶：受到伤害的角色死亡；<br/>\
 				2.中吉/中凶：伤害加一，且受到伤害的角色随机弃置一张牌；<br/>\
