@@ -108,7 +108,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 武则天
 			hok_wuzetian: ['female', 'qun', 3, ['hok_dihui', 'hok_diwei', 'hok_shaduo', 'hok_nvdi'], ['zhu']],
 			// 瑶
-			hok_yao: ['female', 'jin', 3, ['hok_shangui', 'hok_bailu']],
+			hok_yao: ['female', 'wei', 3, ['hok_shangui', 'hok_bailu']],
 			// SP李信
 			hok_sp_lixin: ['male', 'shen', 4, ['hok_wangming', 'hok_dengshen',], ['qun']],
 			// SP明世隐
@@ -807,7 +807,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					}
 				},
-				trigger: { player: 'useCard' },
+				trigger: { player: ['useCard', 'respond'] },
 				filter: function (event) {
 					return (get.type(event.card) == 'trick' || get.type(event.card) == 'delay' || event.card.name == 'sha');
 				},
@@ -3479,7 +3479,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.popup(result.control);
 					game.log(str);
 					if (!player.hasSkill('hok_biangua')) {
-						var guaPlayer =game.filterPlayer(function (target) {
+						var guaPlayer = game.filterPlayer(function (target) {
 							return target.hasSkill('hok_biangua');
 						})[0];
 						guaPlayer.removeMark('hok_biangua2', 8);
@@ -3601,10 +3601,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				audio: 'rejiushi',
 				mod: {
 					cardname: function (card, player, name) {
-						if (card.name == 'zhuge' && card.suit == 'club') return 'jiu';
+						if (card.name == 'zhuge') return 'jiu';
 					},
 					suit: function (card) {
-						if (card.name == 'zhuge' && card.suit == 'club') return 'none';
+						if (card.name == 'zhuge') return 'none';
 					},
 					cardUsable: function (card, player, num) {
 						if (card.name == 'jiu' && card.suit == 'none') return Infinity;
@@ -3613,9 +3613,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				trigger: { player: 'useCard' },
 				forced: true,
 				filter: function (event, player) {
-					return event.card.name == 'zhuge' && get.suit(event.card) == 'club';
+					return event.card.name == 'zhuge';
 				},
-				prompt: '将一张梅花诸葛连弩当无色酒使用(无色酒无次数限制)',
+				prompt: '将一张诸葛连弩当无色酒使用(无色酒无次数限制)',
 				onuse: function (result, player) {
 					var card = get.cardPile(function (card) {
 						var t = get.type(card, 'trick')
@@ -6700,7 +6700,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 			// 王者公共技
 			hok_yinshen: '隐身',
-			hok_yinshen_info: '当你拥有此标记时，你不能成为杀和目标数为1的锦囊牌的目标。当你使用杀或锦囊牌时，你失去此标记。',
+			hok_yinshen_info: '当你拥有此标记时，你不能成为杀和目标数为1的锦囊牌的目标。当你使用或打出杀或锦囊牌时，你失去此标记。',
 			hok_temp_hp: '临时体力',
 			hok_temp_hp_info: '锁定技，当你受到伤害时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
 			// 艾琳
@@ -6847,9 +6847,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_badou: '八斗',
 			lao_badou2: '八斗',
 			lao_badou3: '八斗',
-			lao_badou_info: '你手牌中的梅花牌可以视为酒，每名角色的回合限一次。当你使用酒时，你获得一张普通锦囊牌。你的梅花诸葛连弩视为无色酒，无次数限制；当你使用无色酒时，你额外获得一张普通锦囊牌。',
+			lao_badou_info: '你手牌中的梅花牌可以视为酒，每名角色的回合限一次。当你使用酒时，你获得一张普通锦囊牌。你的诸葛连弩视为无色酒；当你使用无色酒无次数限制，且你额外获得一张普通锦囊牌。',
 			lao_qibu: '七步',
-			lao_qibu_info: '当你使用普通锦囊牌时，你的“七步”标记不超过7，获得标记“七步”。',
+			lao_qibu_info: '当你使用普通锦囊牌且你的“七步”标记不超过7时，获得标记“七步”。',
 			lao_chengshi: '成诗',
 			lao_chengshi_info: '觉醒技，一名角色出牌阶段结束时，当你的“七步”标记为7时，你的“才高”觉醒、回复1点体力并且获得“豆”标记（豆：手牌上限+1），你可以选择一名其他角色获得相同的效果。',
 			// 神董卓

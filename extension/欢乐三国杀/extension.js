@@ -419,7 +419,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         character: {
                             // B
                             // 欢杀鲍三娘
-                            hpp_baosanniang: ['female', 'shu', 3, ['decadewuniang', 'hpp_xushen'], []],
+                            hpp_baosanniang: ['female', 'shu', 3, ['hpp_wuniang', 'hpp_xushen'], []],
                             // 欢杀卑弥呼
                             hpp_beimihu: ['female', 'qun', 4, ['hpp_zongkui', 'hpp_guju', 'bmcanshi'], []],
                             // 欢杀卞夫人
@@ -1471,6 +1471,43 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                         },
                         skill: {
                             // 鲍三娘
+                            hpp_wuniang: {
+                                trigger: {
+                                    player: ["useCard", "respond"],
+                                },
+                                audio: 'xinfu_wuniang',
+                                direct: true,
+                                filter: function (event, player) {
+                                    return event.card.name == 'sha';
+                                },
+                                content: function () {
+                                    'step 0'
+                                    player.chooseTarget(get.prompt2('hpp_wuniang'), function (card, player, target) {
+                                        if (player == target) return false;
+                                        return target.countGainableCards(player, 'he') > 0;
+                                    }).set('ai', function (target) {
+                                        return 10 - get.attitude(_status.event.player, target);
+                                    });
+                                    'step 1'
+                                    if (result.bool) {
+                                        var target = result.targets[0];
+                                        player.logSkill('hpp_wuniang', target);
+                                        player.line(target, 'fire');
+                                        player.gainPlayerCard(target, 'he', true);
+                                        target.draw();
+                                        if (!player.storage.decadexushen) event.finish();
+                                    }
+                                    else event.finish();
+                                    'step 2'
+                                    var list = game.filterPlayer(function (current) {
+                                        return current.name == 'hpp_guansuo' || current.name2 == 'hpp_guansuo';
+                                    });
+                                    if (list.length) game.asyncDraw(list);
+                                    else event.finish();
+                                    'step 3'
+                                    game.delayx();
+                                },
+                            },
                             hpp_xushen: {
                                 derivation: 'decadezhennan',
                                 audio: 'xinfu_xushen',
@@ -5875,6 +5912,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                     player.addSkillLog(result.control);
                                 },
                                 intro: { content: '已因$发动过技能' },
+                                ai:{threaten:10},
                             },
 
                             // 关羽
@@ -11776,7 +11814,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             }
                                             var summer = 0;
                                             for (var i of ui.selected.targets) summer += i.hp;
-                                            game.log(summer + target.hp, num);
                                             return summer + target.hp <= num;
                                         }).set('ai', function (target) {
                                             return get.damageEffect(target, player, player);
@@ -28941,6 +28978,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
 
                             // B
                             hpp_baosanniang: '欢杀鲍三娘',
+                            hpp_wuniang: '武娘',
+                            hpp_wuniang_info: '当你使用或打出【杀】时，你可以获得一名其他角色的一张牌。若如此做，其摸一张牌。（若你已发动许身，则关索也摸一张牌）',
                             hpp_xushen: '许身',
                             hpp_xushen2: '许身',
                             hpp_xushen_info: '限定技，当你进入濒死状态后，你可以回复1点体力并获得技能“镇南”，然后如果你脱离濒死状态且“欢杀关索”不在场，你可令一名其他角色选择是否用“欢杀关索”代替其武将并令其摸三张牌。',
@@ -28949,7 +28988,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_zongkui_info: '回合开始前，你可以选择一名没有“傀”标记的其他角色，令其获得一枚“傀”标记。游戏开始时，体力值最少且没有“傀”标记的一名其他角色也获得一个“傀”标记。',
                             hpp_guju: '骨疽',
                             hpp_guju_info: '锁定技，拥有“傀”标记的角色受到伤害后，你摸一张牌。',
-                            hpp_bianfuren:'欢杀卞夫人',
+                            hpp_bianfuren: '欢杀卞夫人',
                             hpp_wanwei: '挽危',
                             hpp_wanwei_info: '每轮限一次，当一名其他角色进入濒死状态时，你可以交给其一至五张牌，若如此做，其脱离濒死状态时，你摸等量的牌并回复1点体力。',
                             hpp_yuejian: '约俭',
