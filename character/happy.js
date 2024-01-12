@@ -314,8 +314,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							return card.name == 'sha';
 						});
 						if (cards.length > 0) player.discard(cards);
-						player.draw(cards.length);
 						trigger.source.draw(cards.length);
+						player.draw(cards.length + 1);
 					}
 				},
 			},
@@ -827,9 +827,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				trigger: { player: 'damageEnd' },
 				content: function () {
 					'step 0'
-					player.removeMark('hok_temp_hp', 'trigger.num');
+					event.num = trigger.num;
 					'step 1'
+					player.removeMark('hok_temp_hp', 'trigger.num');
+					'step 2'
 					player.loseMaxHp('trigger.num');
+					event.num--;
+					if (event.num = 0 || !player.hasMark('hok_temp_hp')) {
+						event.finish();
+					}
+					'step 3'
+					event.goto(1);
 				}
 			},
 			// 艾琳
@@ -858,7 +866,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				enable: 'phaseUse',
 				filterTarget: lib.filter.notMe,
 				content: function () {
-					if (player.countMark('hok_yueguishengfang') <= 18) {
+					if (player.countMark('hok_yueguishengfang') < 18) {
 						player.addMark('hok_yueguishengfang', 2);
 					}
 					var cards = target.getCards('h', function (card) {
@@ -892,7 +900,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					player.draw();
-					if (player.countMark('hok_yueguishengfang') <= 18) {
+					if (player.countMark('hok_yueguishengfang') < 18) {
 						player.addMark('hok_yueguishengfang', 1);
 					}
 				},
@@ -1374,6 +1382,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					result: {
 						player: function (player) {
+							if (player.countMark('hok_guangan') >= 3) {
+								return 0;
+							}
 							let cards = player.getCards('h');
 							let sumValue = 0;
 							for (card of cards) {
@@ -6634,15 +6645,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_tuan: '#b捞德一评级:3.5',
 			lao_xini: '#b捞德一评级:3.0',
 			hok_ailin: '#b捞德一评级:3.6',
-			hok_bailixuance: '#b捞德一评级:3.8',
+			hok_bailixuance: '#b捞德一评级:3.9',
 			hok_daji: '#b捞德一评级:3.7',
 			hok_lixin: '#b捞德一评级:3.8',
-			hok_makeboluo: '#b捞德一评级:3.9',
+			hok_makeboluo: '#b捞德一评级:3.7',
 			hok_mingshiyin: '#b捞德一评级:3.8',
 			hok_miyue: '#b捞德一评级:3.8',
 			hok_sunwukong: '#r捞德一评级:4.0',
 			hok_wuzetian: '#b捞德一评级:3.8',
-			hok_yao: '#b捞德一评级:3.7',
+			hok_yao: '#b捞德一评级:3.8',
 			hok_sp_lixin: '#r捞德一评级:4.0',
 			hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 			shen_caozhi: '#r捞德一评级:4.3',
@@ -6663,7 +6674,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_zunqian: '遵前',
 			lao_zunqian_info: '当你成为【杀】的目标时，你可以弃置两张牌（不足则全弃，无牌则不弃），然后摸两张牌；若此时全场手牌最多的角色仅有一名且不是你，该角色也可以如此做。',
 			lao_yishan: '揖禅',
-			lao_yishan_info: '当你受到伤害时，你可以弃置手牌中所有的【杀】，你和伤害来源摸X张牌（X为你弃置的【杀】的数量）。',
+			lao_yishan_info: '当你受到伤害时，你可以弃置手牌中所有的【杀】，伤害来源摸X张牌，你摸X+1张牌（X为你弃置的【杀】的数量）。',
 			lao_chongjia: '宠加',
 			lao_chongjia_info: '主公技，觉醒技，准备阶段，若你的体力值为全场最少，则你加1点体力上限，将体力回复至3点，然后获得技能“恭辞”和“坠廷”。',
 			// 曹宇
@@ -6708,9 +6719,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_lingwu: '灵舞',
 			hok_lingwu_info: '锁定技。游戏开始时，你获得一个额外的武器栏，你从牌堆中获得一张武器牌装备之。',
 			hok_yewu: '叶舞',
-			hok_yewu_info: '出牌阶段限一次，你选择一名其他角色，随机弃置其一张手牌，你的“月桂”标记不大于18时，你获得2枚“月桂”标记。',
+			hok_yewu_info: '出牌阶段限一次，你选择一名其他角色，随机弃置其一张手牌，你的“月桂”标记小于18时，你获得2枚“月桂”标记。',
 			hok_xuanwu: '旋舞',
-			hok_xuanwu_info: '当你使用或打出【杀】后，摸一张牌且你的“月桂”标记不大于18时，你获得1枚“月桂”标记。',
+			hok_xuanwu_info: '当你使用或打出【杀】后，摸一张牌且你的“月桂”标记小于18时，你获得1枚“月桂”标记。',
 			hok_yueguishengfang: '月桂盛放',
 			hok_yueguishengfang_info: '出牌阶段限一次，当你的“月桂”标记大于等于6时，你可以使用X张不计入次数的雷【杀】（X为“月桂”数/3向下取整，每使用一次失去3枚“月桂”）。',
 			// 百里玄策
