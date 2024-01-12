@@ -6703,6 +6703,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 王者公共技
 			hok_yinshen: '隐身',
 			hok_yinshen_info: '当你拥有此标记时，你不能成为杀和目标数为1的锦囊牌的目标。当你使用或打出杀或锦囊牌时，你失去此标记。',
+			hok_silie:'撕裂',
+			hok_silie_info:'锁定技，当你使用牌时，你弃置一张手牌，否则失去1点体力。',
 			hok_temp_hp: '临时体力',
 			hok_temp_hp_info: '锁定技，当你受到伤害时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
 			// 艾琳
