@@ -1635,6 +1635,7 @@ window.noname_character_rank = {
 			'hpp_panshu',
 			'hpp_puyuan',
 			'hpp_qinmi',
+			'hpp_quancong',
 			'hpp_quyi',
 			'hpp_shamoke',
 			'hpp_simayi',
@@ -1783,6 +1784,7 @@ window.noname_character_rank = {
 			'hpp_sb_caocao',
 			'hpp_sb_huanggai',
 			'hpp_sb_huangzhong',
+			'hpp_sb_yuanshao',
 
 			'hpp_change',
 			'hpp_dalanmao',

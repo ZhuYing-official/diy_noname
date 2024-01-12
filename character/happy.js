@@ -152,6 +152,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		},
 		characterReplace: {
 			// shen_zhangliao:['shen_zhangliao','ol_zhangliao'],
+			jin_simayi: ['jin_simayi', 'jin_zhangchunhua', 'ol_lisu', 'simazhou', 'cheliji', 'ol_huaxin'],
+			jin_simashi: ['jin_simashi', 'jin_xiahouhui', 'zhanghuyuechen', 'shibao', 'jin_yanghuiyu', 'chengjichengcui'],
+			jin_simazhao: ['jin_simazhao', 'jin_wangyuanji', 'duyu', 'weiguan', 'xuangongzhu'],
+			zhongyan: ['zhongyan', 'xinchang', 'jin_jiachong', 'wangxiang'],
+			yangyan: ['yangyan', 'yangzhi'],
 		},
 		characterFilter: {
 			shen_diaochan: function (mode) {
@@ -1379,29 +1384,25 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					trigger.cancel();
 					player.addSkill('hok_liehua_effect');
 				},
-				ai: {
-					result: {
-						player: function (player) {
-							if (player.countMark('hok_guangan') >= 3) {
-								return 0;
-							}
-							let cards = player.getCards('h');
-							let sumValue = 0;
-							for (card of cards) {
-								sumValue += get.value(card);
-							}
-							if (player.hp > cards.length) {
-								return 1;
-							}
-							if (sumValue / cards.length > 7) {
-								return 0;
-							}
-							if (player.hp >= cards.length - 2 && sumValue / cards.length > 5) {
-								return 1;
-							}
-							return 0;
-						}
+				check: function (event, player) {
+					if (player.countMark('hok_guangan') >= 3) {
+						return false;
 					}
+					let cards = player.getCards('h');
+					let sumValue = 0;
+					for (let i = 0; i < cards.length; i++) {
+						sumValue += get.value(cards[i]);
+					}
+					if (player.hp > cards.length) {
+						return true;
+					}
+					if (sumValue / cards.length > 7) {
+						return false;
+					}
+					if (player.hp >= cards.length - 2 && sumValue / cards.length <= 5) {
+						return true;
+					}
+					return false;
 				},
 				subSkill: {
 					effect: {
@@ -1457,16 +1458,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					trigger.cancel();
 					player.removeMark('hok_guangan', 3);
 					player.addSkill('hok_guangzhan_effect');
-				},
-				ai: {
-					result: {
-						player: function (player, target) {
-							if (player.inRange(target) && get.attitude(player, target) < 0) {
-								return 1 - get.damageEffect(target, player, player, 'thunder');
-							}
-							return 0;
-						}
-					}
 				},
 				group: ['hok_guangzhan_attack'],
 				subSkill: {
@@ -6659,8 +6650,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			shen_caozhi: '#r捞德一评级:4.3',
 			shen_dongzhuo: '#r捞德一评级:4.2',
 			shen_lusu: '#r捞德一评级:4.4',
-			shen_xusheng: '#r捞德一评级:4.2',
-			hpp_re_zuoci: '#r捞德一评级:4.8',
+			shen_xusheng: '#r捞德一评级:4.0',
+			hpp_re_zuoci: '#r捞德一评级:4.9',
 		},
 		translate: {
 			// 曹芳
