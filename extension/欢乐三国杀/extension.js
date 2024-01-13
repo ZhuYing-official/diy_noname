@@ -981,7 +981,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sb_caocao: ['male', 'wei', 4, ['hpp_sbjianxiong', 'hpp_sbqingzheng', 'sbhujia'], ['zhu']],
                             hpp_sb_huanggai: ['male', 'wu', 4, ['hpp_sbkurou', 'hpp_sbzhaxiang'], []],
                             hpp_sb_huangzhong: ['male', 'shu', 4, ['sbliegong'], []],
-                            hpp_sb_yuanshao:['male', 'qun', 4, ['hpp_sbluanji', 'hpp_sbxueyi'], ['zhu']],
+                            hpp_sb_yuanshao: ['male', 'qun', 4, ['hpp_sbluanji', 'hpp_sbxueyi'], ['zhu']],
 
                             // 神
                             // 神曹操
@@ -15515,7 +15515,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                             check: function (card) {
                                                 return 7 - get.value(card);
                                             },
-                                            position: 'he',
+                                            position: 'h',
                                             content: function () {
                                                 player.addTempSkill('hpp_quhu' + lib.skill[event.name].index)
                                                 target.damage('nocard');
@@ -16374,7 +16374,8 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 ai: {
                                     maixie_defend: true,
-                                    threaten: 0.7
+                                    threaten: 0.7,
+                                    expose: 0.25,
                                 }
                             },
 
@@ -20152,6 +20153,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 },
                                 ai: {
                                     order: 7,
+                                    expose: 0.25,
                                     result: { player: 1 },
                                 },
                             },
@@ -23650,9 +23652,6 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 content: function () {
                                     trigger.source.chooseToDiscard('he', true, 2);
                                 },
-                                ai: {
-                                    expose: 0.1,
-                                }
                             },
                             // 喵大乔
                             hpp_miaoguose: {
@@ -23775,7 +23774,28 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 usable: 1,
                                 group: 'hpp_miaolijian_lijian',
                                 ai: {
-                                    expose: 0.1,
+                                    expose: 0.15,
+                                    threaten: 3,
+                                    order: 7,
+                                    result: {
+                                        player: function (player, target) {
+                                            let targets = _status.event.getTempCache('sblijian', 'targets');
+                                            if (Array.isArray(targets)) for (let arr of targets) {
+                                                if (target === arr[0] && !arr[2]) return 1;
+                                            }
+                                            return 0;
+                                        },
+                                        target: function (player, target) {
+                                            let targets = _status.event.getTempCache('sblijian', 'targets');
+                                            if (Array.isArray(targets)) for (let arr of targets) {
+                                                if (target === arr[0]) {
+                                                    if (arr[1] * arr[2] < 0) return get.sgn(arr[2]);
+                                                    return arr[1];
+                                                }
+                                            }
+                                            return 0;
+                                        }
+                                    }
                                 },
                                 subSkill: {
                                     lijian: {
@@ -29052,7 +29072,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_lukang: '#b捞德一评级:3.8',
                             hpp_lusu: '#g捞德一评级:2.4',
                             hpp_luotong: '#r捞德一评级:4.5',
-                            hpp_luxun: '#b捞德一评级:3.0',
+                            hpp_luxun: '#b捞德一评级:3.5',
                             hpp_luyi: '#r捞德一评级:4.0',
                             hpp_luyusheng: '#r捞德一评级:4.1',
                             hpp_lvbu: '#b捞德一评级:3.7',
@@ -30464,7 +30484,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_sbzhaxiang: '诈降',
                             hpp_sbzhaxiang_info: '锁定技，当你失去1点体力后，你摸3张牌；回合结束时，摸X张牌，你于每回合使用的前X张【杀】无距离限制、不计入次数且不能被响应（X为你已损失的体力值的一半，向上取整）。',
                             hpp_sb_huangzhong: '欢杀谋黄忠',
-                            hpp_sb_yuanshao:'欢杀谋袁绍',
+                            hpp_sb_yuanshao: '欢杀谋袁绍',
                             hpp_sbluanji: '乱击',
                             hpp_sbluanji_info: '出牌阶段限一次，你可以将两张手牌当【万箭齐发】使用；当其他角色打出【闪】响应此【万箭齐发】时，你摸一张牌（每回合你以此法至多获得三张牌）。你的【万箭齐发】造成伤害后，可以弃置受伤角色的一张牌（每回合限3次）。',
                             hpp_sbxueyi: '血裔',

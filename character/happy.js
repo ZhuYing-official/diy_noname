@@ -445,9 +445,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 						else if (att > 0) {
 							if (target.hasSkill('remingjian') || target.hasSkill('xinfu_falu')) {
-								return att / 2;
+								return att;
 							}
-							return att / (1 + target.countCards('h'));
+							return att / target.countCards('h');
 						}
 						else {
 							return att / 100;
@@ -834,11 +834,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 0'
 					event.num = trigger.num;
 					'step 1'
-					player.removeMark('hok_temp_hp', 'trigger.num');
+					player.removeMark('hok_temp_hp', trigger.num);
 					'step 2'
-					player.loseMaxHp('trigger.num');
+					player.loseMaxHp(trigger.num);
 					event.num--;
-					if (event.num = 0 || !player.hasMark('hok_temp_hp')) {
+					if (event.num == 0 || !player.hasMark('hok_temp_hp')) {
 						event.finish();
 					}
 					'step 3'
@@ -2801,7 +2801,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								return current.hasSkill('hok_bailu_effect');
 							})[0];
 							hok_luling.removeSkill('hok_bailu_effect');
-							hok_luling.addTempSkill('hok_bailu_round', 'roundStart');
+							hok_luling.addTempSkill('hok_bailu_round', {hok_luling:'phaseEnd'});
 							'step 2'
 							player.removeSkill('hok_bailu_2');
 						}
@@ -6811,7 +6811,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_shangui: '山鬼',
 			hok_shangui_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记并弃置1张手牌。',
 			hok_bailu: '白鹿',
-			hok_bailu_info: '1.每轮限一次，出牌阶段，若没有角色拥有“白鹿”标记，你可以选择一名其他角色获得“白鹿”标记（获得“白鹿”标记的角色体力上限临时+2并临时回复2点体力，直到该角色累计受到2点伤害，该角色失去此标记，你本轮不可使用此技能）；若有角色拥有“白鹿”标记，你可以摸一张牌令该角色失去“白鹿”标记。2.若有角色拥有“白鹿”标记，你不能成为除【桃】以外牌的目标，你不能使用杀和锦囊牌。',
+			hok_bailu_info: '1.每轮限一次，出牌阶段，若没有角色拥有“白鹿”标记，你可以选择一名其他角色获得“白鹿”标记（获得“白鹿”标记的角色体力上限临时+2并临时回复2点体力，直到该角色累计受到2点伤害，该角色失去此标记，你不可使用此技能直到你的下个回合结束）；若有角色拥有“白鹿”标记，你可以摸一张牌令该角色失去“白鹿”标记。2.若有角色拥有“白鹿”标记，你不能成为除【桃】以外牌的目标，你不能使用杀和锦囊牌。',
 
 			// SP李信
 			hok_sp_lixin: '王者SP李信',
