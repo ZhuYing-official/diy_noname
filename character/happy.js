@@ -869,7 +869,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				derivation: 'hok_yueguishengfang',
 				usable: 1,
 				enable: 'phaseUse',
-				filterTarget: lib.filter.notMe,
+				filterTarget: function (card, player, target) {
+					return player != target && target.getCards('h').length != 0;
+				},
 				content: function () {
 					if (player.countMark('hok_yueguishengfang') < 18) {
 						player.addMark('hok_yueguishengfang', 2);
@@ -904,9 +906,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					return event.card && event.card.name == 'sha';
 				},
 				content: function () {
-					player.draw();
 					if (player.countMark('hok_yueguishengfang') < 18) {
 						player.addMark('hok_yueguishengfang', 1);
+					}
+					if(player.getHistory('gain',function(evt){
+						return evt.getParent(2).name=='hok_xuanwu';
+					}).length<3){
+						player.draw();
 					}
 				},
 				subSkill: {
@@ -2801,7 +2807,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								return current.hasSkill('hok_bailu_effect');
 							})[0];
 							hok_luling.removeSkill('hok_bailu_effect');
-							hok_luling.addTempSkill('hok_bailu_round', {hok_luling:'phaseEnd'});
+							hok_luling.addTempSkill('hok_bailu_round', { hok_luling: 'phaseEnd' });
 							'step 2'
 							player.removeSkill('hok_bailu_2');
 						}
@@ -3042,7 +3048,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			// SP明世隐
 			hok_sptaigua: {
-				audio: 2,
 				enable: 'phaseUse',
 				usable: 2,
 				filterTarget: function (card, player, target) {
@@ -3086,19 +3091,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					var cards = tar.getCards('hej');
 
 					var str = '';
-					if (r < 0.02) {
+					if (r < 0.05) {
 						// 1
 						str += '大凶';
-					} else if (r < 0.18) {
+					} else if (r < 0.2) {
 						// 2
 						str += '中凶';
 					} else if (r < 0.5) {
 						// 3
 						str += '小凶';
-					} else if (r < 0.82) {
+					} else if (r < 0.8) {
 						// 4
 						str += '小吉';
-					} else if (r < 0.98) {
+					} else if (r < 0.95) {
 						// 5
 						str += '中吉';
 					} else {
@@ -3108,13 +3113,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.popup(str);
 					game.log(str);
 
-					if (r < 0.02) {
+					if (r < 0.05) {
 						// 1
 						if (!gua6) {
 							tar.die();
 							trigger.cancel();
 						}
-					} else if (r < 0.18) {
+					} else if (r < 0.2) {
 						// 2
 						if (!gua5) {
 							trigger.num++;
@@ -3129,12 +3134,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								tar.discard(cards.randomGet());
 							}
 						}
-					} else if (r < 0.82) {
+					} else if (r < 0.8) {
 						// 4
 						if (!gua3) {
 							tar.draw();
 						}
-					} else if (r < 0.98) {
+					} else if (r < 0.95) {
 						// 5
 						if (!gua2) {
 							trigger.cancel();
@@ -3199,19 +3204,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 					// var str=get.translation(player)+'占卜结果为：';
 					var str = '';
-					if (r < 0.02) {
+					if (r < 0.05) {
 						// 1
 						str += '大吉';
-					} else if (r < 0.18) {
+					} else if (r < 0.2) {
 						// 2
 						str += '中吉';
 					} else if (r < 0.5) {
 						// 3
 						str += '小吉';
-					} else if (r < 0.82) {
+					} else if (r < 0.8) {
 						// 4
 						str += '小凶';
-					} else if (r < 0.98) {
+					} else if (r < 0.95) {
 						// 5
 						str += '中凶';
 					} else {
@@ -3222,13 +3227,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					game.delay(0.5);
 					game.log(str);
 
-					if (r < 0.02) {
+					if (r < 0.05) {
 						// 1
 						if (!gua1) {
 							tar.die();
 							trigger.cancel();
 						}
-					} else if (r < 0.18) {
+					} else if (r < 0.2) {
 						// 2
 						if (!gua2) {
 							trigger.num++;
@@ -3243,12 +3248,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								tar.discard(cards.randomGet());
 							}
 						}
-					} else if (r < 0.82) {
+					} else if (r < 0.8) {
 						// 4
 						if (!gua4) {
 							tar.draw();
 						}
-					} else if (r < 0.98) {
+					} else if (r < 0.95) {
 						// 5
 						if (!gua5) {
 							trigger.cancel();
@@ -6703,8 +6708,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 王者公共技
 			hok_yinshen: '隐身',
 			hok_yinshen_info: '当你拥有此标记时，你不能成为杀和目标数为1的锦囊牌的目标。当你使用或打出杀或锦囊牌时，你失去此标记。',
-			hok_silie:'撕裂',
-			hok_silie_info:'锁定技，当你使用牌时，你弃置一张手牌，否则失去1点体力。',
+			hok_silie: '撕裂',
+			hok_silie_info: '锁定技，当你使用牌时，你弃置一张手牌，否则失去1点体力。',
 			hok_temp_hp: '临时体力',
 			hok_temp_hp_info: '锁定技，当你受到伤害时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
 			// 艾琳
@@ -6712,9 +6717,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_lingwu: '灵舞',
 			hok_lingwu_info: '锁定技。游戏开始时，你获得一个额外的武器栏，你从牌堆中获得一张武器牌装备之。',
 			hok_yewu: '叶舞',
-			hok_yewu_info: '出牌阶段限一次，你选择一名其他角色，随机弃置其一张手牌，你的“月桂”标记小于18时，你获得2枚“月桂”标记。',
+			hok_yewu_info: '出牌阶段限一次，你选择一名有手牌的其他角色，随机弃置其一张手牌，你的“月桂”标记小于18时，你获得2枚“月桂”标记。',
 			hok_xuanwu: '旋舞',
-			hok_xuanwu_info: '当你使用或打出【杀】后，摸一张牌且你的“月桂”标记小于18时，你获得1枚“月桂”标记。',
+			hok_xuanwu_info: '当你使用或打出【杀】后，摸一张牌（每回合限3次）且你的“月桂”标记小于18时，你获得1枚“月桂”标记。',
 			hok_yueguishengfang: '月桂盛放',
 			hok_yueguishengfang_info: '出牌阶段限一次，当你的“月桂”标记大于等于6时，你可以使用X张不计入次数的雷【杀】（X为“月桂”数/3向下取整，每使用一次失去3枚“月桂”）。',
 			// 百里玄策

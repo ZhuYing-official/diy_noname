@@ -88,6 +88,9 @@ window.noname_character_rank = {
 		'jsrg_pangtong',
 		'star_caoren',
 		'clan_xunyou',
+		'caoxian',
+		'sb_guanyu',
+		'mb_chengui',
 	],
 	a: [
 		'diy_zaozhirenjun',
@@ -248,6 +251,9 @@ window.noname_character_rank = {
 		'caoyi',
 		'sb_sp_zhugeliang',
 		'sb_zhugeliang',
+		'ol_jianyong',
+		'ol_sb_jiangwei',
+		'dc_sb_zhouyu',
 	],
 	am: [
 		'diy_caiwenji',
@@ -466,6 +472,8 @@ window.noname_character_rank = {
 		'dc_guansuo',
 		'dc_dongzhao',
 		'zhugeruoxue',
+		'dc_sb_lusu',
+		'mb_huban',
 	],
 	bp: [
 		'chess_diaochan',
@@ -1063,6 +1071,8 @@ window.noname_character_rank = {
 		'baoxin',
 		'mb_xianglang',
 		'lvboshe',
+		'ol_caozhang',
+		'ol_lingtong',
 	],
 	bm: [
 		'diy_xizhenxihong',
@@ -1481,6 +1491,7 @@ window.noname_character_rank = {
 			'shichangshi',
 			'dc_guansuo',
 			'dc_xujing',
+			'caoxian',
 
 			//捞德一
 			'lao_tuanxini',
@@ -1793,6 +1804,7 @@ window.noname_character_rank = {
 			'hpp_sunwukong',
 		],
 		epic: [
+			'mb_chengui',
 			'ol_pengyang',
 			'ol_luyusheng',
 			'clan_xunchen',
@@ -1988,6 +2000,9 @@ window.noname_character_rank = {
 			'clan_xunyou',
 			'lvboshe',
 			'yj_zhoubuyi',
+			'ol_jianyong',
+			'ol_sb_jiangwei',
+			'dc_sb_zhouyu',
 
 			//捞德一
 			'lao_caofang',
@@ -2008,6 +2023,10 @@ window.noname_character_rank = {
 			// 欢乐三国杀
 		],
 		rare: [
+			'mb_huban',
+			'sp_jianggan',
+			'ol_caozhang',
+			'ol_lingtong',
 			'luoxian',
 			'ol_mengda',
 			'tw_menghuo',
@@ -2426,6 +2445,7 @@ window.noname_character_rank = {
 			'yue_zhoufei',
 			'ol_dingshangwan',
 			'ol_liwan',
+			'dc_sb_lusu',
 
 			// 捞德一
 			'lao_caohuan',

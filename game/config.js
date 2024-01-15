@@ -7,7 +7,7 @@ window.config = {
 	forbidai_user: [],
 	forbidall: [],
 	forbidstone: ['zhugedan', 'hs_malfurion', 'lusu', 'chenlin', 'hs_siwangzhiyi',
-		'yuanshao', 're_daqiao', 'hs_xuanzhuanjijia',
+		'yuanshao', 'daqiao', 're_daqiao', 'hs_xuanzhuanjijia',
 		'zhuran', 'huatuo', 'hs_guldan', 'wangyi', 'caoang',
 		'guojia', 're_guojia', 'shen_caocao', 'caopi', 'hs_yngvar', 'guansuo',
 		'hs_anduin', 'hs_antonidas', 'xushi', 'hs_lreno'
@@ -19,7 +19,7 @@ window.config = {
 	zhinang_tricks: ['guohe', 'wuxie', 'wuzhong', 'dongzhuxianji'],
 	connect_zhinang_tricks: ['guohe', 'wuxie', 'wuzhong', 'dongzhuxianji'],
 	all: {
-		sgscharacters: ['standard', 'shenhua', 'xinghuoliaoyuan', 'refresh', 'yijiang', 'sp', 'sp2', 'xianding', 'huicui', 'extra', 'old', 'mobile', 'shiji', 'tw', 'yingbian', 'offline', 'jsrg', 'sb', 'clan', 'collab'],
+		sgscharacters: ['standard', 'shenhua', 'xinghuoliaoyuan', 'refresh', 'yijiang', 'sp', 'sp2', 'xianding', 'huicui', 'extra', 'old', 'mobile', 'shiji', 'tw', 'yingbian', 'offline', 'jsrg', 'sb', 'clan', 'collab', 'onlyOL'],
 		sgscards: ['standard', 'extra', 'sp', 'guozhan', 'zhulu', 'yingbian', 'yongjian'],
 		sgsmodes: ['identity', 'guozhan', 'versus', 'doudizhu', 'single', 'brawl', 'connect'],
 		stockmode: ['identity', 'guozhan', 'versus', 'boss', 'doudizhu', 'single', 'chess', 'stone', 'connect', 'brawl', 'tafang'],

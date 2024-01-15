@@ -16375,7 +16375,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                                 ai: {
                                     maixie_defend: true,
                                     threaten: 0.7,
-                                    expose: 0.25,
+                                    expose: 0.2,
                                 }
                             },
 
@@ -29137,7 +29137,7 @@ game.import("extension", function (lib, game, ui, get, ai, _status) {
                             hpp_wuxian: '#b捞德一评级:3.0',
                             hpp_wuyi: '#b捞德一评级:3.8',
                             // X
-                            hpp_xiahouba: '#b捞德一评级:3.3',
+                            hpp_xiahouba: '#b捞德一评级:3.5',
                             hpp_xiahoudun: '#g捞德一评级:2.4',
                             hpp_xiahoujie: '#b捞德一评级:3.7',
                             hpp_xiahoulingnv: '#b捞德一评级:3.7',
