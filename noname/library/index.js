@@ -1691,7 +1691,7 @@ export class Library extends Uninstantable {
 				},
 				image_background: {
 					name: '游戏背景',
-					init: 'default',
+					init: 'ol_bg',
 					item: {},
 					visualBar: function (node, item, create) {
 						if (node.created) {

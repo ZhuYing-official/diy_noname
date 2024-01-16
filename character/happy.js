@@ -6917,6 +6917,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			if (happy.translate[i].indexOf('神') == 0) happy.translate[i + '_prefix'] = '神';
 			else if (happy.translate[i].indexOf('王者SP') == 0) happy.translate[i + '_prefix'] = '王者SP';
 			else if (happy.translate[i].indexOf('王者') == 0) happy.translate[i + '_prefix'] = '王者';
+			else if (happy.translate[i].indexOf('欢杀界') == 0) happy.translate[i + '_prefix'] = '欢杀界';
 			else if (happy.translate[i].indexOf('欢杀') == 0) happy.translate[i + '_prefix'] = '欢杀';
 		}
 	}
@@ -6929,6 +6930,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		color: '#fdd559',
 		nature: 'soilmm',
 		getSpan: (prefix, name) => `${get.prefixSpan('王者')}${get.prefixSpan('SP')}`,
+	});
+	lib.namePrefix.set('欢杀界', {
+		getSpan: (prefix, name) => `${get.prefixSpan('欢杀')}${get.prefixSpan('界')}`,
 	});
 	return happy;
 });
