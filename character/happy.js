@@ -61,7 +61,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		connect: true,
 		characterSort: {
 			happy: {
-				correction_history: ['lao_caofang', 'lao_caohuan', 'lao_caoyu', 'lao_cuishi', 'lao_liucong', 'lao_tuanxini', 'lao_tuan', 'lao_xini'],
+				correction_history: ['lao_caofang', 'lao_caohuan', 'lao_caoyu', 'lao_cuishi', 'lao_liucong', 'lao_tuanxini', 'lao_tuan', 'lao_xini', 'lao_sp_wanglang'],
 				honor_of_kings_clashlane: ['hok_lixin', 'hok_miyue', 'hok_sp_lixin'],
 				honor_of_kings_jungling: ['hok_bailixuance', 'hok_sunwukong'],
 				honor_of_kings_midlane: ['hok_daji', 'hok_wuzetian'],
@@ -83,11 +83,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 刘琮
 			lao_liucong: ['male', 'qun', 3, ['decadezongshi', 'lao_tunquan', 'rexianzhou', 'lao_quxiang']],
 			// 土安奚泥
-			lao_tuanxini: ['male', 'qun', '8/15', ['lao_tengbing', 'lao_ranwang', 'lao_ranyong']],
+			// lao_tuanxini: ['male', 'qun', '8/15', ['lao_tengbing', 'lao_ranwang', 'lao_ranyong']],
+			lao_tuanxini: ['male', 'qun', 8, ['lao_tengbing', 'lao_ranwang', 'lao_ranyong']],
 			// 土安
-			lao_tuan: ['male', 'qun', '4/8', ['lao_tengbing', 'lao_ranwang']],
+			// lao_tuan: ['male', 'qun', '4/8', ['lao_tengbing', 'lao_ranwang']],
 			// 奚泥
-			lao_xini: ['male', 'qun', '4/7', ['lao_tengbing', 'lao_ranyong']],
+			// lao_xini: ['male', 'qun', '4/7', ['lao_tengbing', 'lao_ranyong']],
+			// SP王朗
+			lao_sp_wanglang: ['male', 'qun', 3, ['lao_yayu', 'lao_shanshi']],
 
 			// 艾琳
 			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
@@ -135,6 +138,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_tuanxini: '带来洞主曰：“此去东南七百里，有一国，名乌戈国。国主兀突骨，身长丈二，不食五谷，以生蛇恶兽为饭；身有鳞甲，刀箭不能侵。其手下军士，俱穿藤甲；其藤生于山涧之中，盘于石壁之上；国人采取，浸于油中，半年方取出晒之；晒干复浸，凡十余遍，却才造成铠甲；穿在身上，渡江不沉，经水不湿，刀箭皆不能入：因此号为‘藤甲军’。今大王可往求之。若得彼相助，擒诸葛亮如利刀破竹也。”孟获大喜，遂投乌戈国，来见兀突骨。其洞无宇舍，皆居土穴之内。孟获入洞，再拜哀告前事。兀突骨曰：“吾起本洞之兵，与汝报仇。”获欣然拜谢。于是兀突骨唤两个领兵俘长：一名土安，一名奚泥，起三万兵，皆穿藤甲，离乌戈国望东北而来。曾经大败蜀军，后被诸葛施计引入盘蛇谷中，尽烧其众，无所生还。',
 			lao_tuan: '土安，《三国演义》里的人物，长乌戈国主兀突骨手下的一个藤甲领兵长，身穿藤甲，后被诸葛施计引入盘蛇谷中阵亡。',
 			lao_xini: '小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
+			lao_sp_wanglang: '王朗（？－228年），本名王严，字景兴。东海郡郯县（今山东省临沂市郯城县）人。汉末至三国曹魏时期重臣、经学家。王朗早年师从太尉杨赐，因通晓经籍而被拜为郎中。后因杨赐去世而弃官服丧，不应孝廉之命。徐州刺史陶谦举其为茂才，拜徐州治中从事。后升任会稽太守，任内获百姓爱戴。建安元年（196年），孙策南攻会稽，王朗率军抵御，终为其所败，并在逃亡途中被孙策擒获，受到礼遇。之后应丞相曹操辟命，被拜为谏议大夫、参司空军事。魏王国建立后，王朗以军祭酒兼领魏郡太守，又任少府、奉常、大理等职。曹丕继王位时，迁御史大夫，封安陵亭侯。曹魏建立后，王朗改任司空，进封乐平乡侯。曹叡继位后，进封王朗为兰陵侯。太和二年（228年），王朗去世。其子王肃袭爵兰陵侯。王朗博学多闻，校注儒家经典，很有名气。王朗有文集三十卷，著有《周易传》《春秋传》《孝经传》等。在魏国朝廷以其所作的《周易传》作为学习《易》学的人必须考核的内容。后世把王朗注解里的思想称为“王学”。',
 			hok_ailin: '艾琳是黄金森林的在逃精灵公主，日落圣殿的不速之客。公主艾琳天性机灵活泼，对一切未知充满好奇心与探索欲。然而“继承人”的责任始终压在她的肩膀上，她被要求收起不稳重的一面，遵循精灵族舞蹈的优雅与绝对的秩序，做好一个“真正的公主”。成年仪式前夕，艾琳决定打破族群禁令，逃去森林外的“危险古怪的人类世界”开启一场自由的冒险。旅程却并没有想象中那样顺遂，人类对精灵同样存在“不详邪恶”的重重误解。越是未知，越是有趣，越是困难，越有斗志。她以舞蹈为表达自我的“语言”，与红头发的法师小女孩成为密友，给圣殿严肃守序的骑士团带来了诸多意外麻烦，甚至组成了圣殿小分队在西方大陆的各个地方冒险……',
 			hok_bailixuance: '玄策不会忘记那个日子：来历不明的马贼冲破边关的城镇，然而齐心协力的守卫军和民众守住城门。率先进入城镇的马贼走投无路，挟持了无力反抗的老弱们作为逃离的砝码。那时候自己多么害怕啊。可哭喊声刺痛小小男子汉的心灵，他推倒藏身的水缸，冲了出去。之后的记忆已不太清晰……那些不是普通的马贼……他们最后都死于首领之手……哥哥没有赶到，谁也没有赶到。他被首领选中，作为祭品去唤醒某种强大的东西。所有人四散逃窜，在绝望和恐惧中，少年眼睁睁看着无名剑士代替自己卷入邪恶迷雾。直到周围一切归于寂静，圆月安静照耀着亘古不变的戈壁，那个男人带走了他。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
@@ -786,6 +790,165 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							}
 						}
 					}
+				},
+			},
+			// SP王朗
+			lao_yayu: {
+				trigger: { player: 'phaseBegin' },
+				filter(event, player) {
+					return player.countCards('h') > 0;
+				},
+				locked: false,
+				forced: true,
+				content: function* (event, map) {
+					var player = map.player;
+					var result = yield player.chooseTarget(get.prompt('lao_yayu'), '', (card, player, target) => {
+						return player.canCompare(target);
+					}).set('ai', target => {
+						var player = _status.event.player;
+						return -get.attitude(player, target);
+					});
+					if (result.bool) {
+						var target = result.targets[0];
+						player.logSkill('lao_yayu', target);
+						var result2 = yield player.chooseToCompare(target);
+						if (!result2.tie) {
+							var players = [player, target];
+							if (result2.bool) players.reverse();
+							var win_cards = players[1].getCards('hs');
+							if (win_cards != undefined) {
+								players[1].discard(win_cards);
+							}
+
+							players[0].addTempSkill('fengyin', { player: 'phaseEnd' });
+							var lose_num = Math.floor(players[0].countCards('h') / 2);
+							if (lose_num > 0) {
+								players[0].chooseToDiscard(lose_num, 'h', true);
+							}
+						} else {
+							players[0].addTempSkill('fengyin', { player: 'phaseEnd' });
+							var lose_num0 = Math.floor(players[0].countCards('h') / 2);
+							if (lose_num0 > 0) {
+								players[0].chooseToDiscard(lose_num0, 'h', true);
+							}
+							players[1].addTempSkill('fengyin', { player: 'phaseEnd' });
+							var lose_num1 = Math.floor(players[0].countCards('h') / 2);
+							if (lose_num1 > 0) {
+								players[0].chooseToDiscard(lose_num1, 'h', true);
+							}
+						}
+					}
+				},
+			},
+			lao_shanshi: {
+				trigger: { player: 'phaseDrawBegin2' },
+				forced: true,
+				filter: function (event, player) {
+					return !event.numFixed;
+				},
+				check: function (event, player) {
+					return (player.countCards('h') + 2 + event.num) <= 5 || game.hasPlayer(function (target) {
+						return player !== target && !game.hasPlayer(function (current) {
+							return current !== player && current !== target && current.countCards('h') < target.countCards('h');
+						}) && get.attitude(player, target) > 0;
+					});
+				},
+				content: function () {
+					trigger.num += 2;
+					player.addTempSkill('lao_shanshi_give', 'phaseDrawAfter');
+				},
+				subSkill: {
+					give: {
+						trigger: { player: 'phaseDrawEnd' },
+						forced: true,
+						charlotte: true,
+						popup: false,
+						filter: function (event, player) {
+							return player.countCards('h') > 5;
+						},
+						content: function () {
+							'step 0'
+							var targets = game.filterPlayer(function (target) {
+								return target != player && !game.hasPlayer(function (current) {
+									return current != player && current != target && current.countCards('h') < target.countCards('h');
+								});
+							}), num = Math.floor(player.countCards('h') / 2);
+							player.chooseCardTarget({
+								position: 'h',
+								filterCard: true,
+								filterTarget: function (card, player, target) {
+									return _status.event.targets.includes(target);
+								},
+								targets: targets,
+								selectTarget: targets.length == 1 ? -1 : 1,
+								selectCard: num,
+								prompt: '将' + get.cnNumber(num) + '张手牌交给一名手牌数最少的其他角色',
+								forced: true,
+								ai1: function (card) {
+									var goon = false, player = _status.event.player;
+									for (var i of _status.event.targets) {
+										if (get.attitude(i, player) > 0 && get.attitude(player, i) > 0) goon = true; break;
+									}
+									if (goon) {
+										if (!player.hasValueTarget(card) || card.name == 'sha' && player.countCards('h', function (cardx) {
+											return cardx.name == 'sha' && !ui.selected.cards.includes(cardx);
+										}) > player.getCardUsable('sha')) return 2;
+										return Math.max(2, get.value(card) / 4);
+									}
+									return 1 / Math.max(1, get.value(card));
+								},
+								ai2: function (target) {
+									return get.attitude(_status.event.player, target);
+								},
+							});
+							'step 1'
+							if (result.bool) {
+								var target = result.targets[0];
+								player.line(target, 'green');
+								player.give(result.cards, target);
+								player.markAuto('lao_shanshi_help', [target]);
+								player.addTempSkill('lao_shanshi_help', { player: 'phaseBeginStart' });
+							}
+						},
+					},
+					help: {
+						trigger: { target: 'useCardToTargeted' },
+						direct: true,
+						charlotte: true,
+						onremove: true,
+						filter: function (event, player) {
+							if (!player.storage.lao_shanshi_help || !player.storage.lao_shanshi_help.length) return false;
+							if (event.card.name != 'sha' && get.type(event.card) != 'trick') return false;
+							for (var i of player.storage.lao_shanshi_help) {
+								if (i.countCards('h') > 0) return true;
+							}
+							return false;
+						},
+						content: function () {
+							'step 0'
+							if (!event.targets) event.targets = player.storage.lao_shanshi_help.slice(0).sortBySeat();
+							event.target = event.targets.shift();
+							event.target.chooseCard('h', '好施：是否将一张手牌交给' + get.translation(player) + '？').set('ai', function (card) {
+								var player = _status.event.player, target = _status.event.getTrigger().player;
+								if (!_status.event.goon) {
+									if (get.value(card, player) < 0 || get.value(card, target) < 0) return 1;
+									return 0;
+								}
+								var cardx = _status.event.getTrigger().card;
+								if (card.name == 'shan' && get.tag(cardx, 'respondShan') && target.countCards('h', 'shan') < player.countCards('h', 'shan')) return 2;
+								if (card.name == 'sha' && (cardx.name == 'juedou' || get.tag(card, 'respondSha') && (target.countCards('h', 'sha') < player.countCards('h', 'sha')))) return 2;
+								if (get.value(card, target) > get.value(card, player) || target.getUseValue(card) > player.getUseValue(card)) return 1;
+								if (player.hasSkillTag('noh')) return 0.5 / Math.max(1, get.value(card, player));
+								return 0;
+							}).set('goon', get.attitude(event.target, player) > 0);
+							'step 1'
+							if (result.bool) {
+								target.logSkill('lao_shanshi_help', player);
+								target.give(result.cards, player);
+							}
+							if (targets.length) event.goto(0);
+						},
+					},
 				},
 			},
 
@@ -1921,6 +2084,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			hok_shigua: {
 				enable: 'phaseUse',
+				popup: false,
 				content() {
 					player.logSkill('hok_shigua');
 					player.storage.hok_lingua1 = (player.storage.hok_lingua1 == true ? true : false);
@@ -1936,6 +2100,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						forced: true,
 						locked: false,
+						popup: false,
 						content() {
 							'step 0'
 							player.storage.hok_lingua1 = true;
@@ -1974,6 +2139,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						forced: true,
 						locked: false,
+						popup: false,
 						content() {
 							'step 0'
 							player.storage.hok_lingua1 = false;
@@ -2767,10 +2933,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				subSkill: {
 					round: { charlotte: true },
 					round2: {
-						group:'hok_bailu_round',
-						trigger:{player:'phaseEnd'},
-						forced:true,
-						content(){
+						group: 'hok_bailu_round',
+						trigger: { player: 'phaseEnd' },
+						forced: true,
+						content() {
 							player.removeSkill('hok_bailu_round2')
 						}
 					},
@@ -3317,13 +3483,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return;
 					}
 					'step 1'
-					event.guaTarget = game.filterPlayer(function (target) {
-						return target.hasSkill('hok_biangua');
-					})[0];
 					player.chooseControl(guaList, 'cancel2').set('ai', function (event, player) {
 						var goodGua = !gua1 + !gua2 + !gua3;
 						var badGua = !gua4 + !gua5 + !gua6;
-						if (get.attitude(_status.event.player, event.guaTarget) <= 0) {
+						if (goodGua <= badGua) {
 							if (goodGua == 0) {
 								return '取消';
 							}
@@ -6051,12 +6214,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					buff:{
 					charlotte:true,
 					trigger:{global:'useCardToTargeted'},
-					filter:function(event,player){
+					filter(event,player){
 					return event.parent.reuse_buff==player&&event.targets.length==event.parent.triggeredTargets4.length;
 					},
 					direct:true,
 					lastDo:true,
-					content:function(){
+					content(){
 					trigger.getParent().targets=trigger.getParent().targets.concat(trigger.targets);
 					trigger.getParent().triggeredTargets4=trigger.getParent().triggeredTargets4.concat(trigger.targets);
 					},
@@ -6643,9 +6806,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// lao_caoyu: '#b捞德一评级:3.5',
 			lao_cuishi: '#b捞德一评级:3.3',
 			lao_liucong: '#g捞德一评级:2.1',
-			lao_tuanxini: '#rUNICRON评级:4.0',
-			lao_tuan: '#b捞德一评级:3.5',
-			lao_xini: '#b捞德一评级:3.0',
+			lao_tuanxini: '#bUNICRON评级:3.5',
+			// lao_tuan: '#b捞德一评级:3.5',
+			// lao_xini: '#b捞德一评级:3.0',
+			lao_sp_wanglang: '#b捞德一评级:3.7',
 			hok_ailin: '#b捞德一评级:3.6',
 			hok_bailixuance: '#b捞德一评级:3.9',
 			hok_daji: '#b捞德一评级:3.7',
@@ -6710,6 +6874,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_xini: '奚泥',
 			lao_ranyong: '燃勇',
 			lao_ranyong_info: '锁定技，当你受到火焰伤害时全场体力值最多的角色（优先自己）分摊1点火焰伤害（至少受到1点）。',
+			// SP王朗
+			lao_sp_wanglang: 'SP王朗',
+			lao_yayu: '雅御',
+			lao_yayu_info: '回合开始时，你可以和一名其他角色拼点。赢的角色弃置所有手牌，没赢的角色非锁定技失效直到其回合结束并弃置手牌数的一半（向下取整）。',
+			lao_shanshi: '善施',
+			lao_shanshi_info: '锁定技。摸牌阶段开始时，你可以多摸两张牌。然后摸牌阶段结束时，若你的手牌数大于5，则你将手牌数的一半（向下取整）交给一名手牌最少其他角色并获得如下效果直到你下回合开始：当你成为【杀】或普通锦囊牌的目标后，其可以交给你一张手牌。',
 
 			// 王者公共技
 			hok_yinshen: '隐身',
@@ -6915,6 +7085,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 	for (var i in happy.character) {
 		if (happy.translate[i]) {
 			if (happy.translate[i].indexOf('神') == 0) happy.translate[i + '_prefix'] = '神';
+			else if (happy.translate[i].indexOf('SP') == 0) happy.translate[i + '_prefix'] = 'SP';
 			else if (happy.translate[i].indexOf('王者SP') == 0) happy.translate[i + '_prefix'] = '王者SP';
 			else if (happy.translate[i].indexOf('王者') == 0) happy.translate[i + '_prefix'] = '王者';
 			else if (happy.translate[i].indexOf('欢杀界') == 0) happy.translate[i + '_prefix'] = '欢杀界';

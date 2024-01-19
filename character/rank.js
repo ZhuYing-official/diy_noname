@@ -1494,7 +1494,6 @@ window.noname_character_rank = {
 			'caoxian',
 
 			//捞德一
-			'lao_tuanxini',
 			'hok_sp_lixin',
 			'hok_sp_mingshiyin',
 			'hok_sunwukong',
@@ -2008,6 +2007,7 @@ window.noname_character_rank = {
 			'lao_caofang',
 			'lao_caoyu',
 			'lao_cuishi',
+			'lao_tuanxini',
 			'lao_tuan',
 			'lao_xini',
 

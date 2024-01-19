@@ -311,7 +311,8 @@
 .skill-dialog.compare>.content>.player-card,
 .skill-dialog.compare>.content>.target-card {
 	width: 108px;
-	height: 150px;
+	/* height: 150px; */
+	height: 136px;
 	background: rgb(141, 125, 103);
 	box-shadow: 1px 1px 4px rgb(66, 66, 66) inset
 }
@@ -477,7 +478,8 @@
 	left: 0;
 	margin: 0;
 	width: 30px;
-	height: 150px;
+	/* height: 150px; */
+	height: 136px;
 	color: rgb(50, 25, 0);
 	font-size: 22px;
 	font-weight: bold;
