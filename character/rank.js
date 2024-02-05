@@ -2019,6 +2019,7 @@ window.noname_character_rank = {
 			'lao_yanxing',
 			'lao_sp_wanglang',
 
+			'hok_anqila',
 			'hok_ailin',
 			'hok_bailixuance',
 			'hok_daji',

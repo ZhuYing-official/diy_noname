@@ -94,6 +94,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// SP王朗
 			lao_sp_wanglang: ['male', 'qun', 3, ['lao_yayu', 'lao_shanshi']],
 
+			// 安琪拉
+			hok_anqila: ['female', 'shu', 3, ['hok_huoqiu', 'hok_hunhuo', 'hok_chihui']],
 			// 艾琳
 			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
 			// 百里玄策
@@ -1257,6 +1259,94 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 3'
 					event.goto(1);
 				}
+			},
+			// 安琪拉
+			hok_huoqiu: {
+				usable: 1,
+				enable: 'phaseUse',
+				enable: ['chooseToRespond', 'chooseToUse'],
+				mod: {
+					targetInRange(card, player) {
+						if (card.name == 'sha' && card.hasNature('fire')) return true;
+					},
+				},
+				filterCard(card) {
+					return lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay';
+				},
+				viewAs: { name: 'sha', nature: 'fire' },
+				viewAsFilter(player) {
+					if (!player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' })) {
+						return false;
+					}
+				},
+				position: 'h',
+				prompt: '将一张锦囊当火【杀】使用或打出',
+				group: 'hok_huoqiu_damage',
+				subSkill: {
+					damage: {
+						forced: true,
+						locked: false,
+						trigger: { source: 'damageBegin1' },
+						filter: function (event) {
+							return event.card && event.card.name == 'sha' && event.hasNature('fire');
+						},
+						mod: {
+							aiOrder: function (player, card, num) {
+								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.5;
+							},
+						},
+						content: function () {
+							trigger.num++;
+						},
+					},
+				},
+			},
+			hok_hunhuo: {
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget(card, player, target) {
+					return target != player && target.inRangeOf(player);
+				},
+				async content(event, trigger, player) {
+					let hunhuoNum = 0;
+					const judgeEvent = event.target.judge(card => {
+						hunhuoNum = Math.floor(get.number(card) / 4);
+						if (hunhuoNum >= 1) {
+							return 2;
+						} else {
+							return -2;
+						}
+					});
+					judgeEvent.judge2 = result => result.bool;
+					const { result: { judge } } = await judgeEvent;
+					if (judge < 2) {
+						return;
+					}
+					player.line(event.target);
+					event.target.chooseToDiscard('h', hunhuoNum, true);
+				},
+			},
+			hok_chihui: {
+				usable: 1,
+				enable: 'phaseUse',
+				filter(event, player) {
+					return game.hasPlayer(function (player) {
+						return player.countCards('h') == 0;
+					});
+				},
+				async content(event, trigger, player) {
+					const { result: { bool, targets } } = await player.chooseTarget(get.prompt('hok_chihui'), '对一名没有手牌的其他角色造成2点伤害', function (card, player, target) {
+						return target.countCards('h') == 0 && player != target;
+					}).set('ai', function (target) {
+						var player = _status.event.player;
+						return get.damageEffect(target, player, player);
+					});
+					if (bool == false) {
+						return;
+					}
+					player.logSkill('hok_chihui', targets);
+					targets[0].damage(2);
+				},
 			},
 			// 艾琳
 			hok_lingwu: {
@@ -5058,7 +5148,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					});
 					_status.happyList = list;
 				},
-				audio: 'pingjian',
+				audio: 'hppxinsheng',
 				trigger: { player: ['damageEnd', 'phaseJieshuBegin', 'phaseBegin'] },
 				frequent: true,
 				content() {
@@ -5117,7 +5207,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 			},
 			hpp_re_xinsheng_use: {
-				audio: 'pingjian',
+				audio: 'hppxinsheng',
 				enable: 'phaseUse',
 				usable: 1,
 				content() {
@@ -5496,6 +5586,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// lao_xini: '#b捞德一评级:3.0',
 			lao_yanxing: '#b捞德一评级:3.7',
 			lao_sp_wanglang: '#b捞德一评级:3.7',
+			hok_anqila: '#b捞德一评级:3.9',
 			hok_ailin: '#b捞德一评级:3.6',
 			hok_bailixuance: '#b捞德一评级:3.9',
 			hok_daji: '#b捞德一评级:3.6',
@@ -5584,6 +5675,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_silie_info: '锁定技，当你使用牌时，你弃置一张手牌，否则失去1点体力。',
 			hok_temp_hp: '临时体力',
 			hok_temp_hp_info: '锁定技，当你受到伤害时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
+			// 安琪拉
+			hok_anqila: '王者安琪拉',
+			hok_huoqiu: '火球',
+			hok_huoqiu_info: '出牌阶段限一次，你可以将1张锦囊牌视为火【杀】使用或打出。你的火【杀】无距离限制且伤害+1。',
+			hok_hunhuo: '混火',
+			hok_hunhuo_info: '出牌阶段限一次，你选择攻击范围内的一名其他角色进行判定，其弃置X张手牌（X为判定牌点数/4，向下取整）。',
+			hok_chihui: '炽辉',
+			hok_chihui_info: '出牌阶段限一次，你可以选择一名没有手牌的其他角色，对其造成2点伤害。',
 			// 艾琳
 			hok_ailin: '王者艾琳',
 			hok_lingwu: '灵舞',
