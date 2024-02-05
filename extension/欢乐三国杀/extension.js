@@ -9417,6 +9417,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     }
                                     if (bool && player.countCards('he')) player.chooseToDiscard(true, 'he');
                                 },
+                                ai: {
+                                    expose: 0.2,
+                                }
                             },
                             hpp_zhiji: {
                                 derivation: 'hpp_guanxing',
@@ -16613,6 +16616,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                         intro: { content: '本回合不能弃置$花色的手牌' },
                                     },
                                 },
+                                ai: {
+                                    expose: 0.2,
+                                },
                             },
                             old_hpp_huguan: {
                                 audio: 'huguan',
@@ -21386,7 +21392,10 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     'step 4'
                                     game.delay();
                                 },
-                                ai: { threaten: 3 },
+                                ai: {
+                                    expose: 0.2,
+                                    threaten: 3,
+                                },
                             },
                             old_hpp_qiaobian: {
                                 audio: 'qiaobian',
@@ -24507,7 +24516,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 subSkill: { as: { sub: true } },
                                 ai: {
                                     threaten: 0.6,
-                                    expose: 0.25,
+                                    expose: 0.2,
                                     effect: {
                                         target: function (card, player, target, current) {
                                             if (typeof card != 'object' || target.hasSkill('hpp_danshou_as') || !['basic', 'trick'].contains(get.type(card, 'trick'))) return;

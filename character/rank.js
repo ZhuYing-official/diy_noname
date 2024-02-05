@@ -2022,10 +2022,12 @@ window.noname_character_rank = {
 			'hok_ailin',
 			'hok_bailixuance',
 			'hok_daji',
+			'hok_lanlingwang',
 			'hok_lixin',
 			'hok_makeboluo',
 			'hok_mingshiyin',
 			'hok_miyue',
+			'hok_sikongzhen',
 			'hok_wuzetian',
 			'hok_yao',
 			// 欢乐三国杀
