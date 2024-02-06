@@ -98,10 +98,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_anqila: ['female', 'shu', 3, ['hok_huoqiu', 'hok_hunhuo', 'hok_chihui']],
 			// 艾琳
 			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
+			// 敖隐
+			hok_aoyin: ['male', 'wu', 3, ['hok_zhanghuo', 'hok_siyu', 'hok_jiafeng', 'hok_qiongxuan']],
 			// 百里玄策
 			hok_bailixuance: ['male', 'shu', 4, ['hok_rexue', 'hok_yangou', 'hok_lianshan']],
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
+			// 东皇太一
+			hok_donghuangtaiyi: ['male', 'wei', 5, ['hok_rishi', 'hok_duoqi']],
 			// 兰陵王
 			hok_lanlingwang: ['male', 'jin', 4, ['hok_yinni', 'hok_yingshi', 'hok_anxi']],
 			// 李信
@@ -1281,21 +1285,26 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				position: 'h',
 				prompt: '将一张锦囊当火【杀】使用或打出',
+				check(card) {
+					const val = get.value(card);
+					if (_status.event.name == 'chooseToRespond') return 1 / Math.max(0.1, val);
+					return 6 - val;
+				},
 				group: 'hok_huoqiu_damage',
 				subSkill: {
 					damage: {
 						forced: true,
 						locked: false,
 						trigger: { source: 'damageBegin1' },
-						filter: function (event) {
+						filter(event) {
 							return event.card && event.card.name == 'sha' && event.hasNature('fire');
 						},
 						mod: {
-							aiOrder: function (player, card, num) {
+							aiOrder(player, card, num) {
 								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.5;
 							},
 						},
-						content: function () {
+						content() {
 							trigger.num++;
 						},
 					},
@@ -1325,6 +1334,17 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.line(event.target);
 					event.target.chooseToDiscard('h', hunhuoNum, true);
 				},
+				ai: {
+					order: 9.1,
+					result: {
+						target: function (player, target) {
+							if (target.countCards('h') == 0) {
+								return 0;
+							}
+							return -1;
+						},
+					}
+				}
 			},
 			hok_chihui: {
 				usable: 1,
@@ -1347,6 +1367,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.logSkill('hok_chihui', targets);
 					targets[0].damage(2);
 				},
+				ai: {
+					order: 5.5,
+					result: {
+						player: 1,
+					}
+				}
 			},
 			// 艾琳
 			hok_lingwu: {
@@ -1472,6 +1498,151 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 								isCard: true,
 							})) return 1;
 							return 0;
+						},
+					},
+				},
+			},
+			// 敖隐
+			hok_zhanghuo: {
+				trigger: { player: 'useCardToPlayered' },
+				forced: true,
+				locked: false,
+				usable: 1,
+				check(event, player) {
+					return get.attitude(player, event.target) <= 0;
+				},
+				filter(event, player) {
+					return event.card.name == 'sha' && event.card.nature == null;
+				},
+				content() {
+					game.setNature(trigger.card, 'fire');
+				},
+				group: 'hok_zhanghuo_effect',
+				subSkill: {
+					effect: {
+						forced: true,
+						locked: false,
+						trigger: { source: 'damageBegin1' },
+						filter(event) {
+							return event.card && event.card.name == 'sha' && event.hasNature('fire');
+						},
+						mod: {
+							aiOrder(player, card, num) {
+								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.5;
+							},
+						},
+						content() {
+							trigger.num++;
+						},
+					},
+				},
+			},
+			hok_siyu: {
+				trigger: { player: 'useCardToPlayered' },
+				forced: true,
+				locked: false,
+				usable: 1,
+				check(event, player) {
+					return get.attitude(player, event.target) <= 0;
+				},
+				filter(event, player) {
+					return event.card.name == 'sha' && event.card.nature == null;
+				},
+				content() {
+					game.setNature(trigger.card, 'thunder');
+				},
+				group: 'hok_siyu_effect',
+				subSkill: {
+					effect: {
+						forced: true,
+						locked: false,
+						trigger: { source: 'damageBegin1' },
+						filter(event) {
+							return event.card && event.card.name == 'sha' && event.hasNature('thunder');
+						},
+						mod: {
+							aiOrder(player, card, num) {
+								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.5;
+							},
+						},
+						content() {
+							if (trigger.num > 0) {
+								player.recover();
+							}
+						},
+					},
+				},
+			},
+			hok_jiafeng: {
+				trigger: { player: 'useCardToPlayered' },
+				forced: true,
+				locked: false,
+				usable: 1,
+				check(event, player) {
+					return get.attitude(player, event.target) <= 0;
+				},
+				filter(event, player) {
+					return event.card.name == 'sha' && event.card.nature == null;
+				},
+				content() {
+					game.setNature(trigger.card, 'ice');
+					trigger.getParent().directHit.add(trigger.target);
+				},
+				ai: {
+					directHit_ai: true,
+				},
+			},
+			hok_qiongxuan: {
+				skillAnimation: true,
+				animationColor: 'wood',
+				unique: true,
+				mark: true,
+				limited: true,
+				trigger: { player: 'damageBegin4' },
+				content() {
+					player.awakenSkill('hok_qiongxuan');
+					player.turnOver();
+					player.addTempSkill('hok_qiongxuan_effect', { player: 'phaseBeginStart' });
+					player.addSkill('hok_qiongxuan_video');
+				},
+				subSkill: {
+					effect: {
+						forced: true,
+						firstDo: true,
+						mark: true,
+						intro: {
+							name: '穷玄',
+							content: '不能成为牌的目标',
+						},
+						mod: {
+							targetEnabled(card, player, target) {
+								return false;
+							}
+						}
+					},
+					video: {
+						trigger: { player: 'phaseBefore' },
+						forced: true,
+						firstDo: true,
+						content() {
+							player.turnOver(false);
+							player.removeSkill('hok_qiongxuan_video');
+							player.addSkill('hok_qiongxuan_wushuang');
+						},
+					},
+					wushuang: {
+						mod: {
+							selectTarget: function (card, player, range) {
+								if (card.name == 'sha' && range[1] != -1) range[1]++;
+							},
+							cardUsable(card, player, num) {
+								if (card.name == 'sha') return num + 1;
+							},
+						},
+						trigger: { player: 'phaseEnd' },
+						forced: true,
+						content() {
+							player.removeSkill('hok_qiongxuan_wushuang');
 						},
 					},
 				},
@@ -1728,6 +1899,120 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					// }
 				},
 			},
+			// 东皇太一
+			hok_rishi: {
+				marktext: '日蚀',
+				intro: {
+					name: '日蚀',
+					content: 'mark',
+				},
+				trigger: { player: 'phaseZhunbeiBegin' },
+				forced: true,
+				locked: false,
+				filter(event, player) {
+					if (player.countMark('hok_rishi') == 0) {
+						return false;
+					}
+					if (player.countMark('hok_rishi') < 3) {
+						return true;
+					}
+					return false;
+				},
+				content() {
+					player.addMark('hok_rishi', 1);
+				},
+				group: 'hok_rishi_biyue',
+				subSkill: {
+					biyue: {
+						trigger: { player: 'phaseJieshuBegin' },
+						frequent: true,
+						preHidden: true,
+						async content(event, trigger, player) {
+							if (player.countMark('hok_rishi') < 3) {
+								player.draw();
+							} else {
+								player.draw(2);
+							}
+						},
+					},
+				},
+			},
+			hok_duoqi: {
+				enable: 'phaseUse',
+				usable: 1,
+				filter(event, player) {
+					if (player.countMark('hok_rishi') == 3) {
+						return true;
+					}
+					return false;
+				},
+				filterTarget(card, player, target) {
+					return target != player;
+				},
+				content() {
+					player.addSkill('hok_duoqi_effect');
+					player.addSkill('fengyin');
+					player.addMark('hok_duoqi_effect');
+
+					target.addSkill('hok_duoqi_effect');
+					target.addSkill('fengyin');
+					target.addMark('hok_duoqi_effect');
+
+					player.removeMark('hok_rishi', 3);
+					target.damage();
+				},
+				subSkill: {
+					effect: {
+						marktext: '堕契',
+						intro: {
+							name: '堕契',
+							content: '锁定技。你的回合开始时你跳过本回合。你不能使用和打出牌。你非锁定技失效。当另一名“堕契”角色受到伤害后，你受到等量的伤害。',
+						},
+						forced: true,
+						trigger: { player: 'phaseBegin' },
+						content() {
+							trigger.cancel();
+							player.removeSkill('hok_duoqi_effect');
+							player.removeMark('hok_duoqi_effect');
+							player.removeSkill('fengyin');
+						},
+						group: ['hok_duoqi_xiongluan', 'hok_duoqi_xianfu'],
+					},
+					xiongluan: {
+						mod: {
+							cardEnabled2(card, player) {
+								if (get.position(card) == 'h' || get.position(card) == 'e' || get.position(card) == 's') return false;
+							},
+						},
+						ai: {
+							effect: {
+								target(card, player, target) {
+									if (get.tag(card, 'damage')) return [0, -999999];
+								},
+							},
+						},
+						charlotte: true,
+					},
+					xianfu: {
+						charlotte: true,
+						trigger: { player: 'damageEnd' },
+						forced: true,
+						filter(event, player) {
+							if (event.num <= 0 || event.getParent().name == 'hok_duoqi_xianfu' || event.getParent().name == 'hok_duoqi') return false;
+							if (event.name == 'damage') return true;
+							return player.isDamaged();
+						},
+						content() {
+							let targets = game.filterPlayer(current => {
+								return current != player && current.hasSkill('hok_duoqi_xianfu');
+							});
+							for (var target of targets) {
+								target.damage('nosource');
+							}
+						},
+					},
+				}
+			},
 			// 兰陵王
 			hok_yinni: {
 				derivation: 'hok_yinshen',
@@ -1752,10 +2037,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						trigger: {
 							player: 'useCardToPlayered',
 						},
-						filter: function (event, player) {
+						filter(event, player) {
 							return event.card.name == 'sha' && player.countMark('hok_yinshen');
 						},
-						content: function () {
+						content() {
 							trigger.getParent().directHit.add(trigger.target);
 						},
 					},
@@ -2851,6 +3136,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						firstDo: true,
 						content() {
 							player.turnOver(false);
+							player.removeSkill('hok_anyue_video');
 						}
 					}
 				},
@@ -2903,7 +3189,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_benlei: {
 				forced: true,
 				trigger: { source: 'damageBefore' },
-				content: function () {
+				content() {
 					game.setNature(trigger, 'thunder');
 					// Object.keys(trigger).forEach(function(key) {
 					// 	game.log(key + ": " + trigger[key]);
@@ -2946,7 +3232,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					order: 9,
 					result: {
-						player: function (player) {
+						player(player) {
 							if (player.hp == 1) return 0;
 							var demages = player.getCards('h').filter(item => get.tag(item, 'damage'));
 							if (!demages.length < 2 && player.hp > 1) return 0;
@@ -3589,7 +3875,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						forced: true,
 						trigger: { player: 'damageAfter' },
 						filter(event, player) {
-							return player.countMark('hok_temp_hp') != 0;
+							return player.countMark('hok_temp_hp') == 0;
 						},
 						content() {
 							'step 0'
@@ -3619,7 +3905,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						content() {
 							'step 0'
 							player.addTempSkill('hok_bailu_round', 'roundStart');
-							player.draw();
+							player.draw(2);
 							player.storage.hok_bailu_target = game.filterPlayer(current => {
 								return current.countMark('hok_bailu_2');
 							})[0];
@@ -5588,8 +5874,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_sp_wanglang: '#b捞德一评级:3.7',
 			hok_anqila: '#b捞德一评级:3.9',
 			hok_ailin: '#b捞德一评级:3.6',
+			hok_aoyin: '#r捞德一评级:4.0',
 			hok_bailixuance: '#b捞德一评级:3.9',
 			hok_daji: '#b捞德一评级:3.6',
+			hok_donghuangtaiyi: '#b捞德一评级:3.7',
 			hok_lanlingwang: '#b捞德一评级:3.7',
 			hok_lixin: '#b捞德一评级:3.8',
 			hok_makeboluo: '#b捞德一评级:3.7',
@@ -5693,6 +5981,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_xuanwu_info: '当你使用或打出【杀】后，摸一张牌（每回合限3次）且你的“月桂”标记小于18时，你获得1枚“月桂”标记。',
 			hok_yueguishengfang: '月桂盛放',
 			hok_yueguishengfang_info: '出牌阶段限一次，当你的“月桂”标记大于等于6时，你可以使用X张不计入次数的雷【杀】（X为“月桂”数/3向下取整，每使用一次失去3枚“月桂”）。',
+			// 敖隐
+			hok_aoyin: '王者敖隐',
+			hok_zhanghuo: '掌火',
+			hok_zhanghuo_info: '每回合限一次，当你使用【杀】指定一名角色为目标后，你令此【杀】改为火【杀】。你的火【杀】伤害+1。',
+			hok_siyu: '司雨',
+			hok_siyu_info: '每回合限一次，当你使用【杀】指定一名角色为目标后，你令此【杀】改为雷【杀】。你的雷【杀】造成伤害后回复1点体力。',
+			hok_jiafeng: '驾风',
+			hok_jiafeng_info: '每回合限一次，当你使用【杀】指定一名角色为目标后，你令此【杀】改为冰【杀】。你的冰【杀】不可被响应。',
+			hok_qiongxuan: '穷玄',
+			hok_qiongxuan_info: '限定技，当你受到伤害时，你可以令你不能成为牌的目标直到你的下个回合开始时，然后你的【杀】可以额外指定一个目标且使用【杀】的次数+1直到回合结束时。',
 			// 百里玄策
 			hok_bailixuance: '王者百里玄策',
 			hok_rexue: '热血',
@@ -5709,6 +6007,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记小于4，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
 			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记不小于3时，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害(如果目标大于6改为5点火焰伤害)，你可以减少其中1~3个目标。',
+			// 东皇太一
+			hok_donghuangtaiyi: '王者东皇太一',
+			hok_rishi: '日蚀',
+			hok_rishi_info: '准备阶段开始时，若你的“日蚀”标记小于3，你获得1枚“日蚀”标记。结束阶段，你可以摸1张牌（若你的“日蚀”标记数为3，改为摸2张）。',
+			hok_duoqi: '堕契',
+			hok_duoqi_info: '出牌阶段限一次，若你的“日蚀”标记等于3，你可以选择一名其他角色，对其造成1点伤害，你与其获得“堕契”标记直到你的回合开始前，然后你失去3枚“日蚀”标记。（“堕契”标记：锁定技。你的回合开始时你跳过本回合。你不能使用和打出牌。你非锁定技失效。当另一名“堕契”角色受到伤害后，你受到等量的伤害。）',
 			// 兰陵王
 			hok_lanlingwang: '王者兰陵王',
 			hok_yinni: '隐匿',
@@ -5803,7 +6107,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_shangui: '山鬼',
 			hok_shangui_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记并弃置1张手牌。',
 			hok_bailu: '白鹿',
-			hok_bailu_info: '1.每轮限一次，出牌阶段，若没有角色拥有“白鹿”标记，你可以选择一名其他角色获得“白鹿”标记（获得“白鹿”标记的角色体力上限临时+2并临时回复2点体力，直到该角色累计受到2点伤害，该角色失去此标记，你不可使用此技能直到你的回合结束时）；若有角色拥有“白鹿”标记，你可以摸一张牌令该角色失去“白鹿”标记。2.若有角色拥有“白鹿”标记，你不能成为除【桃】以外牌的目标，你不能使用杀和锦囊牌。',
+			hok_bailu_info: '1.每轮限一次，出牌阶段，若没有角色拥有“白鹿”标记，你可以选择一名其他角色获得“白鹿”标记（获得“白鹿”标记的角色体力上限临时+2并临时回复2点体力，直到该角色累计受到2点伤害，该角色失去此标记，你不可使用此技能直到你的回合结束时）；若有角色拥有“白鹿”标记，你可以摸2张牌令该角色失去“白鹿”标记。2.若有角色拥有“白鹿”标记，你不能成为除【桃】以外牌的目标，你不能使用杀和锦囊牌。',
 
 			// SP李信
 			hok_sp_lixin: '王者SP李信',

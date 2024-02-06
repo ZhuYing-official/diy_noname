@@ -10835,12 +10835,6 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 insert: true,
                                 content: function () {
                                     'step 0'
-                                    // game.broadcastAll(function (player) {
-                                    //     var cardx = ui.create.card();
-                                    //     cardx.classList.add('infohidden');
-                                    //     cardx.classList.add('infoflip');
-                                    //     player.$throw(cardx, 1000, 'nobroadcast');
-                                    // }, player);
                                     player.$throw(1, 1000);
                                     game.log(player, '将一张牌置于了牌堆顶');
                                     game.delayx();

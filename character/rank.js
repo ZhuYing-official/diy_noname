@@ -1496,6 +1496,7 @@ window.noname_character_rank = {
 			//捞德一
 			'hok_sp_lixin',
 			'hok_sp_mingshiyin',
+			'hok_aoyin',
 			'hok_sunwukong',
 			'shen_caozhi',
 			'shen_dongzhuo',
@@ -2023,6 +2024,7 @@ window.noname_character_rank = {
 			'hok_ailin',
 			'hok_bailixuance',
 			'hok_daji',
+			'hok_donghuangtaiyi',
 			'hok_lanlingwang',
 			'hok_lixin',
 			'hok_makeboluo',
