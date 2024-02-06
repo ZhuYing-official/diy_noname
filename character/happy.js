@@ -1517,6 +1517,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				content() {
 					game.setNature(trigger.card, 'fire');
 				},
+				ai: {
+					order: function () {
+						return get.order({ name: 'sha' }) + Math.random() * 0.5;
+					},
+				},
 				group: 'hok_zhanghuo_effect',
 				subSkill: {
 					effect: {
@@ -1528,7 +1533,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						mod: {
 							aiOrder(player, card, num) {
-								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.5;
+								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.1 + Math.random() * 0.4;
 							},
 						},
 						content() {
@@ -1551,6 +1556,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				content() {
 					game.setNature(trigger.card, 'thunder');
 				},
+				ai: {
+					order: function () {
+						return get.order({ name: 'sha' }) + Math.random() * 0.5;
+					},
+				},
 				group: 'hok_siyu_effect',
 				subSkill: {
 					effect: {
@@ -1562,7 +1572,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						mod: {
 							aiOrder(player, card, num) {
-								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.5;
+								if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.1 + Math.random() * 0.4;
 							},
 						},
 						content() {
@@ -1584,12 +1594,20 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				filter(event, player) {
 					return event.card.name == 'sha' && event.card.nature == null;
 				},
+				mod: {
+					aiOrder(player, card, num) {
+						if (get.itemtype(card) == 'card' && card.name == 'sha' && card.nature) return num + 0.1 + Math.random() * 0.4;
+					},
+				},
 				content() {
 					game.setNature(trigger.card, 'ice');
 					trigger.getParent().directHit.add(trigger.target);
 				},
 				ai: {
 					directHit_ai: true,
+					order: function () {
+						return get.order({ name: 'sha' }) + Math.random() * 0.5;
+					},
 				},
 			},
 			hok_qiongxuan: {
@@ -1599,6 +1617,18 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				mark: true,
 				limited: true,
 				trigger: { player: 'damageBegin4' },
+				check: function (event, player) {
+					if (player.hasJudge('lebu')) {
+						return 0;
+					}
+					if (player.hp == 2) {
+						return 1;
+					}
+					if (player.countCards('h', 'sha') == 0) {
+						return 0;
+					}
+					return 1;
+				},
 				content() {
 					player.awakenSkill('hok_qiongxuan');
 					player.turnOver();
@@ -1910,9 +1940,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				forced: true,
 				locked: false,
 				filter(event, player) {
-					if (player.countMark('hok_rishi') == 0) {
-						return false;
-					}
 					if (player.countMark('hok_rishi') < 3) {
 						return true;
 					}
@@ -1927,6 +1954,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						trigger: { player: 'phaseJieshuBegin' },
 						frequent: true,
 						preHidden: true,
+						filter(event, player) {
+							if (player.countMark('hok_rishi') == 0) {
+								return true;
+							}
+							return false;
+						},
 						async content(event, trigger, player) {
 							if (player.countMark('hok_rishi') < 3) {
 								player.draw();
@@ -1960,6 +1993,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 
 					player.removeMark('hok_rishi', 3);
 					target.damage();
+				},
+				ai: {
+					order: 1,
+					result: {
+						target(player, target) {
+							return -1;
+						}
+					}
 				},
 				subSkill: {
 					effect: {
@@ -2060,8 +2101,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				filterTarget(card, player, target) {
 					return player.canUse({ name: 'sha', isCard: true }, target, false, true);
 				},
-				check: (card) => 5 - get.value(card),
-				prompt: '弃置一张手牌，视为对场上的一名角色使用一张无距离限制的【杀】',
+				check: (card) => 5.5 - get.value(card),
+				prompt: '弃置一张【杀】，视为对场上的一名角色使用一张无距离限制的【杀】',
 				content() {
 					'step 0'
 					game.log(target.getCards('h'))
@@ -2083,10 +2124,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				ai: {
 					order() {
-						return get.order({
-							name: 'guohe',
-							isCard: true,
-						}) + 0.1;
+						return 10;
 					},
 					result: {
 						player(player) {
@@ -2137,7 +2175,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				filterTarget(card, player, target) {
 					return player.canUse({ name: 'sha', isCard: true }, target);
 				},
-				check: (card) => 5 - get.value(card),
+				check: (card) => 6 - get.value(card),
 				prompt: '弃置一张【杀】，视为对场上的一名角色使用了一张不计入次数的【杀】，此【杀】造成的伤害+1。',
 				content() {
 					player.awakenSkill('hok_anxi');
@@ -2148,9 +2186,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					order() {
 						return get.order({
-							name: 'sha',
+							name: 'juedou',
 							isCard: true,
-						});
+						}) + 0.1;
 					},
 					result: {
 						player(player) {
@@ -3233,14 +3271,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					order: 9,
 					result: {
 						player(player) {
-							if (player.hp == 1) return 0;
+							if (player.hp == 1) return 1;
 							var demages = player.getCards('h').filter(item => get.tag(item, 'damage'));
-							if (!demages.length < 2 && player.hp > 1) return 0;
+							if (demages.length < 2) return 0;
 							var card = player.getCards('h', 'sha')[0];
 							if (!lib.filter.cardEnabled(card, player)) return 0;
-							if (lib.filter.cardUsable(card, player)) return 0;
-							if (game.hasPlayer(function (current) {
-								return (player.canUse(card, current, false) && get.damageEffect(target, player, player, 'thunder') > 0);
+							if (!lib.filter.cardUsable(card, player)) return 0;
+							if (player.isDamaged() && game.hasPlayer(function (current) {
+								return get.damageEffect(current, player, player, 'thunder') > 0;
 							})) {
 								return 1;
 							}
@@ -6010,7 +6048,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 东皇太一
 			hok_donghuangtaiyi: '王者东皇太一',
 			hok_rishi: '日蚀',
-			hok_rishi_info: '准备阶段开始时，若你的“日蚀”标记小于3，你获得1枚“日蚀”标记。结束阶段，你可以摸1张牌（若你的“日蚀”标记数为3，改为摸2张）。',
+			hok_rishi_info: '准备阶段开始时，若你的“日蚀”标记小于3，你获得1枚“日蚀”标记。结束阶段，若你有“日蚀”标记，你可以摸1张牌（若你的“日蚀”标记数为3，改为摸2张）。',
 			hok_duoqi: '堕契',
 			hok_duoqi_info: '出牌阶段限一次，若你的“日蚀”标记等于3，你可以选择一名其他角色，对其造成1点伤害，你与其获得“堕契”标记直到你的回合开始前，然后你失去3枚“日蚀”标记。（“堕契”标记：锁定技。你的回合开始时你跳过本回合。你不能使用和打出牌。你非锁定技失效。当另一名“堕契”角色受到伤害后，你受到等量的伤害。）',
 			// 兰陵王
