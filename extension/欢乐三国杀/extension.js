@@ -548,6 +548,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_guotupangji: ['male', 'qun', 3, ['hpp_jigong', 'hpp_shifei'], []],
                             // 欢杀郭照
                             hpp_guozhao: ['female', 'wei', 3, ['hpp_pianchong', 'hpp_zunwei'], []],
+                            // 欢杀顾雍
+                            hpp_guyong: ['male', 'wu', 3, ['hpp_shenxing', 'hpp_bingyi'], []],
 
                             // H
                             // 欢杀韩当
@@ -1201,6 +1203,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             guojia: ['hpp_guojia', 're_guojia', 'guojia'],
                             guotufengji: ['hpp_guotupangji', 'guotufengji', 're_guotufengji'],
                             guozhao: ['hpp_guozhao', 'guozhao', 'xin_guozhao'],
+                            guyong: ['hpp_guyong', 'guyong', 're_guyong', 'xin_guyong', 'tw_guyong'],
                             // H
                             handang: ['hpp_handang', 'tw_handang', 'xin_handang', 're_handang', 'handang', 'old_handang'],
                             haozhao: ['hpp_haozhao', 'haozhao'],
@@ -8519,6 +8522,97 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 顾雍
+                            hpp_shenxing: {
+                                audio: 'reshenxing',
+                                enable: 'phaseUse',
+                                // usable: 20,
+                                filter(event, player) {
+                                    return !player.isTempBanned('hpp_shenxing');
+                                },
+                                async content(event, trigger, player) {
+                                    const num = Math.min(2, player.getStat('skill').hpp_shenxing - 1);
+                                    await player.draw();
+                                    if (num) {
+                                        await player.chooseToDiscard('he', num, true);
+                                        if (!player.countDiscardableCards(player, 'he')) {
+                                            // player.tempBanSkill('hpp_shenxing', 'phaseUseAfter', false);
+                                            player.tempBanSkill('hpp_shenxing');
+                                        }
+                                    }
+                                },
+                                ai: {
+                                    order: function (item, player) {
+                                        const num = player.getStat('skill').hpp_shenxing || 0;
+                                        if (!num) return 10;
+                                        if (num == 1) return 1;
+                                        return 0;
+                                    },
+                                    result: { player: 1 },
+                                },
+                            },
+                            hpp_bingyi: {
+                                audio: 'bingyi',
+                                trigger: { player: 'phaseJieshuBegin' },
+                                filter: function (event, player) {
+                                    return player.countCards('h') > 0;
+                                },
+                                filterx: function (player) {
+                                    var cards = player.getCards('h');
+                                    if (cards.length == 1) return true;
+                                    var color = get.color(cards[0], player);
+                                    for (var i = 1; i < cards.length; i++) {
+                                        if (get.color(cards[i], player) != color) return false;
+                                    }
+                                    return true;
+                                },
+                                filtery: function (player) {
+                                    var cards = player.getCards('h');
+                                    if (cards.length == 1) return true;
+                                    var color = get.number(cards[0], player);
+                                    for (var i = 1; i < cards.length; i++) {
+                                        if (get.number(cards[i], player) != color) return false;
+                                    }
+                                    return true;
+                                },
+                                direct: true,
+                                content: function () {
+                                    "step 0"
+                                    if (lib.skill.hpp_bingyi.filtery(player)) event.draw = true;
+                                    if (lib.skill.hpp_bingyi.filterx(player)) {
+                                        player.chooseTarget(get.prompt('xinbingyi'), '展示所有手牌，并选择至多' + get.cnNumber(player.countCards('h')) + '名角色各摸一张牌', [0, player.countCards('h')], function (card, player, target) {
+                                            return true;
+                                        }).set('ai', function (target) {
+                                            return get.attitude(_status.event.player, target);
+                                        });
+                                    }
+                                    else player.chooseBool(get.prompt('bingyi'), '展示所有手牌').ai = function () { return false };
+                                    "step 1"
+                                    if (result.bool) {
+                                        player.logSkill('hpp_bingyi');
+                                        player.showHandcards(get.translation(player) + '发动了【秉壹】');
+                                        event.targets = result.targets;
+                                    }
+                                    else {
+                                        event.finish();
+                                    }
+                                    "step 2"
+                                    if (targets && targets.length) {
+                                        player.line(targets, 'green');
+                                        targets.sortBySeat();
+                                        game.asyncDraw(targets);
+                                    }
+                                    else event.finish();
+                                    if (event.draw) {
+                                        player.draw();
+                                        event.finish();
+                                    }
+                                    "step 3"
+                                    game.delayx();
+                                },
+                            },
+
+                            // H
                             // 韩当
                             hpp_gongji: {
                                 enable: 'phaseUse',
@@ -34690,6 +34784,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_guojia: '#b捞德一评级:3.8',
                             hpp_guotupangji: '#b捞德一评级:3.5',
                             hpp_guozhao: '#b捞德一评级:3.8',
+                            hpp_guyong: '#b捞德一评级:3.7',
                             // H
                             hpp_handang: '#g捞德一评级:2.5',
                             hpp_haozhao: '#g捞德一评级:2.8',
@@ -35295,6 +35390,11 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_zunwei: '尊位',
                             hpp_zunwei_backup: '尊位',
                             hpp_zunwei_info: '出牌阶段限一次，你可以选择一名其他角色，并选择执行以下一项，然后移除该选项：1.将手牌数摸至与该角色相同（最多摸五张）2.随机使用牌堆中的装备牌至与该角色相同，3.将体力值回复至与该角色相同。',
+                            hpp_guyong: '欢杀顾雍',
+                            hpp_shenxing: '慎行',
+                            hpp_shenxing_info: '出牌阶段限，你可以摸一张牌，然后弃置X张牌（X为你本阶段此前发动此技能的次数，且X至多为2）。',
+                            hpp_bingyi: '秉壹',
+                            hpp_bingyi_info: '结束阶段，你可以展示所有手牌，若颜色均相同，你令任意名角色各摸一张牌（选择的角色数不能超过你展示的手牌数）。若点数也相同，则你摸一张牌。',
                             // H
                             hpp_handang: '欢杀韩当',
                             hpp_gongji: '弓骑',
