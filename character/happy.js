@@ -5450,10 +5450,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 欢杀界左慈
 			hpp_re_xinsheng: {
 				getList() {
-					return Object.keys(lib.characterPack.happykill).filter(function (i) {
+					return Object.keys(lib.characterPack.happykill).filter(i => {
 						if (!lib.characterPack.happykill[i][4]) return true;
 						return !lib.characterPack.happykill[i][4].contains('unseen');
-					});
+					}).concat(_status.extra_pingjianList || []);
 				},
 				init(player) {
 					player.addSkill('hpp_re_xinsheng_remove');
@@ -5500,7 +5500,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							for (var k = 0; k < list2.length; k++) {
 								var info = lib.skill[list2[k]];
 								if (!info || !info.trigger || !info.trigger.player || info.silent || info.limited || info.juexingji || info.hiddenSkill ||
-									info.dutySkill || info.groupSkill || (info.priority && typeof info.priority == 'number') || info.firstDo || info.lastDo) continue;
+									info.dutySkill || (info.zhuSkill && !player.isZhu2()) || info.groupSkill || (info.priority && typeof info.priority == 'number') || info.firstDo || info.lastDo) continue;
 								if (info.trigger.player == name2 || Array.isArray(info.trigger.player) && info.trigger.player.contains(name2)) {
 									if (/*info.init||info.onChooseToUse||*/info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) continue;
 									if (info.init) info.init(player, list2[k]);
@@ -5558,7 +5558,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							game.expandSkills(list2);
 							for (var k = 0; k < list2.length; k++) {
 								var info = lib.skill[list2[k]];
-								if (!info || !info.enable || info.charlotte || info.limited || info.juexingji || info.hiddenSkill || info.dutySkill || info.groupSkill) continue;
+								if (!info || !info.enable || info.charlotte || info.limited || info.juexingji || info.hiddenSkill || info.dutySkill || (info.zhuSkill && !player.isZhu2()) || info.groupSkill) continue;
 								if ((info.enable == 'phaseUse' || (Array.isArray(info.enable) && info.enable.contains('phaseUse'))) ||
 									(info.enable == 'chooseToUse' || (Array.isArray(info.enable) && info.enable.contains('chooseToUse')))) {
 									if (/*info.init||info.onChooseToUse||*/info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) continue;
