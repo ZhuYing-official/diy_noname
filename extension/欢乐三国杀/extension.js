@@ -650,6 +650,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_machao: ['male', 'shu', 4, ['hpp_yuma', 'hpp_tieji'], []],
                             // 欢杀马岱
                             hpp_madai: ['male', 'shu', 4, ['hpp_qianxi', 'mashu'], []],
+                            // 欢杀马良
+                            hpp_maliang: ['male', 'shu', 3, ['hpp_zishu', 'hpp_yingyuan'], []],
                             // 欢杀马谡
                             hpp_masu: ['male', 'shu', 3, ['hpp_sanyao', 'rezhiman'], []],
                             // 欢杀马腾
@@ -1251,6 +1253,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             // M
                             machao: ['hpp_machao', 're_machao', 'machao'],
                             madai: ['hpp_madai', 'tw_madai', 're_madai', 'old_madai', 'madai'],
+                            maliang: ['hpp_maliang', 'maliang', 're_maliang', 'tw_maliang', 'ol_maliang', 'old_maliang'],
                             masu: ['hpp_masu', 'xin_masu', 're_masu', 'masu'],
                             mateng: ['hpp_mateng', 'tw_mateng', 'mateng'],
                             mayunlu: ['hpp_mayunlu', 'tw_mayunlu', 'mayunlu'],
@@ -13594,6 +13597,116 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     content: function (color) {
                                         return '不能使用或打出' + get.translation(color) + '手牌';
                                     },
+                                },
+                            },
+
+                            // 马良
+                            hpp_zishu: {
+                                audio: 'zishu',
+                                locked: true,
+                                subSkill: {
+                                    discard: {
+                                        trigger: { global: 'phaseEnd' },
+                                        audio: 'zishu',
+                                        forced: true,
+                                        filter: function (event, player) {
+                                            if (_status.currentPhase != player) {
+                                                var he = player.getCards('h');
+                                                var bool = false;
+                                                player.getHistory('gain', function (evt) {
+                                                    if (!bool && evt && evt.cards) {
+                                                        for (var i = 0; i < evt.cards.length; i++) {
+                                                            if (he.includes(evt.cards[i])) bool = true; break;
+                                                        }
+                                                    }
+                                                });
+                                                return bool;
+                                            }
+                                            return false;
+                                        },
+                                        content: function () {
+                                            var he = player.getCards('h');
+                                            var list = [];
+                                            player.getHistory('gain', function (evt) {
+                                                if (evt && evt.cards) {
+                                                    for (var i = 0; i < evt.cards.length; i++) {
+                                                        if (he.includes(evt.cards[i])) list.add(evt.cards[i]);
+                                                    }
+                                                }
+                                            });
+                                            player.$throw(list, 1000);
+                                            player.lose(list, ui.discardPile, 'visible');
+                                            game.log(player, '将', list, '置入弃牌堆');
+                                        }
+                                    },
+                                    mark: {
+                                        trigger: {
+                                            player: 'gainBegin',
+                                            global: 'phaseBeginStart',
+                                        },
+                                        silent: true,
+                                        filter: function (event, player) {
+                                            return event.name != 'gain' || player != _status.currentPhase;
+                                        },
+                                        content: function () {
+                                            if (trigger.name == 'gain') trigger.gaintag.add('hpp_zishu');
+                                            else player.removeGaintag('hpp_zishu');
+                                        },
+                                    },
+                                    draw: {
+                                        trigger: {
+                                            player: 'gainAfter',
+                                            global: 'loseAsyncAfter',
+                                        },
+                                        audio: 'zishu',
+                                        forced: true,
+                                        filter: function (event, player) {
+                                            if (_status.currentPhase != player || event.getg(player).length == 0) return false;
+                                            return event.getParent(2).name != 'hpp_zishu_draw';
+                                        },
+                                        content: function () {
+                                            player.draw('nodelay');
+                                        }
+                                    }
+                                },
+                                ai: {
+                                    threaten: 1.2,
+                                    nogain: 1,
+                                    skillTagFilter: function (player) {
+                                        return player != _status.currentPhase;
+                                    },
+                                },
+                                group: ['hpp_zishu_draw', 'hpp_zishu_discard', 'hpp_zishu_mark']
+                            },
+                            hpp_yingyuan: {
+                                audio: 'yingyuan',
+                                trigger: { player: 'useCardAfter' },
+                                filter(event, player) {
+                                    if (_status.currentPhase != player || player.getHistory('custom', evt => evt.hpp_yingyuan_name == event.card.name).length) return false;
+                                    return event.cards.filterInD('oed').length;
+                                },
+                                direct: true,
+                                async content(event, trigger, player) {
+                                    const cards = trigger.cards.filterInD('oed');
+                                    const { result: { bool, targets } } = await player.chooseTarget(lib.filter.notMe)
+                                        .set('prompt2', '将' + get.translation(cards) + '交给一名其他角色')
+                                        .set('prompt', get.prompt('hpp_yingyuan')).set('ai', target => {
+                                            const player = get.event('player'), cards = get.event('cards');
+                                            const att = get.attitude(player, target), name = cards[0].name;
+                                            if (get.position(cards[0]) == 'e' && get.owner(cards[0]) === player && get.value(cards[0], player) > 0) return 0;
+                                            if (target.hasJudge('lebu')) return 0;
+                                            if (att < 3) return 0;
+                                            if (target.hasSkillTag('nogain')) att /= 10;
+                                            if (name === 'sha' && target.hasSha()) att /= 5;
+                                            if (name === 'wuxie' && target.needsToDiscard(cards)) att /= 5;
+                                            return att / (1 + get.distance(player, target, 'absolute'));
+                                        }).set('cards', cards);
+                                    if (bool) {
+                                        const target = targets[0];
+                                        player.logSkill('hpp_yingyuan', target);
+                                        target.gain(cards, 'gain2');
+                                        player.getHistory('custom').push({ hpp_yingyuan_name: trigger.card.name });
+                                    }
                                 },
                             },
 
@@ -34628,6 +34741,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             // M
                             hpp_machao: '#b捞德一评级:3.7',
                             hpp_madai: '#g捞德一评级:2.4',
+                            hpp_maliang: '#b捞德一评级:3.7',
                             hpp_masu: '#b捞德一评级:3.8',
                             hpp_mateng: '#b捞德一评级:3.7',
                             hpp_mayunlu: '#b捞德一评级:3.5',
@@ -35420,6 +35534,11 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_qianxi: '潜袭',
                             hpp_qianxi2: '潜袭',
                             hpp_qianxi_info: '准备阶段，你可以摸两张牌。并弃置其中一张牌，然后令距离为1的一名角色本回合不能使用或打出与你弃置牌颜色相同的手牌。',
+                            hpp_maliang: '欢杀马良',
+                            hpp_zishu: '自书',
+                            hpp_zishu_info: '锁定技，你的回合外，你获得的牌均会在当前回合结束阶段结束时置入弃牌堆；你的回合内，当你不因此技能效果获得牌时，摸一张牌。',
+                            hpp_yingyuan: '应援',
+                            hpp_yingyuan_info: '当你于回合内使用的牌结算完毕后，你可以将之交给一名其他角色（相同牌名的牌每回合限一次）。',
                             hpp_masu: '欢杀马谡',
                             hpp_sanyao: '散谣',
                             hpp_sanyao_info: '出牌阶段限一次，你可以弃置X张牌（X最多为4），然后对等量其他角色造成1点伤害。',
