@@ -34275,7 +34275,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_huatuo: '#b捞德一评级:3.9',
                             hpp_huaxiong: '#g捞德一评级:2.9',
                             // J
-                            hpp_jiangwei: '#b捞德一评级:3.5',
+                            hpp_jiangwei: '#b捞德一评级:3.8',
                             hpp_jianyong: '#b捞德一评级:3.6',
                             hpp_jiaxu: '#g捞德一评级:2.4',
                             hpp_jushou: '#b捞德一评级:3.8',
@@ -34438,7 +34438,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_zhugeguo: '#b捞德一评级:3.6',
                             hpp_zhugejin: '#b捞德一评级:3.6',
                             hpp_zhugeke: '#b捞德一评级:3.7',
-                            hpp_zhugeliang: '#b捞德一评级:3.2',
+                            hpp_zhugeliang: '#b捞德一评级:3.7',
                             hpp_zhugezhan: '#g捞德一评级:2.8',
                             hpp_zhuhuan: '#b捞德一评级:3.5',
                             hpp_zhujun: '#b捞德一评级:3.7',
