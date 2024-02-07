@@ -1314,7 +1314,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				usable: 1,
 				enable: 'phaseUse',
 				filterTarget(card, player, target) {
-					return target != player && target.inRangeOf(player);
+					return target != player && target.inRangeOf(player) && target.countCards('h') > 0;
 				},
 				async content(event, trigger, player) {
 					let hunhuoNum = 0;
@@ -1350,22 +1350,16 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				usable: 1,
 				enable: 'phaseUse',
 				filter(event, player) {
-					return game.hasPlayer(function (player) {
-						return player.countCards('h') == 0;
+					return game.hasPlayer(function (current) {
+						return current.countCards('h') == 0 && current != player;
 					});
 				},
-				async content(event, trigger, player) {
-					const { result: { bool, targets } } = await player.chooseTarget(get.prompt('hok_chihui'), '对一名没有手牌的其他角色造成2点伤害', function (card, player, target) {
-						return target.countCards('h') == 0 && player != target;
-					}).set('ai', function (target) {
-						var player = _status.event.player;
-						return get.damageEffect(target, player, player);
-					});
-					if (bool == false) {
-						return;
-					}
-					player.logSkill('hok_chihui', targets);
-					targets[0].damage(2);
+				filterTarget(card, player, target) {
+					return target != player && target.countCards('h') == 0;
+				},
+				content() {
+					player.logSkill('hok_chihui', target);
+					target.damage(2, 'fire');
 				},
 				ai: {
 					order: 5.5,
@@ -2089,9 +2083,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				enable: 'phaseUse',
 				usable: 1,
 				filter(event, player) {
-					return game.hasPlayer(target => player.canUse({ name: 'sha' }, target, false, true)) && player.getCards('h', function (card) {
-						return card.name == 'sha';
-					});
+					return game.hasPlayer(target => player.canUse({ name: 'sha' }, target, false, true)) && player.getCards('h', 'sha').length > 0;
 				},
 				filterCard(card) {
 					return card.name == 'sha';
@@ -2100,7 +2092,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					return player.canUse({ name: 'sha', isCard: true }, target, false, true);
 				},
 				check: (card) => 5.5 - get.value(card),
-				prompt: '弃置一张【杀】，视为对场上的一名角色使用一张无距离限制的【杀】',
+				prompt: '弃置一张【杀】，视为对场上的一名角色使用一张无距离限制的【杀】，若此【杀】造成伤害，目标角色获得标记“影蚀”，失去一张【闪】',
 				content() {
 					'step 0'
 					game.log(target.getCards('h'))
@@ -2163,9 +2155,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				skillAnimation: true,
 				animationColor: 'thunder',
 				filter(event, player) {
-					return game.hasPlayer(target => player.canUse({ name: 'sha' }, target)) && player.getCards('h', function (card) {
-						return card.name == 'sha';
-					});
+					return game.hasPlayer(target => player.canUse({ name: 'sha' }, target)) && player.getCards('h', 'sha').length > 0;
 				},
 				filterCard(card) {
 					return card.name == 'sha';
@@ -6007,7 +5997,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_hunhuo: '混火',
 			hok_hunhuo_info: '出牌阶段限一次，你选择攻击范围内的一名其他角色进行判定，其弃置X张手牌（X为判定牌点数/4，向下取整）。',
 			hok_chihui: '炽辉',
-			hok_chihui_info: '出牌阶段限一次，你可以选择一名没有手牌的其他角色，对其造成2点伤害。',
+			hok_chihui_info: '出牌阶段限一次，你可以选择一名没有手牌的其他角色，对其造成2点火焰伤害。',
 			// 艾琳
 			hok_ailin: '王者艾琳',
 			hok_lingwu: '灵舞',
@@ -6170,7 +6160,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				4.小凶/小吉：受到伤害的角色摸一张牌；<br/>\
 				5.中凶/中吉：受到伤害的角色将此伤害改为回复体力并摸一张牌；<br/>\
 				6.大凶/大吉：受到伤害的角色回复体力至体力上限并摸四张牌。<br/>\
-				(大、中、小概率分别为：2% 16% 32%)',
+				(大、中、小概率分别为：5% 15% 30%)',
 			hok_biangua: '变卦',
 			hok_biangua3: '变卦',
 			hok_biangua_info: '当你发动命卦后，获得1个“卦”标记。出牌阶段限一次，当前回合角色可以弃置你的8个“卦”标记将你卦象中的一种效果移除。',

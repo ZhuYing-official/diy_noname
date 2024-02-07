@@ -15475,6 +15475,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                         if (num > 0) target.chooseToDiscard(num, true, 'he');
                                     }
                                 },
+                                ai: {
+                                    expose: 0.2,
+                                },
                             },
                             hpp_wulie: {
                                 unique: true,
@@ -15533,6 +15536,9 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                             i.addMark('hpp_wulie2', 1);
                                         }
                                     }
+                                },
+                                ai: {
+                                    expose: 0.2,
                                 },
                             },
                             hpp_wulie2: {
