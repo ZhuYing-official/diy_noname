@@ -375,6 +375,155 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                     };
                 },
             };
+
+            //----------------游戏播报·始----------------
+            lib.skill._OpenTheGame = {
+                charlotte: true,
+                ruleSkill: true,
+                forceDie: true,
+                trigger: { global: 'gameDrawAfter' },
+                filter: function (event, player, name) {
+                    game.TrueHasExtension = function (ext) {
+                        return lib.config.extensions && lib.config.extensions.includes(ext);
+                    };
+                    game.HasExtension = function (ext) {
+                        return game.TrueHasExtension(ext) && lib.config['extension_' + ext + '_enable'];
+                    };
+                    return lib.config.extension_欢乐三国杀_HDfightAudio && player == game.me && (!game.HasExtension('十周年UI') || !lib.config.extension_十周年UI_gameAnimationEffect);
+                },
+                direct: true,
+                firstDo: true,
+                priority: Infinity,
+                content: function () {
+                    player.$fullscreenpop('游戏开始', 'fire');
+                    game.broadcastAll(function () {
+                        if (lib.config.background_audio) game.playAudio('..', 'extension', '欢乐三国杀/audio/effect', 'happy_OpenTheGame');
+                    });
+                },
+            };
+            lib.skill._happy_miaoshou = {
+                charlotte: true,
+                ruleSkill: true,
+                trigger: { global: 'xmiaoshou' },
+                filter: function (event, player) {
+                    return lib.config.extension_欢乐三国杀_HDfightAudio && event.player == player;
+                },
+                direct: true,
+                firstDo: true,
+                forceDie: true,
+                content: function () {
+                    trigger.player.$fullscreenpop('妙手回春', 'water');
+                    game.broadcastAll(function () {
+                        if (lib.config.background_audio) game.playAudio('..', 'extension', '欢乐三国杀/audio/effect', 'happy_miaoshou');
+                    });
+                },
+            };
+            lib.skill._happy_yishu = {
+                charlotte: true,
+                ruleSkill: true,
+                trigger: { global: 'xyishu' },
+                filter: function (event, player) {
+                    return lib.config.extension_欢乐三国杀_HDfightAudio && event.player == player;
+                },
+                direct: true,
+                firstDo: true,
+                forceDie: true,
+                content: function () {
+                    trigger.player.$fullscreenpop('医术高超', 'wood');
+                    game.broadcastAll(function () {
+                        if (lib.config.background_audio) game.playAudio('..', 'extension', '欢乐三国杀/audio/effect', 'happy_yishu');
+                    });
+                },
+            };
+            lib.skill._recovertrigger = {
+                charlotte: true,
+                ruleSkill: true,
+                trigger: { global: 'recoverEnd' },
+                filter: function (event, player) {
+                    if (_status.currentPhase != player) {
+                        return lib.config.extension_欢乐三国杀_HDfightAudio && event.player != event.source && event.source == player;
+                    }
+                    return true;
+                },
+                direct: true,
+                firstDo: true,
+                forceDie: true,
+                content: function () {
+                    if (_status.currentPhase != player) _status.event.trigger('xmiaoshou');
+                    else {
+                        if (player.storage.jstxyishugaochao == undefined) player.storage.jstxyishugaochao = trigger.num;
+                        else player.storage.jstxyishugaochao += trigger.num;
+                        if (player.storage.jstxyishugaochao >= 3) {
+                            player.storage.jstxyishugaochao -= 3;
+                            _status.event.trigger('xyishu');
+                        }
+                    }
+                },
+                group: '_recovertrigger_Delete',
+                subSkill: {
+                    Delete: {
+                        charlotte: true,
+                        ruleSkill: true,
+                        trigger: { player: 'phaseEnd' },
+                        direct: true,
+                        lastDo: true,
+                        forceDie: true,
+                        content: function () {
+                            delete player.storage.jstxyishugaochao;
+                        },
+                    },
+                },
+            };
+            lib.skill._jishaAudio = {
+                charlotte: true,
+                ruleSkill: true,
+                trigger: { global: 'dieBegin' },
+                filter: function (event, player) {
+                    return lib.config.extension_欢乐三国杀_HDkillAudio != 'off' && event.source == player && event.player != player;
+                },
+                direct: true,
+                firstDo: true,
+                content: function () {
+                    'step 0'
+                    if (!player.storage.hpp_kill) player.storage.hpp_kill = 0;
+                    player.storage.hpp_kill++;
+                    'step 1'
+                    var list = ['一血·卧龙出山', '双杀·一战成名', '三杀·举世皆惊', '四杀·天下无敌', '五杀·诛天灭地', '六杀·癫狂杀戮', '无双·万军取首'];
+                    if (lib.config.extension_欢乐三国杀_HDkillAudio == 'new') list = ['一破·卧龙出山', '双连·一战成名', '三连·举世皆惊', '四连·天下无敌', '五连·诛天灭地', '六连·诛天灭地', '七连·诛天灭地'];
+                    var num = Math.min(7, player.storage.hpp_kill);
+                    player.$fullscreenpop(list[num - 1], ['water', 'wood', 'thunder', 'fire'][Math.min(3, num - 1)]);
+                    game.broadcastAll(function (num, bool) {
+                        if (lib.config.background_audio) game.playAudio('..', 'extension', '欢乐三国杀/audio/effect', 'happy_jisha' + num + (bool ? '_new' : ''));
+                    }, num, lib.config.extension_欢乐三国杀_HDkillAudio == 'new');
+                },
+            };
+            lib.skill._happy_HighDamageAudio = {
+                charlotte: true,
+                ruleSkill: true,
+                trigger: { source: 'damageBegin4' },
+                filter: function (event, player) {
+                    return lib.config.extension_欢乐三国杀_HDfightAudio && event.player != player && event.num >= 3;
+                },
+                direct: true,
+                lastDo: true,
+                priority: -Infinity,
+                content: function () {
+                    if (trigger.num == 3) {
+                        player.$fullscreenpop('癫狂屠戮', 'fire');
+                        game.broadcastAll(function () {
+                            if (lib.config.background_audio) game.playAudio('..', 'extension', '欢乐三国杀/audio/effect', 'happy_diankuang');
+                        });
+                    }
+                    else {
+                        player.$fullscreenpop('无双<br>万军取首', 'fire');
+                        game.broadcastAll(function () {
+                            if (lib.config.background_audio) game.playAudio('..', 'extension', '欢乐三国杀/audio/effect', 'happy_wanjun');
+                        });
+                    }
+                },
+            };
+            //----------------游戏播报·末----------------
+
             if (ext.enable) {
                 game.import('character', function () {
                     var happykill = {
@@ -36795,6 +36944,24 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             that.innerHTML = '<span>清除最近使用武将记录</span>';
                         }, 1000);
                     }
+                },
+            },
+            HDfightAudio: {
+                name: '游戏播报',
+                intro: '游戏播报包括以下内容（实时生效）' +
+                    '<br><li>游戏开始播报(让步十周年UI)' +
+                    '<br><li>癫狂屠戮，万军取首播报' +
+                    '<br><li>医术高超，妙手回春播报',
+                init: true,
+            },
+            HDkillAudio: {
+                name: '击杀播报',
+                intro: '击杀角色时播放对应配音',
+                init: 'old',
+                item: {
+                    off: '关闭',
+                    old: '旧版',
+                    new: '新版',
                 },
             },
         }, package: {

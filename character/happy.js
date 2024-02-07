@@ -1956,10 +1956,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						frequent: true,
 						preHidden: true,
 						filter(event, player) {
-							if (player.countMark('hok_rishi') == 0) {
-								return true;
-							}
-							return false;
+							return player.countMark('hok_rishi') != 0;
 						},
 						async content(event, trigger, player) {
 							if (player.countMark('hok_rishi') < 3) {
