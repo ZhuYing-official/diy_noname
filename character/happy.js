@@ -1,4 +1,4 @@
-'use strict';
+import { game } from '../noname.js';
 //-------------------------------------------------------
 //SP明世隐
 let guaList = ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'];
@@ -1054,7 +1054,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				locked: false,
 				forced: true,
-				content: function* (event, map) {
+				*content(event, map) {
 					var player = map.player;
 					var result = yield player.chooseTarget(get.prompt('lao_yayu'), '', (card, player, target) => {
 						return player.canCompare(target);
@@ -1729,6 +1729,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					lock: {
 						usable: 1,
 						enable: 'phaseUse',
+						changeSeat: true,
 						filter(event, player) {
 							return game.hasPlayer(function (current) {
 								return current.hasSkill('hok_yangou_effect');
@@ -3680,6 +3681,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				enable: 'phaseUse',
 				filterCard: true,
 				selectCard: 1,
+				changeSeat: true,
 				content() {
 					'step 0'
 					player.chooseControl('选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置', '直到你的下个回合，你获得技能“飞影”').set('ai', function (event, player) {

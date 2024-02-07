@@ -1,7 +1,8 @@
 /*jshint esversion: 6 */
 'use strict';
+import {nonameInitialized} from '../../noname/util/index.js'
 game.import('extension', (lib, game, ui, get, ai, _status) => {
-	const decadeUIName = '十周年UI', decadeUIPath = window.decadeUIPath = `${lib.assetURL}extension/${decadeUIName}/`, Mixin = window.Mixin = {
+	const decadeUIName = '十周年UI',decadeUIResolvePath=`${nonameInitialized}extension/${decadeUIName}/`, decadeUIPath = window.decadeUIPath = `${lib.assetURL}extension/${decadeUIName}/`, Mixin = window.Mixin = {
 		/**
 		 * @overload
 		 * @param {string} method

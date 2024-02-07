@@ -5,7 +5,7 @@
  * @typedef { InstanceType<typeof lib.element.Button> } Button
  * @typedef { InstanceType<typeof lib.element.Dialog> } Dialog
  * @typedef { InstanceType<typeof lib.element.GameEvent> } GameEvent
- * @typedef { InstanceType<typeof lib.element.GameEvent> & InstanceType<typeof lib.element.GameEventPromise> & typeof Promise<typeof lib.element.GameEvent> } GameEventPromise
+ * @typedef { InstanceType<typeof lib.element.GameEvent> & InstanceType<typeof lib.element.GameEventPromise> } GameEventPromise
  * @typedef { InstanceType<typeof lib.element.NodeWS> } NodeWS
  * @typedef { InstanceType<typeof lib.element.Control> } Control
 */
@@ -22,19 +22,15 @@ import { Announce } from "./announce/index.js";
 import { Channel } from "./channel/index.js";
 import { Experimental } from "./experimental/index.js";
 import * as Element from "./element/index.js";
+import { updateURLs } from "./update-urls.js";
 
 
 export class Library extends Uninstantable {
 	static configprefix = 'noname_0.9_';
 	static versionOL = 27;
-	static updateURLS = {
-		// coding: 'https://gitcode.net/sinat_33405273/noname/-/raw/',
-		// github: 'https://raw.githubusercontent.com/libccy/noname',
-		github: 'https://raw.githubusercontent.com/ZhuYing-official/diy_noname',
-		gitee: "https://gitee.com/zhuyingofficial/diy_noname/raw",
-	};
-	static updateURL = 'https://raw.githubusercontent.com/libccy/noname';
-	static mirrorURL = 'https://gitcode.net/sinat_33405273/noname/-/raw/';
+	static updateURLS = updateURLs;
+	static updateURL = updateURLs.github;
+	static mirrorURL = updateURLs.coding;
 	static hallURL = '47.99.105.222';
 	static assetURL = assetURL;
 	static userAgent = userAgent;
@@ -1130,17 +1126,17 @@ export class Library extends Uninstantable {
 					init: 'coding',
 					unfrequent: true,
 					item: {
+						coding: 'URC',
 						github: 'GitHub',
-						gitee: 'Gitee',
 					},
 					onclick: function (item) {
 						game.saveConfig('update_link', item);
-						lib.updateURL = lib.updateURLS[item] || lib.updateURLS.github;
+						lib.updateURL = lib.updateURLS[item] || lib.updateURLS.coding;
 					},
 				},
 				extension_source: {
 					name: '获取扩展地址',
-					init: 'github',
+					init: 'GitHub Proxy',
 					unfrequent: true,
 					item: {},
 					intro: () => `获取在线扩展时的地址。当前地址：${document.createElement('br').outerHTML}${lib.config.extension_sources[lib.config.extension_source]}`
@@ -3078,6 +3074,12 @@ export class Library extends Uninstantable {
 						lib.init.cssstyles();
 					}
 				},
+				equip_span: {
+					name: '装备牌占位',
+					intro: '打开后，没有装备的装备区将在装备栏占据空白位置。',
+					init: false,
+					unfrequent: false,
+				},
 				fold_card: {
 					name: '折叠手牌',
 					init: true,
@@ -3937,8 +3939,8 @@ export class Library extends Uninstantable {
 					item: {
 						'6': '6',
 						'12': '12',
-						'20': '24',
-						'30': '36',
+						'24': '24',
+						'36': '36',
 					},
 					unfrequent: true
 				},
@@ -8440,12 +8442,12 @@ export class Library extends Uninstantable {
 				'daqiao', 'lingcao', 'liuzan', 'lusu', 'luxun', 'yanwen', 'zhouyu', 'ns_wangyue',
 				'old_caozhen', 'xuhuang', 'maliang', 'guojia', 'simayi', 'old_zhuzhi'];
 			const bannedcards = ['zengbin'];
-			const favs = ["shen_lvmeng", "shen_zhaoyun", "shen_zhugeliang", "chenlin", "ns_guanlu", 
-				"wangji", "xunyou", 
+			const favs = ["shen_lvmeng", "shen_zhaoyun", "shen_zhugeliang", "chenlin", "ns_guanlu",
+				"wangji", "xunyou",
 				"zhangchunhua", "old_zhonghui",
-				"qinmi","zhugeliang",
+				"qinmi", "zhugeliang",
 				"re_luxun", "sunquan",
-				"sunshangxiang","zhugejin", "zhugeke", 
+				"sunshangxiang", "zhugejin", "zhugeke",
 				"diaochan", "sp_diaochan", "hetaihou", "ns_huamulan",
 				"re_huatuo", "yj_jushou", "yxs_libai",
 				"xin_liru", "liuxie", "ns_nanhua",
@@ -9601,6 +9603,30 @@ export class Library extends Uninstantable {
 			type: "equip",
 			subtype: "equip6",
 		},
+		empty_equip1: {
+			type: "equip",
+			subtype: "equip1",
+		},
+		empty_equip2: {
+			type: "equip",
+			subtype: "equip2",
+		},
+		empty_equip3: {
+			type: "equip",
+			subtype: "equip3",
+		},
+		empty_equip4: {
+			type: "equip",
+			subtype: "equip4",
+		},
+		empty_equip5: {
+			type: "equip",
+			subtype: "equip5",
+		},
+		empty_equip6: {
+			type: "equip",
+			subtype: "equip6",
+		},
 		zhengsu_leijin: {},
 		zhengsu_mingzhi: {},
 		zhengsu_bianzhen: {},
@@ -9632,20 +9658,40 @@ export class Library extends Uninstantable {
 	static filter = {
 		all: () => true,
 		none: () => false,
-		//Check if the card does not count toward the player's hand limit
-		//检测此牌是否不计入此角色的手牌上限
+		/**
+		 * Check if the card does not count toward the player's hand limit
+		*
+		 * 检测此牌是否不计入此角色的手牌上限
+* @param { Card } card
+		 * @param { Player } player
+		 * @returns { boolean }
+		 */
 		ignoredHandcard: (card, player) => game.checkMod(card, player, false, 'ignoredHandcard', player),
-		//Check if the card is giftable
-		//检测此牌是否可赠予
+		/**
+		 * Check if the card is giftable
+		*
+		 * 检测此牌是否可赠予
+* @param { Card } card
+		 * @param { Player } player
+		 * @param { Player } target
+		 * @param { boolean } [strict]
+		 */
 		cardGiftable: (card, player, target, strict) => {
 			const mod = game.checkMod(card, player, target, 'unchanged', 'cardGiftable', player);
 			if (!mod || strict && (mod == 'unchanged' && (get.position(card) != 'h' || !get.cardtag(card, 'gifts')) || player == target)) return false;
 			return get.type(card, false) != 'equip' || target.canEquip(card, true);
 		},
-		//Check if the card is recastable
-		//检查此牌是否可重铸
-		cardRecastable: (card, player, source, strict) => {
-			if (typeof player == 'undefined') player = get.owner(card);
+		/**
+		 * Check if the card is recastable
+		*
+		 * 检查此牌是否可重铸
+		* @param { Card } card
+		 * @param { Player } player
+		 * @param { Player } [source]
+		 * @param { boolean } [strict]
+		 */
+		cardRecastable: (card, player = get.owner(card), source, strict) => {
+			// if (typeof player == 'undefined') player = get.owner(card);
 			const mod = game.checkMod(card, player, source, 'unchanged', 'cardRecastable', player);
 			if (!mod) return false;
 			if (strict && mod == 'unchanged') {
@@ -9656,6 +9702,11 @@ export class Library extends Uninstantable {
 			return true;
 		},
 		//装备栏相关
+		/**
+				 * @param { Card } card 
+				 * @param { Player } player 
+				 * @returns { boolean }
+				 */
 		canBeReplaced: function (card, player) {
 			var mod = game.checkMod(card, player, 'unchanged', 'canBeReplaced', player);
 			if (mod != 'unchanged') return mod;
@@ -9697,7 +9748,7 @@ export class Library extends Uninstantable {
 				console.error(new ReferenceError('缺少info的技能:', skill));
 				return false;
 			}
-			if (!game.expandSkills(player.getSkills(true).concat(lib.skill.global)).includes(skill)) return false;
+			if (!game.expandSkills(player.getSkills('invisible').concat(lib.skill.global)).includes(skill)) return false;
 			if (!game.expandSkills(player.getSkills(false).concat(lib.skill.global)).includes(skill)) {//hiddenSkills
 				if (get.mode() != 'guozhan') return false;
 				if (info.noHidden) return false;
@@ -9715,7 +9766,16 @@ export class Library extends Uninstantable {
 			if (typeof info.usable == 'number' && player.hasSkill('counttrigger') &&
 				player.storage.counttrigger && player.storage.counttrigger[skill] >= info.usable) return false;
 			if (info.round && (info.round - (game.roundNumber - player.storage[skill + '_roundcount']) > 0)) return false;
-			if (player.storage[`temp_ban_${skill}`] === true) return false;
+			for (const item in player.storage) {
+				if (item.startsWith('temp_ban_')) {
+					if (player.storage[item] !== true) continue;
+					const skillName = item.slice(9);
+					if (lib.skill[skillName]) {
+						const skills = game.expandSkills([skillName]);
+						if (skills.includes(skill)) return false;
+					}
+				}
+			}
 			return true;
 		},
 		characterDisabled: function (i, libCharacter) {
@@ -10222,6 +10282,19 @@ export class Library extends Uninstantable {
 			return 0;
 		}
 	};
+	/**
+		 * @type {{
+		 * 	global: string[];
+		 * 	globalmap: SMap<Player[]>;
+		 * 	storage: SMap<any>;
+		 * 	undist: SMap<any>;
+		 * 	thers: SMap<any>;
+		 * 	zhu: SMap<any>;
+		 * 	zhuSkill: SMap<any>;
+		 * 	land_used: SMap<any>;
+		 * 	[key: string]: Skill;
+		 * }}
+		 */
 	static skill = {
 		stratagem_fury: {
 			marktext: '🔥',
@@ -10272,7 +10345,9 @@ export class Library extends Uninstantable {
 						if (game.hasPlayer(current => {
 							if (!player.canUse(card, current)) return false;
 							const storage = player.storage, zhibi = storage.zhibi;
-							return (zhibi && !zhibi.includes(current) || get.effect(current, card, player, player) >= 2 - Math.max(0, (storage.stratagem_fury || 0) - 1)) && current.mayHaveShan(player, 'use') && player.hasSkill('jiu');
+							return (zhibi && !zhibi.includes(current) || get.effect(current, card, player, player) >= 2 - Math.max(0, (storage.stratagem_fury || 0) - 1)) && current.mayHaveShan(player, 'use', current.getCards(i => {
+								return i.hasGaintag('sha_notshan');
+							})) && player.hasSkill('jiu');
 						})) return 1;
 						return 0;
 					}
@@ -10343,7 +10418,9 @@ export class Library extends Uninstantable {
 							if (game.hasPlayer(current => {
 								if (!player.canUse(card, current)) return false;
 								const storage = player.storage, zhibi = storage.zhibi;
-								return (zhibi && !zhibi.includes(current) || (get.effect(current, card, player, player) >= 2 - Math.max(0, (storage.stratagem_fury || 0) - 1))) && current.mayHaveShan(player, 'use');
+								return (zhibi && !zhibi.includes(current) || (get.effect(current, card, player, player) >= 2 - Math.max(0, (storage.stratagem_fury || 0) - 1))) && current.mayHaveShan(player, 'use', current.getCards(i => {
+									return i.hasGaintag('sha_notshan');
+								}));
 							})) return get.order(card, player) + 0.5;
 						}
 						else if (cardName == 'tao' && player.hp <= 2 && player.getDamagedHp() >= 2) return get.order(card, player) + 0.5;
@@ -11255,6 +11332,7 @@ export class Library extends Uninstantable {
 			priority: 100,
 			firstDo: true,
 			popup: false,
+			silent: true,
 			filter: function (event, player) {
 				return player.hp >= player.maxHp;
 			},
@@ -11343,6 +11421,7 @@ export class Library extends Uninstantable {
 			popup: false,
 			priority: -100,
 			lastDo: true,
+			silent: true,
 			filter: function (event) {
 				return !event._cleared && event.card.name != 'wuxie';
 			},
@@ -11359,6 +11438,7 @@ export class Library extends Uninstantable {
 			popup: false,
 			priority: -100,
 			lastDo: true,
+			silent: true,
 			filter: function (event) {
 				return ui.todiscard[event.discardid] ? true : false;
 			},
@@ -11388,6 +11468,7 @@ export class Library extends Uninstantable {
 			priority: 5,
 			forced: true,
 			popup: false,
+			silent: true,
 			filter: function (event, player) {
 				//if(!event.player.isDying()) return false;
 				//if(event.source&&event.source.isIn()&&event.source!=player) return false;
@@ -11541,6 +11622,7 @@ export class Library extends Uninstantable {
 			popup: false,
 			logv: false,
 			forceDie: true,
+			silent: true,
 			//priority:-5,
 			content: function () {
 				"step 0";
@@ -11569,6 +11651,7 @@ export class Library extends Uninstantable {
 			forced: true,
 			popup: false,
 			forceDie: true,
+			silent: true,
 			filter: function (event, player) {
 				var evt = event.getParent();
 				return evt && evt.name == 'damage' && evt.hasNature('linked') && player.isLinked();
@@ -12809,6 +12892,10 @@ export class Library extends Uninstantable {
 			color: '#c3f9ff',
 			nature: 'thundermm',
 		}],
+		['合', {
+			color: '#c3f9ff',
+			nature: 'thundermm',
+		}],
 		['梦', {
 			color: '#6affe2',
 			nature: 'watermm',
@@ -13087,10 +13174,9 @@ export class Library extends Uninstantable {
 		ignore: () => void 0
 	};
 }
-Library.config = undefined;
 
+Library.config = undefined;
 Library.configOL = undefined;
-;
 
 export const lib = Library;
 

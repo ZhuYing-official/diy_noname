@@ -3703,7 +3703,13 @@ class Create extends Uninstantable {
 				// if(!get.config('menu_loadondemand')) node._initLink();
 				return node;
 			};
-			for (var i in lib.extensionMenu) {
+			let extensionsInMenu = Object.keys(lib.extensionMenu);
+			if (lib.config.extensionSort && Array.isArray(lib.config.extensionSort)) {
+				extensionsInMenu.sort((a, b) => {
+					return lib.config.extensionSort.indexOf(a) - lib.config.extensionSort.indexOf(b);
+				});
+			}
+			for (let i of extensionsInMenu) {
 				if (lib.config.all.stockextension.includes(i) && !lib.config.all.plays.includes(i)) continue;
 				if (lib.config.hiddenPlayPack.includes(i)) continue;
 				createModeConfig(i, start.firstChild);
@@ -4190,7 +4196,7 @@ class Create extends Uninstantable {
 							}
 							editnode.classList.remove('disabled');
 						};
-						var clickButton = async () => {
+						var clickButton = async function () {
 							if (currentButton == this) {
 								resetEditor();
 								return;
@@ -8652,6 +8658,48 @@ class Create extends Uninstantable {
 				clickCapt.call(node[lib.config.character_dialog_tool]);
 			}
 		}
+
+		//仅仅下面是新加的，by Curpond
+
+		let container = dialog.querySelector('.content-container>.content')
+		let Searcher = ui.create.div('.searcher.caption')
+		let input = document.createElement('input')
+		input.style.textAlign = 'center'
+		input.style.border = 'solid 2px #294510'
+		input.style.borderRadius = '6px'
+		input.style.fontWeight = 'bold'
+		input.style.fontSize = '21px'
+		let find = ui.create.button(['find', '搜索'], 'tdnodes')
+		find.style.display = 'inline'
+		let clickfind = function (e) {
+			e.stopPropagation()
+			let value = input.value
+			if (value == '') {
+				game.alert('搜索不能为空')
+				input.focus()
+				return
+			}
+			let list = []
+			for (let btn of dialog.buttons) {
+
+				if ((new RegExp(value, 'g').test(get.translation(btn.link)))) {
+					btn.classList.remove('nodisplay')
+				} else {
+					btn.classList.add('nodisplay')
+				}
+			}
+
+		}
+		input.addEventListener('keyup', (e) => {
+
+			if (e.key == 'Enter') clickfind(e)
+		})
+		find.listen(clickfind)
+		Searcher.appendChild(input)
+		Searcher.appendChild(find)
+		container.prepend(Searcher)
+
+
 		return dialog;
 	}
 	static dialog() {
@@ -8994,7 +9042,7 @@ class Create extends Uninstantable {
 		lib.init.js(lib.assetURL + 'game', 'pinyinjs', function () { });
 		lib.init.js(lib.assetURL + 'game', 'keyWords', function () { });
 
-		lib.updateURL = lib.updateURLS[lib.config.update_link] || lib.updateURLS.github;
+		lib.updateURL = lib.updateURLS[lib.config.update_link] || lib.updateURLS.coding;
 
 		lib.init.cssstyles();
 
@@ -9008,10 +9056,9 @@ class Create extends Uninstantable {
 		ui.backgroundMusic.autoplay = true;
 		ui.backgroundMusic.addEventListener('ended', game.playBackgroundMusic);
 		ui.window.appendChild(ui.backgroundMusic);
-		ui.window.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', function playMusic() {
-			ui.window.removeEventListener(lib.config.touchscreen ? 'touchend' : 'click', playMusic, false);
-			if (!ui.backgroundMusic.played.length && lib.config.background_music != 'music_off') ui.backgroundMusic.play();
-		}, false);
+		ui.window.addEventListener(lib.config.touchscreen ? 'touchend' : 'click', () => {
+			if (!ui.backgroundMusic.played.length && lib.config.background_music != 'music_off' && !isNaN(ui.backgroundMusic.duration)) ui.backgroundMusic.play();
+		}, { once: true });
 		if (lib.config.cursor_style == 'pointer') {
 			ui.window.classList.add('nopointer');
 		}
@@ -9624,8 +9671,8 @@ class Create extends Uninstantable {
 			if (get.position(item) == 'j' && item.viewAs && lib.config.cardtempname != 'off') {
 				node.classList.add('infoflip');
 				node.classList.add('infohidden')
-				ui.create.cardTempName(item, node).style.setProperty('display','block','important')
-				
+				ui.create.cardTempName(item, node).style.setProperty('display', 'block', 'important')
+
 			}
 			return node;
 		},
@@ -9914,8 +9961,7 @@ class Create extends Uninstantable {
 		ui.updateConnectPlayerPositions();
 		game.connectPlayers = [];
 		const configOL = lib.configOL;
-		// const numberOfPlayers = parseInt(configOL.player_number) || configOL.number;
-		const numberOfPlayers = configOL.identity_mode == 'normal_team' ? parseInt(parseInt(configOL.player_number) / 2 || configOL.number / 2) : parseInt(configOL.player_number) || configOL.number;
+		const numberOfPlayers = parseInt(configOL.player_number) || configOL.number;
 		for (let position = 0; position < numberOfPlayers; position++) {
 			const player = ui.create.player(ui.window);
 			player.dataset.position = position;
@@ -13378,12 +13424,14 @@ class Click extends Uninstantable {
 				// 有bug，先用旧版
 				if (lib.config.background_speak && e !== 'init') {
 					let audio, skillnode = this;
+					const playedAudios = [];
 					(function play() {
 						if (!skillnode.audioList || !skillnode.audioList.length) {
 							skillnode.audioList = game.parseSkillAudio(skillnode.link, playername);
-							if (!skillnode.audioList.length) return;
+							if (!skillnode.audioList.length || skillnode.audioList.length == playedAudios.length) return;
 						}
 						audio = skillnode.audioList.shift();
+						playedAudios.push(audio);
 						game.playAudio(audio, play);
 					})();
 				}
@@ -13593,12 +13641,14 @@ class Click extends Uninstantable {
 				// 有bug，先用旧版
 				if (lib.config.background_speak && e !== 'init') {
 					let audio, skillnode = this;
+					const playedAudios = [];
 					(function play() {
 						if (!skillnode.audioList || !skillnode.audioList.length) {
 							skillnode.audioList = game.parseSkillAudio(skillnode.link, playername);
-							if (!skillnode.audioList.length) return;
+							if (!skillnode.audioList.length || skillnode.audioList.length == playedAudios.length) return;
 						}
 						audio = skillnode.audioList.shift();
+						playedAudios.push(audio);
 						game.playAudio(audio, play);
 					})();
 				}
@@ -14093,6 +14143,30 @@ export class UI extends Uninstantable {
 	 * @type { Control | undefined }
 	 */
 	static skills3;
+	/**
+		 * @type { HTMLDivElement }
+		 */
+	static window;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static pause;
+	/**
+	 * @type { HTMLAudioElement }
+	 */
+	static backgroundMusic;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static special;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static fakeme;
+	/**
+	 * @type { HTMLDivElement }
+	 */
+	static chess;
 	static refresh(node) {
 		void window.getComputedStyle(node, null).getPropertyValue("opacity");
 	}
@@ -14662,6 +14736,6 @@ export class UI extends Uninstantable {
 	static updateRoundNumber(roundNumber, cardPileNumber) {
 		if (ui.cardPileNumber) ui.cardPileNumber.innerHTML = `${roundNumber}轮 剩余牌: ${cardPileNumber}`;
 	}
-};
+}
 
 export const ui = UI;

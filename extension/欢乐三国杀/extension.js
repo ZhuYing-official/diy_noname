@@ -1819,7 +1819,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     return event.player != player && !player.hasSkill('hpp_wanwei_used') && player.countCards('he');
                                 },
                                 direct: true,
-                                content: function* (event, map) {
+                                *content(event, map) {
                                     var player = map.player;
                                     var target = map.trigger.player;
                                     var result = yield player.chooseCard(get.prompt2('hpp_wanwei', target), 'he', [1, 5]).set('ai', cardx => {
@@ -3112,7 +3112,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     });
                                 },
                                 direct: true,
-                                content: function* (event, map) {
+                                *content(event, map) {
                                     var player = map.player, trigger = map.trigger;
                                     var target = trigger.player, list = lib.inpile.filter(i => {
                                         if (player.getStorage('hpp_shouxi').includes(i)) return false;
@@ -9868,7 +9868,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     return list2.includes(event.player) && list2.some(current => event.player != current && !list.includes(current));
                                 },
                                 direct: true,
-                                content: function* (event, map) {
+                                *content(event, map) {
                                     var player = map.player, trigger = map.trigger;
                                     var target = player.storage.hpp_lirang;
                                     var current = trigger.player == player ? target : player;
@@ -12521,7 +12521,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                     if (event.card && get.type(event.card) == 'trick') return true;
                                 },
                                 direct: true,
-                                content: function* (event, map) {
+                                *content(event, map) {
                                     var player = map.player;
                                     var num = Math.min(player.countCards('h'), player.getHp());
                                     var result = yield player.chooseCard(get.prompt('hpp_qianxun'), '将至多' + get.cnNumber(num) + '张手牌置于武将牌上', [1, num]).set('ai', card => 1 / (get.value(card) || 0.5));
@@ -19836,7 +19836,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                             return !event.numFixed;
                                         },
                                         prompt2: () => '放弃摸牌，展示牌堆顶的三张牌并选择获得其中一种颜色的所有牌，本回合你可以将与这些牌颜色不同的一张手牌当作【决斗】使用。',
-                                        content: function* (event, map) {
+                                        *content(event, map) {
                                             var player = map.player, trigger = map.trigger;
                                             trigger.changeToZero();
                                             var cards = get.cards(3, true);
@@ -26382,7 +26382,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 audio: 'mubing',
                                 enable: 'phaseUse',
                                 usable: 1,
-                                content: function* (event, map) {
+                                *content(event, map) {
                                     var player = map.player;
                                     var cards = get.cards(4, true);
                                     var dialog = ['募兵：请选择你要获得的牌和弃置的牌'];
