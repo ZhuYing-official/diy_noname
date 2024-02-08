@@ -575,7 +575,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 shen_wei: ['hpp_shen_caocao', 'hpp_shen_simayi', 'hpp_shen_zhangliao', 'hpp_shen_dianwei', 'hpp_shen_guojia', 'hpp_shen_xunyu'],
                                 shen_shu: ['hpp_shen_guanyu', 'hpp_shen_zhugeliang', 'hpp_shen_zhaoyun', 'hpp_shen_liubei', 'hpp_shen_zhangfei', 'hpp_shen_jiangwei', 'hpp_shen_machao'],
                                 shen_wu: ['hpp_shen_lvmeng', 'hpp_shen_zhouyu', 'hpp_shen_luxun', 'hpp_shen_ganning', 'hpp_shen_sunquan', 'hpp_shen_sunce', 'hpp_shen_daxiaoqiao', 'hpp_shen_taishici'],
-                                shen_qun: ['hpp_shen_lvbu', 'hpp_shen_huatuo', 'hpp_shen_zhenji', 'hpp_shen_zhangjiao', 'hpp_shen_diaochan'],
+                                shen_qun: ['hpp_shen_lvbu', 'hpp_shen_huatuo', 'hpp_shen_zhenji', 'hpp_shen_zhangjiao', 'hpp_shen_diaochan', 'hpp_shen_zuoci'],
                                 doudizhu: ['hpp_change', 'hpp_dalanmao', 'hpp_libai', 'hpp_nvwa', 'hpp_sunwukong', 'hpp_tunxingmengli', 'hpp_tunxingmenglix',],
                             },
                         },
@@ -1213,6 +1213,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhouyu: ['male', 'shen', 4, ['hpp_qinyin', 'hpp_yeyan'], ['wu']],
                             // 神诸葛亮
                             hpp_shen_zhugeliang: ['male', 'shen', 3, ['hpp_qixing', 'hpp_kuangfeng', 'hpp_dawu'], ['shu']],
+                            // 神左慈
+                            hpp_shen_zuoci: ['male', 'shen', 3, ['hpp_huanshu', 'hpp_huanhua', 'hpp_huanjing'], []],
 
                             // 嫦娥
                             hpp_change: ['female', 'shen', '1/4', ['hpp_daoyao', 'hpp_benyue'], []],
@@ -1296,10 +1298,14 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_shen_zhenji: '中山无极人，别称甄洛或甄宓，庙号文昭甄皇后。魏文帝曹丕的正室。懂诗文，有倾国倾城之貌，《洛神赋》即是曹植为她所作。',
                             hpp_shen_zhouyu: '字公瑾，庐江舒县人。东汉末年名将。有姿貌、精音律，江东有“曲有误，周郎顾”之语。周瑜少与孙策交好，后孙策遇刺身亡，孙权继任。周瑜将兵赴丧，以中护军的身份与长史张昭共掌众事，建安十三年（208年），周瑜率东吴军与刘备军联合，在赤壁击败曹操。此战也奠定了三分天下的基础。',
                             hpp_shen_zhugeliang: '字孔明、号卧龙，汉族，琅琊阳都人，三国时期蜀汉丞相、杰出的政治家、军事家、发明家、文学家。在世时被封为武乡侯，死后追谥忠武侯，后来东晋政权推崇诸葛亮军事才能，特追封他为武兴王。诸葛亮为匡扶蜀汉政权，呕心沥血、鞠躬尽瘁、死而后已。其代表作有《前出师表》、《后出师表》、《诫子书》等。曾发明木牛流马等，并改造连弩，可一弩十矢俱发。于234年在宝鸡五丈原逝世。',
+                            hpp_shen_zuoci: '左慈，字元放，自号乌角先生，东汉未年著名方士，与于吉皆为修道之人，葛玄之师。少居天柱山，研习炼丹之术。戏耍诸侯，明五经，兼通星纬，学道术，明六甲。《后汉书》说他少有神道。曹植《辩道论》中说他擅长房中术。经过六七十年的修炼。理解天干地支，会变化、辟谷。左慈为人广施薄取，懂人所想，但不刺探那些心智高远的人内心所想。遇上那些人生失意的人，他也能使他们明白个中玄妙，使他们的人性变得乖张。',
+
                             hpp_change: '嫦娥，中国古代神话中的人物，又名恒我、恒娥、姮娥、常娥、素娥，羿之妻，因偷吃了不死药而飞升至月宫。嫦娥的故事最早出现在商朝卦书 《归藏》。而嫦娥奔月的完整故事最早记载于西汉《淮南子·览冥训》。东汉时期，嫦娥与羿的夫妻关系确立，而嫦娥在进入月宫后变成了捣药的蟾蜍。南北朝以后，嫦娥的形象回归为女儿身。汉画像中，嫦娥人头蛇身，头梳高髻，身着宽袖长襦，身后长尾上饰有倒钩状细短羽毛。南北朝以后，嫦娥的形象被描绘成绝世美女。南朝陈后主陈叔宝曾把宠妃张丽华比作嫦娥。唐朝诗人白居易曾用嫦娥夸赞邻家少女不可多得的容貌。',
                             hpp_dalanmao: '欢乐三国杀家园系统角色',
                             hpp_nvwa: '女娲，中国上古神话中的创世女神。又称娲皇、女阴，史记女娲氏，是华夏民族人文先始，是福佑社稷之正神。相传女娲造人，一日中七十化变，以黄泥仿照自己抟土造人，创造人类社会并建立婚姻制度；因世间天塌地陷，于是熔彩石以补苍天，斩鳌足以立四极，留下了女娲补天的神话传说。女娲不但是补天救世的英雄和抟土造人的女神，还是一个创造万物的自然之神，神通广大化生万物，每天至少能创造出七十样东西。她开世造物，因此被称为大地之母，是被民间广泛而又长久崇拜的创世神和始母神。',
                             hpp_sunwukong: '狗卡桌游《自在西游》联动角色',
+                            hpp_tunxingmengli: '据《王子年拾遗记》记载:蜀先主甘后，生而体貌特异，年至十八，玉质柔肌，态媚容治...河南献玉人高三尺...甘后与玉人洁白齐润，观者殆相乱惑。刘备非常喜爱这尊玉雕，“夕则用后而玩玉人”。白玉美人怀抱一只白玉狸猫，甘夫人常对玉人倾诉渴望为刘备诞下一子的心愿，然而久盼未果。偶有一日，在梦中化身成一只饥肠辘辘、失去理智的白玉狸猫，闯入到幻境当中，吞掉了幻境中的启明星。事后，梦醒的甘夫人发现已怀有身孕，甚是欣喜。而白玉美人怀抱的玉狸猫则留在了幻境中，化身为吞星梦狸守护着幻境里的星星。',
+                            hpp_tunxingmenglix: '据《王子年拾遗记》记载:蜀先主甘后，生而体貌特异，年至十八，玉质柔肌，态媚容治...河南献玉人高三尺...甘后与玉人洁白齐润，观者殆相乱惑。刘备非常喜爱这尊玉雕，“夕则用后而玩玉人”。白玉美人怀抱一只白玉狸猫，甘夫人常对玉人倾诉渴望为刘备诞下一子的心愿，然而久盼未果。偶有一日，在梦中化身成一只饥肠辘辘、失去理智的白玉狸猫，闯入到幻境当中，吞掉了幻境中的启明星。事后，梦醒的甘夫人发现已怀有身孕，甚是欣喜。而白玉美人怀抱的玉狸猫则留在了幻境中，化身为吞星梦狸守护着幻境里的星星。',
                         },
                         characterFilter: {
                             hpp_tunxingmengli: () => false,
@@ -35359,6 +35365,159 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 神左慈
+                            hpp_huanshu: {
+                                audio: 'hpphuanshu',
+                                trigger: {
+                                    global: ['roundStart', 'huanshuDistoryed'],
+                                    player: ['damageEnd', 'phaseUseBegin'],
+                                },
+                                filter(event, player) {
+                                    if (event.name == 'huanshuDistoryed') return true;
+                                    return event.name != 'phaseUse' || player.countCards('h', card => card.hpp_huanshu && !card.hpp_huanhua);
+                                },
+                                forced: true,
+                                async content(event, trigger, player) {
+                                    if (trigger.name == 'huanshuDistoryed') await player.draw(trigger.cards.length);
+                                    else if (trigger.name == 'phaseUse') {
+                                        const cards = player.getCards('h', card => card.hpp_huanshu && !card.hpp_huanhua);
+                                        for (const card of cards) {
+                                            const card2 = lib.card.list.filter(cardx => {
+                                                if (card.suit == cardx[0] && card.number == cardx[1] && card.name == cardx[2] && card.nature == cardx[3]) return false;
+                                                return card.suit == cardx[0];
+                                            }).randomGet();
+                                            if (!card2) continue;
+                                            game.addVideo('skill', player, ['hpp_huanshu', [false, get.cardInfo(card)]]);
+                                            game.broadcastAll((card, card2) => {
+                                                card.init([card2[0], card2[1], card2[2], card2[3]]);
+                                            }, card, card2);
+                                        }
+                                    }
+                                    else await lib.skill.hpp_huanshu.GainContent(2, (trigger.num || 1), player);
+                                },
+                                async GainContent(length, num, player) {
+                                    game.addGlobalSkill('hpp_huanshu_gain');
+                                    while (num > 0 && player.hasSkill('hpp_huanshu')) {
+                                        num--;
+                                        const sum = Math.min(length, player.maxHp * 2 - player.countCards('h', card => card.hpp_huanshu));
+                                        if (sum > 0) {
+                                            let gains = [], count = 0;
+                                            while (sum - count > 0) {
+                                                count++;
+                                                const cardy = lib.card.list.randomGet();
+                                                let gainCard = game.createCard2(cardy[2], cardy[0], cardy[1], cardy[3]);
+                                                gainCard.hpp_huanshu = true;
+                                                gains.push(gainCard);
+                                            }
+                                            if (gains.length) await player.gain(gains, 'gain2');
+                                        }
+                                        if (length - sum > 0) await player.draw(length - sum);
+                                    }
+                                },
+                                subSkill: {
+                                    gain: {
+                                        charlotte: true,
+                                        mod: {
+                                            ignoredHandcard(card, player) {
+                                                if (card.hpp_huanshu) return true;
+                                            },
+                                            cardDiscardable(card, player, name) {
+                                                if (name == 'phaseDiscard' && card.hpp_huanshu) return false;
+                                            },
+                                        },
+                                        trigger: { player: 'gainAfter', global: 'loseAsyncAfter' },
+                                        filter(event, player) {
+                                            return event.getg(player).some(card => card.hpp_huanshu);
+                                        },
+                                        forced: true,
+                                        popup: false,
+                                        firstDo: true,
+                                        forceDie: true,
+                                        content() {
+                                            const cards = trigger.getg(player).filter(card => card.hpp_huanshu);
+                                            if (player.hasSkill('hpp_huanshu', null, false, false)) {
+                                                game.broadcastAll(cards => {
+                                                    for (const card of cards) card.classList.add('glow');
+                                                }, cards);
+                                            }
+                                            else {
+                                                game.cardsGotoSpecial(cards);
+                                                game.log(cards, '被销毁了');
+                                                var next = game.createEvent('huanshuDistoryed');
+                                                next.player = player;
+                                                next.cards = cards;
+                                                next.setContent('emptyEvent');
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                            hpp_huanhua: {
+                                audio: 'hpphuanhua',
+                                enable: 'phaseUse',
+                                onChooseToUse(event) {
+                                    if (!game.online && event.type == 'phase' && !event.hpp_huanhua_count) event.set('hpp_huanhua_count', event.player.getHistory('useSkill', evt => evt.skill == 'hpp_huanhua').length);
+                                },
+                                filter(event, player) {
+                                    return event.hpp_huanhua_count < 2 + player.countMark('hpp_huanjing_effect') && player.countCards('h', card => card.hpp_huanshu && !card.hpp_huanhua) && player.countCards('h', card => (player.countMark('hpp_huanjing_effect') || !card.hpp_huanshu) && !card.hasGaintag('hpp_huanhua_tag'));
+                                },
+                                filterCard(card, player) {
+                                    if (ui.selected.cards.length) return (player.countMark('hpp_huanjing_effect') || !card.hpp_huanshu) && !card.hasGaintag('hpp_huanhua_tag');
+                                    return card.hpp_huanshu && !card.hpp_huanhua;
+                                },
+                                selectCard: 2,
+                                check(card) {
+                                    if (ui.selected.cards.length && ui.selected.cards[0].suit == card.suit) return 5 + get.useful(card) * get.value(card);
+                                    return get.useful(card) * get.value(card);
+                                },
+                                complexCard: true,
+                                position: 'h',
+                                lose: false,
+                                discard: false,
+                                delay: false,
+                                async content(event, trigger, player) {
+                                    const cards = event.cards, suit = cards[0].suit;
+                                    cards[0].hpp_huanhua = true;
+                                    player.addGaintag([cards[1]], 'hpp_huanhua_tag');
+                                    game.addVideo('skill', player, ['hpp_huanhua', [false, get.cardInfo(cards[0])]]);
+                                    game.broadcastAll(cards => {
+                                        cards[0].init([cards[1].suit, cards[1].number, cards[1].name, cards[1].nature]);
+                                    }, cards);
+                                    if (suit == cards[1].suit) await lib.skill.hpp_huanshu.GainContent(1, 1, player);
+                                },
+                                ai: {
+                                    order: 9,
+                                    result: { player: 1 },
+                                },
+                                subSkill: { tag: {} },
+                            },
+                            hpp_huanjing: {
+                                audio: 'hpphuanjing',
+                                unique: true,
+                                limited: true,
+                                enable: 'phaseUse',
+                                async content(event, trigger, player) {
+                                    const num = Math.max(1, player.getDamagedHp() * 2);
+                                    player.awakenSkill('hpp_huanjing');
+                                    await lib.skill.hpp_huanshu.GainContent(num, 1, player);
+                                    player.addTempSkill('hpp_huanjing_effect');
+                                    player.addMark('hpp_huanjing_effect', num, false);
+                                },
+                                ai: {
+                                    order: 10,
+                                    result: { player: 1 },
+                                },
+                                subSkill: {
+                                    effect: {
+                                        charlotte: true,
+                                        onremove: true,
+                                        marktext: '境',
+                                        intro: { content: '<li>本回合可额外发动#次【幻化】<br><li>本回合发动【幻化】可选择“幻术”牌为转化目标卡牌' },
+                                    },
+                                },
+                            },
+
+                            // 斗地主
                             // 嫦娥
                             hpp_daoyao: {
                                 audio: 'hppdaoyao',
@@ -36103,6 +36262,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
 
                             // 吞梦星狸
                             hpp_tunxing: {
+                                audio: 'hpptunxing',
                                 onremove(player) {
                                     if (player.additionalSkills && player.additionalSkills.hpp_tunxing && player.additionalSkills.hpp_tunxing.length) player.removeAdditionalSkill('hpp_tunxing');
                                 },
@@ -36133,7 +36293,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_mengli: {
-                                audio: 2,
+                                audio: 'hppmengli',
                                 trigger: { player: 'changeHp' },
                                 filter(event, player) {
                                     return get.sgn(player.hp - 3.5) != get.sgn(player.hp - 3.5 - event.num);
@@ -38145,6 +38305,21 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_kuangfeng_info: '出牌阶段结束时，你可以移去任意张“星”对等量的角色各造成1点伤害。',
                             hpp_dawu: '大雾',
                             hpp_dawu_info: '结束阶段，你可以移去一张“星”，然后直到你的下回合开始，你受到非属性伤害-1。',
+                            hpp_shen_zuoci: '欢杀神左慈',
+                            hpp_huanshu: '幻术',
+                            hpp_huanshu_info: '锁定技<br>\
+                                每当受到1点伤害及每轮开始时，你获得两张幻术牌，幻术牌不计入手牌上限且至多为你的体力上限*2（若已达幻术牌上限，超出上限的部分将改为摸等量的牌）。<br>\
+                                出牌阶段开始时，手牌中所有未“幻化”的幻术牌将变换为同花色的其他牌。<br>\
+                                其他角色获得幻术牌后销毁之，然后你摸一张牌。',
+                            hpp_huanhua: '幻化',
+                            hpp_huanhua_tag: '已选择',
+                            hpp_huanhua_info: '每回合限2次，你可以幻化手中的一张幻术牌，令此牌的花色、点数、牌名与你的一张手牌（不含幻术牌）一致；若幻化目标的花色与幻术牌一致，获得一张幻术牌。<br>\
+                                （同一张幻术牌仅可幻化一次，同一张手牌仅可被幻化一次）',
+                            hpp_huanjing: '幻境',
+                            hpp_huanjing_info: '限定技<br>\
+                                获得X张幻术牌，然后直至本回合结束，“幻化”次数增加X次且可令幻术牌成为幻化目标。<br>\
+                                （X为你当前已损失体力值*2，至少为1）',
+
                             // 斗地主
                             hpp_change: '欢杀嫦娥',
                             hpp_daoyao: '捣药',
@@ -38201,7 +38376,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_tunxing: '吞星',
                             hpp_tunxing_info: '锁定技，游戏开始时和你变化形态时，你从随机的3名主公将中选择一名，获得其除主公技、觉醒技以外的全部技能，直到下次形态变化时为止。',
                             hpp_mengli: '梦狸',
-                            hpp_mengli_info: '锁定技，体力值变化后，若体力值大于3，则变化为黑狸形态；若体力值小于等于3，则变化为白狸形态；每次变化形态时摸一张牌。',
+                            hpp_mengli_info: '锁定技，体力值变化后若体力值：①大于3，变化为黑狸形态；②小于等于3，变化为白狸形态。每次变换形态时摸一张牌。',
 
                             biao_zhu: '标·主',
                             biao_hu: '标·虎',

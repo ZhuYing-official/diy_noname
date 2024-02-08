@@ -5828,6 +5828,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hppyizheng: {
 				audio: 2,
 			},
+			hpphuanshu: {
+				audio: 2,
+			},
+			hpphuanhua: {
+				audio: 2,
+			},
+			hpphuanjing: {
+				audio: 2,
+			},
 			// 72变
 			hpp72bian: {
 				audio: 1,
@@ -5872,6 +5881,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				audio: 2,
 			},
 			hpptuantu: {
+				audio: 2,
+			},
+			// 吞星
+			hpptunxing: {
+				audio: 2,
+			},
+			// 梦狸
+			hppmengli: {
 				audio: 2,
 			},
 		},

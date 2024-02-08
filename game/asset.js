@@ -6238,6 +6238,12 @@ window.noname_asset_list = [
 	'audio/skill/hpppingting2.mp3',
 	'audio/skill/hppyizheng1.mp3',
 	'audio/skill/hppyizheng2.mp3',
+	'audio/skill/hpphuanshu1.mp3',
+	'audio/skill/hpphuanshu2.mp3',
+	'audio/skill/hpphuanhua1.mp3',
+	'audio/skill/hpphuanhua2.mp3',
+	'audio/skill/hpphuanjing1.mp3',
+	'audio/skill/hpphuanjing2.mp3',
 	'audio/skill/hpp72bian1.mp3',
 	'audio/skill/hppshixian1.mp3',
 	'audio/skill/hppshixian2.mp3',
@@ -6257,6 +6263,10 @@ window.noname_asset_list = [
 	'audio/skill/hpplianshi2.mp3',
 	'audio/skill/hpptuantu1.mp3',
 	'audio/skill/hpptuantu2.mp3',
+	'audio/skill/hpptunxing1.mp3',
+	'audio/skill/hpptunxing2.mp3',
+	'audio/skill/hppmengli1.mp3',
+	'audio/skill/hppmengli2.mp3',
 
 	/*voice begin*/
 	'audio/voice/male/0.mp3',
