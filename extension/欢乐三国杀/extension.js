@@ -15457,7 +15457,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_chenghao: {
-                                audio: 2,
+                                audio: 'xinfu_chenghao',
                                 trigger: {
                                     global: 'damageEnd',
                                 },
@@ -33507,6 +33507,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
 
                             // 神孙权
                             hpp_quanxue: {
+                                audio: 'hppquanxue',
                                 marktext: '学',
                                 intro: { content: 'mark', name2: '学' },
                                 trigger: { player: 'phaseUseBegin' },
@@ -33585,6 +33586,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_dingli: {
+                                audio:'hppdingli',
                                 trigger: { global: 'logSkill' },
                                 filter: function (event, player) {
                                     return event.skill == 'hpp_quanxue_remove' && event.player != player;
