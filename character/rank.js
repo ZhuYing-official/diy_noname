@@ -2161,6 +2161,13 @@ window.noname_character_rank = {
 			'hpp_sp_zhenji',
 			'hpp_sp_zhugeliang',
 
+			'hpp_sb_caocao',
+			'hpp_sb_huanggai',
+			'hpp_sb_huangzhong',
+			'hpp_sb_liubei',
+			'hpp_sb_yuanshao',
+			'hpp_sb_yujin',
+
 			'hpp_miao_caifuren',
 			'hpp_miao_caiwenji',
 			'hpp_miao_daqiao',
@@ -2174,18 +2181,13 @@ window.noname_character_rank = {
 			'hpp_miao_zhenji',
 			'hpp_miao_zhurong',
 
-			'hpp_sb_caocao',
-			'hpp_sb_huanggai',
-			'hpp_sb_huangzhong',
-			'hpp_sb_liubei',
-			'hpp_sb_yuanshao',
-			'hpp_sb_yujin',
-
 			'hpp_change',
 			'hpp_dalanmao',
 			'hpp_libai',
 			'hpp_nvwa',
 			'hpp_sunwukong',
+			'hpp_tunxingmengli',
+			'hpp_tunxingmenglix',
 		],
 		epic: [
 			'yue_xiaoqiao',
