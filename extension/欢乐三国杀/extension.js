@@ -1075,6 +1075,8 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_zhurong: ['female', 'shu', 4, ['hpp_juxiang', 'hpp_lieren', 'hpp_changbiao'], []],
                             // 欢杀朱治
                             hpp_zhuzhi: ['male', 'wu', 4, ['hpp_anguo'], []],
+                            // 欢杀邹氏
+                            hpp_zoushi: ['female', 'qun', 3, ['hpp_huoshui', 'hpp_qingcheng'], []],
                             // 欢杀祖茂
                             hpp_zumao: ['male', 'wu', 4, ['hpp_yinbing', 'hpp_juedi'], []],
                             // 欢杀左慈
@@ -1554,6 +1556,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             zhuran: ['hpp_zhuran', 're_zhuran', 'xin_zhuran', 'zhuran', 'old_zhuran'],
                             zhurong: ['hpp_zhurong', 're_zhurong', 'ol_zhurong', 'zhurong'],
                             zhuzhi: ['hpp_zhuhzi', 're_zhuzhi', 'zhuzhi', 'xin_zhuzhi', 'old_zhuzhi'],
+                            zoushi: ['hpp_zoushi', 're_zoushi', 'jsrg_zoushi'],
                             zumao: ['hpp_zumao', 'zumao', 'tw_zumao'],
                             zuoci: ['hpp_zuoci', 're_zuoci', 'zuoci'],
                             // SP
@@ -26262,6 +26265,115 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
 
+                            // 邹氏
+                            hpp_huoshui: {
+                                audio: 'huoshui',
+                                enable: 'phaseUse',
+                                filter(event, player) {
+                                    return game.hasPlayer(target => {
+                                        if (target == player || player.getStorage('hpp_huoshui_used').includes(target)) return false;
+                                        return (!player.hasSkill('hpp_huoshui_0') && !target.hasSkill('fengyin')) || (!player.hasSkill('hpp_huoshui_1') && target.countCards('h')) || (!player.hasSkill('hpp_huoshui_2') && target.countDiscardableCards(player, 'e'));
+                                    });
+                                },
+                                usable: 3,
+                                chooseButton: {
+                                    dialog(event, player) {
+                                        var dialog = ui.create.dialog('祸水：选择一名一名其他角色…', 'hidden');
+                                        dialog.add([[
+                                            ['0', '令其本回合非锁定技失效'],
+                                            ['1', '观看其手牌并获得其中一张牌'],
+                                            ['2', '弃置其装备区所有牌'],
+                                        ], 'textbutton']);
+                                        return dialog;
+                                    },
+                                    filter(button, player) {
+                                        if (player.hasSkill('hpp_huoshui_' + button.link, null, null, false)) return false;
+                                        return game.hasPlayer(target => {
+                                            if (target == player || player.getStorage('hpp_huoshui_used').includes(target)) return false;
+                                            return (button.link == '0' && !target.hasSkill('fengyin')) || (button.link == '1' && target.countCards('h')) || (button.link == '2' && target.countDiscardableCards(player, 'e'));
+                                        });
+                                    },
+                                    check: () => 1 + Math.random(),
+                                    backup(links, player) {
+                                        return {
+                                            audio: 'huoshui',
+                                            num: links[0],
+                                            filterTarget(card, player, target) {
+                                                if (target == player || player.getStorage('hpp_huoshui_used').includes(target)) return false;
+                                                const num = lib.skill.hpp_huoshui_backup.num;
+                                                return (num == '0' && !target.hasSkill('fengyin')) || (num == '1' && target.countCards('h')) || (num == '2' && target.countDiscardableCards(player, 'e'));
+                                            },
+                                            async content(event, trigger, player) {
+                                                const target = event.target, num = lib.skill.hpp_huoshui_backup.num;
+                                                if (!player.storage.hpp_huoshui_used) {
+                                                    player.when({ global: 'phaseAfter' }).then(() => delete player.storage.hpp_huoshui_used);
+                                                }
+                                                player.markAuto('hpp_huoshui_used', [target]);
+                                                player.addTempSkill('hpp_huoshui_' + num);
+                                                switch (num) {
+                                                    case '0':
+                                                        target.addTempSkill('fengyin');
+                                                        break;
+                                                    case '1':
+                                                        if (!target.countGainableCards(player, 'h')) await player.viewHandcards(target);
+                                                        await player.gainPlayerCard(target, 'h', true, 'visible');
+                                                        break;
+                                                    case '2':
+                                                        await target.discard(target.getDiscardableCards(player, 'e')).set('discarder', player);
+                                                        break;
+                                                }
+                                            },
+                                            ai: {
+                                                result: {
+                                                    target(player, target) {
+                                                        const num = lib.skill.hpp_huoshui_backup.num;
+                                                        if (num == '1') return -target.countCards('h');
+                                                        if (num == '2') return -target.countDiscardableCards(player, 'e');
+                                                        return -target.getSkills(null, false, false).filter(skill => !get.is.locked(skill)).length - 1;
+                                                    },
+                                                },
+                                            },
+                                        }
+                                    },
+                                    prompt(links) {
+                                        return '祸水：' + [
+                                            ['令一名角色本回合非锁定技失效'],
+                                            ['观看一名角色的手牌并获得其中一张牌'],
+                                            ['弃置一名角色装备区所有牌']
+                                        ][parseInt(links[0])];
+                                    },
+                                },
+                                ai: {
+                                    order: 9,
+                                    result: { player: 1 },
+                                },
+                                subSkill: {
+                                    backup: {},
+                                    '0': { charlotte: true },
+                                    '1': { charlotte: true },
+                                    '2': { charlotte: true },
+                                },
+                            },
+                            hpp_qingcheng: {
+                                audio: 'qingcheng',
+                                inherit: 'reqingcheng',
+                                filter(event, player) {
+                                    return game.hasPlayer(target => lib.skill.hpp_qingcheng.filterTarget(null, player, target));
+                                },
+                                filterTarget(card, player, target) {
+                                    return target != player && target.countCards('h') <= player.countCards('h') + player.getDamagedHp();
+                                },
+                                ai: {
+                                    order: 10,
+                                    result: {
+                                        player(player, target) {
+                                            if (target.countCards('h')) return -Math.max(get.value(target.getCards('h'), player) - get.value(player.getCards('h'), player), 0);
+                                            return 0;
+                                        },
+                                    },
+                                },
+                            },
+
                             // 祖茂
                             hpp_yinbing: {
                                 group: 'hpp_yinbing_discard',
@@ -33586,7 +33698,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                                 },
                             },
                             hpp_dingli: {
-                                audio:'hppdingli',
+                                audio: 'hppdingli',
                                 trigger: { global: 'logSkill' },
                                 filter: function (event, player) {
                                     return event.skill == 'hpp_quanxue_remove' && event.player != player;
@@ -36357,6 +36469,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_zhuran: '#b捞德一评级:3.7',
                             hpp_zhurong: '#r捞德一评级:4.1',
                             hpp_zhuzhi: '#b捞德一评级:3.6',
+                            hpp_zoushi: '#b捞德一评级:3.9',
                             hpp_zumao: '#b捞德一评级:3.7',
                             hpp_zuoci: '#b捞德一评级:3.4',
                             // SP
@@ -37624,6 +37737,11 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             hpp_zhuzhi: '欢杀朱治',
                             hpp_anguo: '安国',
                             hpp_anguo_info: '出牌阶段限一次，你可以选择一名角色，若其手牌数为全场最少，其摸一张牌；体力值为全场最低，回复1点体力；装备区内牌数为全场最少，随机使用一张装备牌。然后若该角色有未执行的分支且你满足条件，你执行之。',
+                            hpp_zoushi: '欢杀邹氏',
+                            hpp_huoshui: '祸水',
+                            hpp_huoshui_info: '出牌阶段限3次，你可以选择一名本回合未成为过祸水目标的其他角色并选择一项：1.其本回合所有非锁定技失效；2.你观看其手牌并获得其中一张手牌；3.弃置其装备区里的所有牌。（每个选项每回合限1次）',
+                            hpp_qingcheng: '倾城',
+                            hpp_qingcheng_info: '出牌阶段限一次，你可以与一名手牌数小于等于X的角色交换手牌（X为你当前手牌数与你已损失体力值之和）。',
                             hpp_zumao: '欢杀祖茂',
                             hpp_yinbing: '引兵',
                             hpp_yinbing_info: '弃牌阶段前，你可以将任意张非基本牌置于你的武将牌上；当你受到【杀】造成的伤害后，你移去一张“引兵”牌，并摸一张牌。',
