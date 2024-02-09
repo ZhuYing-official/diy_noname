@@ -1,14 +1,5 @@
 import { game } from '../noname.js';
 //-------------------------------------------------------
-//SP明世隐
-let guaList = ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'];
-let gua1 = false;
-let gua2 = false;
-let gua3 = false;
-let gua4 = false;
-let gua5 = false;
-let gua6 = false;
-
 //SP李信
 function removeRenjie(player) {
 	if (player.hasSkill('pozhu')) {
@@ -4190,8 +4181,18 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				trigger: {
 					player: 'damageBegin2',
 				},
+				init(player) {
+					if (!player.storage.guaList) {
+						player.storage.guaList = ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'];
+						player.storage.gua1 = false,
+							player.storage.gua2 = false,
+							player.storage.gua3 = false,
+							player.storage.gua4 = false,
+							player.storage.gua5 = false,
+							player.storage.gua6 = false;
+					}
+				},
 				content() {
-					'step 0'
 					var r = Math.random();
 					var tar = trigger.player;
 					var cards = tar.getCards('hej');
@@ -4215,19 +4216,18 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					} else {
 						str += '大吉';
 					}
-					// event.dialog=ui.create.dialog(str);
 					player.popup(str);
 					game.log(str);
 
 					if (r < 0.05) {
 						// 1
-						if (!gua6) {
+						if (!player.storage.gua6) {
 							tar.die();
 							trigger.cancel();
 						}
 					} else if (r < 0.2) {
 						// 2
-						if (!gua5) {
+						if (!player.storage.gua5) {
 							trigger.num++;
 							if (cards.length > 0) {
 								tar.discard(cards.randomGet());
@@ -4235,25 +4235,25 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					} else if (r < 0.5) {
 						// 3
-						if (!gua4) {
+						if (!player.storage.gua4) {
 							if (cards.length > 0) {
 								tar.discard(cards.randomGet());
 							}
 						}
 					} else if (r < 0.8) {
 						// 4
-						if (!gua3) {
+						if (!player.storage.gua3) {
 							tar.draw();
 						}
 					} else if (r < 0.95) {
 						// 5
-						if (!gua2) {
+						if (!player.storage.gua2) {
 							trigger.cancel();
 							tar.recover(trigger.num);
 							tar.draw();
 						}
 					} else {
-						if (!gua1) {
+						if (!player.storage.gua1) {
 							trigger.cancel();
 							tar.recover((tar.maxHp - tar.hp));
 							tar.draw(4);
@@ -4267,33 +4267,29 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							}
 						}
 					}
-
-					'step 1'
-					game.delay(0.5);
-					// event.dialog.close();
 				},
 				mark: true,
 				intro: {
 					content(storage, player) {
-						if (gua1 && guaList.indexOf('大吉') >= 0) {
-							guaList.splice(guaList.indexOf('大吉'), 1);
+						if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
+							player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
 						}
-						if (gua2 && guaList.indexOf('中吉') >= 0) {
-							guaList.splice(guaList.indexOf('中吉'), 1);
+						if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
+							player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
 						}
-						if (gua3 && guaList.indexOf('小吉') >= 0) {
-							guaList.splice(guaList.indexOf('小吉'), 1);
+						if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
+							player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
 						}
-						if (gua4 && guaList.indexOf('小凶') >= 0) {
-							guaList.splice(guaList.indexOf('小凶'), 1);
+						if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
+							player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
 						}
-						if (gua5 && guaList.indexOf('中凶') >= 0) {
-							guaList.splice(guaList.indexOf('中凶'), 1);
+						if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
+							player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
 						}
-						if (gua6 && guaList.indexOf('大凶') >= 0) {
-							guaList.splice(guaList.indexOf('大凶'), 1);
+						if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
+							player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
 						}
-						return '<div class="text center"><span class=thundertext>' + guaList + '</span></div>'
+						return '<div class="text center"><span class=thundertext>' + player.storage.guaList + '</span></div>'
 					},
 				},
 			},
@@ -4303,12 +4299,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					source: 'damageBegin2',
 				},
 				content() {
-					'step 0'
 					var r = Math.random();
 					var tar = trigger.player;
 					var cards = tar.getCards('hej');
 
-					// var str=get.translation(player)+'占卜结果为：';
 					var str = '';
 					if (r < 0.05) {
 						// 1
@@ -4328,20 +4322,19 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					} else {
 						str += '大凶';
 					}
-					// event.dialog=ui.create.dialog(str);
 					player.popup(str);
 					game.delay(0.5);
 					game.log(str);
 
 					if (r < 0.05) {
 						// 1
-						if (!gua1) {
+						if (!player.storage.gua1) {
 							tar.die();
 							trigger.cancel();
 						}
 					} else if (r < 0.2) {
 						// 2
-						if (!gua2) {
+						if (!player.storage.gua2) {
 							trigger.num++;
 							if (cards.length > 0) {
 								tar.discard(cards.randomGet());
@@ -4349,25 +4342,25 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 					} else if (r < 0.5) {
 						// 3
-						if (!gua3) {
+						if (!player.storage.gua3) {
 							if (cards.length > 0) {
 								tar.discard(cards.randomGet());
 							}
 						}
 					} else if (r < 0.8) {
 						// 4
-						if (!gua4) {
+						if (!player.storage.gua4) {
 							tar.draw();
 						}
 					} else if (r < 0.95) {
 						// 5
-						if (!gua5) {
+						if (!player.storage.gua5) {
 							trigger.cancel();
 							tar.recover(trigger.num);
 							tar.draw();
 						}
 					} else {
-						if (!gua6) {
+						if (!player.storage.gua6) {
 							trigger.cancel();
 							tar.recover((tar.maxHp - tar.hp));
 							tar.draw(4);
@@ -4378,9 +4371,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							player.addMark('hok_biangua2', 1);
 						}
 					}
-					'step 1'
-					game.delay(0.5);
-					// event.dialog.close();
 				},
 			},
 			hok_minggua3: {
@@ -4396,61 +4386,61 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content() {
 					'step 0'
-					if (gua1 && guaList.indexOf('大吉') >= 0) {
-						guaList.splice(guaList.indexOf('大吉'), 1);
+					if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
 					}
-					if (gua2 && guaList.indexOf('中吉') >= 0) {
-						guaList.splice(guaList.indexOf('中吉'), 1);
+					if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
 					}
-					if (gua3 && guaList.indexOf('小吉') >= 0) {
-						guaList.splice(guaList.indexOf('小吉'), 1);
+					if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
 					}
-					if (gua4 && guaList.indexOf('小凶') >= 0) {
-						guaList.splice(guaList.indexOf('小凶'), 1);
+					if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
 					}
-					if (gua5 && guaList.indexOf('中凶') >= 0) {
-						guaList.splice(guaList.indexOf('中凶'), 1);
+					if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
 					}
-					if (gua6 && guaList.indexOf('大凶') >= 0) {
-						guaList.splice(guaList.indexOf('大凶'), 1);
+					if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
 					} else {
 						return;
 					}
 					'step 1'
-					player.chooseControl(guaList, 'cancel2').set('ai', function (event, player) {
-						var goodGua = !gua1 + !gua2 + !gua3;
-						var badGua = !gua4 + !gua5 + !gua6;
+					player.chooseControl(player.storage.guaList, 'cancel2').set('ai', function (event, player) {
+						var goodGua = !player.storage.gua1 + !player.storage.gua2 + !player.storage.gua3;
+						var badGua = !player.storage.gua4 + !player.storage.gua5 + !player.storage.gua6;
 						if (goodGua <= badGua) {
 							if (goodGua == 0) {
 								return '取消';
 							}
-							return guaList[0];
+							return player.storage.guaList[0];
 						} else {
 							if (badGua == 0) {
 								return '取消';
 							}
-							return guaList[guaList.length - 1];
+							return player.storage.guaList[player.storage.guaList.length - 1];
 						}
 					});
 					'step 2'
 					switch (result.control) {
 						case '大吉':
-							gua1 = true;
+							player.storage.gua1 = true;
 							break;
 						case '中吉':
-							gua2 = true;
+							player.storage.gua2 = true;
 							break;
 						case '小吉':
-							gua3 = true;
+							player.storage.gua3 = true;
 							break;
 						case '小凶':
-							gua4 = true;
+							player.storage.gua4 = true;
 							break;
 						case '中凶':
-							gua5 = true;
+							player.storage.gua5 = true;
 							break;
 						case '大凶':
-							gua6 = true;
+							player.storage.gua6 = true;
 							break;
 						default:
 					}
@@ -4464,8 +4454,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
 						return target.maxHp >= player.maxHp;
 					}).set('forceDie', true).set('ai', function (target) {
-						var goodGua = (gua1 ? 0 : 1) + (gua2 ? 0 : 1) + (gua3 ? 0 : 1);
-						var badGua = (gua4 ? 0 : 1) + (gua5 ? 0 : 1) + (gua6 ? 0 : 1);
+						var goodGua = (player.storage.gua1 ? 0 : 1) + (player.storage.gua2 ? 0 : 1) + (player.storage.gua3 ? 0 : 1);
+						var badGua = (player.storage.gua4 ? 0 : 1) + (player.storage.gua5 ? 0 : 1) + (player.storage.gua6 ? 0 : 1);
 						if (get.attitude(_status.event.player, target) > 0 && goodGua > badGua) {
 							return 5;
 						}
@@ -4485,6 +4475,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					}
 					else event.finish();
 					'step 5'
+					target.storage.guaList = player.storage.guaList;
+					target.storage.gua1 = player.storage.gua1,
+						target.storage.gua2 = player.storage.gua2,
+						target.storage.gua3 = player.storage.gua3,
+						target.storage.gua4 = player.storage.gua4,
+						target.storage.gua5 = player.storage.gua5,
+						target.storage.gua6 = player.storage.gua6;
 					target.addSkillLog('hok_minggua');
 					target.addSkill('hok_minggua2');
 				},
@@ -4515,29 +4512,29 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return target.hasSkill('hok_biangua');
 					})[0];
 					if (tar) {
-						return tar.countMark('hok_biangua2') > 7 && guaList.length > 0;
+						return tar.countMark('hok_biangua2') > 7 && player.storage.guaList.length > 0;
 					}
 					return false;
 				},
 				content() {
 					'step 0'
-					if (gua1 && guaList.indexOf('大吉') >= 0) {
-						guaList.splice(guaList.indexOf('大吉'), 1);
+					if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
 					}
-					if (gua2 && guaList.indexOf('中吉') >= 0) {
-						guaList.splice(guaList.indexOf('中吉'), 1);
+					if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
 					}
-					if (gua3 && guaList.indexOf('小吉') >= 0) {
-						guaList.splice(guaList.indexOf('小吉'), 1);
+					if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
 					}
-					if (gua4 && guaList.indexOf('小凶') >= 0) {
-						guaList.splice(guaList.indexOf('小凶'), 1);
+					if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
 					}
-					if (gua5 && guaList.indexOf('中凶') >= 0) {
-						guaList.splice(guaList.indexOf('中凶'), 1);
+					if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
 					}
-					if (gua6 && guaList.indexOf('大凶') >= 0) {
-						guaList.splice(guaList.indexOf('大凶'), 1);
+					if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
 					} else {
 						return;
 					}
@@ -4546,40 +4543,40 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					event.guaTarget = game.filterPlayer(function (target) {
 						return target.hasSkill('hok_biangua');
 					})[0];
-					player.chooseControl(guaList, 'cancel2').set('ai', function (event, player) {
-						var goodGua = !gua1 + !gua2 + !gua3;
-						var badGua = !gua4 + !gua5 + !gua6;
+					player.chooseControl(player.storage.guaList, 'cancel2').set('ai', function (event, player) {
+						var goodGua = !player.storage.gua1 + !player.storage.gua2 + !player.storage.gua3;
+						var badGua = !player.storage.gua4 + !player.storage.gua5 + !player.storage.gua6;
 						if (get.attitude(_status.event.player, event.guaTarget) <= 0) {
 							if (goodGua == 0) {
 								return '取消';
 							}
-							return guaList[0];
+							return player.storage.guaList[0];
 						} else {
 							if (badGua == 0) {
 								return '取消';
 							}
-							return guaList[guaList.length - 1];
+							return player.storage.guaList[player.storage.guaList.length - 1];
 						}
 					});
 					'step 2'
 					switch (result.control) {
 						case '大吉':
-							gua1 = true;
+							player.storage.gua1 = true;
 							break;
 						case '中吉':
-							gua2 = true;
+							player.storage.gua2 = true;
 							break;
 						case '小吉':
-							gua3 = true;
+							player.storage.gua3 = true;
 							break;
 						case '小凶':
-							gua4 = true;
+							player.storage.gua4 = true;
 							break;
 						case '中凶':
-							gua5 = true;
+							player.storage.gua5 = true;
 							break;
 						case '大凶':
-							gua6 = true;
+							player.storage.gua6 = true;
 							break;
 						default:
 					}
