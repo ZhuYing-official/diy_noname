@@ -6812,8 +6812,7 @@ game.import('extension', function (lib, game, ui, get, ai, _status) {
                             // 冯妤
                             hpp_tiqi: {
                                 audio: 'tiqi',
-                                // trigger: { global: ['phaseDrawEnd', 'phaseDrawSkipped', 'phaseDrawCancelled'] },
-                                trigger: { global: ['phaseUseBefore'] },
+                                trigger: { global: ['phaseDrawEnd', 'phaseDrawSkipped', 'phaseDrawCancelled'] },
                                 filter: function (event, player) {
                                     if (player == event.player) return false;
                                     var num = 0;
