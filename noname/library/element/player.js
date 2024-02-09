@@ -23,7 +23,7 @@ export class Player extends HTMLDivElement {
 		 */
 		// @ts-ignore
 		const player = ui.create.div('.player', position);
-		Object.setPrototypeOf(player, Player.prototype);
+		Object.setPrototypeOf(player, (lib.element.Player || Player).prototype);
 		// @ts-ignore
 		player._args = [position];
 		return player;
@@ -654,7 +654,14 @@ export class Player extends HTMLDivElement {
 	 * @param { (card: Card) => boolean } [filter] 
 	 */
 	getKnownCards(other = _status.event.player, filter = card => true) {
-		if (!other) other = this;
+		if (!other) {
+			if (other === null) console.trace(`getKnownCards的other参数不应传入null,可以用void 0或undefined占位`);
+			other = _status.event.player || this;
+		}
+		if (!filter) {
+			if (other === null) console.trace(`getKnownCards的filter参数不应传入null,可以用void 0或undefined占位`);
+			filter = card => true;
+		}
 		return this.getCards('h', card => {
 			return card.isKnownBy(other) && filter(card);
 		});
@@ -664,6 +671,10 @@ export class Player extends HTMLDivElement {
 	 * @param { Player } [other] 
 	 */
 	isAllCardsKnown(other = _status.event.player) {
+		if (!other) {
+			if (other === null) console.trace(`isAllCardsKnown的other参数不应传入null,可以用void 0或undefined占位`);
+			other = _status.event.player || this;
+		}
 		if (!other) other = this;
 		return this.countCards('h', card => {
 			return !card.isKnownBy(other);
@@ -675,7 +686,14 @@ export class Player extends HTMLDivElement {
 	 * @param { (card: Card) => boolean } [filter]  
 	 */
 	hasKnownCards(other = _status.event.player, filter = card => true) {
-		if (!other) other = this;
+		if (!other) {
+			if (other === null) console.trace(`hasKnownCards的other参数不应传入null,可以用void 0或undefined占位`);
+			other = _status.event.player || this;
+		}
+		if (!filter) {
+			if (other === null) console.trace(`hasKnownCards的filter参数不应传入null,可以用void 0或undefined占位`);
+			filter = card => true;
+		}
 		return this.countCards('h', card => {
 			return card.isKnownBy(other) && filter(card);
 		}) > 0;
@@ -808,10 +826,16 @@ export class Player extends HTMLDivElement {
 		if (cards && !isArray) recast.cards = [cards];
 		else if (isArray && cards.length) recast.cards = cards;
 		else _status.event.next.remove(recast);
-		if (typeof recastingLose != 'function') recastingLose = (player, cards) => player.loseToDiscardpile(cards).log = false;
+		if (typeof recastingLose != 'function') {
+			if (recastingLose === null) console.trace(`recast的recastingLose参数不应传入null,可以用void 0或undefined占位`);
+			recastingLose = (player, cards) => player.loseToDiscardpile(cards).log = false;
+		}
 		recast.recastingLose = recastingLose;
 		recast.recastingLosingEvents = [];
-		if (typeof recastingGain != 'function') recastingGain = (player, cards) => player.draw(cards.length).log = false;
+		if (typeof recastingGain != 'function') {
+			if (recastingLose === null) console.trace(`recast的recastingGain参数不应传入null,可以用void 0或undefined占位`);
+			recastingGain = (player, cards) => player.draw(cards.length).log = false;
+		}
 		recast.recastingGain = recastingGain;
 		recast.recastingGainingEvents = [];
 		recast.setContent('recast');
@@ -3223,6 +3247,8 @@ export class Player extends HTMLDivElement {
 		if (arg2) {
 			if (typeof arg2 == 'string') {
 				filter = card => (getCardName(card) == arg2);
+			} else if (Array.isArray(arg2)) {
+				filter = card => arg2.includes(getCardName(card));
 			} else if (typeof arg2 == 'object') {
 				filter = card => {
 					for (let j in arg2) {
@@ -3331,13 +3357,6 @@ export class Player extends HTMLDivElement {
 		}
 		return list;
 	}
-	cacheCountCards(arg1) {
-		let cache = CacheContext.getCacheContext();
-		if (cache) {
-			return cache.delegate(this).countCards(arg1);
-		}
-		return this.countCards(arg1);
-	}
 	countCards(arg1, arg2) {
 		let count = 0;
 		for (let item of this.iterableGetCards(arg1, arg2)) {
@@ -3374,19 +3393,15 @@ export class Player extends HTMLDivElement {
 		}
 		return skills;
 	}
-	getModableSkills(useCache) {
-		var func = function (player) {
-			var skills = player.getSkills().concat(lib.skill.global);
-			game.expandSkills(skills);
-			skills = skills.filter(function (skill) {
-				var info = get.info(skill);
-				return info && info.mod;
-			});
-			skills.sort((a, b) => get.priority(a) - get.priority(b));
-			return skills;
-		};
-		if (!useCache) return func(this);
-		return game.callFuncUseStepCache("player.getModableSkills", func, [this]);
+	getModableSkills() {
+		var skills = this.getSkills().concat(lib.skill.global);
+		game.expandSkills(skills);
+		skills = skills.filter(function (skill) {
+			var info = get.info(skill);
+			return info && info.mod;
+		});
+		skills.sort((a, b) => get.priority(a) - get.priority(b));
+		return skills;
 	}
 	getSkills(arg2, arg3, arg4) {
 		var skills = this.skills.slice(0);
@@ -4736,9 +4751,6 @@ export class Player extends HTMLDivElement {
 			}
 		});
 	}
-	cacheSupportFunction() {
-		return ['hasCard', 'hasValueTarget', 'getCardIndex', 'countCards', 'getSkills', 'getUseValue', 'canUse'];
-	}
 	moveCard() {
 		var next = game.createEvent('moveCard');
 		next.player = this;
@@ -4806,7 +4818,7 @@ export class Player extends HTMLDivElement {
 				this.logSkill(event.logSkill);
 			}
 			else if (Array.isArray(event.logSkill)) {
-				this.logSkill.apply(this, event.logSkill);
+				this.logSkill.call(this, ...event.logSkill);
 			}
 		}
 		if (result.card || !result.skill) {
@@ -6880,7 +6892,12 @@ export class Player extends HTMLDivElement {
 		var info = get.info(card);
 		if (info.multicheck && !info.multicheck(card, this)) return false;
 		if (!lib.filter.cardEnabled(card, this)) return false;
-		if (includecard && !lib.filter.cardUsable(card, this)) return false;
+		if (includecard) {
+			let evt = includecard;
+			if (typeof evt !== 'object') evt = _status.event.getParent('chooseToUse');
+			if (get.itemtype(evt) !== 'event') evt = undefined;
+			if (!lib.filter.cardUsable(card, this, evt)) return false;
+		}
 		if (distance !== false && !lib.filter.targetInRange(card, this, target)) return false;
 		return lib.filter[includecard ? 'targetEnabledx' : 'targetEnabled'](card, this, target);
 	}
@@ -6890,8 +6907,47 @@ export class Player extends HTMLDivElement {
 			return player.canUse(card, current, distance, includecard);
 		});
 	}
-	hasValueTarget() {
-		return this.getUseValue.apply(this, arguments) > 0;
+	hasValueTarget(card, distance, includecard) {
+		if (typeof (card) == 'string') {
+			card = { name: card, isCard: true };
+		}
+		var player = this;
+		var targets = game.filterPlayer();
+		var value = [];
+		var min = 0;
+		var info = get.info(card);
+		if (!info || info.notarget) return false;
+		var range;
+		var select = get.copy(info.selectTarget);
+		if (select == undefined) {
+			if (info.filterTarget == undefined) return true;
+			range = [1, 1];
+		}
+		else if (typeof select == 'number') range = [select, select];
+		else if (get.itemtype(select) == 'select') range = select;
+		else if (typeof select == 'function') range = select(card, player);
+		if (info.singleCard) range = [1, 1];
+		game.checkMod(card, player, range, 'selectTarget', player);
+		if (!range) return false;
+
+		let cache = CacheContext.requireCacheContext();
+		for (var i = 0; i < targets.length; i++) {
+			if (player.canUse(card, targets[i], distance, includecard)) {
+				var eff = cache.get.effect(targets[i], card, player, player);
+				if (range[1] == 1 && eff > 0) {
+					return true;
+				}
+				value.push(eff);
+			}
+		}
+		value.sort(function (a, b) {
+			return b - a;
+		});
+		for (var i = 0; i < value.length; i++) {
+			if (i == range[1] || range[1] != -1 && value[i] <= 0) break;
+			min += value[i];
+		}
+		return min > 0;
 	}
 	getUseValue(card, distance, includecard) {
 		if (typeof (card) == 'string') {
@@ -6916,12 +6972,9 @@ export class Player extends HTMLDivElement {
 		game.checkMod(card, player, range, 'selectTarget', player);
 		if (!range) return 0;
 
-		let cache = CacheContext.getCacheContext();
-		if (!cache) {
-			cache = new CacheContext();
-		}
+		let cache = CacheContext.requireCacheContext();
 		for (var i = 0; i < targets.length; i++) {
-			if (cache.delegate(player).canUse(card, targets[i], distance, includecard)) {
+			if (player.canUse(card, targets[i], distance, includecard)) {
 				var eff = cache.get.effect(targets[i], card, player, player);
 				value.push(eff);
 			}
@@ -8052,7 +8105,7 @@ export class Player extends HTMLDivElement {
 		return targets;
 	}
 	isEnemyOf() {
-		return !this.isFriendOf.apply(this, arguments);
+		return !this.isFriendOf.call(this, ...arguments);
 	}
 	isFriendOf(player) {
 		if (get.mode() == 'guozhan') {
@@ -8306,6 +8359,18 @@ export class Player extends HTMLDivElement {
 		if (mode == 'versus' && (_status.mode == 'four' || _status.mode == 'guandu')) return true;
 		return false;
 	}
+	isInitFilter(tag) {
+		const player = this;
+		for (const name of [player.name, player.name1, player.name2]) {
+			if (name && lib.character[name]) {
+				const filter = get.characterInitFilter(name);
+				if (!filter.includes(tag)) continue;
+				if (lib.characterInitFilter[name] && lib.characterInitFilter[name](tag) === false) continue;
+				return true;
+			}
+		}
+		return false;
+	}
 	hasZhuSkill(skill, player) {
 		if (!this.hasSkill(skill)) return false;
 		if (player) {
@@ -8338,10 +8403,6 @@ export class Player extends HTMLDivElement {
 		return false;
 	}
 	hasSkillTag(tag, hidden, arg, globalskill) {
-		let cache = CacheContext.getCacheContext();
-		if (!cache) {
-			cache = new CacheContext();
-		}
 		var skills = this.getSkills(hidden);
 		if (globalskill) {
 			skills.addArray(lib.skill.global);
@@ -8351,7 +8412,7 @@ export class Player extends HTMLDivElement {
 			var info = lib.skill[skills[i]];
 			if (info && info.ai) {
 				if (info.ai.skillTagFilter && info.ai[tag] &&
-					info.ai.skillTagFilter(cache.delegate(this), tag, arg) === false) continue;
+					info.ai.skillTagFilter(this, tag, arg) === false) continue;
 				if (typeof info.ai[tag] == 'string') {
 					if (info.ai[tag] == arg) return true;
 				}
@@ -8465,7 +8526,7 @@ export class Player extends HTMLDivElement {
 		else if (get.itemtype(ignore) === 'card') selected.add(ignore);
 		if (this === viewer || get.itemtype(viewer) == 'player') cards = this.getKnownCards(viewer);
 		else cards = this.getShownCards();
-		cards = cards.filter(card => {
+		count += cards.filter(card => {
 			if (selected.includes(card)) return false;
 			let name = get.name(card, this);
 			if (name == 'sha' || name == 'hufu' || name == 'yuchanqian') {
@@ -8474,8 +8535,7 @@ export class Player extends HTMLDivElement {
 				return true;
 			}
 			return false;
-		});
-		count += cards.length;
+		}).length;
 		if (count && rvt !== 'count') return rvt === 'odds' ? 1 : true;
 		let hs = this.getCards('hs').filter(i => !cards.includes(i)).length;
 		if (!hs) {
@@ -8510,7 +8570,7 @@ export class Player extends HTMLDivElement {
 		else if (get.itemtype(ignore) === 'card') selected.add(ignore);
 		if (this === viewer || get.itemtype(viewer) == 'player') cards = this.getKnownCards(viewer);
 		else cards = this.getShownCards();
-		cards = cards.filter(card => {
+		count += cards.filter(card => {
 			if (selected.includes(card)) return false;
 			let name = get.name(card, this);
 			if (name === 'shan' || name === 'hufu') {
@@ -8519,8 +8579,7 @@ export class Player extends HTMLDivElement {
 				return true;
 			}
 			return false;
-		});
-		count += cards.length;
+		}).length;
 		if (count && rvt !== 'count') return rvt === 'odds' ? 1 : true;
 		let hs = this.getCards('hs').filter(i => !cards.includes(i)).length;
 		if (!hs) {
@@ -10133,3 +10192,6 @@ export class Player extends HTMLDivElement {
 		}
 	}
 }
+
+CacheContext.inject(Player.prototype,
+	['hasCard', 'hasValueTarget', 'getModableSkills', 'getCardIndex', 'countCards', 'getSkills', 'getUseValue', 'canUse']);

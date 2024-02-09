@@ -1,6 +1,7 @@
 window.noname_source_list = [
 	'LICENSE',
 	'noname.js',
+	'service-worker.js',
 
 	'noname/ai/basic.js',
 	'noname/ai/index.js',
@@ -19,10 +20,10 @@ window.noname_source_list = [
 	'noname/init/polyfill.js',
 	'noname/library/index.js',
 	'noname/library/path.js',
-'noname/library/update-urls.js',
+	'noname/library/update-urls.js',
 	'noname/library/announce/index.d.ts',
 	'noname/library/announce/index.js',
-'noname/library/cache/cacheContext.js',
+	'noname/library/cache/cacheContext.js',
 	'noname/library/cache/childNodesWatcher.js',
 	'noname/library/crypt/md5.js',
 	'noname/library/channel/index.js',

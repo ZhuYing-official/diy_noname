@@ -1,8 +1,8 @@
 window.noname_update = {
-	version: '1.10.7',
+	version: '1.10.7.1',
 	update: '1.10.5',
 	changeLog: [
-		'整合@PZ157 @nonameShijian @universe-st @mengxinzxz @copcap @Tipx-L 的Pull Request',
+		'整合@PZ157 @nonameShijian @copcap @mengxinzxz @lieren2023 @kuangshen04 @universe-st 的Pull Request',
 		'OL族吴乔、谋关羽；手杀谋荀彧；海外服侠关羽、石韬、史阿、玉真子',
 		'其他AI优化与bug修复',
 	],
@@ -12,6 +12,7 @@ window.noname_update = {
 		'card/sp.js',
 		'card/standard.js',
 		'card/yingbian.js',
+		'card/yongjian.js',
 		'character/clan.js',
 		'character/collab.js',
 		'character/ddd.js',
@@ -47,6 +48,7 @@ window.noname_update = {
 		'game/entry.js',
 		'game/game.js',
 		'game/package.js',
+		'game/pinyinjs.js',
 		'game/source.js',
 
 		'mode/boss.js',
@@ -115,5 +117,7 @@ window.noname_update = {
 		'noname/util/struct/promise-error-handler/firefox.js',
 		'noname/util/struct/promise-error-handler/index.js',
 		'noname/util/struct/promise-error-handler/unknown.js',
+		
+		'service-worker.js',
 	]
 };

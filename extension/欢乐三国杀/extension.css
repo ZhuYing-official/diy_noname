@@ -1,0 +1,16 @@
+/*神左慈幻化卡牌颜色*/
+.card.hpp_huanshu-glow:before {
+    opacity: 0.35;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgb(255, 109, 12) 0 0 5px, rgb(255, 0, 0) 0 0 10px;
+    background-color: #ffffff;
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+}
+
+.card.hpp_huanhua-glow:before {
+    opacity: 0.3;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgb(255, 109, 12) 0 0 5px, rgb(255, 0, 0) 0 0 10px;
+    background-color: yellow;
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+}
