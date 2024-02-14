@@ -1313,7 +1313,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				async content(event, trigger, player) {
 					let hunhuoNum = 0;
 					const judgeEvent = event.target.judge(card => {
-						hunhuoNum = Math.floor(get.number(card) / 4);
+						hunhuoNum = Math.floor(get.number(card) / 5);
 						if (hunhuoNum >= 1) {
 							return 2;
 						} else {
@@ -6019,7 +6019,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_huoqiu: '火球',
 			hok_huoqiu_info: '出牌阶段限一次，你可以将1张锦囊牌视为火【杀】使用或打出。你的火【杀】无距离限制且伤害+1。',
 			hok_hunhuo: '混火',
-			hok_hunhuo_info: '出牌阶段限一次，你选择攻击范围内的一名其他角色进行判定，其弃置X张手牌（X为判定牌点数/4，向下取整）。',
+			hok_hunhuo_info: '出牌阶段限一次，你选择攻击范围内的一名其他角色进行判定，其弃置X张手牌（X为判定牌点数/5，向下取整）。',
 			hok_chihui: '炽辉',
 			hok_chihui_info: '出牌阶段限一次，你可以选择一名没有手牌的其他角色，对其造成2点火焰伤害。',
 			// 艾琳
