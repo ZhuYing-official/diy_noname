@@ -1,50 +1,5 @@
 import { game } from '../noname.js';
 //-------------------------------------------------------
-//SP李信
-function removeRenjie(player) {
-	if (player.hasSkill('pozhu')) {
-		player.removeSkill('pozhu');
-	}
-	if (player.hasSkill('olqingyi')) {
-		player.removeSkill('olqingyi');
-	}
-	if (player.hasSkill('xinfu_zuilun')) {
-		player.removeSkill('xinfu_zuilun');
-	}
-};
-function removeTongyu(player) {
-	if (player.hasSkill('reshuishi')) {
-		player.removeSkill('reshuishi');
-	}
-	if (player.hasSkill('lingce')) {
-		player.removeSkill('lingce');
-	}
-	if (player.hasSkill('dinghan')) {
-		player.removeSkill('dinghan');
-	}
-};
-function removeKuangbao(player) {
-	if (player.hasSkill('drlt_jieying')) {
-		player.removeSkill('drlt_jieying');
-	}
-	if (player.hasSkill('shencai')) {
-		player.removeSkill('shencai');
-	}
-	if (player.hasSkill('drlt_poxi')) {
-		player.removeSkill('drlt_poxi');
-	}
-};
-function hok_remove(player, arrays) {
-	if (arrays.includes('renjie')) {
-		removeRenjie(player);
-	}
-	if (arrays.includes('tongyu')) {
-		removeTongyu(player);
-	}
-	if (arrays.includes('kuangbao')) {
-		removeKuangbao(player);
-	}
-};
 //-------------------------------------------------------------
 game.import('character', function (lib, game, ui, get, ai, _status) {
 	var happy = {
@@ -1353,7 +1308,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content() {
 					player.logSkill('hok_chihui', target);
-					target.damage(2, 'fire');
+					target.damage('fire');
+					target.damage('fire');
 				},
 				ai: {
 					order: 5.5,
@@ -3297,7 +3253,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						content() {
 							if (player.isDamaged()) {
-								player.recover(trigger.num / 2);
+								player.recover(Math.floor(trigger.num / 2));
 							}
 						},
 					}
@@ -3960,7 +3916,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							return 0;
 						},
 					},
-					order: 10,
+					order: 3,
 					threaten: 1,
 					expose: 0.25,
 				}
@@ -4058,15 +4014,59 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					switch (result.control) {
 						case '统御':
 							player.addTempSkill('hok_sptongkuang_tongyu');
-							hok_remove(player, ['renjie', 'kuangbao']);
+							lib.skill.hok_sptongkuang.hok_remove(player, ['renjie', 'kuangbao']);
 							break;
 						case '狂暴':
 							player.addTempSkill('hok_sptongkuang_kuangbao');
-							hok_remove(player, ['tongyu', 'renjie']);
+							lib.skill.hok_sptongkuang.hok_remove(player, ['tongyu', 'renjie']);
 							break;
 						default:
 							player.addTempSkill('hok_sptongkuang_renjie');
-							hok_remove(player, ['tongyu', 'kuangbao']);
+							lib.skill.hok_sptongkuang.hok_remove(player, ['tongyu', 'kuangbao']);
+					}
+				},
+				removeRenjie(player) {
+					if (player.hasSkill('pozhu')) {
+						player.removeSkill('pozhu');
+					}
+					if (player.hasSkill('olqingyi')) {
+						player.removeSkill('olqingyi');
+					}
+					if (player.hasSkill('xinfu_zuilun')) {
+						player.removeSkill('xinfu_zuilun');
+					}
+				},
+				removeTongyu(player) {
+					if (player.hasSkill('reshuishi')) {
+						player.removeSkill('reshuishi');
+					}
+					if (player.hasSkill('lingce')) {
+						player.removeSkill('lingce');
+					}
+					if (player.hasSkill('dinghan')) {
+						player.removeSkill('dinghan');
+					}
+				},
+				removeKuangbao(player) {
+					if (player.hasSkill('drlt_jieying')) {
+						player.removeSkill('drlt_jieying');
+					}
+					if (player.hasSkill('shencai')) {
+						player.removeSkill('shencai');
+					}
+					if (player.hasSkill('drlt_poxi')) {
+						player.removeSkill('drlt_poxi');
+					}
+				},
+				hok_remove(player, arrays) {
+					if (arrays.includes('renjie')) {
+						lib.skill.hok_sptongkuang.removeRenjie(player);
+					}
+					if (arrays.includes('tongyu')) {
+						lib.skill.hok_sptongkuang.removeTongyu(player);
+					}
+					if (arrays.includes('kuangbao')) {
+						lib.skill.hok_sptongkuang.removeKuangbao(player);
 					}
 				},
 				subSkill: {
@@ -6021,7 +6021,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_hunhuo: '混火',
 			hok_hunhuo_info: '出牌阶段限一次，你选择攻击范围内的一名其他角色进行判定，其弃置X张手牌（X为判定牌点数/5，向下取整）。',
 			hok_chihui: '炽辉',
-			hok_chihui_info: '出牌阶段限一次，你可以选择一名没有手牌的其他角色，对其造成2点火焰伤害。',
+			hok_chihui_info: '出牌阶段限一次，你可以选择一名没有手牌的其他角色，对其造成2次火焰伤害。',
 			// 艾琳
 			hok_ailin: '王者艾琳',
 			hok_lingwu: '灵舞',
