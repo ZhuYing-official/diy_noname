@@ -20,6 +20,7 @@ image/*.TXT
 app
 app.html
 ehthumbs.db
+extension
 Home
 jsconfig.json
 localStorage.json
@@ -29,6 +30,4 @@ noname.ico
 package-lock.json
 package.json
 Thumbs.db
-unpackage
-UserData
-temp
+bun.lockb
