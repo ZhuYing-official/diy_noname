@@ -20,7 +20,7 @@ image/*.TXT
 app
 app.html
 ehthumbs.db
-extension
+# extension
 Home
 jsconfig.json
 localStorage.json

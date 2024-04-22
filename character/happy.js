@@ -8,11 +8,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		characterSort: {
 			happy: {
 				correction_history: ['lao_caofang', 'lao_caohuan', 'lao_caoyu', 'lao_cuishi', 'lao_liucong', 'lao_tuanxini', 'lao_tuan', 'lao_xini', 'lao_yanxing', 'lao_sp_wanglang'],
-				honor_of_kings_clashlane: ['hok_lixin', 'hok_miyue', 'hok_sikongzhen', 'hok_sp_lixin'],
-				honor_of_kings_jungling: ['hok_bailixuance', 'hok_lanlingwang', 'hok_sunwukong'],
-				honor_of_kings_midlane: ['hok_anqila', 'hok_daji', 'hok_wuzetian'],
-				honor_of_kings_roaming: ['hok_donghuangtaiyi', 'hok_mingshiyin', 'hok_yao', 'hok_sp_mingshiyin'],
-				honor_of_kings_farmlane: ['hok_ailin', 'hok_aoyin', 'hok_makeboluo'],
+				honor_of_kings_clashlane: ['hok_hainuo', 'hok_lixin', 'hok_miyue', 'hok_sikongzhen', 'hok_sp_lixin'],
+				honor_of_kings_jungling: ['hok_bailixuance', 'hok_dasiming', 'hok_lanlingwang', 'hok_sunwukong'],
+				honor_of_kings_midlane: ['hok_anqila', 'hok_daji', 'hok_gaojianli', 'hok_wuzetian'],
+				honor_of_kings_roaming: ['hok_donghuangtaiyi', 'hok_duoliya', 'hok_mingshiyin', 'hok_yao', 'hok_sp_mingshiyin'],
+				honor_of_kings_farmlane: ['hok_ailin', 'hok_aoyin', 'hok_bailishouyue', 'hok_makeboluo'],
 				happy_kings: ['shen_caozhi', 'shen_dongzhuo', 'shen_lusu', 'shen_xusheng'],
 				hpp_hpp: ['hpp_re_zuoci'],
 			},
@@ -46,12 +46,22 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
 			// 敖隐
 			hok_aoyin: ['male', 'wu', 3, ['hok_zhanghuo', 'hok_siyu', 'hok_jiafeng', 'hok_qiongxuan']],
+			// 百里守约
+			hok_bailishouyue: ['male', 'qun', 3, ['hok_miaozhun', 'hok_miyan', 'hok_kuangju']],
 			// 百里玄策
 			hok_bailixuance: ['male', 'shu', 4, ['hok_rexue', 'hok_yangou', 'hok_lianshan']],
 			// 妲己
 			hok_daji: ['female', 'qun', 3, ['hok_meixin', 'hok_huhuo']],
+			// 大司命
+			hok_dasiming: ['male', 'wei', 4, ['hok_mingge', 'hok_hungui']],
 			// 东皇太一
 			hok_donghuangtaiyi: ['male', 'wei', 5, ['hok_rishi', 'hok_duoqi']],
+			// 朵莉亚
+			hok_duoliya: ['female', 'wei', 4, ['hok_renyu', 'hok_huange', 'hok_tianlai']],
+			// 高渐离
+			hok_gaojianli: ['male', 'jin', 3, ['hok_aige', 'hok_kuangge', 'hok_lige', 'hok_moyin',]],
+			// 海诺
+			hok_hainuo: ['male', 'wei', 3, ['hok_mingren', 'hok_zhuimang', 'hok_xuanji', 'hok_xingyou', 'hok_minghui']],
 			// 兰陵王
 			hok_lanlingwang: ['male', 'jin', 4, ['hok_yinni', 'hok_yingshi', 'hok_anxi']],
 			// 李信
@@ -84,7 +94,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 神徐盛
 			shen_xusheng: ['male', 'shen', 4, ['kuijun'], ['wu']],
 
-			// 欢杀陆逊
+			// 欢杀左慈
 			hpp_re_zuoci: ['male', 'qun', 3, ['hpp_re_xinsheng'], []],
 		},
 		characterIntro: {
@@ -102,9 +112,13 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_ailin: '艾琳是黄金森林的在逃精灵公主，日落圣殿的不速之客。公主艾琳天性机灵活泼，对一切未知充满好奇心与探索欲。然而“继承人”的责任始终压在她的肩膀上，她被要求收起不稳重的一面，遵循精灵族舞蹈的优雅与绝对的秩序，做好一个“真正的公主”。成年仪式前夕，艾琳决定打破族群禁令，逃去森林外的“危险古怪的人类世界”开启一场自由的冒险。旅程却并没有想象中那样顺遂，人类对精灵同样存在“不详邪恶”的重重误解。越是未知，越是有趣，越是困难，越有斗志。她以舞蹈为表达自我的“语言”，与红头发的法师小女孩成为密友，给圣殿严肃守序的骑士团带来了诸多意外麻烦，甚至组成了圣殿小分队在西方大陆的各个地方冒险……',
 			hok_anqila: '这具身体，想必一直憧憬仰慕着这位圣骑士。这种仰慕如此强烈，让梅林无法抵御。梅林抓狂了！她才不要刚离开囚笼，就单恋上弱爆了的人类。她果断决定一回到村镇，立刻暗杀这位救命恩人。幸亏，他们所遇到的第一个行人，朝圣骑士打招呼，并叫他“亚瑟”！一瞬间，所有不堪回忆的黑历史都涌到了梅林……哦不，现在名为安琪拉的小女孩脑中：是的，她被称为世界上最伟大和正义的巫师，但这是假象。她是个失败者。天才的她计划要谋夺世界，无耻的家伙践踏了她的自尊心，诅咒了她，让她被迫听命于亚瑟王。什么复兴日落圣殿！她本想毁灭它！亚瑟王死后，她以为自己终于解脱，却又失手被困。如今，命运的诅咒再度生效。小女孩的单相思让眼前这个同样叫亚瑟的圣骑士成为她新的主人。真是倒霉透顶！愤怒焚烧了安琪拉的理智。她召唤出巨大火球。圣骑士反应神速的拔出长剑：“你是谁！”他警惕的问。“请接受我——法师安琪拉的效忠。这是命运安排我们重逢。”小女孩展现出与年龄不符的微笑，“我的陛下……”“知识，就是力量！”',
 			hok_aoyin: '“千年，疾光迅影，我们在世人的传说中载沉载浮。”在这世界已难辨析真伪的传说中，古老的龙族诞自天地，是流动的自然之力孕育出的全新生命。直到众神掀开神话的篇章，生命繁衍壮大成族群。龙步入世间，感受这个孕育他的世界正在发生的一切变化——他们与万物同行，倾听天地声息……直到这非凡不朽的一族，不知自哪一段往事中倏然隐去，只在尘世中留下散佚的传说之篇。但在另一个故事里，他们并未离去。古老的巨龙怀恋着这个孕育他们的世界，于是将生命中最深刻丰沛的情感凝结成一枚生命的结晶——期待着有一天，他们的后代与这世界，再次同行。鳞甲冰凉，心中滚烫。剑光辉映一条曲折绵长的路，一个答案震彻远方。“让龙族之名，重昭天地。”',
+			hok_bailishouyue: '非人的马贼队伍突袭了人群，集市瞬时陷入火海。如雨的飞箭下，他和同伴们死命撑着城门的支柱。他们关上大门，将贼人的队伍一分为二，守卫军追捕着城内的贼子，乡民们的任务就是守住这扇大门。守住城门，就守住了弟弟。可当四周安静下来，残垣断壁的家中却找不到弟弟的身影。玄策那时候该多么恐惧呀，但自己没有遵守住约定。不久，长城守卫军中多出一个安静的身影，他的射击技术精妙无比。他总朝更远的地方搜寻，越来越远。为了提醒自己，他改名守约。守约，言出必果。',
 			hok_bailixuance: '玄策不会忘记那个日子：来历不明的马贼冲破边关的城镇，然而齐心协力的守卫军和民众守住城门。率先进入城镇的马贼走投无路，挟持了无力反抗的老弱们作为逃离的砝码。那时候自己多么害怕啊。可哭喊声刺痛小小男子汉的心灵，他推倒藏身的水缸，冲了出去。之后的记忆已不太清晰……那些不是普通的马贼……他们最后都死于首领之手……哥哥没有赶到，谁也没有赶到。他被首领选中，作为祭品去唤醒某种强大的东西。所有人四散逃窜，在绝望和恐惧中，少年眼睁睁看着无名剑士代替自己卷入邪恶迷雾。直到周围一切归于寂静，圆月安静照耀着亘古不变的戈壁，那个男人带走了他。',
 			hok_daji: '关于妲己，历史上的记载非常稀少，只有《史记》和《国语》里有寥寥数语。我们只知道她是商朝最后一个王商纣王的妃子，出自有苏氏。更多的信息，实际上来自明代的小说《封神演义》。在小说里，在纣王身边妲己实际上是狐狸精。她蛊惑纣王干下了种种祸害百姓、残害忠良的倒行逆施，最终断送了商朝的天下。小说中的妲己，就是“女色祸国论”的形象。',
 			hok_donghuangtaiyi: '平庸是恶。自己，为何不能成为神？怀抱这这种执念，他孤注一掷，用被云珀改造过的身体强行吞噬了奇迹的力量。他如愿以偿，成为世间第一个接近于神的造物，通过奇迹，掌握了进化以及无穷力量的可能性。他的身体因奇迹中蕴含的能量而产生变化，进化为半神之姿；巫神祝冠其以“叛巫”之名；最尊敬的师父摇头走入森林深处，选择与自己相反的道路……但他深知这一切远非终点——总有一日，他将夺取全部的奇迹之力，成为真正的、唯一的神明。凭借着如同吞天噬日般的“神迹”，一批同样对力量充满渴望的人开始奉“东神”为首领。他们自称“全知者”，以云珀改造自身获得强大的力量，统治着位于森林顶端的云梦城——这里也很快在森民们口中被更名成为了“东神城”。他高居宫殿之中，坦然接受着全知者和森民们无比敬仰的注目。他的真名如何，已无迹可考。但现在，即使是小孩听到他的名字也会止住哭泣：噬灭日蚀——东皇太一。“日蚀亲临，如我之神迹！”',
+			hok_duoliya: '小时候，在一次偷溜前往迷雾之海沉船宝藏“寻宝”的途中，朵莉亚用歌声救起了一个遭遇海难的人类小男孩——海都命运家族少主海诺，从此，开始拥有了第一个真正意义上的朋友。 往后的日子里，朵莉亚常常会偷溜到海都去找小海诺玩耍，对于过早失去双亲承受着家族命运孤独的海诺，和鲜有伙伴向往热忱友谊的小人鱼朵莉亚来说，这对两小无猜的“秘密伙伴”彼此早已成为对方最重要的存在。海都一年一度的烟火大会即将举行，然而，不明缘由的污染却加速了海底深渊巨兽的苏醒，情急之中， 为帮朵莉亚找到那首传说中饱含着最真挚情感记忆，能安抚海兽的“人鱼之歌”，海诺用窥探命运的能力，带她去往命运时空里若干年后的未来，在老去的海诺那里，找到用俩人一生回忆谱写的“人鱼之歌”。尽管不愿接受命运的答案，朵莉亚最终还是选择唱出这首“人鱼之歌”，让狂躁的巨兽吞噬掉俩人最美好的情感记忆得到安抚，但这也意味着选择了彼此的遗忘和失去……',
+			hok_gaojianli: '高渐离，战国末期的燕国人，音乐家，善击筑（一种古之打击乐）。据《战国策》记载，高渐离与荆轲相友善，饮与市，边击筑边引吭高歌。当燕太子丹招募荆轲谋刺秦王政之际，燕太子丹在易水边为英雄送别，高渐离为之击筑。荆轲刺秦失败之后，传说高渐离隐姓埋名，浪迹天涯，后来得以凭音乐技能混迹于秦宫，为秦始皇击筑，谋刺秦皇，未果而身死。',
+			hok_hainuo: '曾经的命运家族，是海都执政者之一，以双眼洞察命运，为海都领航。指引前行的人，却在一场无端的厄运中，沉没深海，至此群星暗淡，再无光芒。海诺幼年时，命运神杖就预言，家族将注定迈向衰亡，所以有人说，海诺就是那厄运之人。他不顾族人“罔顾祖训”的反对，毅然将命运启示殿搬到外城，承接普通民众诉求，为命运家族积累声望，为命运家族保住了最后的基业。众人直到那时才发现，所谓的厄运之人，成为了他们最值得信赖和依靠的存在。“行无穷命途，见万千命运”，海诺坚信，终局亦可逆转。他会让命运的光芒，再次绽放！',
 			hok_lanlingwang: '一人敌一国，多么荒诞，又是多么简单。他反复着这样的伎俩，散布死亡。恐惧滋生，长城驻军被玩弄在掌中。直到某个夜晚，另一把剑的锋芒刺穿黑暗。“是你，幽灵！”啊，那个叛徒，还没有离开吗？竟然如此不甘心，而且……女人？兰陵王微笑着。也好，一直都赢，挺无聊的。“刀锋所划之地，便是疆土。”',
 			hok_lixin: '李信所守护的是长城，却也不是长城。他是废太子之子，如今丧城丧国的、孤独落魄的王族后裔。长安城已经不是他的长安城，家亦非家。亲情，友情，理想，这些在他看来不过是一些冠冕堂皇的表象。牡丹方士同他许诺以长城换得长安，燃烧着炽热野心的少年因而来到边疆，为了有朝一日能够夺回真正属于自己的"家"而战斗。',
 			hok_makeboluo: '马可波罗，中古时期的威尼斯商人。其父亲和叔叔，都曾到东方经商，而他本人，则在元世祖忽必烈的时代，来到中国。他穿越沙漠和帕米尔高原，经河西走廊来到元大都，游历了许多城市，据说还见过忽必烈，接受过元朝的官职。回到威尼斯之后，因带回的东方珍宝而成为巨富。后来参与威尼斯与热那亚的战争中被俘，在狱中，向同牢的作家口述了他的东方见闻，遂成著名的《马可波罗游记》。《马可波罗游记》极大地开拓了欧洲人的东方视野，丰富了他们关于东方的想象，激起了欧洲人向往东方的雄心。但也有人质疑游记的真实性，比如游记没有提到著名的长城，不过，作为一个口述游记，记录长城作用几乎完全消失的元代的事情，缺失长城也是可以理解的。',
@@ -1220,7 +1234,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				enable: ['chooseToRespond', 'chooseToUse'],
 				mod: {
 					targetInRange(card, player) {
-						if (card.name == 'sha' && card.hasNature('fire')) return true;
+						if (card.name == 'sha' && card.nature == 'fire') return true;
 					},
 				},
 				filterCard(card) {
@@ -1240,6 +1254,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					return 6 - val;
 				},
 				group: 'hok_huoqiu_damage',
+				ai: {
+					order() {
+						return get.order({ name: "sha" }) + 0.5;
+					},
+				},
 				subSkill: {
 					damage: {
 						forced: true,
@@ -1286,7 +1305,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					order: 9.1,
 					result: {
-						target: function (player, target) {
+						target(player, target) {
 							if (target.countCards('h') == 0) {
 								return 0;
 							}
@@ -1314,8 +1333,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					order: 5.5,
 					result: {
-						player: 1,
-					}
+						target(player, target) {
+							return -get.damageEffect(target, player, player, "fire");
+						}
+					},
 				}
 			},
 			// 艾琳
@@ -1462,7 +1483,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					game.setNature(trigger.card, 'fire');
 				},
 				ai: {
-					order: function () {
+					order() {
 						return get.order({ name: 'sha' }) + Math.random() * 0.5;
 					},
 				},
@@ -1501,7 +1522,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					game.setNature(trigger.card, 'thunder');
 				},
 				ai: {
-					order: function () {
+					order() {
 						return get.order({ name: 'sha' }) + Math.random() * 0.5;
 					},
 				},
@@ -1549,7 +1570,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				ai: {
 					directHit_ai: true,
-					order: function () {
+					order() {
 						return get.order({ name: 'sha' }) + Math.random() * 0.5;
 					},
 				},
@@ -1561,7 +1582,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				mark: true,
 				limited: true,
 				trigger: { player: 'damageBegin4' },
-				check: function (event, player) {
+				check(event, player) {
 					if (player.hasJudge('lebu')) {
 						return 0;
 					}
@@ -1591,7 +1612,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						mod: {
 							targetEnabled(card, player, target) {
 								return false;
-							}
+							},
 						}
 					},
 					video: {
@@ -1606,11 +1627,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 					wushuang: {
 						mod: {
-							selectTarget: function (card, player, range) {
+							selectTarget(card, player, range) {
 								if (card.name == 'sha' && range[1] != -1) range[1]++;
 							},
 							cardUsable(card, player, num) {
 								if (card.name == 'sha') return num + 1;
+							},
+							attackRange(player, num) {
+								return num + 1;
 							},
 						},
 						trigger: { player: 'phaseEnd' },
@@ -1620,6 +1644,102 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 					},
 				},
+			},
+			// 百里守约
+			hok_miaozhun: {
+				derivation: 'hok_yinshen',
+				trigger: { player: 'phaseJieshuBegin' },
+				forced: true,
+				locked: false,
+				filter(event, player) {
+					if (player.countMark('hok_yinshen')) {
+						return false;
+					}
+					if (player.getHistory('skipped').contains('phaseUse')) return true;
+					var history = player.getHistory('useCard').concat(player.getHistory('respond'));
+					for (var i = 0; i < history.length; i++) {
+						if ((history[i].card.name == 'sha' || get.type(history[i].card) == 'trick' || get.type(history[i].card) == "delay") && history[i].isPhaseUsing()) {
+							return false;
+						}
+					}
+					return true;
+				},
+				content() {
+					player.addMark('hok_yinshen', 1);
+					player.addSkill('hok_yinshen');
+				},
+				group: 'hok_miaozhun_effect',
+				subSkill: {
+					effect: {
+						mod: {
+							attackRange(player, num) {
+								return num + 2;
+							},
+						}
+					},
+				},
+			},
+			hok_miyan: {
+				derivation: 'hok_yinshen',
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: lib.filter.notMe,
+				content() {
+					if (target.hasMark('hok_yinshen')) {
+						target.removeMark('hok_yinshen', 1);
+						target.removeSkill('hok_yinshen');
+					}
+					target.chooseToDiscard('h', true).set('ai', function (card) {
+						return 6 - get.value(card);
+					});
+				},
+				ai: {
+					result: {
+						target(player, target) {
+							return -1;
+						}
+					},
+					threaten: 1,
+					order: 9,
+					expose: 0.2,
+				}
+			},
+			hok_kuangju: {
+				trigger: { player: 'phaseUseBegin' },
+				filter(event, player) {
+					return game.hasPlayer(target => player.canUse({ name: 'sha' }, target, false, true)) && player.getCards('h', 'sha').length > 0;
+				},
+				content() {
+					'step 0';
+					player.storage.hok_kuangju = 0;
+					player.chooseToDiscard([1, player.getCards('h', 'sha').length], 'h', '弃置X张杀，视为对该角色使用一张伤害为X的【杀】（不可以触发酒）。', { name: 'sha' })
+						.set("ai", (card) => 1 / (get.value(card) || 0.5));
+					'step 1';
+					if (result.bool) {
+						var sum = result.cards.length;
+						if (sum > 0) {
+							player.storage.hok_kuangju = sum;
+						}
+					}
+					'step 2'
+					if (result.bool) {
+						player.chooseUseTarget('sha', true, false);
+					}
+				},
+				group: 'hok_kuangju_effect',
+				subSkill: {
+					effect: {
+						forced: true,
+						locked: false,
+						trigger: { source: 'damageBegin1' },
+						filter(event, player) {
+							return player.storage.hok_kuangju > 0;
+						},
+						content() {
+							trigger.num = player.storage.hok_kuangju;
+						},
+					}
+				}
 			},
 			// 百里玄策
 			hok_rexue: {
@@ -1835,7 +1955,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					event.huhuoList = game.filterPlayer(function (target) {
 						return player.inRange(target) && !target.isDead() && target != player;
 					});
-					event.huhuoDamage = (event.huhuoList.length > 6 ? 5 : 3);
+					event.huhuoDamage = (event.huhuoList.length > 4 ? 5 : 3);
 					if (result.bool) {
 						for (var i = 0; i < result.targets.length; i++) {
 							// event.huhuoList.splice(event.huhuoList.indexOf(result.targets[0]), 1);
@@ -1874,9 +1994,90 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					// }
 				},
 			},
+			// 大司命
+			hok_mingge: {
+				marktext: '鸣',
+				intro: {
+					name: '鸣戈',
+					content: 'mark',
+				},
+				trigger: { source: 'damageSource' },
+				forced: true,
+				filter(event, player) {
+					return event.num > 0 && event.card && event.card.name == 'sha';
+				},
+				content() {
+					if (!trigger.player.hasMark('hok_mingge')) {
+						trigger.player.addMark('hok_mingge');
+					} else {
+						var cards = target.getCards('h', function (card) {
+							return lib.filter.cardDiscardable(card, target, 'hok_shangui');
+						});
+						if (cards.length > 0) target.discard(cards.randomGets(2));
+					}
+					player.storage.clears = player.storage.clears.filter(element => element !== trigger.player);
+				},
+				group: ['hok_mingge_effect', 'hok_mingge_record', 'hok_mingge_clear'],
+				subSkill: {
+					effect: {
+						mod: {
+							attackRange(player, num) {
+								if (player.storage._xuanji) return num;
+								return num + 1;
+							},
+						}
+					},
+					record: {
+						trigger: { player: 'phaseBegin' },
+						forced: true,
+						locked: false,
+						filter(event, player) {
+							return game.hasPlayer((current) => {
+								return current.countMark('hok_mingge');
+							});
+						},
+						content() {
+							player.storage.clears = game.filterPlayer((current) => {
+								return current.countMark('hok_mingge');
+							});
+						},
+					},
+					clear: {
+						trigger: { player: 'phaseEnd' },
+						forced: true,
+						locked: false,
+						filter(event, player) {
+							if (player.storage.clears != undefined) {
+								return player.storage.clears.length > 0;
+							}
+							return false;
+						},
+						content() {
+							'step 0'
+							player.storage.clears.forEach((element) => {
+								if (element.hasMark('hok_mingge')) {
+									element.removeMark('hok_mingge', 1);
+								}
+							})
+							'step 1'
+							player.storage.clears = [];
+						},
+					}
+				}
+			},
+			hok_hungui: {
+				trigger: { source: "damageSource" },
+				filter(event, player) {
+					return event.player.hp == 1;
+				},
+				content() {
+					player.line(trigger.player, { color: [255, 255, 0] });
+					trigger.player.die();
+				},
+			},
 			// 东皇太一
 			hok_rishi: {
-				marktext: '日蚀',
+				marktext: '蚀',
 				intro: {
 					name: '日蚀',
 					content: 'mark',
@@ -1964,6 +2165,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 									target.removeSkill('fengyin');
 								}
 								player.storage.hok_duoqi = false;
+							} else {
+								player.storage.hok_duoqi = true;
 							}
 						},
 						group: ['hok_duoqi_xiongluan', 'hok_duoqi_xianfu'],
@@ -2002,6 +2205,558 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 					},
 				}
+			},
+			// 朵莉亚
+			hok_renyu: {
+				trigger: { player: "damageBegin4" },
+				filter(event) {
+					return event.hasNature("fire");
+				},
+				forced: true,
+				content() {
+					trigger.cancel();
+				},
+				ai: {
+					nofire: true,
+					effect: {
+						target(card, player, target, current) {
+							if (get.tag(card, "fireDamage")) return "zerotarget";
+						},
+					},
+				},
+			},
+			hok_huange: {
+				derivation: 'hok_yinshen',
+				usable: 1,
+				enable: 'phaseUse',
+				filterTarget: lib.filter.notMe,
+				content() {
+					if (target.hasMark('hok_yinshen')) {
+						target.removeMark('hok_yinshen', 1);
+						target.removeSkill('hok_yinshen');
+					}
+					if (get.distance(player, target) <= 1) {
+						target.chooseToDiscard('h', true).set('ai', function (card) {
+							return 6 - get.value(card);
+						});
+					}
+				},
+				ai: {
+					result: {
+						target(player, target) {
+							return -1;
+						}
+					},
+					threaten: 1,
+					order: 9,
+					expose: 0.2,
+				}
+			},
+			hok_tianlai: {
+				trigger: { player: 'phaseUseBegin' },
+				content() {
+					'step 0'
+					var maxThreaten = 0;
+					game.filterPlayer(function (target) {
+						var att = get.attitude(_status.event.player, target);
+						if (att > 0) {
+							if (get.threaten(target) > maxThreaten) {
+								maxThreaten = get.threaten(target);
+							}
+						}
+						return false;
+					});
+					player.chooseTarget(get.prompt("hok_tianlai")).set("ai", function (target) {
+						game.log('maxThreaten ' + maxThreaten)
+						var player = _status.event.player,
+							att = get.attitude(player, target);
+						if (att > 0 && maxThreaten == get.threaten(target)) return att;
+						return -1;
+					});
+					'step 1'
+					if (result.bool) {
+						var target = result.targets[0];
+						target.addSkill('hok_tianlai_effect');
+					}
+				},
+				subSkill: {
+					effect: {
+						trigger: { player: ["useSkillAfter", "logSkill"] },
+						enable: 1,
+						filter(event, player) {
+							if (lib.skill[event.skill].equipSkill == true) return false;
+							if (event.skill != 'hok_tianlai') return true;
+							return false;
+						},
+						content() {
+							'step 0'
+							player.removeSkill('hok_tianlai_effect');
+							'step 1'
+							var skillsLength = player.getHistory("useSkill").length;
+							if (skillsLength >= 2) {
+								var nextSkill = player.getHistory("useSkill")[skillsLength - 2].skill;
+								let nextSkillName = nextSkill.toString();
+								if (nextSkillName != 'hok_tianlai' && nextSkillName != 'hok_tianlai_effect' && nextSkillName != 'hok_minghui' && nextSkillName != 'miniyoulong') {
+									player.useSkill(nextSkill);
+								} else if (nextSkillName == 'hok_minghui') {
+									player.addTempSkill('hok_minghuitianlai');
+								}
+							}
+						},
+					}
+				}
+			},
+			// 高渐离
+			hok_aige: {
+				marktext: '歌',
+				intro: {
+					name: '哀歌',
+					content: 'mark',
+				},
+				trigger: { player: "useCardAfter" },
+				frequent: true,
+				preHidden: true,
+				filter(event) {
+					return get.tag(event.card, 'damage') || event.card.name == 'sha';
+				},
+				content() {
+					if (player.countMark('hok_aige') < 5) {
+						player.addMark('hok_aige');
+					}
+				},
+				group: 'hok_aige_effect',
+				subSkill: {
+					effect: {
+						trigger: { player: 'useCard2' },
+						forced: true,
+						filter(event, player) {
+							return player.countMark('hok_aige') >= 3 && event.card.name == 'sha';
+						},
+						content() {
+							player.removeMark('hok_aige', 3);
+							trigger.baseDamage += 1;
+						},
+					}
+				},
+			},
+			hok_kuangge: {
+				usable: 1,
+				enable: 'phaseUse',
+				enable: ['chooseToRespond', 'chooseToUse'],
+				filterCard(card) {
+					return lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay';
+				},
+				viewAs: { name: 'sha' },
+				viewAsFilter(player) {
+					if (!player.countCards('hs', { type: 'trick' }) && !player.countCards('hs', { type: 'delay' })) {
+						return false;
+					}
+				},
+				position: 'hs',
+				prompt: '将一张锦囊当【杀】使用或打出',
+				check(card) {
+					const val = get.value(card);
+					if (_status.event.name == 'chooseToRespond') return 1 / Math.max(0.1, val);
+					return 5.5 - val;
+				},
+				ai: {
+					respondSha: true,
+				},
+			},
+			hok_lige: {
+				enable: 'phaseUse',
+				filter(event, player) {
+					return game.hasPlayer(target => player.canUse({ name: 'sha', nature: 'fire' }, target)) && player.countCards('hes', card => lib.skill.hok_lige.filterCard(card, player));
+				},
+				position: "hes",
+				filterCard(card, player) {
+					return get.type(card) == 'equip' && get.subtype(card) == 'equip3';
+				},
+				filterTarget(card, player, target) {
+					return player.canUse({ name: 'sha', nature: 'fire', isCard: true }, target);
+				},
+				usable: 1,
+				check: (card) => 8 - get.value(card),
+				prompt: '弃置一张防具马，视为对一名其他角色使用一张不计入次数的火【杀】',
+				content() {
+					'step 0'
+					player.useCard({ name: 'sha', nature: 'fire', isCard: true }, target);
+					player.addSkill('hok_lige_paoxiao');
+					'step 1'
+					var next = player.chooseToUse();
+					next.set(
+						"openskilldialog",
+						`###${get.prompt("hok_kuangge")}###`
+					);
+					next.set("norestore", true);
+					next.set("_backupevent", "hok_kuangge");
+					next.set("addCount", false);
+					next.set("custom", {
+						add: {},
+						replace: { window() { } },
+					});
+					next.backup("hok_kuangge");
+					'step 2'
+					player.removeSkill('hok_lige_paoxiao');
+				},
+				subSkill: {
+					paoxiao: {
+						mod: {
+							cardUsable(card, player, num) {
+								if (card.name == 'sha') return Infinity;
+							}
+						},
+					},
+				},
+			},
+			hok_moyin: {
+				enable: 'phaseUse',
+				unique: true,
+				limited: true,
+				skillAnimation: true,
+				animationColor: 'thunder',
+				filter(event, player) {
+					return player.countCards('hes');
+				},
+				content() {
+					player.awakenSkill('hok_moyin');
+					player.addTempSkill('hok_moyin_aige');
+				},
+				subSkill: {
+					aige: {
+						trigger: { player: "useCard" },
+						filter(event, player) {
+							if (get.tag(event.card, 'damage') || event.card.name == 'sha')
+								return lib.skill.hok_moyin_aige.logTarget(event, player).length;
+							return false;
+						},
+						logTarget(event, player) {
+							return game.filterPlayer(current => {
+								return current != player && current.inRangeOf(player);
+							});
+						},
+						forced: true,
+						content() {
+							'step 0'
+							event.targets = lib.skill.hok_moyin_aige.logTarget(trigger, player).sortBySeat();
+							'step 1'
+							var target = event.targets.shift();
+							event.target = target;
+							target.chooseToDiscard('h', '魔音：弃置一张手牌，或失去1点体力').set('ai', card => {
+								var player = _status.event.player;
+								if (card.name == 'tao' || card.name == 'jiu') return 0;
+								if (player.hasSkill('zhaxiang') && player.hp > 1) return 0;
+								return 6 - get.value(card);
+							});
+							'step 2'
+							if (!result.bool) target.loseHp();
+							if (event.targets.length) event.goto(1);
+						},
+					},
+				},
+			},
+			// 海诺
+			hok_mingren: {
+				marktext: '命',
+				intro: {
+					name: '命刃',
+					content: 'mark',
+				},
+				trigger: { source: 'damageSource' },
+				forced: true,
+				filter(event, player) {
+					return event.num > 0;
+				},
+				content() {
+					if (!trigger.player.hasMark('hok_mingren') && trigger.player != player) {
+						trigger.player.addMark('hok_mingren');
+					}
+					player.storage.clears = player.storage.clears.filter(element => element !== trigger.player);
+				},
+				group: ['hok_mingren_record', 'hok_mingren_clear'],
+				subSkill: {
+					record: {
+						trigger: { player: 'phaseBegin' },
+						forced: true,
+						locked: false,
+						filter(event, player) {
+							return game.hasPlayer((current) => {
+								return current.countMark('hok_mingren');
+							});
+						},
+						content() {
+							player.storage.clears = game.filterPlayer((current) => {
+								return current.countMark('hok_mingren');
+							});
+						},
+					},
+					clear: {
+						trigger: { player: 'phaseEnd' },
+						forced: true,
+						locked: false,
+						filter(event, player) {
+							if (player.storage.clears != undefined) {
+								return player.storage.clears.length > 0;
+							}
+							return false;
+						},
+						content() {
+							'step 0'
+							player.storage.clears.forEach((element) => {
+								if (element.hasMark('hok_mingren')) {
+									element.removeMark('hok_mingren', 1);
+								}
+							})
+							'step 1'
+							player.storage.clears = [];
+						},
+					}
+				}
+			},
+			hok_zhuimang: {
+				trigger: { player: 'useCard2' },
+				filter(event, player) {
+					if (event.card.name != 'sha') return false;
+					if (player.storage._xuanji) return false;
+					return game.hasPlayer(function (current) {
+						return !event.targets.contains(current) && current.hasMark('hok_mingren') && current != player;
+					});
+				},
+				direct: true,
+				content() {
+					'step 0'
+					player.chooseTarget(get.prompt('hok_zhuimang'), '为' + get.translation(trigger.card) + '增加任意个目标', function (card, player, target) {
+						return !_status.event.sourcex.contains(target) && target.hasMark('hok_mingren') && player != target;
+					}, [1, Infinity]
+					).set('sourcex', trigger.targets).set('ai', function (target) {
+						var player = _status.event.player;
+						return get.effect(target, _status.event.card, player, player);
+					}).set('card', trigger.card);
+					'step 1'
+					if (result.bool) {
+						if (!event.isMine() && !event.isOnline()) game.delayx();
+						event.target = result.targets[0];
+					}
+					else {
+						event.finish();
+					}
+					'step 2'
+					player.logSkill('hok_zhuimang', event.target);
+					trigger.targets.push(event.target);
+				},
+				ai: {
+					effect: {
+						player(card, player, target, current, isLink) {
+							if (!isLink && card.name == 'sha') {
+								if (player._double) return;
+								player._double = true;
+								if (get.effect(target, card, player, player) <= 0) {
+									delete player._double;
+									return;
+								}
+								if (game.hasPlayer(function (current) {
+									return current != target && current.hasMark('hok_mingren') &&
+										player.canUse(card, current) && get.effect(current, card, player, player) > 0;
+								})) {
+									delete player._double;
+									return [1, 1];
+								}
+								delete player._double;
+							}
+						}
+					}
+				},
+				group: 'hok_zhuimang_effect',
+				subSkill: {
+					effect: {
+						mod: {
+							attackRange(player, num) {
+								if (player.storage._xuanji) return num;
+								return num + 2;
+							},
+						}
+					},
+				},
+			},
+			hok_xuanji: {
+				enable: 'phaseUse',
+				usable: 1,
+				filter(event, player) {
+					if (!player.storage._xuanji) return false;
+					return game.hasPlayer((current) => {
+						return current != player && current.inRangeOf(player);
+					});
+				},
+				content() {
+					"step 0";
+					if (game.hasPlayer((current) => {
+						return current != player && current.hasSkill('hok_minghuitianlai_effect') && current.inRangeOf(player);
+					})) {
+						player.chooseTarget(
+							"对攻击范围内的一名其他角色造成1点伤害",
+							function (card, player, target) {
+								return target != player && target.hasSkill('hok_minghuitianlai_effect') && target.inRangeOf(player);
+							}
+						).set("ai", function (target) {
+							var player = _status.event.player;
+							return get.damageEffect(target, player, player);
+						});
+					} else {
+						player.chooseTarget(
+							"对攻击范围内的一名其他角色造成1点伤害",
+							function (card, player, target) {
+								return target != player && target.inRangeOf(player);
+							}
+						).set("ai", function (target) {
+							var player = _status.event.player;
+							return get.damageEffect(target, player, player);
+						});
+					}
+					"step 1";
+					if (result.bool) {
+						var target = result.targets[0];
+						player.line(target, "fire");
+						if (target.hasSkill('hok_minghuitianlai_effect')) {
+							target.damage(2);
+						} else {
+							target.damage();
+						}
+						if (target.hasMark('hok_mingren')) {
+							player.recover();
+						}
+					} else event.finish();
+				},
+			},
+			hok_xingyou: {
+				derivation: ['hok_zhuimang', 'hok_xuanji'],
+				enable: 'phaseUse',
+				usable: 1,
+				init(player) {
+					player.storage._xuanji = false;
+				},
+				mark: true,
+				intro: {
+					name: '行游',
+					content(storage, player) {
+						if (!player.storage.hok_xingyou) return;
+						return '行游记录体力：' + player.storage.hok_xingyou;
+					}
+				},
+				filter(event, player) {
+					return player.countCards('h');
+				},
+				filterCard: lib.filter.cardDiscardable,
+				selectCard: 1,
+				check(card) {
+					var player = _status.event.player;
+					if (get.position(card) == 'h' && !player.countCards('h', 'du')) return 1;
+					return 6 - get.value(card);
+				},
+				position: 'h',
+				content() {
+					'step 0'
+					player.discard(cards);
+					'step 1'
+					if (!player.storage._xuanji) {
+						player.storage._xuanji = true;
+						player.storage.hok_xingyou = player.hp;
+						player.gainMaxHp();
+						player.recover();
+					} else {
+						player.storage._xuanji = false;
+						player.loseMaxHp();
+						player.draw();
+					}
+				},
+				ai: {
+					order: 1,
+					result: { player: 1 },
+				},
+			},
+			hok_minghui: {
+				derivation: ['hok_minghuitianlai'],
+				unique: true,
+				mark: true,
+				skillAnimation: true,
+				animationColor: "water",
+				limited: true,
+				enable: 'phaseUse',
+				filter(event, player) {
+					if (player.storage.hok_xingyou && player.storage.hok_xingyou > player.hp) return true;
+					return false;
+				},
+				content() {
+					player.awakenSkill("hok_minghui");
+					player.recover(player.storage.hok_xingyou - player.hp);
+				},
+				intro: {
+					content: "limited",
+				},
+				ai: {
+					order: 13,
+					result: {
+						player(player) {
+							if (player.hp < 2) {
+								return 1;
+							}
+							return 0;
+						}
+					},
+				},
+			},
+			hok_minghuitianlai: {
+				unique: true,
+				mark: true,
+				intro: {
+					content: "limited",
+				},
+				skillAnimation: true,
+				animationColor: "thunder",
+				limited: true,
+				enable: 'phaseUse',
+				filterTarget(card, player, target) {
+					return target != player && target.inRangeOf(player);
+				},
+				content() {
+					player.awakenSkill("hok_minghuitianlai");
+					target.addTempSkill('hok_minghuitianlai_effect');
+				},
+				ai: {
+					order: 13,
+					result: {
+						target(player, target) {
+							if (game.hasPlayer((current) => {
+								return current != player && current.hasSkill('hok_minghuitianlai_effect') && current.inRangeOf(player);
+							})) {
+								return -get.damageEffect(target, player, player);
+							} else {
+								return -get.damageEffect(target, player, player);
+							}
+						},
+					},
+				},
+				subSkill: {
+					effect: {
+						charlotte: true,
+						mark: true,
+						intro: {
+							name: '命回·天籁',
+							content: '不能使用和打出牌',
+						},
+						mod: {
+							cardEnabled2(card, player) {
+								return false;
+							},
+						},
+						ai: {
+							effect: {
+								target(card, player, target) {
+									if (get.tag(card, 'damage')) return [0, -999999];
+								},
+							},
+						},
+					},
+				},
 			},
 			// 兰陵王
 			hok_yinni: {
@@ -2074,13 +2829,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return 10;
 					},
 					result: {
-						player(player) {
-							if (player.hasValueTarget({
-								name: 'sha',
-								isCard: true,
-							})) return 1.5;
-							return 0.5;
-						},
+						target(player, target) {
+							return get.effect(target, { name: 'sha' }, player, target);
+						}
 					},
 				},
 				subSkill: {
@@ -2135,14 +2886,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							isCard: true,
 						}) + 0.1;
 					},
+
 					result: {
-						player(player) {
-							if (player.hasValueTarget({
-								name: 'sha',
-								isCard: true,
-							})) return 1.5;
-							return 0.5;
-						},
+						target(player, target) {
+							return get.effect(target, { name: 'sha' }, player, target);
+						}
 					},
 				},
 			},
@@ -3173,10 +3921,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				forced: true,
 				trigger: { source: 'damageBefore' },
 				content() {
-					game.setNature(trigger, 'thunder');
-					// Object.keys(trigger).forEach(function(key) {
-					// 	game.log(key + ": " + trigger[key]);
-					//   });
+					if (trigger.card.nature == null) {
+						game.setNature(trigger, 'thunder');
+					}
 					if (get.distance(player, trigger.player) <= 1) {
 						player.changeHujia(1, null, true);
 					}
@@ -3270,7 +4017,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					// 		if (['trick', 'delay'].contains(lib.card[card.name].type) && get.color(card) == 'black') return 'thunder';
 					// 	},
 					targetInRange(card, player) {
-						if (card.name == 'sha' && (card.hasNature('fire') || card.hasNature('thunder'))) return true;
+						if (card.name == 'sha' && (card.nature == 'fire' || card.nature == 'thunder')) return true;
 					},
 				},
 				group: ['hok_qitian_sha', 'hok_qitian_shan'],
@@ -3329,7 +4076,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						enable: ['chooseToRespond', 'chooseToUse'],
 						filterCard(card) {
 							return ((lib.card[card.name].type == 'trick' || lib.card[card.name].type == 'delay') && get.color(card) == 'red')
-								|| (card.name == 'sha', card.hasNature('fire'));
+								|| (card.name == 'sha', card.nature == 'fire');
 						},
 						viewAs: { name: 'shan' },
 						viewAsFilter(player) {
@@ -3402,7 +4149,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							trigger.num = 3;
 						}
 					} else {
-						player.draw();
+						player.draw(2);
 					}
 				},
 			},
@@ -3663,6 +4410,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					game.broadcastAll(function (target1, target2) {
 						game.swapSeat(target1, target2);
 					}, target, targetSwap);
+					target.chooseToDiscard("h", true);
 				},
 				check(card) {
 					return (5 - get.value(card)) && _status.event.player.countCards('h') > 2;
@@ -3781,9 +4529,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						target.removeMark('hok_yinshen', 1);
 						target.removeSkill('hok_yinshen');
 					}
-					target.chooseToDiscard('h', true).set('ai', function (card) {
-						return 6 - get.value(card);
+					var cards = target.getCards('h', function (card) {
+						return lib.filter.cardDiscardable(card, target, 'hok_shangui');
 					});
+					if (cards.length > 0) target.discard(cards.randomGet());
 				},
 				ai: {
 					result: {
@@ -5444,9 +6193,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 欢杀界左慈
 			hpp_re_xinsheng: {
 				getList() {
-					return Object.keys(lib.characterPack.happykill).filter(i => {
-						if (!lib.characterPack.happykill[i][4]) return true;
-						return !lib.characterPack.happykill[i][4].contains('unseen');
+					return Object.keys(lib.characterPack.MiNikill).filter(i => {
+						if (!lib.characterPack.MiNikill[i][4]) return true;
+						return !lib.characterPack.MiNikill[i][4].contains('unseen');
 					}).concat(_status.extra_pingjianList || []);
 				},
 				init(player) {
@@ -5926,9 +6675,14 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_anqila: '#b捞德一评级:3.9',
 			hok_ailin: '#b捞德一评级:3.6',
 			hok_aoyin: '#r捞德一评级:4.0',
+			hok_bailishouyue: '#b捞德一评级:3.7',
 			hok_bailixuance: '#b捞德一评级:3.9',
 			hok_daji: '#b捞德一评级:3.6',
+			hok_dasiming: '#b捞德一评级:3.7',
 			hok_donghuangtaiyi: '#b捞德一评级:3.7',
+			hok_duoliya: '#b捞德一评级:3.9',
+			hok_gaojianli: '#b捞德一评级:3.7',
+			hok_hainuo: '#b捞德一评级:3.9',
 			hok_lanlingwang: '#b捞德一评级:3.7',
 			hok_lixin: '#b捞德一评级:3.8',
 			hok_makeboluo: '#b捞德一评级:3.7',
@@ -6041,7 +6795,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_jiafeng: '驾风',
 			hok_jiafeng_info: '每回合限一次，当你使用【杀】指定一名角色为目标后，你令此【杀】改为冰【杀】。你的冰【杀】不可被响应。',
 			hok_qiongxuan: '穷玄',
-			hok_qiongxuan_info: '限定技，当你受到伤害时，你可以令你不能成为牌的目标直到你的下个回合开始时，然后你的【杀】可以额外指定一个目标且使用【杀】的次数+1直到回合结束时。',
+			hok_qiongxuan_info: '限定技，当你受到伤害时，你可以令你不能成为牌的目标直到你的下个回合开始时，然后获得以下状态直到回合结束时: 1.你的攻击范围+1; 2.【杀】可以额外指定一个目标; 3.使用【杀】的次数+1。',
+			// 百里守约
+			hok_bailishouyue: '王者百里守约',
+			hok_miaozhun: '瞄准',
+			hok_miaozhun_info: '锁定技，攻击范围+2。结束阶段，若你本回合没有使用杀或锦囊牌，你获得“隐身”标记。',
+			hok_miyan: '谧眼',
+			hok_miyan_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记并弃置1张手牌。',
+			hok_kuangju: '狂狙',
+			hok_kuangju_info: '出牌阶段开始时，你可以弃置你手牌中X张【杀】，视为使用一张伤害为X的【杀】（不计入次数）。',
 			// 百里玄策
 			hok_bailixuance: '王者百里玄策',
 			hok_rexue: '热血',
@@ -6057,13 +6819,51 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_meixin: '魅心',
 			hok_meixin_info: '出牌阶段限一次，你可以将一张红色手牌当做【乐不思蜀】使用，当你使用魅心且你的魅心标记小于4，你获得1枚“魅心”标记。',
 			hok_huhuo: '狐火',
-			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记不小于3时，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害(如果目标大于6改为5点火焰伤害)，你可以减少其中1~3个目标。',
+			hok_huhuo_info: '出牌阶段限一次，当你的“魅心”标记不小于3时，你可以弃置3枚“魅心”标记对攻击范围内的目标随机造成总计至多3点火焰伤害(如果目标大于4改为5点火焰伤害)，你可以减少其中1~3个目标。',
+			// 大司命
+			hok_dasiming: '王者大司命',
+			hok_mingge: '鸣戈',
+			hok_mingge_info: '你的攻击范围+1。你的【杀】造成伤害后，目标角色获得标记“命刃”直到你的下个回合结束；若你的杀对“鸣戈”标记的角色造成伤害时，其随机弃置两张牌。',
+			hok_hungui: '魂归',
+			hok_hungui_info: '当你对其他角色造成伤害后，若其体力值为1，你可以直接斩杀之。',
 			// 东皇太一
 			hok_donghuangtaiyi: '王者东皇太一',
 			hok_rishi: '日蚀',
 			hok_rishi_info: '准备阶段开始时，若你的“日蚀”标记小于3，你获得1枚“日蚀”标记。结束阶段，若你有“日蚀”标记，你可以摸1张牌（若你的“日蚀”标记数为3，改为摸2张）。',
 			hok_duoqi: '堕契',
 			hok_duoqi_info: '出牌阶段限一次，若你的“日蚀”标记等于3，你可以选择一名其他角色，对其造成1点伤害，你与其获得“堕契”标记直到你的回合开始前，然后你失去3枚“日蚀”标记。（“堕契”标记：锁定技。你的回合开始时你跳过本回合。你不能使用和打出牌。你非锁定技失效。当另一名“堕契”角色受到伤害后，你受到等量的伤害。）',
+			// 朵莉亚
+			hok_duoliya: '王者朵莉亚',
+			hok_renyu: '人鱼',
+			hok_renyu_info: '锁定技，当你受到火属性伤害时，你防止此伤害。',
+			hok_huange: '欢歌',
+			hok_huange_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记，若你与其距离为1，其弃置1张手牌。',
+			hok_tianlai: '天籁',
+			hok_tianlai_info: '出牌阶段开始时，你选择一名角色，令其下一个技能发动后额外结算一次。',
+			// 高渐离
+			hok_gaojianli: '王者高渐离',
+			hok_aige: '哀歌',
+			hok_aige_info: '你每使用3张伤害标签的牌，下张【杀】伤害+1。',
+			hok_kuangge: '狂歌',
+			hok_kuangge_info: '出牌阶段限一次，你可以将1张锦囊牌视为【杀】使用或打出。',
+			hok_lige: '离歌',
+			hok_lige_info: '出牌阶段限一次，你可以弃置1张防具马，视为使用一张无计入次数限制的火【杀】；然后你可以发动1次“狂歌”。',
+			hok_moyin: '魔音',
+			hok_moyin_info: '限定技，出牌阶段，你可令你本回合每使用1张伤害标签的牌，你攻击范围内的其他角色需弃置1张手牌，否则流失等量的体力。',
+			// 海诺
+			hok_hainuo: '王者海诺',
+			hok_mingren: '命刃',
+			hok_mingren_info: '你造成伤害后，目标角色获得标记“命刃”直到你的下个回合结束。',
+			hok_zhuimang: '追芒',
+			hok_zhuimang_info: '锁定技，你的攻击范围+2。你使用【杀】时，可以额外指定任意名拥有“命刃”标记的角色。',
+			hok_xuanji: '旋击',
+			hok_xuanji_info: '出牌阶段，你可以对攻击范围内的一名其他角色造成1点伤害。若其拥有“命刃”标记且因此受到伤害后，你回复1点体力。',
+			hok_xingyou: '行游',
+			hok_xingyou_info: '出牌阶段限一次，你可以弃置1张手牌，选择：1.将“追芒”切换为“旋击”，记录当前体力值，然后加1点体力上限并恢复1点体力；2.将“旋击”切换为“追芒”，减1点体力上限，然后摸一张牌。',
+			hok_minghui: '命回',
+			hok_minghui_info: '限定技，出牌阶段，你可以将体力值回复至“行游”记录的体力值。',
+			hok_minghuitianlai: '命回·天籁',
+			hok_minghuitianlai_info: '限定技，出牌阶段，你可以指定一名其他角色，直到回合结束，你对其使用“旋击”伤害+ 1，其不能使用和打出手牌。',
 			// 兰陵王
 			hok_lanlingwang: '王者兰陵王',
 			hok_yinni: '隐匿',
@@ -6125,7 +6925,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_tianlei: '天雷',
 			hok_tianlei_info: '锁定技，主公技。你防止即将受到的雷电伤害。你的回合开始时，你使用1张游戏外的【闪电】。',
 			hok_benlei: '奔雷',
-			hok_benlei_info: '锁定技。你造成的伤害始终为雷属性。每回合可使用的【杀】的次数+1。当你对与你距离为1的角色造成伤害后，你获得1点护甲。你的回合开始时，你失去所有护甲。',
+			hok_benlei_info: '锁定技。你造成的无属性伤害始终为雷属性。每回合可使用的【杀】的次数+1。当你对与你距离为1的角色造成伤害后，你获得1点护甲。你的回合开始时，你失去所有护甲。',
 			hok_leitingwanjun: '雷霆万钧',
 			hok_leitingwanjun_info: '限定技，本回合你造成的雷属性伤害+1；你每造成2点雷属性伤害，你回复1点体力。',
 			// 孙悟空
@@ -6135,7 +6935,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// hok_qitian_thunder: '齐天·雷',
 			hok_qitian_info: '锁定技，你的属性杀无距离限制，红色锦囊牌可以当做【火杀】，黑色锦囊牌可以当做【雷杀】，你的【火杀】可以当做【闪】。（无色锦囊牌可以当做【刺杀】）',
 			hok_shengbang: '圣棒',
-			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2（最大为3）；若为黑色，你摸一张牌。',
+			hok_shengbang_info: '锁定技，当你的杀造成伤害时，你可以弃置一张牌进行判定，若为红色，伤害×2（最大为3）；若为黑色，你摸两张牌。',
 			hok_houmao: '猴毛',
 			hok_houmao_info: '限定技，准备阶段开始时，你可以将体力回复至等同于你上回合结束时的体力值，弃置你判定区的牌，随机获得一张雷杀/火杀。',
 			hok_naogong: '闹宫',
@@ -6148,15 +6948,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_dihui_strengthen: '帝辉·强化',
 			hok_dihui_strengthen_info: '出牌阶段限1次，你选择1名角色，视为对其使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置1张牌。',
 			hok_diwei: '帝威',
-			hok_diwei_info: '出牌阶段限1次，你获得1个标记“曌”，你选择弃置1张手牌然后选择一项：选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置；直到你的下个回合，你获得技能“飞影”。',
+			hok_diwei_info: '出牌阶段限1次，你获得1个标记“曌”，你选择弃置1张手牌然后选择一项：1.选择1名与你座位相邻的角色，令其与同方向下一个角色交换位置并弃置一张牌; 2.直到你的下个回合，你获得技能“飞影”。',
 			hok_shaduo: '杀夺',
 			hok_shaduo_info: '限定技，出牌阶段，若游戏轮数大于等于4你获得1个标记“曌”，视为你对所有其他角色使用无视距离不计入次数的【杀】，此【杀】命中的目标随机弃置2张牌。',
 			hok_nvdi: '女帝',
-			hok_nvdi_info: '主公技，结束阶段，若你未于出牌阶段内使用或打出过【杀】和锦囊牌，你可以摸X张牌（X为场上存活的群势力角色数）。',
+			hok_nvdi_info: '主公技，结束阶段，若你未于出牌阶段内使用或打出过【杀】和普通锦囊牌，你可以摸X张牌（X为场上存活的群势力角色数）。',
 			// 瑶
 			hok_yao: '王者瑶',
 			hok_shangui: '山鬼',
-			hok_shangui_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记并弃置1张手牌。',
+			hok_shangui_info: '出牌阶段限一次，你可以选择一名其他角色，令其失去“隐身”标记并随机弃置1张手牌。',
 			hok_bailu: '白鹿',
 			hok_bailu_info: '1.每轮限一次，出牌阶段，若没有角色拥有“白鹿”标记，你可以选择一名其他角色获得“白鹿”标记（获得“白鹿”标记的角色体力上限临时+2并临时回复2点体力，直到该角色累计受到2点伤害，该角色失去此标记，你不可使用此技能直到你的回合结束时）；若有角色拥有“白鹿”标记，你可以摸2张牌令该角色失去“白鹿”标记。2.若有角色拥有“白鹿”标记，你不能成为除【桃】以外牌的目标，你不能使用杀和锦囊牌。',
 
