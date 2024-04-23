@@ -1711,7 +1711,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content() {
 					'step 0';
-					player.storage.hok_kuangju = 0;
 					player.chooseToDiscard([1, player.getCards('h', 'sha').length], 'h', '弃置X张杀，视为对该角色使用一张伤害为X的【杀】（不可以触发酒）。', { name: 'sha' })
 						.set("ai", (card) => 1 / (get.value(card) || 0.5));
 					'step 1';
@@ -1736,7 +1735,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							return player.storage.hok_kuangju > 0;
 						},
 						content() {
+							'step 0'
 							trigger.num = player.storage.hok_kuangju;
+							'step 1'
+							player.storage.hok_kuangju = 0;
 						},
 					}
 				}
