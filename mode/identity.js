@@ -442,6 +442,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					name: players[i].name1,
 					name2: players[i].name2,
 					identity: players[i].identity,
+					nickname: players[i].node.nameol.innerHTML,
 				};
 				if (stratagemMode) {
 					ifo.translate = lib.translate[game.players[i].name];
@@ -1061,7 +1062,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							list.push(group);
 						}
 						map[group].push(i);
-						if (lib.character[i][4] && lib.character[i][4].includes("zhu")) {
+						if (lib.character[i].isZhugong) {
 							if (!map_zhu[group]) {
 								map_zhu[group] = [];
 							}
@@ -1240,7 +1241,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							list.push(group);
 						}
 						map[group].push(i);
-						if (lib.character[i][4] && lib.character[i][4].includes("zhu")) {
+						if (lib.character[i].isZhugong) {
 							if (!map_zhu[group]) {
 								map_zhu[group] = [];
 							}
@@ -1506,8 +1507,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						if (
 							get.is.double(result[i][0]) ||
 							(lib.character[result[i][0]] &&
-								lib.character[result[i][0]][1] == "shen" &&
-								!lib.character[result[i][0]][4].includes("hiddenSkill"))
+								lib.character[result[i][0]].group == "shen" &&
+								!lib.character[result[i][0]].hasHiddenSkill)
 						)
 							shen.push(lib.playerOL[i]);
 					}
@@ -1722,7 +1723,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						}
 					}
 					if (typeof lib.config.test_game == "string" && player == game.me.next) {
-						player.init(lib.config.test_game);
+						if (lib.config.test_game != "_")
+							player.init(lib.config.test_game);
 					}
 					if (get.is.double(player.name1)) {
 						player._groupChosen = true;
@@ -2108,7 +2110,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							} else {
 								var bool = false;
 								for (var j of ix) {
-									if (lib.character[j][4] && lib.character[j][4].includes("zhu")) {
+									if (lib.character[j].isZhugong) {
 										bool = true;
 										break;
 									}
@@ -2123,7 +2125,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						if (lib.filter.characterDisabled(i)) continue;
 						event.list.push(i);
 						list4.push(i);
-						if (!stratagemMode && lib.character[i][4] && lib.character[i][4].includes("zhu")) {
+						if (!stratagemMode && lib.character[i].isZhugong) {
 							list2.push(i);
 						} else {
 							list3.push(i);
@@ -2313,7 +2315,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						ui.cheat2 = ui.create.control("自由选将", function () {
 							if (this.dialog == _status.event.dialog) {
 								if (game.changeCoin) {
-									game.changeCoin(50);
+									game.changeCoin(10);
 								}
 								this.dialog.close();
 								_status.event.dialog = this.backup;
@@ -2376,8 +2378,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						game.me._groupChosen = true;
 						game.me.chooseControl(get.is.double(name, true)).set("prompt", "请选择你的势力");
 					} else if (
-						lib.character[name][1] == "shen" &&
-						!lib.character[name][4].includes("hiddenSkill") &&
+						lib.character[name].group == "shen" &&
+						!lib.character[name].hasHiddenSkill &&
 						get.config("choose_group")
 					) {
 						var list = lib.group.slice(0);
@@ -2575,7 +2577,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						var pack = lib.characterPack[lib.configOL.characterPack[i]];
 						for (var j in pack) {
 							// if(j=='zuoci') continue;
-							if (lib.character[j]) libCharacter[j] = pack[j];
+							if (lib.character[j]) libCharacter[j] = lib.character[j];
 						}
 					}
 					for (i in lib.characterReplace) {
@@ -2590,7 +2592,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							list4.addArray(ix);
 							var bool = false;
 							for (var j of ix) {
-								if (libCharacter[j][4] && libCharacter[j][4].includes("zhu")) {
+								if (libCharacter[j].isZhugong) {
 									bool = true;
 									break;
 								}
@@ -2612,7 +2614,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						event.list.push(i);
 						event.list2.push(i);
 						list4.push(i);
-						if (libCharacter[i][4] && libCharacter[i][4].includes("zhu")) {
+						if (libCharacter[i].isZhugong) {
 							list2.push(i);
 						} else {
 							list3.push(i);
@@ -2798,8 +2800,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						if (
 							get.is.double(result[i][0]) ||
 							(lib.character[result[i][0]] &&
-								lib.character[result[i][0]][1] == "shen" &&
-								!lib.character[result[i][0]][4].includes("hiddenSkill"))
+								lib.character[result[i][0]].group == "shen" &&
+								!lib.character[result[i][0]].hasHiddenSkill)
 						)
 							shen.push(lib.playerOL[i]);
 					}
@@ -3998,8 +4000,10 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 						current.showTimer(time);
 						if (current.isOnline()) {
 							current.send(send, camouflaged, event.videoId, true);
+							if (current.identity == "nei") {
 							current.wait();
-							if (current.identity == "nei") event.withOL = true;
+								event.withOL = true;
+							}
 							return;
 						}
 						var me = game.me;
@@ -4010,6 +4014,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							else
 								event._result = {
 									bool: true,
+									_noHidingTimer: true,
 								};
 							return;
 						}
@@ -4018,7 +4023,7 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					if (!aiTargets.length) return;
 					aiTargets.randomSort();
 					new Promise((resolve) =>
-						setTimeout(resolve, Math.ceil(5000 + 5000 * Math.random()))
+						setTimeout(resolve, Math.ceil(3000 + 5000 * Math.random()))
 					).then(() => {
 						var interval = setInterval(() => {
 							aiTargets.shift();

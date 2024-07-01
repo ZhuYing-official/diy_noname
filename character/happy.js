@@ -39,6 +39,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_yanxing: ['male', 'qun', 4, ['lao_mengjue', 'lao_sudi', 'lao_duanmao']],
 			// SP王朗
 			lao_sp_wanglang: ['male', 'qun', 3, ['lao_yayu', 'lao_shanshi']],
+			// 肉鸽
+			lao_roguelike: ['male', 'qun', '4/5', ['lao_roguelike_skill']],
 
 			// 安琪拉
 			hok_anqila: ['female', 'shu', 3, ['hok_huoqiu', 'hok_hunhuo', 'hok_chihui']],
@@ -1171,6 +1173,66 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
+			// 肉鸽
+			lao_roguelike_skill: {
+				getList: function () {
+					const list = Object.keys(lib.characterPack.MiNikill).concat(_status.extra_pingjianList || []);
+					return list.filter(i => !get.character(i, 4) || !get.character(i, 4).includes('unseen'));
+				},
+				Mbaby_characterlist: true,
+				trigger: {
+					global: ["phaseBefore", 'dying'],
+					player: "enterGame",
+				},
+				filter(event, player) {
+					if (event.name == "phase") {
+						return game.phaseNumber == 0;
+					}
+					return true;
+				},
+				content: function () {
+					'step 0'
+					var allList = ((!_status.connectMode && lib.config.extension_活动武将_PingJianName) ? lib.config.extension_活动武将_PingJianName : lib.skill.lao_roguelike_skill.getList()).filter(i => lib.character[i]);
+					var list = [], skills = [], map = [];
+					allList.randomSort();
+					for (var i = 0; i < allList.length; i++) {
+						var name = allList[i];
+						var skills2 = lib.character[name][3];
+						for (var j = 0; j < skills2.length; j++) {
+							if (player.getStorage('lao_roguelike_skill').includes(skills2[j])) continue;
+							if (skills2[j] == 'lao_roguelike_skill') continue;
+							if (skills.includes(skills2[j])) {
+								list.add(name);
+								if (!map[name]) map[name] = [];
+								map[name].push(skills2[j]);
+								skills.add(skills2[j]);
+								continue;
+							}
+							var list2 = [skills2[j]];
+							game.expandSkills(list2);
+							for (var k = 0; k < list2.length; k++) {
+								var info = lib.skill[list2[k]];
+								if (info.silent || info.limited || info.juexingji || info.hiddenSkill || info.dutySkill
+									|| (info.zhuSkill && !player.isZhu2()) || info.groupSkill || (info.priority && typeof info.priority == 'number') || info.firstDo || info.lastDo) continue;
+								if (/*info.init||info.onChooseToUse||*/info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) continue;
+								if (info.init) info.init(player, list2[k]);
+								list.add(name);
+								if (!map[name]) map[name] = [];
+								map[name].push(skills2[j]);
+								skills.add(skills2[j]);
+								break;
+							}
+						}
+						if (list.length > 2) break;
+					}
+					if (skills.length) player.chooseControl(skills).set('dialog', ['请选择获得的技能', [list, 'character']]);
+					else event.finish();
+					'step 1'
+					player.markAuto('lao_roguelike_skill', [result.control]);
+					player.addSkill(result.control);
+					player.loseMaxHp();
+				},
+			},
 
 			// 王者公共技
 			hok_yinshen: {
@@ -2012,10 +2074,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					if (!trigger.player.hasMark('hok_mingge')) {
 						trigger.player.addMark('hok_mingge');
 					} else {
-						var cards = target.getCards('h', function (card) {
-							return lib.filter.cardDiscardable(card, target, 'hok_shangui');
+						var cards = trigger.player.getCards('h', function (card) {
+							return lib.filter.cardDiscardable(card, trigger.player, 'hok_mingge');
 						});
-						if (cards.length > 0) target.discard(cards.randomGets(2));
+						if (cards.length > 0) trigger.player.discard(cards.randomGets(2));
 					}
 					player.storage.clears = player.storage.clears.filter(element => element !== trigger.player);
 				},
@@ -2075,6 +2137,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				content() {
 					player.line(trigger.player, { color: [255, 255, 0] });
 					trigger.player.die();
+					player.draw(2);
 				},
 			},
 			// 东皇太一
@@ -2269,7 +2332,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						return false;
 					});
 					player.chooseTarget(get.prompt("hok_tianlai")).set("ai", function (target) {
-						game.log('maxThreaten ' + maxThreaten)
 						var player = _status.event.player,
 							att = get.attitude(player, target);
 						if (att > 0 && maxThreaten == get.threaten(target)) return att;
@@ -2537,14 +2599,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 1'
 					if (result.bool) {
 						if (!event.isMine() && !event.isOnline()) game.delayx();
-						event.target = result.targets[0];
+						event.targets = result.targets;
 					}
 					else {
 						event.finish();
 					}
 					'step 2'
-					player.logSkill('hok_zhuimang', event.target);
-					trigger.targets.push(event.target);
+					player.logSkill('hok_zhuimang', event.targets);
+					player.line(event.targets, "fire");
+					trigger.targets.addArray(event.targets);
 				},
 				ai: {
 					effect: {
@@ -3962,7 +4025,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					player.addTempSkill('hok_leitingwanjun_effect');
 				},
 				ai: {
-					order: 9,
+					order: 12,
 					result: {
 						player(player) {
 							if (player.hp == 1) return 1;
@@ -6762,6 +6825,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_yayu_info: '回合开始时，你可以和一名其他角色拼点。赢的角色弃置所有手牌，没赢的角色非锁定技失效直到其回合结束并弃置手牌数的一半（向下取整）。',
 			lao_shanshi: '善施',
 			lao_shanshi_info: '锁定技。摸牌阶段开始时，你可以多摸两张牌。然后摸牌阶段结束时，若你的手牌数大于5，则你将手牌数的一半（向下取整）交给一名手牌最少其他角色并获得如下效果直到你下回合开始：当你成为【杀】或普通锦囊牌的目标后，其可以交给你一张手牌。',
+			// 肉鸽
+			lao_roguelike: '肉鸽',
+			lao_roguelike_skill: '肉鸽',
+			lao_roguelike_skill_info: '锁定技，游戏开始时或一名角色进入濒死状态时，你随机获得三张未加入游戏的武将牌，选该武将牌的一项技能获得之，然后减1点体力上限。',
 
 			// 王者公共技
 			hok_yinshen: '隐身',
@@ -6825,9 +6892,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 大司命
 			hok_dasiming: '王者大司命',
 			hok_mingge: '鸣戈',
-			hok_mingge_info: '你的攻击范围+1。你的【杀】造成伤害后，目标角色获得标记“命刃”直到你的下个回合结束；若你的杀对“鸣戈”标记的角色造成伤害时，其随机弃置两张牌。',
+			hok_mingge_info: '你的攻击范围+1。你的【杀】造成伤害后，目标角色获得标记“鸣戈”直到你的下个回合结束；若你的杀对“鸣戈”标记的角色造成伤害时，其随机弃置两张牌。',
 			hok_hungui: '魂归',
-			hok_hungui_info: '当你对其他角色造成伤害后，若其体力值为1，你可以直接斩杀之。',
+			hok_hungui_info: '当你对其他角色造成伤害后，若其体力值为1，你可以直接斩杀之，然后摸2张牌。',
 			// 东皇太一
 			hok_donghuangtaiyi: '王者东皇太一',
 			hok_rishi: '日蚀',

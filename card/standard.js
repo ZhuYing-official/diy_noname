@@ -608,6 +608,12 @@ game.import("card", function () {
 							if (target !== _status.event.dying) {
 								if (
 									!player.isPhaseUsing() ||
+									player.needsToDiscard(0, (i, player) => {
+										return (
+											!player.canIgnoreHandcard(i) &&
+											taos.includes(i)
+										);
+									}) ||
 									player.hasSkillTag(
 										"nokeep",
 										true,
@@ -619,7 +625,7 @@ game.import("card", function () {
 									)
 								)
 									return 2;
-								let min = 7.2 - (4 * player.hp) / player.maxHp,
+								let min = 8.1 - (4.5 * player.hp) / player.maxHp,
 									nd = player.needsToDiscard(0, (i, player) => {
 										return (
 											!player.canIgnoreHandcard(i) &&
@@ -1007,6 +1013,7 @@ game.import("card", function () {
 							});
 							game.loseAsync({
 								lose_list: lose_list,
+								visible: true,
 							}).setContent("chooseToCompareLose");
 						}
 						if (cards2.length) game.cardsGotoOrdering(cards2);
@@ -1406,7 +1413,7 @@ game.import("card", function () {
 						return 1;
 					},
 					basic: {
-						order: 9,
+						order: 7.2,
 						useful: [5, 1],
 						value: 5,
 					},
@@ -1699,7 +1706,7 @@ game.import("card", function () {
 						return 1;
 					},
 					basic: {
-						order: 9,
+						order: 7.2,
 						useful: 1,
 						value: 5,
 					},
@@ -1842,7 +1849,7 @@ game.import("card", function () {
 						}
 					},
 					basic: {
-						order: 7.2,
+						order: 7,
 						useful: 4.5,
 						value: 9.2,
 					},
@@ -2082,7 +2089,7 @@ game.import("card", function () {
 				},
 				ai: {
 					wuxie: function (target, card, player, viewer) {
-						if (get.attitude(viewer, player._trueMe || player) > 0) return 0;
+						if (!target.countCards("hej") ||get.attitude(viewer, player._trueMe || player) > 0) return 0;
 					},
 					basic: {
 						order: 7.5,
@@ -2110,12 +2117,13 @@ game.import("card", function () {
 							pos = get.position(button.link),
 							name = get.name(button.link);
 						if (pos == "j") {
-							if (name == "lebu") {
+							let viewAs = button.link.viewAs;
+							if (viewAs == "lebu") {
 								let needs = target.needsToDiscard(2);
 								btv *= 1.08 + 0.2 * needs;
-							} else if (name == "shandian" || name == "fulei" || name == "plague") btv /= 2;
+							} else if (viewAs == "shandian" || viewAs == "fulei") btv /= 2;
 						}
-						if (get.attitude(player, get.owner(button.link)) > 0) btv = -btv;
+						if (att > 0) btv = -btv;
 						if (pos != "e") {
 							if (pos == "h" && !player.hasSkillTag("viewHandcard", null, target, true))
 								return btv + 0.1;
@@ -2155,6 +2163,7 @@ game.import("card", function () {
 									return get.value(card, target) > 0 && card != target.getEquip('jinhe');
 								}) && !js.some(card => {
 									var cardj = card.viewAs ? { name: card.viewAs } : card;
+									if (cardj.name == "xumou_jsrg") return true;
 									return get.effect(target, cardj, target, player) < 0;
 								})) return 0;
 							}
@@ -2163,6 +2172,7 @@ game.import("card", function () {
 									return get.value(card, target) <= 0;
 								}) || js.some(card => {
 									var cardj = card.viewAs ? { name: card.viewAs } : card;
+									if (cardj.name == "xumou_jsrg") return false;
 									return get.effect(target, cardj, target, player) < 0;
 								})) ? 1.5 : 0;
 							}
@@ -2179,6 +2189,7 @@ game.import("card", function () {
 									return get.value(card, target) > 0 && card != target.getEquip('jinhe');
 								}) || js.some(card => {
 									var cardj = card.viewAs ? { name: card.viewAs } : card;
+									if (cardj.name == "xumou_jsrg") return true;
 									return get.effect(target, cardj, target, player) < 0;
 								})) ? -1.5 : 1.5;
 							}
@@ -2186,6 +2197,7 @@ game.import("card", function () {
 								return get.value(card, target) <= 0;
 							}) || js.some(card => {
 								var cardj = card.viewAs ? { name: card.viewAs } : card;
+								if (cardj.name == "xumou_jsrg") return false;
 								return get.effect(target, cardj, target, player) < 0;
 							})) ? 1.5 : -1.5;
 						},
@@ -2217,6 +2229,7 @@ game.import("card", function () {
 								}) ||
 									js.some((card) => {
 										var cardj = card.viewAs ? { name: card.viewAs } : card;
+										if (cardj.name == "xumou_jsrg") return true;
 										return get.effect(target, cardj, target, player) < 0;
 									})
 									? -1.5
@@ -2227,6 +2240,7 @@ game.import("card", function () {
 							}) ||
 								js.some((card) => {
 									var cardj = card.viewAs ? { name: card.viewAs } : card;
+									if (cardj.name == "xumou_jsrg") return false;
 									return get.effect(target, cardj, target, player) < 0;
 								})
 								? 1.5
@@ -2249,6 +2263,7 @@ game.import("card", function () {
 									}) &&
 									!js.some((card) => {
 										var cardj = card.viewAs ? { name: card.viewAs } : card;
+										if (cardj.name == "xumou_jsrg") return true;
 										return get.effect(target, cardj, target, player) < 0;
 									})
 								)
@@ -2259,6 +2274,7 @@ game.import("card", function () {
 								}) ||
 									js.some((card) => {
 										var cardj = card.viewAs ? { name: card.viewAs } : card;
+										if (cardj.name == "xumou_jsrg") return false;
 										return get.effect(target, cardj, target, player) < 0;
 									})
 									? 1.5
@@ -2365,6 +2381,7 @@ game.import("card", function () {
 				ai: {
 					wuxie: (target, card, player, viewer, status) => {
 						if (
+							!target.countCards("hej") ||
 							status * get.attitude(viewer, player._trueMe || player) > 0 ||
 							(target.hp > 2 &&
 								!target.hasCard((i) => {
@@ -2421,12 +2438,13 @@ game.import("card", function () {
 							pos = get.position(button.link),
 							name = get.name(button.link);
 						if (pos === "j") {
-							if (name === "lebu") {
+							let viewAs = button.link.viewAs;
+							if (viewAs === "lebu") {
 								let needs = target.needsToDiscard(2);
 								val *= 1.08 + 0.2 * needs;
-							} else if (name == "shandian" || name == "fulei" || name == "plague") val /= 2;
+							} else if (viewAs == "shandian" || viewAs == "fulei") val /= 2;
 						}
-						if (get.attitude(player, get.owner(button.link)) > 0) val = -val;
+						if (att > 0) val = -val;
 						if (pos !== "e") return val;
 						let sub = get.subtypes(button.link);
 						if (sub.includes("equip1")) return (val * Math.min(3.6, target.hp)) / 3;
@@ -2464,6 +2482,7 @@ game.import("card", function () {
 							if (att > 0) {
 								if (js.some(card => {
 									const cardj = card.viewAs ? { name: card.viewAs } : card;
+									if (cardj.name == "xumou_jsrg") return false;
 									return get.effect(target, cardj, target, player) < 0;
 								})) return 3;
 								if (target.isDamaged() && es.some(card => card.name == 'baiyin') &&
@@ -2483,6 +2502,7 @@ game.import("card", function () {
 								}));
 								const noj = (js.length == 0 || !js.some(card => {
 									const cardj = card.viewAs ? { name: card.viewAs } : card;
+									if (cardj.name == "xumou_jsrg") return true;
 									return get.effect(target, cardj, target, player) < 0;
 								}))
 								if (noh && noe2 && noj) return 1.5;
@@ -2516,6 +2536,7 @@ game.import("card", function () {
 								if (
 									js.some((card) => {
 										const cardj = card.viewAs ? { name: card.viewAs } : card;
+										if (cardj.name == "xumou_jsrg") return false;
 										return get.effect(target, cardj, target, player) < 0;
 									})
 								)
@@ -2546,6 +2567,7 @@ game.import("card", function () {
 									js.length == 0 ||
 									!js.some((card) => {
 										const cardj = card.viewAs ? { name: card.viewAs } : card;
+										if (cardj.name == "xumou_jsrg") return true;
 										return get.effect(target, cardj, target, player) < 0;
 									});
 								if (noh && noe2 && noj) return 1.5;
@@ -3116,7 +3138,7 @@ game.import("card", function () {
 				},
 				ai: {
 					effect: {
-						target: function (card, player, target) {
+						target_use(card, player, target) {
 							if (typeof card !== "object" || target.hasSkillTag("unequip2")) return;
 							if (
 								player.hasSkillTag("unequip", false, {

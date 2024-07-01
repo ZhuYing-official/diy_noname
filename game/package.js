@@ -1,4 +1,5 @@
 window.noname_package = {
+	// 捞德一
 	character: {
 		standard: "标准",
 		refresh: "界限突破",
@@ -24,6 +25,7 @@ window.noname_package = {
 		old: "怀旧",
 		diy: "DIY",
 		ddd: "3D精选",
+		// key: "Key",
 		// yxs:"英雄杀",
 		// hearth:"炉石传说",
 		// gwent:"昆特牌",

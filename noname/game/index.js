@@ -16,20 +16,16 @@ import { lib } from "../library/index.js";
 import { _status } from "../status/index.js";
 import { ui } from "../ui/index.js";
 import { gnc } from "../gnc/index.js";
-import {
-	userAgent,
-	Uninstantable,
-	GeneratorFunction,
-	AsyncFunction,
-	delay,
-	nonameInitialized,
-} from "../util/index.js";
+import { userAgent, Uninstantable, GeneratorFunction, AsyncFunction, delay, nonameInitialized } from "../util/index.js";
 
 import { DynamicStyle } from "./dynamic-style/index.js";
 import { GamePromises } from "./promises.js";
 import { Check } from "./check.js";
 
-export class Game {
+import security from "../util/security.js";
+import { GameCompatible } from "./compatible.js";
+
+export class Game extends GameCompatible {
 	online = false;
 	onlineID = null;
 	onlineKey = null;
@@ -53,18 +49,19 @@ export class Game {
 	/**
 	 * @type { string }
 	 */
-	// @ts-ignore
 	layout;
 	/**
 	 * @type { Player }
 	 */
-	// @ts-ignore
 	me;
 	/**
 	 * @type { boolean }
 	 */
-	// @ts-ignore
 	chess;
+	/**
+	 * @type { Player }
+	 */
+	zhu;
 	globalEventHandlers = new (class {
 		constructor() {
 			this._handlers = {};
@@ -110,10 +107,10 @@ export class Game {
 			if (typeof event.name != "string") return;
 			const handlerMap = this._handlers[event.name];
 			if (!handlerMap) return;
-			Object.keys(handlerMap).forEach((key) => {
+			Object.keys(handlerMap).forEach(key => {
 				const list = handlerMap[key];
 				if (!list) return;
-				list.forEach((handler) => {
+				list.forEach(handler => {
 					event.pushHandler(key, handler);
 				});
 			});
@@ -122,25 +119,13 @@ export class Game {
 	//Stratagem
 	//谋攻
 	setStratagemBuffCost(cardName, cost) {
-		return game.broadcastAll(
-			(clientCardName, clientCost) => lib.stratagemBuff.cost.set(clientCardName, clientCost),
-			cardName,
-			cost
-		);
+		return game.broadcastAll((clientCardName, clientCost) => lib.stratagemBuff.cost.set(clientCardName, clientCost), cardName, cost);
 	}
 	setStratagemBuffEffect(cardName, effect) {
-		return game.broadcastAll(
-			(clientCardName, clientEffect) => lib.stratagemBuff.cost.set(clientCardName, clientEffect),
-			cardName,
-			effect
-		);
+		return game.broadcastAll((clientCardName, clientEffect) => lib.stratagemBuff.cost.set(clientCardName, clientEffect), cardName, effect);
 	}
 	setStratagemBuffPrompt(cardName, prompt) {
-		return game.broadcastAll(
-			(clientCardName, clientPrompt) => lib.stratagemBuff.cost.set(clientCardName, clientPrompt),
-			cardName,
-			prompt
-		);
+		return game.broadcastAll((clientCardName, clientPrompt) => lib.stratagemBuff.cost.set(clientCardName, clientPrompt), cardName, prompt);
 	}
 	/**
 	 * 添加新的属性杀
@@ -157,7 +142,7 @@ export class Game {
 	hasNature(item, nature, player) {
 		var natures = get.natureList(item, player);
 		if (!nature) return natures.length > 0;
-		if (nature == "linked") return natures.some((n) => lib.linked.includes(n));
+		if (nature == "linked") return natures.some(n => lib.linked.includes(n));
 		return get.is.sameNature(natures, nature);
 	}
 	/**
@@ -266,40 +251,19 @@ export class Game {
 		return yingbianEffect;
 	}
 	setYingbianConditionColor(yingbianCondition, color) {
-		return game.broadcastAll(
-			(yingbianCondition, color) => lib.yingbian.condition.color.set(yingbianCondition, color),
-			yingbianCondition,
-			color
-		);
+		return game.broadcastAll((yingbianCondition, color) => lib.yingbian.condition.color.set(yingbianCondition, color), yingbianCondition, color);
 	}
 	setComplexYingbianCondition(yingbianCondition, condition) {
-		return game.broadcastAll(
-			(yingbianCondition, condition) =>
-				lib.yingbian.condition.complex.set(yingbianCondition, condition),
-			yingbianCondition,
-			condition
-		);
+		return game.broadcastAll((yingbianCondition, condition) => lib.yingbian.condition.complex.set(yingbianCondition, condition), yingbianCondition, condition);
 	}
 	setSimpleYingbianCondition(yingbianCondition, condition) {
-		return game.broadcastAll(
-			(yingbianCondition, condition) => lib.yingbian.condition.simple.set(yingbianCondition, condition),
-			yingbianCondition,
-			condition
-		);
+		return game.broadcastAll((yingbianCondition, condition) => lib.yingbian.condition.simple.set(yingbianCondition, condition), yingbianCondition, condition);
 	}
 	setYingbianEffect(yingbianEffect, effect) {
-		return game.broadcastAll(
-			(yingbianEffect, effect) => lib.yingbian.effect.set(yingbianEffect, effect),
-			yingbianEffect,
-			effect
-		);
+		return game.broadcastAll((yingbianEffect, effect) => lib.yingbian.effect.set(yingbianEffect, effect), yingbianEffect, effect);
 	}
 	setYingbianPrompt(yingbian, prompt) {
-		return game.broadcastAll(
-			(yingbian, prompt) => lib.yingbian.prompt.set(yingbian, prompt),
-			yingbian,
-			prompt
-		);
+		return game.broadcastAll((yingbian, prompt) => lib.yingbian.prompt.set(yingbian, prompt), yingbian, prompt);
 	}
 	/**
 	 * Dynamic Style Manager
@@ -369,8 +333,7 @@ export class Game {
 				node._link.current = this.link;
 				const tmpName = node.lastChild.innerHTML;
 				node.lastChild.innerHTML = config.item[this._link];
-				if (config.onclick && config.onclick.call(node, this._link, this) === false)
-					node.lastChild.innerHTML = tmpName;
+				if (config.onclick && config.onclick.call(node, this._link, this) === false) node.lastChild.innerHTML = tmpName;
 				if (config.update) config.update();
 			},
 			menu.childElementCount - 2
@@ -408,19 +371,19 @@ export class Game {
 			style.transform = "scale(1.05)";
 		}
 		document.body.insertBefore(uiBackground, document.body.firstChild);
-		if (background.startsWith("db:")) uiBackground.setBackgroundDB(background.slice(3));
-		else if (background.startsWith("ext:"))
-			uiBackground.setBackgroundImage(`extension/${background.slice(4)}`);
+		if (background.startsWith("blob:") || background.startsWith("data:")) {
+			uiBackground.setBackgroundImage(background);
+		} else if (background.startsWith("db:")) uiBackground.setBackgroundDB(background.slice(3));
+		else if (background.startsWith("ext:")) uiBackground.setBackgroundImage(`extension/${background.slice(4)}`);
 		else if (background == "default") {
 			uiBackground.addTempClass("start");
 			style.backgroundImage = "none";
 		} else if (background.startsWith("custom_")) {
 			style.backgroundImage = "none";
-			game.getDB("image", background).then((fileToLoad) => {
+			game.getDB("image", background).then(fileToLoad => {
 				if (!fileToLoad) return;
 				const fileReader = new FileReader();
-				fileReader.onload = (fileLoadedEvent) =>
-					(style.backgroundImage = `url(${fileLoadedEvent.target.result})`);
+				fileReader.onload = fileLoadedEvent => (style.backgroundImage = `url(${fileLoadedEvent.target.result})`);
 				fileReader.readAsDataURL(fileToLoad, "UTF-8");
 			});
 		} else uiBackground.setBackgroundImage(`image/background/${background}.jpg`);
@@ -433,7 +396,7 @@ export class Game {
 	 * 用给定的BPM、节拍和偏移生成谱面
 	 */
 	generateBeatmapTimeleap(bpm, beats, offset) {
-		return beats.map((value) => Math.round((value * 60000) / bpm + (offset || 0)));
+		return beats.map(value => Math.round((value * 60000) / bpm + (offset || 0)));
 	}
 	updateRenku() {
 		game.broadcast(function (renku) {
@@ -454,7 +417,7 @@ export class Game {
 			cards = [cards];
 		}
 		// @ts-ignore
-		cards.forEach((card) => card.addKnower(players));
+		cards.forEach(card => card.addKnower(players));
 	}
 	/**
 	 * 移除牌的所有知情者。
@@ -467,7 +430,7 @@ export class Game {
 			cards = [cards];
 		}
 		// @ts-ignore
-		cards.forEach((card) => card.clearKnowers());
+		cards.forEach(card => card.clearKnowers());
 	}
 	/**
 	 * @param { { [key: string]: any } } [arg]
@@ -557,8 +520,8 @@ export class Game {
 	/**
 	 * @template { keyof GameHistory } T
 	 * @param { T } key
-	 * @param { (event: import('../library/index.js').GameEventPromise) => boolean } filter
-	 * @param { import('../library/index.js').GameEventPromise } [last]
+	 * @param { (event: GameEventPromise) => boolean } filter
+	 * @param { GameEventPromise } [last]
 	 * @returns { boolean }
 	 */
 	hasGlobalHistory(key, filter, last) {
@@ -580,8 +543,8 @@ export class Game {
 	/**
 	 * @template { keyof GameHistory } T
 	 * @param { T } key
-	 * @param { (event: import('../library/index.js').GameEventPromise) => boolean } filter
-	 * @param { import('../library/index.js').GameEventPromise } [last]
+	 * @param { (event: GameEventPromise) => boolean } filter
+	 * @param { GameEventPromise } [last]
 	 * @returns { void }
 	 */
 	checkGlobalHistory(key, filter, last) {
@@ -608,8 +571,8 @@ export class Game {
 	 * @template { keyof GameHistory } T
 	 * @overload
 	 * @param { T } key
-	 * @param { (event: import('../library/index.js').GameEventPromise) => boolean } [filter]
-	 * @param { import('../library/index.js').GameEventPromise } [last]
+	 * @param { (event: GameEventPromise) => boolean } [filter]
+	 * @param { GameEventPromise } [last]
 	 * @returns { GameHistory[T] }
 	 */
 	getGlobalHistory(key, filter, last) {
@@ -630,13 +593,13 @@ export class Game {
 	/**
 	 * @template { keyof GameHistory } T
 	 * @param { T } key
-	 * @param { (event: import('../library/index.js').GameEventPromise) => boolean } filter
-	 * @param { import('../library/index.js').GameEventPromise } [last]
+	 * @param { (event: GameEventPromise) => boolean } filter
+	 * @param { GameEventPromise } [last]
 	 * @returns { boolean }
 	 */
 	hasAllGlobalHistory(key, filter, last) {
 		if (!key || !filter) return false;
-		return _status.globalHistory.some((value) => {
+		return _status.globalHistory.some(value => {
 			if (value[key]) {
 				if (last && value[key].includes(last)) {
 					const lastIndex = value[key].indexOf(last);
@@ -656,14 +619,14 @@ export class Game {
 	/**
 	 * @template { keyof GameHistory } T
 	 * @param { T } key
-	 * @param { (event: import('../library/index.js').GameEventPromise) => boolean } filter
-	 * @param { import('../library/index.js').GameEventPromise } [last]
+	 * @param { (event: GameEventPromise) => boolean } filter
+	 * @param { GameEventPromise } [last]
 	 * @returns { void }
 	 */
 	checkAllGlobalHistory(key, filter, last) {
 		if (!key || !filter) return;
 		let stopped = false;
-		_status.globalHistory.forEach((value) => {
+		_status.globalHistory.forEach(value => {
 			if (value[key]) {
 				if (last && value[key].includes(last) && !stopped) {
 					stopped = true;
@@ -686,13 +649,13 @@ export class Game {
 	 * @template { keyof GameHistory } T
 	 * @overload
 	 * @param { T } key
-	 * @param { (event: import('../library/index.js').GameEventPromise) => boolean } [filter]
-	 * @param { import('../library/index.js').GameEventPromise } [last]
+	 * @param { (event: GameEventPromise) => boolean } [filter]
+	 * @param { GameEventPromise } [last]
 	 * @returns { GameHistory[T] }
 	 */
 	getAllGlobalHistory(key, filter, last) {
 		const history = [];
-		_status.globalHistory.forEach((value) => {
+		_status.globalHistory.forEach(value => {
 			if (!key || !value[key]) {
 				history.push(value);
 			} else {
@@ -718,12 +681,12 @@ export class Game {
 	/**
 	 * @overload
 	 * @param { Card } cards
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @returns { GameEventPromise }
 	 */
 	/**
 	 * @overload
 	 * @param {Card[]} cards
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @returns { GameEventPromise }
 	 */
 	cardsDiscard(cards) {
 		/** @type { 'cards' | 'card' | void } */
@@ -746,12 +709,12 @@ export class Game {
 	/**
 	 * @overload
 	 * @param { Card } cards
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @returns { GameEventPromise }
 	 */
 	/**
 	 * @overload
 	 * @param {Card[]} cards
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @returns { GameEventPromise }
 	 */
 	cardsGotoOrdering(cards) {
 		/** @type { 'cards' | 'card' | void } */
@@ -771,13 +734,13 @@ export class Game {
 	 * @overload
 	 * @param { Card } cards
 	 * @param { 'toRenku' | false } [bool] 为false时不触发trigger，为'toRenku'时牌放到仁库
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @returns { GameEventPromise }
 	 */
 	/**
 	 * @overload
 	 * @param {Card[]} cards
 	 * @param { 'toRenku' | false } [bool] 为false时不触发trigger，为'toRenku'时牌放到仁库
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @returns { GameEventPromise }
 	 */
 	cardsGotoSpecial(cards, bool) {
 		/** @type { 'cards' | 'card' | void } */
@@ -836,7 +799,7 @@ export class Game {
 		return next;
 	}
 	/**
-	 * @param { import('../library/index.js').GameEventPromise } event
+	 * @param { GameEventPromise } event
 	 */
 	$cardsGotoPile(event) {
 		const cards = event.cards;
@@ -932,11 +895,8 @@ export class Game {
 					(node.system = ui.create.system(lib.translate[skill], null, true, true)),
 					() => {
 						const uiIntro = ui.create.dialog("hidden");
-						uiIntro.addText(player ? `来源：${get.translation(player)}` : "地图").style.margin =
-							"0";
-						uiIntro._place_text = uiIntro.add(
-							ui.create.div(".text", lib.translate[`${skill}_info`])
-						);
+						uiIntro.addText(player ? `来源：${get.translation(player)}` : "地图").style.margin = "0";
+						uiIntro._place_text = uiIntro.add(ui.create.div(".text", lib.translate[`${skill}_info`]));
 						uiIntro.add(ui.create.div(".placeholder.slim"));
 						return uiIntro;
 					},
@@ -959,7 +919,7 @@ export class Game {
 		let n = updates.length;
 		for (let i = 0; i < updates.length; i++) {
 			if (lib.node && lib.node.fs) {
-				lib.node.fs.access(__dirname + "/" + updates[i], (err) => {
+				lib.node.fs.access(__dirname + "/" + updates[i], err => {
 					if (!err) {
 						let stat = lib.node.fs.statSync(__dirname + "/" + updates[i]);
 						// @ts-ignore
@@ -1241,14 +1201,7 @@ export class Game {
 			ui.timer.show();
 			let num;
 			//这么一大行都是为了祢衡
-			if (
-				_status.event &&
-				_status.event.name == "chooseToUse" &&
-				_status.event.type == "phase" &&
-				_status.event.player &&
-				_status.event.player.forceCountChoose &&
-				typeof _status.event.player.forceCountChoose.phaseUse == "number"
-			) {
+			if (_status.event && _status.event.name == "chooseToUse" && _status.event.type == "phase" && _status.event.player && _status.event.player.forceCountChoose && typeof _status.event.player.forceCountChoose.phaseUse == "number") {
 				num = _status.event.player.forceCountChoose.phaseUse;
 			} else if (_status.connectMode) {
 				num = lib.configOL.choose_timeout;
@@ -1272,11 +1225,7 @@ export class Game {
 		} else if (_status.event.player.forceCountChoose && _status.event.isMine() && !_status.countDown) {
 			let info = _status.event.player.forceCountChoose;
 			let num;
-			if (
-				_status.event.name == "chooseToUse" &&
-				_status.event.type == "phase" &&
-				typeof info.phaseUse == "number"
-			) {
+			if (_status.event.name == "chooseToUse" && _status.event.type == "phase" && typeof info.phaseUse == "number") {
 				num = info.phaseUse;
 			} else if (typeof info[_status.event.name] == "number") {
 				num = info[_status.event.name];
@@ -1296,10 +1245,7 @@ export class Game {
 						} else if (ui.confirm.str.includes("o")) {
 							ui.click.ok();
 						}
-					} else if (
-						["chooseControl", "chooseBool"].includes(_status.event.name) &&
-						_status.paused
-					) {
+					} else if (["chooseControl", "chooseBool"].includes(_status.event.name) && _status.paused) {
 						_status.event.result = "ai";
 						game.resume();
 					} else {
@@ -1339,6 +1285,16 @@ export class Game {
 		}
 	}
 	/**
+	 * ```plain
+	 * 进入沙盒运行模式
+	 * ```
+	 *
+	 * @param { string } ip
+	 */
+	requireSandboxOn(ip = "") {
+		security.requireSandboxOn(ip);
+	}
+	/**
 	 * @param { string } ip
 	 * @param { (result: boolean) => any } callback
 	 */
@@ -1361,8 +1317,7 @@ export class Game {
 				delete game.ws;
 			}
 			let str = "";
-			if (!ip.startsWith("wss://") && !ip.startsWith("ws://"))
-				str = get.config("wss_mode", "connect") ? "wss://" : "ws://";
+			if (!ip.startsWith("wss://") && !ip.startsWith("ws://")) str = get.config("wss_mode", "connect") ? "wss://" : "ws://";
 			game.ws = new WebSocket(str + ip + "");
 		} catch {
 			// 今天狂神龙尊来了这里也没有参数
@@ -1370,6 +1325,7 @@ export class Game {
 			if (callback) callback(false);
 			return;
 		}
+		game.sandbox = security.createSandbox();
 		game.ws.onopen = lib.element.ws.onopen;
 		game.ws.onmessage = lib.element.ws.onmessage;
 		game.ws.onerror = lib.element.ws.onerror;
@@ -1391,7 +1347,7 @@ export class Game {
 	 * @param {*} message
 	 */
 	sendTo(id, message) {
-		return new lib.element.Client(new lib.element.NodeWS(id)).send(message);
+		return new lib.element.Client(new lib.element.NodeWS(id), true).send(message);
 	}
 	createServer() {
 		lib.node.clients = [];
@@ -1414,211 +1370,192 @@ export class Game {
 		}
 	}
 	/**
+	 * @overload
+	 * @param { object } options
+	 * @param { string } options.path
+	 * //param { boolean } [options.broadcast = false]
+	 * @param { boolean } [options.addVideo = true]
+	 * @param { boolean } [options.video = false]
+	 * @param { (evt: Event) => void } [options.onCanPlay = (evt => void 0)]
+	 * @param { (evt: Event) => void } [options.onPlay = (evt => void 0)]
+	 * @param { (evt: Event) => void } [options.onEnded = (evt => void 0)]
+	 * @param { (evt: Event) => void } [options.onError = (evt => void 0)]
 	 * @returns { HTMLAudioElement }
 	 */
-	playAudio() {
-		let path = "",
-			emptyPath = true,
-			notCheckDBPath = true,
-			onError = null;
-		if (_status.video) {
-			// 为了能更美观的写代码，默认返回audio而不额外加一个void类型
-			// @ts-ignore
-			if (arguments[1] != "video") return;
-			path = arguments[0];
-		} else {
-			for (const argument of arguments) {
-				if (typeof argument === "string" || typeof argument == "number") {
-					if (emptyPath) emptyPath = false;
-					else if (notCheckDBPath) {
-						notCheckDBPath = false;
-						if (/^db:extension-[^:]*$/.test(path)) path += ":";
-						else path += "/";
-					} else path += "/";
-					path += argument;
-				} else if (typeof argument == "function") onError = argument;
-				if (_status.video) break;
-			}
-			if (path.startsWith("ext:")) path = path.replace(/^ext:/, "extension/");
-			else if (!path.startsWith("db:")) path = `audio/${path}`;
-			if (!lib.config.repeat_audio && _status.skillaudio.includes(path)) return;
-		}
+	/**
+	 * @overload
+	 * @param { ...string | number | ((evt: Event) => void) } args
+	 * @returns { HTMLAudioElement }
+	 */
+	playAudio(...args) {
+		const options =
+			args.length === 1 && get.objtype(args[0]) === "object"
+				? args[0]
+				: {
+						path: args.filter(arg => typeof arg === "string" || typeof arg === "number").join("/"),
+						onError: args.find(arg => typeof arg === "function"),
+					};
+
+		const {
+			path = "",
+			// broadcast = false,
+			addVideo = true,
+			video = false,
+			onCanPlay = evt => void 0,
+			onPlay = evt => void 0,
+			onEnded = evt => void 0,
+			onError = evt => void 0,
+		} = options;
+
+		// 为了能更美观的写代码，默认返回audio而不额外加一个void类型
+		// @ts-ignore
+		if (_status.video && !video) return;
+
+		let parsedPath = "";
+		if (["blob:", "data:"].some(prefix => path.startsWith(prefix))) parsedPath = path;
+		else if (path.startsWith("ext:")) parsedPath = path.replace(/^ext:/, "extension/");
+		else if (path.startsWith("db:")) parsedPath = path.replace(/^(db:[^:]*)\//, (_, p) => p + ":");
+		else parsedPath = `audio/${path}`;
+
+		// @ts-ignore
+		if (!lib.config.repeat_audio && _status.skillaudio.includes(parsedPath)) return;
+
 		const audio = document.createElement("audio");
-		audio.autoplay = true;
 		audio.volume = lib.config.volumn_audio / 8;
-		//Some browsers do not support "autoplay", so "oncanplay" listening has been added
-		audio.oncanplay = () => Promise.resolve(audio.play()).catch(() => void 0);
-		audio.onplay = () => {
-			_status.skillaudio.add(path);
-			setTimeout(() => _status.skillaudio.remove(path), 1000);
-			game.addVideo("playAudio", null, path);
+		audio.autoplay = true;
+
+		audio.oncanplay = ev => {
+			//Some browsers do not support "autoplay", so "oncanplay" listening has been added
+			Promise.resolve(audio.play()).catch(e => console.error(e));
+			if (_status.video || game.online) return;
+			onCanPlay(ev);
 		};
-		audio.onended = (event) => audio.remove();
-		audio.onerror = (event) => {
+		audio.onplay = ev => {
+			_status.skillaudio.add(parsedPath);
+			setTimeout(() => _status.skillaudio.remove(parsedPath), 1000);
+			// if (broadcast) game.broadcast(game.playAudio, options);
+			if (addVideo) game.addVideo("playAudio", null, path);
+			if (_status.video || game.online) return;
+			onPlay(ev);
+		};
+		audio.onended = ev => {
 			audio.remove();
-			if (onError) onError(event);
+			if (_status.video || game.online) return;
+			onEnded(ev);
 		};
-		new Promise((resolve, reject) => {
-			if (path.startsWith("db:"))
-				game.getDB("image", path.slice(3)).then(
-					(octetStream) => resolve(get.objectURL(octetStream)),
-					reject
-				);
-			else if (lib.path.extname(path)) resolve(`${lib.assetURL}${path}`);
-			else resolve(`${lib.assetURL}${path}.mp3`);
-		}).then((resolvedPath) => {
+		audio.onerror = ev => {
+			audio.remove();
+			if (_status.video || game.online) return;
+			onError(ev);
+		};
+
+		Promise.resolve().then(async () => {
+			let resolvedPath;
+			if (parsedPath.startsWith("db:")) resolvedPath = get.objectURL(await game.getDB("image", parsedPath.slice(3)));
+			else if (lib.path.extname(parsedPath)) resolvedPath = `${lib.assetURL}${parsedPath}`;
+			else if (URL.canParse(path)) resolvedPath = path;
+			else resolvedPath = `${lib.assetURL}${parsedPath}.mp3`;
+
 			audio.src = resolvedPath;
 			ui.window.appendChild(audio);
 		});
+
 		return audio;
 	}
 	/**
+	 * @param { object } options
+	 * @param { string[] } options.audioList
+	 * @param { boolean } [options.autoplay = true]
+	 * @param { boolean } [options.random = true]
+	 * @param { boolean } [options.addVideo = true]
+	 * @returns
+	 */
+	tryAudio({ audioList, autoplay = true, random = true, addVideo = true }) {
+		/**
+		 * @type {string}
+		 */
+		let audio,
+			list = audioList.slice(),
+			refresh = false; // 当前audioList是否有可播放的音频
+
+		const check = () => {
+			if (list.length) return true;
+			if (refresh) {
+				list = audioList.slice();
+				return true;
+			}
+			return false;
+		};
+
+		/**
+		 * @returns {HTMLAudioElement}
+		 */
+		const play = () => {
+			//@ts-ignore
+			if (!check()) return;
+			//@ts-ignore
+			audio = random ? list.randomRemove() : list.shift();
+			return game.playAudio({
+				path: audio,
+				addVideo,
+				onCanPlay: () => (refresh = true),
+				onError: play,
+			});
+		};
+
+		if (autoplay) return play();
+		return () => {
+			if (random) list = audioList.slice();
+			return play();
+		};
+	}
+	/**
+	 * @deprecated 请使用get.Audio.skill().fileList
+	 * 
 	 * 根据skill中的audio,audioname,audioname2和player来获取音频地址列表
 	 * @typedef {[string,number]|string|number|boolean} audioInfo
 	 * @typedef {{audio: audioInfo, audioname?:string[], audioname2?:{[playerName: string]: audioInfo}}} skillInfo
 	 * @param { string } skill  技能名
-	 * @param { Player | string } [player]  角色/角色名
-	 * @param { skillInfo | audioInfo } [skillInfo]  预设的skillInfo/audioInfo(转为skillInfo)，覆盖lib.skill[skill]
+	 * @param { Player | Object | string } [player]  角色/角色名
+	 * @param { skillInfo | audioInfo } [skillInfo]  使用指定的skillInfo/audioInfo
 	 * @returns { string[] }  语音地址列表
-	 * @example
-	 * ```js
-	 * const info=lib.skill['skillname'];
-	 * info.audio=undefined //默认值[true,2]
-	 * info.audio=false // 不播放语音
-	 * info.audio=true // [skill/skillname.mp3]
-	 * info.audio=3 // [skill/skillname1.mp3,skill/skillname2.mp3,skill/skillname3.mp3]（项数为数字大小）
-	 * info.audio="(ext:extName|db:extension-extName)(/anyPath):true|number(:format)" //间接路径
-	 * // 同上，只是将目录改为(ext:extName|db:extension-extName)(/anyPath)，且可以指定格式(默认mp3)
-	 * info.audio="(ext:extName|db:extension-extName/)(anyPath/)filename(.format)" //直接路径
-	 * //path和format至少有一个，否则会识别为引用技能
-	 * //起始位置为audio/(若无anyPath则为audio/skill/)，若没有format默认mp3
-	 * info.audio="otherSkillname" //引用技能
-	 * //引用一个其他技能的语音，若lib.skill["otherSkillname"]不存在则读取"otherSkillname"的audio为默认值[true,2]
-	 * info.audio=["otherSkillname", number] //带fixedNum的引用技能
-	 * //同样引用一个其他技能的语音，若lib.skill["otherSkillname"]不存在则读取"otherSkillname"的audio为number
-	 * //若"otherSkillname"的语音数超过number，则只取前number个
-	 * info.audio=[true,2,"otherSkillname1",["otherSkillname2",2]] //任意元素拼接
-	 * //数组里可以放任何以上的格式，结果为分析完的结果合并
-	 *
-	 * info.audioname=['player1','player2']
-	 * //audioname里可以放任意角色名。
-	 * //如果其中包含发动技能的角色名"player"，且info.audio不是直接路径"(anyPath/)filename(.format)"的形式
-	 * //则在"skill"和number中插入"_player"，形如
-	 *
-	 * info.audioname2={'player1':audioInfo1,'player2':audioInfo2}
-	 * //audioname2是一个对象，其中key为角色名，value的类型和info.audio一样
-	 * //如果key中包含发动技能的角色名player，则直接改用info.audioname2[player]来播放语音
-	 * ```
 	 */
 	parseSkillAudio(skill, player, skillInfo) {
-		if (typeof player === "string") player = { name: player };
-		else if (typeof player !== "object" || player === null) player = {};
-
-		if (skillInfo && (typeof skillInfo !== "object" || Array.isArray(skillInfo)))
-			skillInfo = { audio: skillInfo };
-
-		const checkSkill = (skill, history) => {
-			if (!lib.skill[skill]) return false;
-			if (!history.includes(skill)) return true;
-			if (history[0] === skill) return false;
-			//deadlock
-			throw new RangeError(`parseSkillAudio: ${skill} in `, history, ` forms a deadlock`);
-		};
-
-		const getName = (filter) => {
-			const name = (player.tempname || []).find((i) => filter(i));
-			return (
-				name ||
-				[player.name, player.name1, player.name2].reduce((result, name) => {
-					if (result) return result;
-					if (!name) return result;
-					if (filter(name)) return name;
-					let tempname = get.character(name, 4).find((tag) => tag.startsWith("tempname:"));
-					if (!tempname) return result;
-					tempname = tempname
-						.split(":")
-						.slice(1)
-						.find((i) => filter(i));
-					return tempname || result;
-				}, void 0)
-			);
-		};
-
-		/**
-		 * @param {string} skill
-		 * @param {{audioname:string[],history:string[]}} options
-		 * @param {skillInfo} [skillInfo]
-		 * @returns {string[]}
-		 */
-		function getAudioList(skill, options, skillInfo) {
-			const info = skillInfo || lib.skill[skill];
-			if (!info) {
-				console.error(new ReferenceError(`parseSkillAudio: Cannot find ${skill} in lib.skill`));
-				return parseAudio(skill, options, [true, 2]);
-			}
-
-			const { audioname, history } = options;
-			history.unshift(skill);
-			let audioInfo = info.audio;
-			if (Array.isArray(info.audioname)) audioname.addArray(info.audioname);
-			if (info.audioname2) audioInfo = info.audioname2[getName((i) => info.audioname2[i])] || audioInfo;
-			if (typeof audioInfo === "function") audioInfo = audioInfo(player);
-
-			return parseAudio(skill, options, audioInfo);
-		}
-
-		/**
-		 * @param {string} skill
-		 * @param {{audioname:string[],history:string[]}} options
-		 * @param {audioInfo} audioInfo  info.audio
-		 * @returns {string[]}
-		 */
-		function parseAudio(skill, options, audioInfo) {
-			const audioname = options.audioname.slice();
-			const history = options.history.slice();
-			options = { audioname, history };
-			if (Array.isArray(audioInfo)) {
-				if (typeof audioInfo[0] === "string" && typeof audioInfo[1] === "number") {
-					// [audioname, number]
-					if (checkSkill(audioInfo[0], history))
-						return getAudioList(audioInfo[0], options).slice(0, audioInfo[1]);
-					return parseAudio(audioInfo[0], options, audioInfo[1]);
-				}
-				return audioInfo.reduce((total, i) => total.addArray(parseAudio(skill, options, i)), []);
-			}
-
-			if (!["string", "number", "boolean"].includes(typeof audioInfo))
-				return parseAudio(skill, options, [true, 2]);
-			if (audioInfo === false) return [];
-			if (typeof audioInfo === "string" && checkSkill(audioInfo, history))
-				return getAudioList(audioInfo, options);
-
-			audioInfo = String(audioInfo);
-			let list = audioInfo.match(/(?:(.*):|^)(true|\d+)(?::(.*)|$)/); // [path, number|true, format]
-			if (!list) {
-				let path = "",
-					format = "";
-				if (!/^db:|^ext:|\//.test(audioInfo)) path = "skill/";
-				if (!/\.\w+$/.test(audioInfo)) format = ".mp3";
-				if (path && format) return parseAudio(audioInfo, options, [true, 2]);
-				return [`${path}${audioInfo}${format}`];
-			}
-
-			let _audioname = getName((i) => audioname.includes(i));
-			_audioname = _audioname ? `_${_audioname}` : "";
-
-			if (list[2] === "true")
-				return [`${list[1] || "skill"}/${skill}${_audioname}.${list[3] || "mp3"}`];
-
-			const audioList = [];
-			list[2] = parseInt(list[2]);
-			for (let i = 1; i <= list[2]; i++) {
-				audioList.push(`${list[1] || "skill"}/${skill}${_audioname}${i}.${list[3] || "mp3"}`);
-			}
-			return audioList;
-		}
-
-		return getAudioList(skill, { audioname: [], history: [] }, skillInfo);
+		return get.Audio.skill({ skill, player, info: skillInfo }).fileList;
+	}
+	/**
+	 * @deprecated 请使用get.Audio.skill().textList
+	 * 
+	 * 根据skill中的audio,audioname,audioname2和player来获取技能台词列表
+	 * @param { string } skill  技能名
+	 * @param { Player | Object | string } [player]  角色/角色名
+	 * @param { skillInfo | audioInfo } [skillInfo]  使用指定的skillInfo/audioInfo
+	 * @returns { string[] }  语音地址列表
+	 */
+	parseSkillText(skill, player, skillInfo) {
+		return get.Audio.skill({ skill, player, info: skillInfo }).textList;
+	}
+	/**
+	 * @deprecated 请使用get.Audio.skill().audioList
+	 * 
+	 * 根据skill中的audio,audioname,audioname2和player来获取技能台词列表及其对应的源文件名
+	 * @param { string } skill  技能名
+	 * @param { Player | Object | string } [player]  角色/角色名
+	 * @param { skillInfo | audioInfo } [skillInfo]  使用指定的skillInfo/audioInfo
+	 * @returns 语音地址列表
+	 */
+	parseSkillTextMap(skill, player, skillInfo) {
+		return get.Audio.skill({ skill, player, info: skillInfo }).audioList;
+	}
+	/**
+	 * @deprecated 请使用get.Audio.die().audioList
+	 * 
+	 * 获取角色死亡时能播放的所有阵亡语音
+	 * @param { string | Player } player  角色名
+	 * @returns 语音地址列表
+	 */
+	parseDieTextMap(player) {
+		return get.Audio.die({ player }).audioList;
 	}
 	/**
 	 *
@@ -1626,27 +1563,34 @@ export class Game {
 	 * @param { Player | string } player
 	 * @param { boolean } [directaudio]
 	 * @param { boolean } [nobroadcast]
-	 * @param { ['lib']['skill'] } [skillInfo]
+	 * @param { any } [skillInfo]
 	 * @returns
 	 */
 	trySkillAudio(skill, player, directaudio, nobroadcast, skillInfo) {
-		if (!nobroadcast)
-			game.broadcast(game.trySkillAudio, skill, player, directaudio, nobroadcast, skillInfo);
+		if (!nobroadcast) game.broadcast(game.trySkillAudio, skill, player, directaudio, nobroadcast, skillInfo);
+		if (!lib.config.background_speak) return;
+
 		const info = skillInfo || lib.skill[skill];
 		if (!info) return;
-		if (!lib.config.background_speak) return;
 		if (info.direct && !directaudio) return;
 		if (lib.skill.global.includes(skill) && !info.forceaudio) return;
 
-		let audio,
-			list = game.parseSkillAudio(skill, player, skillInfo).randomSort();
-		return (function play() {
-			if (!list.length) return;
-			audio = list.shift();
-			return game.playAudio(audio, play);
-		})();
+		const audioList = get.Audio.skill({ skill, player, info: skillInfo }).fileList;
+		return game.tryAudio({ audioList });
 	}
 	/**
+	 * @param { Player | string } player
+	 * @returns
+	 */
+	tryDieAudio(player) {
+		game.broadcast(game.tryDieAudio, player);
+		if (!lib.config.background_speak) return;
+
+		const audioList = get.Audio.die({ player }).fileList;
+		return game.tryAudio({ audioList });
+	}
+	/**
+	 * @deprecated
 	 * @param { string } name
 	 * @param { number } [index]
 	 * @returns
@@ -1733,17 +1677,10 @@ export class Game {
 		const audio = get.dynamicVariable(lib.card[card.name].audio, card, sex);
 		if (typeof audio == "string") {
 			const audioInfo = audio.split(":");
-			if (audio.startsWith("db:"))
-				game.playAudio(
-					`${audioInfo[0]}:${audioInfo[1]}`,
-					audioInfo[2],
-					`${card.name}_${sex}.${audioInfo[3] || "mp3"}`
-				);
-			else if (audio.startsWith("ext:"))
-				game.playAudio(
-					`${audioInfo[0]}:${audioInfo[1]}`,
-					`${card.name}_${sex}.${audioInfo[2] || "mp3"}`
-				);
+			if (["blob:", "data:"].some(prefix => audio.startsWith(prefix))) {
+				game.playAudio(audio);
+			} else if (audio.startsWith("db:")) game.playAudio(`${audioInfo[0]}:${audioInfo[1]}`, audioInfo[2], `${card.name}_${sex}.${audioInfo[3] || "mp3"}`);
+			else if (audio.startsWith("ext:")) game.playAudio(`${audioInfo[0]}:${audioInfo[1]}`, `${card.name}_${sex}.${audioInfo[2] || "mp3"}`);
 			else game.playAudio("card", sex, `${audioInfo[0]}.${audioInfo[1] || "mp3"}`);
 		} else game.playAudio("card", sex, card.name);
 	}
@@ -1756,42 +1693,29 @@ export class Game {
 			const aozhanBGMConfiguration = lib.config.mode_config.guozhan.aozhan_bgm;
 			if (aozhanBGMConfiguration == "disabled") return;
 			let aozhan = _status.tempAozhan || aozhanBGMConfiguration;
-			if (Array.isArray(aozhan))
-				aozhan = aozhan.randomGet("disabled", _status.currentAozhan) || aozhanBGMConfiguration;
-			if (aozhan == "random")
-				aozhan = Object.keys(lib.mode.guozhan.config.aozhan_bgm.item).randomGet(
-					"disabled",
-					"random",
-					_status.currentAozhan
-				);
+			if (Array.isArray(aozhan)) aozhan = aozhan.randomGet("disabled", _status.currentAozhan) || aozhanBGMConfiguration;
+			if (aozhan == "random") aozhan = Object.keys(lib.mode.guozhan.config.aozhan_bgm.item).randomGet("disabled", "random", _status.currentAozhan);
 			_status.currentAozhan = aozhan;
-			if (aozhan.startsWith("db:"))
-				game.getDB("image", aozhan.slice(3)).then((result) => (ui.backgroundMusic.src = result));
-			else if (aozhan.startsWith("ext:"))
-				ui.backgroundMusic.src = `${lib.assetURL}extension/${aozhan.slice(4)}`;
+			if (["blob:", "data:"].some(prefix => aozhan.startsWith(prefix))) {
+				ui.backgroundMusic.src = aozhan;
+			} else if (aozhan.startsWith("db:")) game.getDB("image", aozhan.slice(3)).then(result => (ui.backgroundMusic.src = result));
+			else if (aozhan.startsWith("ext:")) ui.backgroundMusic.src = `${lib.assetURL}extension/${aozhan.slice(4)}`;
 			else ui.backgroundMusic.src = `${lib.assetURL}audio/background/aozhan_${aozhan}.mp3`;
 			return;
 		}
 		let music = _status.tempMusic || lib.config.background_music;
-		if (Array.isArray(music))
-			music = music.randomGet("music_off", _status.currentMusic) || lib.config.background_music;
-		if (music == "music_random")
-			music = lib.config.all.background_music.randomGet(
-				"music_off",
-				"music_random",
-				_status.currentMusic
-			);
+		if (Array.isArray(music)) music = music.randomGet("music_off", _status.currentMusic) || lib.config.background_music;
+		if (music == "music_random") music = lib.config.all.background_music.randomGet("music_off", "music_random", _status.currentMusic);
 		_status.currentMusic = music;
 		if (music == "music_custom") {
 			const backgroundMusicSourceConfiguration = lib.config.background_music_src;
-			if (backgroundMusicSourceConfiguration)
-				ui.backgroundMusic.src = backgroundMusicSourceConfiguration;
+			if (backgroundMusicSourceConfiguration) ui.backgroundMusic.src = backgroundMusicSourceConfiguration;
 			return;
 		}
-		if (music.startsWith("db:"))
-			game.getDB("image", music.slice(3)).then((result) => (ui.backgroundMusic.src = result));
-		else if (music.startsWith("ext:"))
-			ui.backgroundMusic.src = `${lib.assetURL}extension/${music.slice(4)}`;
+		if (["blob:", "data:"].some(prefix => music.startsWith(prefix))) {
+			ui.backgroundMusic.src = music;
+		} else if (music.startsWith("db:")) game.getDB("image", music.slice(3)).then(result => (ui.backgroundMusic.src = result));
+		else if (music.startsWith("ext:")) ui.backgroundMusic.src = `${lib.assetURL}extension/${music.slice(4)}`;
 		else ui.backgroundMusic.src = `${lib.assetURL}audio/background/${music}.mp3`;
 	}
 	// 某种意义上，改不了，得重写
@@ -1876,7 +1800,7 @@ export class Game {
 	 */
 	import(type, content, url) {
 		if (type == "extension") {
-			const promise = game.loadExtension(content).then((name) => {
+			const promise = game.loadExtension(content).then(name => {
 				if (typeof _status.extensionLoaded == "undefined") _status.extensionLoaded = [];
 				_status.extensionLoaded.add(name);
 				return name;
@@ -1886,9 +1810,7 @@ export class Game {
 			return promise;
 		} else {
 			if (!lib.imported[type]) lib.imported[type] = {};
-			const promise = Promise.resolve(
-				(gnc.is.generator(content) ? gnc.of(content) : content)(lib, game, ui, get, ai, _status)
-			).then((content2) => {
+			const promise = Promise.resolve((gnc.is.generator(content) ? gnc.of(content) : content)(lib, game, ui, get, ai, _status)).then(content2 => {
 				if (content2.name) {
 					lib.imported[type][content2.name] = content2;
 					delete content2.name;
@@ -1903,14 +1825,7 @@ export class Game {
 	async loadExtension(object) {
 		let noEval = false;
 		if (typeof object == "function") {
-			object = await (gnc.is.generatorFunc(object) ? gnc.of(object) : object)(
-				lib,
-				game,
-				ui,
-				get,
-				ai,
-				_status
-			);
+			object = await (gnc.is.generatorFunc(object) ? gnc.of(object) : object)(lib, game, ui, get, ai, _status);
 			noEval = true;
 		}
 		if (object.closeSyntaxCheck) {
@@ -1973,8 +1888,7 @@ export class Game {
 				name: "编辑此扩展",
 				clear: true,
 				onclick: () => {
-					if (game.editExtension && lib.extensionPack && lib.extensionPack[name])
-						game.editExtension(name);
+					if (game.editExtension && lib.extensionPack && lib.extensionPack[name]) game.editExtension(name);
 					else alert("无法编辑未启用的扩展，请启用此扩展并重启后重试");
 				},
 			};
@@ -1984,18 +1898,14 @@ export class Game {
 			onclick: function () {
 				if (this.innerHTML != "<span>确认删除</span>") {
 					this.innerHTML = "<span>确认删除</span>";
-					new Promise((resolve) => setTimeout(resolve, 1000)).then(
-						() => (this.innerHTML = "<span>删除此扩展</span>")
-					);
+					new Promise(resolve => setTimeout(resolve, 1000)).then(() => (this.innerHTML = "<span>删除此扩展</span>"));
 					return;
 				}
 				const page = this.parentNode,
 					start = page.parentNode.previousSibling;
 				page.remove();
 				if (start) {
-					const pageInStart = Array.from(start.childNodes).find(
-						(childNode) => childNode.link == page
-					);
+					const pageInStart = Array.from(start.childNodes).find(childNode => childNode.link == page);
 					if (pageInStart) {
 						let active = false;
 						if (pageInStart.classList.contains("active")) active = true;
@@ -2019,8 +1929,7 @@ export class Game {
 		if (!object || !libConfig[`${extensionName}_enable`]) return;
 		if (!noEval) lib.init.eval(object);
 		const config = Object.keys(libConfig).reduce((constructingConfig, key) => {
-			if (key != extensionName && key.startsWith(extensionName))
-				constructingConfig[key.slice(11 + name.length)] = libConfig[key];
+			if (key != extensionName && key.startsWith(extensionName)) constructingConfig[key.slice(11 + name.length)] = libConfig[key];
 			return constructingConfig;
 		}, {});
 		try {
@@ -2045,30 +1954,15 @@ export class Game {
 				if (precontent) {
 					_status.extension = name;
 
-					await (gnc.is.generatorFunc(precontent) ? gnc.of(precontent) : precontent).call(
-						object,
-						config
-					);
+					await (gnc.is.generatorFunc(precontent) ? gnc.of(precontent) : precontent).call(object, config);
 					delete _status.extension;
 				}
 			} catch (e1) {
 				console.log(`加载《${name}》扩展的precontent时出现错误。`, e1);
-				if (!lib.config.extension_alert)
-					alert(
-						`加载《${name}》扩展的precontent时出现错误。\n该错误本身可能并不影响扩展运行。您可以在“设置→通用→无视扩展报错”中关闭此弹窗。\n${decodeURI(
-							e1.stack
-						)}`
-					);
+				if (!lib.config.extension_alert) alert(`加载《${name}》扩展的precontent时出现错误。\n该错误本身可能并不影响扩展运行。您可以在“设置→通用→无视扩展报错”中关闭此弹窗。\n${decodeURI(e1.stack)}`);
 			}
 
-			if (content)
-				lib.extensions.push([
-					name,
-					content,
-					config,
-					_status.evaluatingExtension,
-					objectPackage || {},
-				]);
+			if (content) lib.extensions.push([name, content, config, _status.evaluatingExtension, objectPackage || {}]);
 		} catch (e) {
 			console.log(e);
 		}
@@ -2137,7 +2031,7 @@ export class Game {
 				filelist2 = _filelist || [];
 			if (_filelist) delete data._filelist;
 			const filelist = Object.keys(data);
-			filelist.forEach((value) => zip.file(value, data[value]));
+			filelist.forEach(value => zip.file(value, data[value]));
 			game.print(filelist);
 			game.print(filelist2);
 			const generate = zip.generate({
@@ -2148,22 +2042,14 @@ export class Game {
 				return;
 			}
 			if (extensionPackage) {
-				extensionPackage.files = filelist
-					.concat(filelist2)
-					.filter((value) => value != "extension.js");
+				extensionPackage.files = filelist.concat(filelist2).filter(value => value != "extension.js");
 				const size = generate.byteLength;
 				if (size < 1000) extensionPackage.size = `${size}B`;
 				else if (size < 1000000) extensionPackage.size = `${Math.round(size / 1000)}KB`;
 				else extensionPackage.size = `${Math.round(size / 100000) / 10}MB`;
 				zip.file(
 					"package.js",
-					Object.keys(extensionPackage).reduce(
-						(constructingData, key, currentIndex, keys) =>
-							`${constructingData}\t${key}:${JSON.stringify(extensionPackage[key])}${
-								currentIndex < keys.length - 1 ? ",\n" : "\n};"
-							}`,
-						`extension["${exportExtension}"]={\n`
-					)
+					Object.keys(extensionPackage).reduce((constructingData, key, currentIndex, keys) => `${constructingData}\t${key}:${JSON.stringify(extensionPackage[key])}${currentIndex < keys.length - 1 ? ",\n" : "\n};"}`, `extension["${exportExtension}"]={\n`)
 				);
 			}
 			const blob = zip.generate({
@@ -2172,13 +2058,10 @@ export class Game {
 				fileNameToSaveAs = `${exportExtension.replace(/\\|\/|:|\?|"|\*|<|>|\|/g, "-")}.zip`;
 
 			if (lib.device) {
-				const directory =
-					lib.device == "android"
-						? cordova.file.externalDataDirectory
-						: cordova.file.documentsDirectory;
+				const directory = lib.device == "android" ? cordova.file.externalDataDirectory : cordova.file.documentsDirectory;
 				new Promise((resolve, reject) => window.resolveLocalFileSystemURL(directory, resolve, reject))
 					.then(
-						(directoryEntry) =>
+						directoryEntry =>
 							new Promise((resolve, reject) =>
 								directoryEntry.getFile(
 									fileNameToSaveAs,
@@ -2190,12 +2073,9 @@ export class Game {
 								)
 							)
 					)
+					.then(fileEntry => new Promise((resolve, reject) => fileEntry.createWriter(resolve, reject)))
 					.then(
-						(fileEntry) =>
-							new Promise((resolve, reject) => fileEntry.createWriter(resolve, reject))
-					)
-					.then(
-						(fileWriter) =>
+						fileWriter =>
 							new Promise((resolve, reject) => {
 								fileWriter.onerror = reject;
 								fileWriter.onwriteend = resolve;
@@ -2215,7 +2095,7 @@ export class Game {
 			return;
 		}
 		//导入
-		const UHP = (error) => {
+		const UHP = error => {
 			if (!(error instanceof Error)) error = new Error(error);
 			for (const [key, value] of Object.entries(Object.getOwnPropertyDescriptors(error))) {
 				if (value.configurable === true) {
@@ -2247,27 +2127,31 @@ export class Game {
 			if (str === "" || str === undefined) throw "你导入的不是扩展！请选择正确的文件";
 			// 编译ts扩展
 			if (isTsFile) {
-				if (typeof globalThis.ts === 'undefined') {
-					await lib.init.promises.js('game', 'typescript');
+				if (typeof globalThis.ts === "undefined") {
+					await lib.init.promises.js("game", "typescript");
 				}
 				/**
 				 * @type {typeof import('typescript')}
 				 */
 				const ts = globalThis.ts;
-				str = ts.transpile(str, {
-					module: ts.ModuleKind.ES2015,
-					//@todo: ES2019 -> ES2020
-					target: ts.ScriptTarget.ES2019,
-					inlineSourceMap: true,
-					resolveJsonModule: true,
-					esModuleInterop: true,
-				}, 'extension.ts');
+				str = ts.transpile(
+					str,
+					{
+						module: ts.ModuleKind.ES2015,
+						//@todo: ES2019 -> ES2020
+						target: ts.ScriptTarget.ES2019,
+						inlineSourceMap: true,
+						resolveJsonModule: true,
+						esModuleInterop: true,
+					},
+					"extension.ts"
+				);
 			}
 			_status.importingExtension = true;
 			try {
 				// 导入普通扩展
-				eval(str);
-				// esm扩展可以不写game.impoprt或许会导致_status.extensionLoading不存在
+				security.eval(str);
+				// esm扩展可以不写game.import或许会导致_status.extensionLoading不存在
 				if (Array.isArray(_status.extensionLoading)) {
 					await Promise.allSettled(_status.extensionLoading);
 					delete _status.extensionLoading;
@@ -2276,16 +2160,16 @@ export class Game {
 				// 是模块扩展
 				if (
 					// @ts-ignore
-					error.message === 'Cannot use import statement outside a module' || 
+					error.message === "Cannot use import statement outside a module" ||
 					// @ts-ignore
-					error.message === 'await is only valid in async functions and the top level bodies of modules'
+					error.message === "await is only valid in async functions and the top level bodies of modules"
 				) {
 					// 改为用info.json判断扩展名
 					const infoFile = zip.file("info.json");
 					if (!infoFile) throw new Error("未找到info.json,导入模块化扩展必须加入info.json！");
 					const info = JSON.parse(infoFile.asText());
-					if (typeof info.name == 'string') {
-						await game.import('extension', () => {
+					if (typeof info.name == "string") {
+						await game.import("extension", () => {
 							return Object.assign(info, {
 								config: {},
 							});
@@ -2303,21 +2187,20 @@ export class Game {
 			game.saveConfigValue("extensions");
 			game.saveConfig(`extension_${extensionName}_enable`, true);
 			const config = game.importedPack.config;
-			Object.keys(config).forEach((value) => {
+			Object.keys(config).forEach(value => {
 				const configObject = config[value];
-				if (configObject && "init" in configObject)
-					game.saveConfig(`extension_${extensionName}_${value}`, configObject.init);
+				if (configObject && "init" in configObject) game.saveConfig(`extension_${extensionName}_${value}`, configObject.init);
 			});
-			if (game.download) {
+			if (typeof game.readFile == "function") {
 				const files = zip.files,
 					hiddenFileFlags = [".", "_"],
 					fileList = Object.keys(files)
-						.filter((key) => !files[key].dir && !hiddenFileFlags.includes(key[0]))
+						.filter(key => !files[key].dir && !hiddenFileFlags.includes(key[0]))
 						.reverse();
 				//电脑端
 				//具备nodeJS环境
 				if (lib.node && lib.node.fs) {
-					const writeFile = (errnoException) => {
+					const writeFile = errnoException => {
 						if (errnoException) {
 							finishLoad();
 							UHP(errnoException);
@@ -2329,30 +2212,16 @@ export class Game {
 							const zipDir = fileList.pop(),
 								fileName = zipDir.split("/"),
 								name = fileName.pop(),
-								letGo = (name) =>
-									new Promise((resolve) =>
-										lib.node.fs.writeFile(
-											`${__dirname}/extension/${extensionName}/${name}`,
-											zip.file(zipDir).asNodeBuffer(),
-											null,
-											resolve
-										)
-									).then(writeFile);
-							return fileName.length
-								? game.promises
-										.createDir(`extension/${extensionName}/${fileName.join("/")}`)
-										.then(() => letGo(`${fileName.join("/")}/${name}`))
-								: letGo(name);
+								letGo = name => new Promise(resolve => lib.node.fs.writeFile(`${__dirname}/extension/${extensionName}/${name}`, zip.file(zipDir).asNodeBuffer(), null, resolve)).then(writeFile);
+							return fileName.length ? game.promises.createDir(`extension/${extensionName}/${fileName.join("/")}`).then(() => letGo(`${fileName.join("/")}/${name}`)) : letGo(name);
 						}
 						finishLoad();
 					};
 					game.promises.ensureDirectory(`extension/${extensionName}`).then(writeFile).catch(UHP);
-				} else
-					new Promise((resolve, reject) =>
-						window.resolveLocalFileSystemURL(nonameInitialized, resolve, reject)
-					)
+				} else if (typeof window.resolveLocalFileSystemURL == "function") {
+					new Promise((resolve, reject) => window.resolveLocalFileSystemURL(nonameInitialized, resolve, reject))
 						.then(
-							(directoryEntry) =>
+							directoryEntry =>
 								new Promise((resolve, reject) =>
 									directoryEntry.getDirectory(
 										`extension/${extensionName}`,
@@ -2364,7 +2233,7 @@ export class Game {
 									)
 								)
 						)
-						.then((directoryEntry) => {
+						.then(directoryEntry => {
 							//扩展文件夹
 							const writeFile = () => {
 								if (!fileList.length) {
@@ -2375,7 +2244,7 @@ export class Game {
 								const zipDirectory = fileList.shift(),
 									fileName = zipDirectory.split("/"),
 									name = fileName.pop(),
-									letGo = (name) =>
+									letGo = name =>
 										new Promise((resolve, reject) =>
 											directoryEntry.getFile(
 												name,
@@ -2386,45 +2255,52 @@ export class Game {
 												reject
 											)
 										)
+											.then(fileEntry => new Promise((resolve, reject) => fileEntry.createWriter(resolve, reject)))
 											.then(
-												(fileEntry) =>
-													new Promise((resolve, reject) =>
-														fileEntry.createWriter(resolve, reject)
-													)
-											)
-											.then(
-												(fileWriter) =>
+												fileWriter =>
 													new Promise((resolve, reject) => {
 														fileWriter.onerror = reject;
 														fileWriter.onwriteend = resolve;
-														fileWriter.write(
-															zip.file(zipDirectory).asArrayBuffer()
-														);
+														fileWriter.write(zip.file(zipDirectory).asArrayBuffer());
 													})
 											)
 											.then(writeFile);
-								return fileName.length
-									? game.promises
-											.createDir(`extension/${extensionName}/${fileName.join("/")}`)
-											.then(() => letGo(`${fileName.join("/")}/${name}`))
-									: letGo(name);
+								return fileName.length ? game.promises.createDir(`extension/${extensionName}/${fileName.join("/")}`).then(() => letGo(`${fileName.join("/")}/${name}`)) : letGo(name);
 							};
 							return writeFile();
 						})
 						.catch(UHP);
+				} else {
+					const writeFile = errnoException => {
+						if (errnoException) {
+							finishLoad();
+							UHP(errnoException);
+							return;
+						}
+						if (fileList.length) {
+							//filename 数组 ...dir+/+file
+							//这里需要个创文件夹的函数
+							const zipDir = fileList.pop(),
+								fileName = zipDir.split("/"),
+								name = fileName.pop(),
+								// letGo = name => new Promise(resolve => lib.node.fs.writeFile(`${__dirname}/extension/${extensionName}/${name}`, zip.file(zipDir).asNodeBuffer(), null, resolve)).then(writeFile);
+								letGo = name => game.promises.writeFile(zip.file(zipDir).asArrayBuffer(), `extension/${extensionName}`, name).then(writeFile);
+							return fileName.length ? game.promises.createDir(`extension/${extensionName}/${fileName.join("/")}`).then(() => letGo(`${fileName.join("/")}/${name}`)) : letGo(name);
+						}
+						finishLoad();
+					};
+					game.promises.ensureDirectory(`extension/${extensionName}`).then(writeFile).catch(UHP);
+				}
 			} else {
 				localStorage.setItem(`${lib.configprefix}extension_${extensionName}`, str);
 				const hiddenFileFlags = [".", "_"],
-					fileList = Object.keys(zip.files).filter(
-						(filePath) =>
-							!hiddenFileFlags.includes(filePath[0]) && filePath[filePath.length - 1] != "/"
-					);
+					fileList = Object.keys(zip.files).filter(filePath => !hiddenFileFlags.includes(filePath[0]) && filePath[filePath.length - 1] != "/");
 				if (fileList.length && lib.db) {
 					lib.config.extensionInfo[extensionName] = {
 						file: fileList,
 					};
 					game.saveConfigValue("extensionInfo");
-					fileList.forEach((filePath) => {
+					fileList.forEach(filePath => {
 						const arrayBuffer = zip.file(filePath).asArrayBuffer();
 						if (!arrayBuffer) return;
 						const blob = new Blob([arrayBuffer]);
@@ -2433,13 +2309,7 @@ export class Game {
 							fileReader.onerror = reject;
 							fileReader.onload = resolve;
 							fileReader.readAsDataURL(blob, "UTF-8");
-						}).then((fileLoadedEvent) =>
-							game.putDB(
-								"image",
-								`extension-${extensionName}:${filePath}`,
-								fileLoadedEvent.target.result
-							)
-						);
+						}).then(fileLoadedEvent => game.putDB("image", `extension-${extensionName}:${filePath}`, fileLoadedEvent.target.result));
 					});
 				}
 				finishLoad();
@@ -2712,21 +2582,18 @@ export class Game {
 					if (_status.mode == "stratagem") {
 						game.players[i].init(players[i].name, players[i].name2);
 						game.players[i].identity = players[i].identity;
-						if (
-							(game.players[i].identity == "fan" &&
-								game.players[i].isCamouflaged &&
-								game.me.identity == "nei") ||
-							game.players[i] == game.me
-						) {
+						if ((game.players[i].identity == "fan" && game.players[i].isCamouflaged && game.me.identity == "nei") || game.players[i] == game.me) {
 							game.players[i].setIdentity(players[i].identity);
 						}
 					} else {
 						game.players[i].init(players[i].name, players[i].name2);
 						game.players[i].setIdentity(players[i].identity);
 					}
+					game.players[i].setNickname(players[i].nickname);
 				} else if (lib.config.mode == "doudizhu" || lib.config.mode == "single") {
 					game.players[i].init(players[i].name, players[i].name2);
 					game.players[i].setIdentity(players[i].identity);
+					game.players[i].setNickname(players[i].nickname);
 				} else if (lib.config.mode == "stone") {
 					game.players[i].init(players[i].name, players[i].name2);
 					game.players[i].classList.add("noidentity");
@@ -2760,6 +2627,7 @@ export class Game {
 					} else {
 						game.players[i].setIdentity(game.players[i].group);
 					}
+					game.players[i].setNickname(players[i].nickname);
 				}
 			}
 			for (var i = 0; i < game.players.length; i++) {
@@ -2807,7 +2675,7 @@ export class Game {
 			}
 		},
 		playAudio: function (str) {
-			game.playAudio(str, "video");
+			game.playAudio({ path: str, video: true });
 		},
 		playSkillAudio: function (name) {
 			game.playSkillAudio(name, "video");
@@ -3021,10 +2889,14 @@ export class Game {
 		},
 		addSubPlayer: function (player, content) {
 			if (player && content && content[0] && content[1] && content[2] && content[3] && content[4]) {
-				var skill = content[0];
+				var skill = content[0],
+					list = content[3];
 				lib.skill[skill] = content[1];
 				lib.character[skill] = content[2];
-				lib.translate[skill] = content[3];
+				for (let i = 0; i < list.length; i++) {
+					if (!list[i]) continue;
+					lib.translate[skill + ["", "_prefix", "_ab"][i]] = list[i];
+				}
 				player.storage[skill] = content[4];
 			}
 		},
@@ -3080,18 +2952,16 @@ export class Game {
 			player.tempname.add(map.to);
 			player.skin[name] = map.to;
 			const goon = !lib.character[map.to];
-			if (goon)
-				lib.character[map.to] = [
-					"",
-					"",
-					0,
-					[],
-					(map.list.find((i) => i[0] == map.to) || [map.to, []])[1],
-				];
+			if (goon) lib.character[map.to] = ["", "", 0, [], (map.list.find(i => i[0] == map.to) || [map.to, []])[1]];
 			player.smoothAvatar(map.avatar2);
 			player.node["avatar" + map.name.slice(4)].setBackground(map.to, "character");
 			player.node["avatar" + map.name.slice(4)].show();
 			if (goon) delete lib.character[map.to];
+		},
+		changeGroup: function (player, targetGroup) {
+			if (!player || !targetGroup) return;
+			player.group = targetGroup;
+			player.node.name.dataset.nature = get.groupnature(targetGroup);
 		},
 		skill: function (player, content) {
 			if (typeof content == "string") {
@@ -3164,11 +3034,7 @@ export class Game {
 						player.classList.remove("unseen2_v");
 						break;
 				}
-				if (
-					!player.classList.contains("unseen_v") &&
-					(!player.name2 || !player.classList.contains("unseen2_v")) &&
-					player.storage.nohp
-				) {
+				if (!player.classList.contains("unseen_v") && (!player.name2 || !player.classList.contains("unseen2_v")) && player.storage.nohp) {
 					delete player.storage.nohp;
 					player.node.hp.show();
 					player.update();
@@ -3246,11 +3112,7 @@ export class Game {
 		},
 		compareMultiple: function (player, info) {
 			if (player && info) {
-				player.$compareMultiple(
-					get.infoCard(info[0]),
-					get.infoTargets(info[1]),
-					get.infoCards(info[2])
-				);
+				player.$compareMultiple(get.infoCard(info[0]), get.infoTargets(info[1]), get.infoCards(info[2]));
 			} else {
 				console.log(player);
 			}
@@ -3292,11 +3154,7 @@ export class Game {
 				}
 				for (var i = 0; i < cards.length; i++) {
 					for (var j = 0; j < nodes.length; j++) {
-						if (
-							cards[i][2] == nodes[j].name &&
-							cards[i][0] == nodes[j].suit &&
-							cards[i][1] == nodes[j].number
-						) {
+						if (cards[i][2] == nodes[j].name && cards[i][0] == nodes[j].suit && cards[i][1] == nodes[j].number) {
 							nodes[j].moveDelete(player);
 							cards.splice(i--, 1);
 							nodes.splice(j--, 1);
@@ -3320,11 +3178,7 @@ export class Game {
 				}
 				for (var i = 0; i < cards.length; i++) {
 					for (var j = 0; j < nodes.length; j++) {
-						if (
-							cards[i][2] == nodes[j].name &&
-							cards[i][0] == nodes[j].suit &&
-							cards[i][1] == nodes[j].number
-						) {
+						if (cards[i][2] == nodes[j].name && cards[i][0] == nodes[j].suit && cards[i][1] == nodes[j].number) {
 							nodes[j].delete();
 							if (method == "zoom") {
 								nodes[j].style.transform = "scale(0)";
@@ -3419,11 +3273,7 @@ export class Game {
 				var checkMatch = function (l1, l2) {
 					for (var i = 0; i < l1.length; i++) {
 						for (var j = 0; j < l2.length; j++) {
-							if (
-								l2[j].suit == l1[i][0] &&
-								l2[j].number == l1[i][1] &&
-								l2[j].name == l1[i][2]
-							) {
+							if (l2[j].suit == l1[i][0] && l2[j].number == l1[i][1] && l2[j].name == l1[i][2]) {
 								l2[j].addGaintag(content[1]);
 								l2.splice(j--, 1);
 								break;
@@ -3438,8 +3288,21 @@ export class Game {
 		},
 		removeGaintag: function (player, content) {
 			if (player && content) {
-				if (Array.isArray(content)) player.removeGaintag.apply(player, content);
-				else player.removeGaintag(content);
+				if (Array.isArray(content)) {
+					const checkMatch = function (l1, l2) {
+						for (var i = 0; i < l1.length; i++) {
+							for (var j = 0; j < l2.length; j++) {
+								if (l2[j].suit == l1[i][0] && l2[j].number == l1[i][1] && l2[j].name == l1[i][2]) {
+									l2[j].addGaintag(content[0]);
+									l2.splice(j--, 1);
+									break;
+								}
+							}
+						}
+					};
+					// player.removeGaintag.apply(player, content);
+					checkMatch(content[1], player.getCards("h"));
+				} else player.removeGaintag(content);
 			} else {
 				console.log(player);
 			}
@@ -3632,14 +3495,9 @@ export class Game {
 			if (player && content) {
 				var card = get.infoCard(content[0]);
 				card.viewAs = content[1];
-				if (
-					card.viewAs &&
-					card.viewAs != card.name &&
-					(card.classList.contains("fullskin") || card.classList.contains("fullborder"))
-				) {
+				if (card.viewAs && card.viewAs != card.name && (card.classList.contains("fullskin") || card.classList.contains("fullborder"))) {
 					card.classList.add("fakejudge");
-					card.node.background.innerHTML =
-						lib.translate[card.viewAs + "_bg"] || get.translation(card.viewAs)[0];
+					card.node.background.innerHTML = lib.translate[card.viewAs + "_bg"] || get.translation(card.viewAs)[0];
 				}
 				card.classList.add("drawinghidden");
 				player.node.judges.insertBefore(card, player.node.judges.firstChild);
@@ -3739,11 +3597,7 @@ export class Game {
 				var checkMatch = function (l1, l2) {
 					for (var i = 0; i < l1.length; i++) {
 						for (var j = 0; j < l2.length; j++) {
-							if (
-								l2[j].suit == l1[i][0] &&
-								l2[j].number == l1[i][1] &&
-								l2[j].name == l1[i][2]
-							) {
+							if (l2[j].suit == l1[i][0] && l2[j].number == l1[i][1] && l2[j].name == l1[i][2]) {
 								l2[j].remove();
 								l2.splice(j--, 1);
 								break;
@@ -4432,35 +4286,15 @@ export class Game {
 					surface.beginPath();
 					var middle = 0.5;
 					var radius = p.radius;
-					if (
-						type == "recover" ||
-						type == "legend" ||
-						type == "rare" ||
-						type == "epic" ||
-						type == "coin" ||
-						type == "dust"
-					) {
+					if (type == "recover" || type == "legend" || type == "rare" || type == "epic" || type == "coin" || type == "dust") {
 						middle = 0.7;
 						radius /= 3;
 					}
 
 					p.opacity = Math.round((p.death / p.life) * 100) / 100;
-					var gradient = surface.createRadialGradient(
-						p.location.x,
-						p.location.y,
-						0,
-						p.location.x,
-						p.location.y,
-						p.radius
-					);
-					gradient.addColorStop(
-						0,
-						"rgba(" + p.r + ", " + p.g + ", " + p.b + ", " + p.opacity + ")"
-					);
-					gradient.addColorStop(
-						middle,
-						"rgba(" + p.r + ", " + p.g + ", " + p.b + ", " + p.opacity + ")"
-					);
+					var gradient = surface.createRadialGradient(p.location.x, p.location.y, 0, p.location.x, p.location.y, p.radius);
+					gradient.addColorStop(0, "rgba(" + p.r + ", " + p.g + ", " + p.b + ", " + p.opacity + ")");
+					gradient.addColorStop(middle, "rgba(" + p.r + ", " + p.g + ", " + p.b + ", " + p.opacity + ")");
 					gradient.addColorStop(1, "rgba(" + p.r + ", " + p.g + ", " + p.b + ", 0)");
 					surface.fillStyle = gradient;
 					surface.arc(p.location.x, p.location.y, radius, Math.PI * 2, false);
@@ -4504,7 +4338,7 @@ export class Game {
 			dashed = false,
 			drag = false;
 		if (arguments[1] && typeof arguments[1] == "object")
-			Object.keys(arguments[1]).forEach((value) => {
+			Object.keys(arguments[1]).forEach(value => {
 				switch (value) {
 					case "opacity":
 						opacity = arguments[1][value];
@@ -4611,19 +4445,11 @@ export class Game {
 			let current;
 			if (time < total / 3) {
 				ctx.strokeStyle = "rgba(" + color.toString() + "," + opacity * (time / (total / 3)) + ")";
-				current = [
-					from[0] + ((to[0] - from[0]) * time) / (total / 3),
-					from[1] + ((to[1] - from[1]) * time) / (total / 3),
-				];
+				current = [from[0] + ((to[0] - from[0]) * time) / (total / 3), from[1] + ((to[1] - from[1]) * time) / (total / 3)];
 			} else if (time <= total) {
 				current = to;
 				if (time > total / 1.5) {
-					ctx.strokeStyle =
-						"rgba(" +
-						color.toString() +
-						"," +
-						opacity * (1 - (time - total / 1.5) / (total - total / 1.5)) +
-						")";
+					ctx.strokeStyle = "rgba(" + color.toString() + "," + opacity * (1 - (time - total / 1.5) / (total - total / 1.5)) + ")";
 				} else {
 					ctx.strokeStyle = "rgba(" + color.toString() + "," + opacity + ")";
 				}
@@ -4651,8 +4477,8 @@ export class Game {
 	 * @param { string } name
 	 * @param { string } skill
 	 * @param { Player } player
-	 * @param { import('../library/index.js').GameEventPromise } event
-	 * @returns { import('../library/index.js').GameEventPromise }
+	 * @param { GameEventPromise } event
+	 * @returns { GameEventPromise }
 	 */
 	createTrigger(name, skill, player, event, indexedData) {
 		let info = get.info(skill);
@@ -4675,7 +4501,7 @@ export class Game {
 	 *
 	 * @param { string } name
 	 * @param { false } [trigger]
-	 * @param { import('../library/index.js').GameEventPromise } [triggerEvent]
+	 * @param { GameEventPromise } [triggerEvent]
 	 */
 	createEvent(name, trigger, triggerEvent) {
 		const next = new lib.element.GameEvent(name, trigger).toPromise();
@@ -4687,19 +4513,9 @@ export class Game {
 	 * @param { { extension: string, sex: Sex, group: string, hp: string | number, skills?: string[], tags?: any[], translate: string } } information
 	 */
 	addCharacter(name, information) {
+		//TODO: 这一坨也要改
 		const extensionName = _status.extension || information.extension,
-			character = [
-				information.sex,
-				information.group,
-				information.hp,
-				information.skills || [],
-				[
-					_status.evaluatingExtension
-						? `db:extension-${extensionName}:${name}.jpg`
-						: `ext:${extensionName}/${name}.jpg`,
-					`die:ext:${extensionName}/${name}.mp3`,
-				],
-			];
+			character = [information.sex, information.group, information.hp, information.skills || [], [_status.evaluatingExtension ? `db:extension-${extensionName}:${name}.jpg` : `ext:${extensionName}/${name}.jpg`, `die:ext:${extensionName}/${name}.mp3`]];
 		if (information.tags) character[4] = character[4].concat(information.tags);
 		lib.character[name] = character;
 		const packName = `mode_extension_${extensionName}`;
@@ -4716,6 +4532,7 @@ export class Game {
 		let extname = _status.extension || "扩展";
 		let gzFlag = false;
 		packagename = packagename || extname;
+		//TODO: 把这里一大坨改成新写法
 		for (let i in pack) {
 			if (i == "mode") {
 				if (pack[i] == "guozhan") gzFlag = true;
@@ -4734,14 +4551,8 @@ export class Game {
 						imgsrc = "ext:" + extname + "/" + j + ".jpg";
 					}
 					const audiosrc = "die:ext:" + extname + "/" + j + ".mp3";
-					if (
-						!pack[i][j][4].some(
-							(str) => typeof str == "string" && /^(?:db:extension-|ext:):(?:.+)/.test(str)
-						)
-					)
-						pack[i][j][4].add(imgsrc);
-					if (!pack[i][j][4].some((str) => typeof str == "string" && /^die:(?:.+)/.test(str)))
-						pack[i][j][4].add(audiosrc);
+					if (!pack[i][j][4].some(str => typeof str == "string" && /^(?:db:extension-.+?|ext|img):(?:.+)/.test(str))) pack[i][j][4].add(imgsrc);
+					if (!pack[i][j][4].some(str => typeof str == "string" && /^die:(?:.+)/.test(str))) pack[i][j][4].add(audiosrc);
 					if (pack[i][j][4].includes("boss") || pack[i][j][4].includes("hiddenboss")) {
 						lib.config.forbidai.add(j);
 					}
@@ -4785,17 +4596,19 @@ export class Game {
 		if (info.audio == true) {
 			info.audio = "ext:" + extname;
 		}
-		if (info.fullskin) {
-			if (_status.evaluatingExtension) {
-				info.image = "db:extension-" + extname + ":" + name + ".png";
-			} else {
-				info.image = "ext:" + extname + "/" + name + ".png";
-			}
-		} else if (info.fullimage) {
-			if (_status.evaluatingExtension) {
-				info.image = "db:extension-" + extname + ":" + name + ".jpg";
-			} else {
-				info.image = "ext:" + extname + "/" + name + ".jpg";
+		if (!info.image || typeof info.image !== "string") {
+			if (info.fullskin) {
+				if (_status.evaluatingExtension) {
+					info.image = "db:extension-" + extname + ":" + name + ".png";
+				} else {
+					info.image = "ext:" + extname + "/" + name + ".png";
+				}
+			} else if (info.fullimage) {
+				if (_status.evaluatingExtension) {
+					info.image = "db:extension-" + extname + ":" + name + ".jpg";
+				} else {
+					info.image = "ext:" + extname + "/" + name + ".jpg";
+				}
 			}
 		}
 		lib.card[name] = info;
@@ -4809,11 +4622,7 @@ export class Game {
 				suits = ["club", "spade"];
 			}
 			for (let i = 0; i < info2.number; i++) {
-				lib.card.list.push([
-					suits[Math.floor(Math.random() * suits.length)],
-					Math.ceil(Math.random() * 13),
-					name,
-				]);
+				lib.card.list.push([suits[Math.floor(Math.random() * suits.length)], Math.ceil(Math.random() * 13), name]);
 			}
 		}
 		let packname = "mode_extension_" + extname;
@@ -4915,10 +4724,14 @@ export class Game {
 		lib.translate[name] = info2.translate;
 		let imgsrc;
 		let extname = _status.extension || info2.extension;
-		if (_status.evaluatingExtension) {
-			imgsrc = "extension-" + extname + ":" + name + ".jpg";
+		if (info.splash) {
+			imgsrc = info.splash;
 		} else {
-			imgsrc = "ext:" + extname + "/" + name + ".jpg";
+			if (_status.evaluatingExtension) {
+				imgsrc = "extension-" + extname + ":" + name + ".jpg";
+			} else {
+				imgsrc = "ext:" + extname + "/" + name + ".jpg";
+			}
 		}
 		lib.mode[name] = {
 			name: info2.translate,
@@ -5055,7 +4868,7 @@ export class Game {
 	 */
 	removeExtension(extensionName, keepFile) {
 		const prefix = `extension_${extensionName}`;
-		Object.keys(lib.config).forEach((key) => {
+		Object.keys(lib.config).forEach(key => {
 			if (key.startsWith(prefix)) game.saveConfig(key);
 		});
 		localStorage.removeItem(`${lib.configprefix}${prefix}`);
@@ -5064,10 +4877,7 @@ export class Game {
 		game.saveConfig("extensions", lib.config.extensions);
 		const modeList = lib.config.extensionInfo[extensionName];
 		if (modeList) {
-			if (modeList.file)
-				Object.values(modeList.file).forEach((filePath) =>
-					game.deleteDB("image", `extension-${extensionName}:${filePath}`)
-				);
+			if (modeList.file) Object.values(modeList.file).forEach(filePath => game.deleteDB("image", `extension-${extensionName}:${filePath}`));
 			if (modeList.mode) Object.values(modeList.mode).forEach(game.clearModeConfig);
 			delete lib.config.extensionInfo[extensionName];
 			game.saveConfigValue("extensionInfo");
@@ -5640,24 +5450,21 @@ export class Game {
 				td = document.createElement("td");
 				num = 0;
 				for (j = 0; j < game.additionaldead[i].stat.length; j++) {
-					if (game.additionaldead[i].stat[j].damage != undefined)
-						num += game.additionaldead[i].stat[j].damage;
+					if (game.additionaldead[i].stat[j].damage != undefined) num += game.additionaldead[i].stat[j].damage;
 				}
 				td.innerHTML = num;
 				tr.appendChild(td);
 				td = document.createElement("td");
 				num = 0;
 				for (j = 0; j < game.additionaldead[i].stat.length; j++) {
-					if (game.additionaldead[i].stat[j].damaged != undefined)
-						num += game.additionaldead[i].stat[j].damaged;
+					if (game.additionaldead[i].stat[j].damaged != undefined) num += game.additionaldead[i].stat[j].damaged;
 				}
 				td.innerHTML = num;
 				tr.appendChild(td);
 				td = document.createElement("td");
 				num = 0;
 				for (j = 0; j < game.additionaldead[i].stat.length; j++) {
-					if (game.additionaldead[i].stat[j].gain != undefined)
-						num += game.additionaldead[i].stat[j].gain;
+					if (game.additionaldead[i].stat[j].gain != undefined) num += game.additionaldead[i].stat[j].gain;
 				}
 				td.innerHTML = num;
 				tr.appendChild(td);
@@ -5673,8 +5480,7 @@ export class Game {
 				td = document.createElement("td");
 				num = 0;
 				for (j = 0; j < game.additionaldead[i].stat.length; j++) {
-					if (game.additionaldead[i].stat[j].kill != undefined)
-						num += game.additionaldead[i].stat[j].kill;
+					if (game.additionaldead[i].stat[j].kill != undefined) num += game.additionaldead[i].stat[j].kill;
 				}
 				td.innerHTML = num;
 				tr.appendChild(td);
@@ -5696,8 +5502,7 @@ export class Game {
 		dialog.add(ui.create.div(".placeholder"));
 
 		for (let i = 0; i < game.players.length; i++) {
-			if (!_status.connectMode && game.players[i].isUnderControl(true) && game.layout != "long2")
-				continue;
+			if (!_status.connectMode && game.players[i].isUnderControl(true) && game.layout != "long2") continue;
 			let hs = game.players[i].getCards("h");
 			if (hs.length) {
 				dialog.add('<div class="text center">' + get.translation(game.players[i]) + "</div>");
@@ -5776,6 +5581,8 @@ export class Game {
 				newvid.name1 = newvid.name2.slice(10, newvid.name1.lastIndexOf("_"));
 			}
 			lib.videos.unshift(newvid);
+			// 清洗代理对象
+			newvid.video = structuredClone(newvid.video);
 			store.put(newvid);
 			ui.create.videoNode(newvid, true);
 		}
@@ -5851,13 +5658,7 @@ export class Game {
 						game.reload();
 					});
 				}
-			} else if (
-				!_status.connectMode &&
-				get.config("continue_game") &&
-				!ui.continue_game &&
-				!_status.brawl &&
-				!game.no_continue_game
-			) {
+			} else if (!_status.connectMode && get.config("continue_game") && !ui.continue_game && !_status.brawl && !game.no_continue_game) {
 				ui.continue_game = ui.create.control("再战", game.reloadCurrent);
 			}
 		}
@@ -5898,12 +5699,7 @@ export class Game {
 		}
 		if (window.isNonameServer) {
 			lib.configOL.gameStarted = false;
-			game.saveConfig("pagecfg" + window.isNonameServer, [
-				lib.configOL,
-				game.roomId,
-				_status.onlinenickname,
-				_status.onlineavatar,
-			]);
+			game.saveConfig("pagecfg" + window.isNonameServer, [lib.configOL, game.roomId, _status.onlinenickname, _status.onlineavatar]);
 			game.reload();
 		} else if (_status.connectMode && !game.online) {
 			setTimeout(game.reload, 15000);
@@ -5918,11 +5714,11 @@ export class Game {
 	 */
 	executingAsyncEventMap = new Map();
 	/**
-	 * @type { import('../library/index.js').GameEventPromise[] }
+	 * @type { GameEventPromise[] }
 	 */
 	belongAsyncEventList = [];
 	/**
-	 * @param { import('../library/index.js').GameEventPromise } [belongAsyncEvent]
+	 * @param { GameEventPromise } [belongAsyncEvent]
 	 */
 	async loop(belongAsyncEvent) {
 		if (belongAsyncEvent) {
@@ -5931,24 +5727,8 @@ export class Game {
 			belongAsyncEvent = game.belongAsyncEventList.at(-1);
 		}
 		while (true) {
-			let event =
-				belongAsyncEvent && belongAsyncEvent.parent == _status.event
-					? belongAsyncEvent
-					: _status.event;
-			let {
-				step,
-				source,
-				player,
-				target,
-				targets,
-				card,
-				cards,
-				skill,
-				forced,
-				num,
-				_trigger: trigger,
-				_result: result,
-			} = event;
+			let event = belongAsyncEvent && belongAsyncEvent.parent == _status.event ? belongAsyncEvent : _status.event;
+			let { step, source, player, target, targets, card, cards, skill, forced, num, _trigger: trigger, _result: result } = event;
 			const _resolve = () => {
 				if (event.async) {
 					if (typeof event.resolve == "function") {
@@ -6003,8 +5783,7 @@ export class Game {
 					if (next.player && next.player.skipList.includes(next.name)) {
 						event.trigger(next.name + "Skipped");
 						next.player.skipList.remove(next.name);
-						if (lib.phaseName.includes(next.name))
-							next.player.getHistory("skipped").add(next.name);
+						if (lib.phaseName.includes(next.name)) next.player.getHistory("skipped").add(next.name);
 					} else {
 						next.parent = event;
 						_status.event = next;
@@ -6052,12 +5831,7 @@ export class Game {
 						});
 						if (typeof event.step == "number") ++event.step;
 					};
-					if (
-						player &&
-						player.classList.contains("dead") &&
-						!event.forceDie &&
-						event.name != "phaseLoop"
-					) {
+					if (player && player.classList.contains("dead") && !event.forceDie && event.name != "phaseLoop") {
 						game.broadcastAll(function () {
 							while (_status.dieClose.length) {
 								_status.dieClose.shift().close();
@@ -6080,12 +5854,8 @@ export class Game {
 					} else {
 						await game
 							.runContent(belongAsyncEvent)
-							.catch((e) => {
-								if (
-									_status.withError ||
-									lib.config.compatiblemode ||
-									(_status.connectMode && !lib.config.debug)
-								) {
+							.catch(e => {
+								if (_status.withError || lib.config.compatiblemode || (_status.connectMode && !lib.config.debug)) {
 									game.print("游戏出错：" + event.name);
 									game.print(e.toString());
 									console.log(e);
@@ -6103,55 +5873,33 @@ export class Game {
 		}
 	}
 	/**
-	 * @param { import('../library/index.js').GameEventPromise } [belongAsyncEvent]
+	 * @param { GameEventPromise } [belongAsyncEvent]
 	 */
 	runContent(belongAsyncEvent) {
-		return new Promise((resolve) => {
-			let event =
-				belongAsyncEvent && belongAsyncEvent.parent == _status.event
-					? belongAsyncEvent
-					: _status.event;
-			let {
-				step,
-				source,
-				player,
-				target,
-				targets,
-				card,
-				cards,
-				skill,
-				forced,
-				num,
-				_trigger: trigger,
-				_result: result,
-				_storeEvent,
-			} = event;
+		return new Promise(resolve => {
+			let event = belongAsyncEvent && belongAsyncEvent.parent == _status.event ? belongAsyncEvent : _status.event;
+			let { step, source, player, target, targets, card, cards, skill, forced, num, _trigger: trigger, _result: result, _storeEvent } = event;
 			// 数组形式
 			if ("contents" in event && Array.isArray(event.contents)) {
 				/*
-				event.contents[step](event, trigger, player, _storeEvent).then((evt) => {
-					if (evt) event._storeEvent = evt;
-					if (game.executingAsyncEventMap.has(event.toEvent())) {
-						game.executingAsyncEventMap.set(_status.event.toEvent(), game.executingAsyncEventMap.get(_status.event.toEvent()).then(() => {
-							if (event.step >= event.contents.length - 1) event.finish();
-							resolve();
-						}));
-					} else {
-						if (event.step >= event.contents.length - 1) event.finish();
-						resolve();
-					}
-				});
-				*/
+			   event.contents[step](event, trigger, player, _storeEvent).then((evt) => {
+				   if (evt) event._storeEvent = evt;
+				   if (game.executingAsyncEventMap.has(event.toEvent())) {
+					   game.executingAsyncEventMap.set(_status.event.toEvent(), game.executingAsyncEventMap.get(_status.event.toEvent()).then(() => {
+						   if (event.step >= event.contents.length - 1) event.finish();
+						   resolve();
+					   }));
+				   } else {
+					   if (event.step >= event.contents.length - 1) event.finish();
+					   resolve();
+				   }
+			   });
+			   */
 				// 解决不了问题...就把问题统一
-				const run = async (event) => {
+				const run = async event => {
 					if (typeof event.step !== "number") event.step = 0;
 					while (event.step < event.contents.length && !event.finished) {
-						const evt = await event.contents[event.step](
-							event,
-							event._trigger,
-							event.player,
-							event._tmpStoreEvent
-						);
+						const evt = await event.contents[event.step](event, event._trigger, event.player, event._tmpStoreEvent);
 						if (evt) event._tmpStoreEvent = evt;
 
 						if (game.executingAsyncEventMap.has(event.toEvent())) {
@@ -6196,34 +5944,14 @@ export class Game {
 			} else if (event.content instanceof GeneratorFunction) {
 				if (!event.debugging) {
 					if (event.generatorContent) event.generatorContent.return();
-					event.generatorContent = event.content(
-						event,
-						step,
-						source,
-						player,
-						target,
-						targets,
-						card,
-						cards,
-						skill,
-						forced,
-						num,
-						trigger,
-						result,
-						_status,
-						lib,
-						game,
-						ui,
-						get,
-						ai
-					);
+					event.generatorContent = event.content(event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai);
 				} else {
 					delete event.debugging;
 				}
 				var next = event.generatorContent.next();
 				if (typeof next.value == "function" && next.value.toString() == "code=>eval(code)") {
 					//触发debugger
-					var inputCallback = (inputResult) => {
+					var inputCallback = inputResult => {
 						if (inputResult === false) {
 							event.debugging = true;
 							game.resume2();
@@ -6239,14 +5967,15 @@ export class Game {
 				resolve();
 			} else if (event.content instanceof AsyncFunction) {
 				// _status,lib,game,ui,get,ai六个变量由game.import提供
-				event.content(event, trigger, player).then(() => {
+				// 使用另一种方式来停止event.content
+				const { promise, resolve: resolveContent } = Promise.withResolvers();
+				promise.then(() => {
 					// 其实这个if几乎一定执行了
 					if (game.executingAsyncEventMap.has(event.toEvent())) {
 						if (!game.executingAsyncEventMap.get(_status.event.toEvent())) {
 							console.warn(`game.executingAsyncEventMap中包括了event，但不包括_status.event！`);
 							console.log("event :>> ", event.toEvent());
 							console.log("_status.event :>> ", _status.event.toEvent());
-							// debugger;
 							game.executingAsyncEventMap.set(
 								event.toEvent(),
 								game.executingAsyncEventMap.get(event.toEvent()).then(() => {
@@ -6268,28 +5997,10 @@ export class Game {
 						resolve();
 					}
 				});
+				event.resolveContent = resolveContent;
+				event.content(event, trigger, player).finally(() => resolveContent());
 			} else {
-				event.content(
-					event,
-					step,
-					source,
-					player,
-					target,
-					targets,
-					card,
-					cards,
-					skill,
-					forced,
-					num,
-					trigger,
-					result,
-					_status,
-					lib,
-					game,
-					ui,
-					get,
-					ai
-				);
+				event.content(event, step, source, player, target, targets, card, cards, skill, forced, num, trigger, result, _status, lib, game, ui, get, ai);
 				resolve();
 			}
 		});
@@ -6309,6 +6020,7 @@ export class Game {
 			}
 			_status.paused = false;
 			delete _status.waitingForTransition;
+			if ((_status.event && _status.event.content instanceof AsyncFunction) || Array.isArray(_status.event.contents)) return;
 			game.loop();
 		}
 	}
@@ -6316,6 +6028,7 @@ export class Game {
 		if (_status.connectMode) return;
 		if (_status.paused2) {
 			_status.paused2 = false;
+			if ((_status.event && _status.event.content instanceof AsyncFunction) || Array.isArray(_status.event.contents)) return;
 			game.loop();
 		}
 	}
@@ -6417,7 +6130,7 @@ export class Game {
 		return game.asyncDelay(time, time2);
 	}
 	/**
-	 * @param { import('../library/index.js').GameEventPromise } [event]
+	 * @param { GameEventPromise } [event]
 	 */
 	check(event = _status.event) {
 		game.callHook("checkBegin", [event]);
@@ -6427,20 +6140,15 @@ export class Game {
 			auto = true,
 			auto_confirm = lib.config.auto_confirm;
 		const player = event.player;
-		const uppercaseType = (type) => type[0].toUpperCase() + type.slice(1);
+		const uppercaseType = type => type[0].toUpperCase() + type.slice(1);
 
-		if (
-			!event.filterButton &&
-			!event.filterCard &&
-			!event.filterTarget &&
-			(!event.skill || !event._backup)
-		) {
+		if (!event.filterButton && !event.filterCard && !event.filterTarget && (!event.skill || !event._backup)) {
 			if (event.choosing) _status.imchoosing = true;
 			return false;
 		}
 
 		let useCache = !lib.config.compatiblemode && !event.skill && !event.multitarget;
-		const filterCache = (type) => {
+		const filterCache = type => {
 			if (get.select(event[`select${uppercaseType(type)}`])[1] < 0) return false;
 			const cardinfo = get.info(get.card() || {});
 			if (cardinfo && cardinfo.complexTarget) return false;
@@ -6448,7 +6156,7 @@ export class Game {
 			return !event[`complex${uppercaseType(type)}`];
 		};
 
-		["button", "card", "target"].forEach((type) => {
+		["button", "card", "target"].forEach(type => {
 			if (!event[`filter${uppercaseType(type)}`]) return;
 			if (!filterCache(type)) useCache = false;
 			if (!ok) game.uncheck(type);
@@ -6471,15 +6179,7 @@ export class Game {
 		}
 
 		player.node.equips.classList.remove("popequip");
-		if (
-			event.filterCard &&
-			lib.config.popequip &&
-			!_status.nopopequip &&
-			get.is.phoneLayout() &&
-			typeof event.position === "string" &&
-			event.position.includes("e") &&
-			player.node.equips.querySelector(".card.selectable")
-		) {
+		if (event.filterCard && lib.config.popequip && !_status.nopopequip && get.is.phoneLayout() && typeof event.position === "string" && event.position.includes("e") && player.node.equips.querySelector(".card.selectable")) {
 			player.node.equips.classList.add("popequip");
 			auto_confirm = false;
 		}
@@ -6487,7 +6187,7 @@ export class Game {
 		if (event.isMine() && game.chess && get.config("show_distance") && game.me) {
 			const players = game.players.slice();
 			if (event.deadTarget) players.addArray(game.dead);
-			players.forEach((player) => {
+			players.forEach(player => {
 				if (player === game.me) return player.node.action.hide();
 				player.node.action.show();
 				let dist = get.distance(game.me, player, "pure");
@@ -6527,12 +6227,12 @@ export class Game {
 
 		if (game.chess) {
 			const shadows = Array.from(ui.chessContainer.querySelectorAll(".playergrid.temp"));
-			shadows.forEach((i) => i.remove());
+			shadows.forEach(i => i.remove());
 		}
 		if (event.player) event.player.node.equips.classList.remove("popequip");
 
 		if (args.includes("button") && event.dialog && event.dialog.buttons) {
-			event.dialog.buttons.forEach((button) => {
+			event.dialog.buttons.forEach(button => {
 				button.classList.remove("selectable");
 				button.classList.remove("selected");
 				game.callHook("uncheckButton", [button, event]);
@@ -6541,7 +6241,7 @@ export class Game {
 		}
 		if (args.includes("card") && event.player) {
 			const cards = event.player.getCards("hejsx");
-			cards.forEach((card) => {
+			cards.forEach(card => {
 				card.classList.remove("selected");
 				card.classList.remove("selectable");
 				card.updateTransform(false);
@@ -6550,7 +6250,7 @@ export class Game {
 			ui.selected.cards.length = 0;
 		}
 		if (args.includes("target")) {
-			players.forEach((target) => {
+			players.forEach(target => {
 				target.classList.remove("selected");
 				target.classList.remove("selectable");
 				game.callHook("uncheckTarget", [target, event]);
@@ -6565,13 +6265,13 @@ export class Game {
 			_status.mousedragging = null;
 			_status.mousedragorigin = null;
 
-			ui.touchlines.forEach((i) => i.delete());
+			ui.touchlines.forEach(i => i.delete());
 			ui.touchlines.length = 0;
 		}
 		ui.canvas.width = ui.arena.offsetWidth;
 		ui.canvas.height = ui.arena.offsetHeight;
-		players.forEach((i) => i.unprompt());
-		_status.dragline.forEach((i) => i && i.remove());
+		players.forEach(i => i.unprompt());
+		_status.dragline.forEach(i => i && i.remove());
 		_status.dragline.length = 0;
 		ui.arena.classList.remove("dragging");
 
@@ -6704,7 +6404,7 @@ export class Game {
 			game.me.setIdentity(game.me.identity);
 		}
 		setTimeout(
-			(players) => {
+			players => {
 				for (let i = 0; i < players.length; i++) {
 					players[i].style.transition = "";
 				}
@@ -6798,10 +6498,7 @@ export class Game {
 			if (lib.config.layout != game.layout) {
 				lib.init.layout(lib.config.layout);
 			} else if (lib.config.mode == "brawl") {
-				if (
-					lib.config.player_border == "normal" &&
-					(game.layout == "long" || game.layout == "long2")
-				) {
+				if (lib.config.player_border == "normal" && (game.layout == "long" || game.layout == "long2")) {
 					ui.arena.classList.add("lslim_player");
 				}
 			}
@@ -6932,10 +6629,7 @@ export class Game {
 					if (!lib.card[lib.card.list[i][2]]) {
 						lib.card.list.splice(i, 1);
 						i--;
-					} else if (
-						lib.card[lib.card.list[i][2]].mode &&
-						lib.card[lib.card.list[i][2]].mode.includes(lib.config.mode) == false
-					) {
+					} else if (lib.card[lib.card.list[i][2]].mode && lib.card[lib.card.list[i][2]].mode.includes(lib.config.mode) == false) {
 						lib.card.list.splice(i, 1);
 						i--;
 					}
@@ -7107,10 +6801,7 @@ export class Game {
 				for (let i = 0; i < list.length; i++) {
 					if (Math.random() < 0.7 || i == list.length - 1) {
 						if (friend) {
-							event.moveAvatar(
-								list[i],
-								event.friend.length + event.config.width * (event.config.height - 1)
-							);
+							event.moveAvatar(list[i], event.friend.length + event.config.width * (event.config.height - 1));
 							event.friend.push(list[i]);
 						} else {
 							event.moveAvatar(list[i], event.enemy.length);
@@ -7144,13 +6835,8 @@ export class Game {
 				let width = event.width,
 					height = event.height,
 					margin = event.margin;
-				let left =
-					(-(width + 10) * event.config.width) / 2 + 5 + (i % event.config.width) * (width + 10);
-				let top =
-					(-(height + 10) * event.config.height) / 2 +
-					5 +
-					Math.floor(i / event.config.width) * (height + 10) +
-					margin / 2;
+				let left = (-(width + 10) * event.config.width) / 2 + 5 + (i % event.config.width) * (width + 10);
+				let top = (-(height + 10) * event.config.height) / 2 + 5 + Math.floor(i / event.config.width) * (height + 10) + margin / 2;
 				node.style.transform = "translate(" + left + "px," + top + "px)";
 				node.index = i;
 			};
@@ -7159,8 +6845,7 @@ export class Game {
 				if (!get.is.phoneLayout()) {
 					margin = 38;
 				}
-				let height =
-					(ui.window.offsetHeight - 10 * (event.config.height + 1) - margin) / event.config.height;
+				let height = (ui.window.offsetHeight - 10 * (event.config.height + 1) - margin) / event.config.height;
 				let width = (ui.window.offsetWidth - 10 * (event.config.width + 1)) / event.config.width;
 				if (width * event.config.ratio < height) {
 					height = width * event.config.ratio;
@@ -7178,19 +6863,13 @@ export class Game {
 						event.moveNode(event.avatars[i], event.avatars[i].index);
 						event.avatars[i].style.width = width + "px";
 						event.avatars[i].style.height = height + "px";
-						event.avatars[i].nodename.style.fontSize =
-							Math.max(14, Math.round(width / 5.6)) + "px";
+						event.avatars[i].nodename.style.fontSize = Math.max(14, Math.round(width / 5.6)) + "px";
 					}
 				}
 				if (event.deciding) {
 					let str = "px," + (event.margin / 2 - event.height * 0.5) + "px)";
 					for (let i = 0; i < event.friendlist.length; i++) {
-						event.friendlist[i].style.transform =
-							"scale(1.2) translate(" +
-							((-(event.width + 14) * event.friendlist.length) / 2 +
-								7 +
-								i * (event.width + 14)) +
-							str;
+						event.friendlist[i].style.transform = "scale(1.2) translate(" + ((-(event.width + 14) * event.friendlist.length) / 2 + 7 + i * (event.width + 14)) + str;
 					}
 				}
 			};
@@ -7212,19 +6891,12 @@ export class Game {
 					}
 					if (event.config.update) {
 						for (let i = 0; i < event.friendlist.length; i++) {
-							event.friendlist[i].nodename.innerHTML =
-								event.config.update(i, event.friendlist.length) ||
-								event.friendlist[i].nodename.innerHTML;
+							event.friendlist[i].nodename.innerHTML = event.config.update(i, event.friendlist.length) || event.friendlist[i].nodename.innerHTML;
 						}
 					}
 					let str = "px," + (event.margin / 2 - event.height * 0.5) + "px)";
 					for (let i = 0; i < event.friendlist.length; i++) {
-						event.friendlist[i].style.transform =
-							"scale(1.2) translate(" +
-							((-(event.width + 14) * event.friendlist.length) / 2 +
-								7 +
-								i * (event.width + 14)) +
-							str;
+						event.friendlist[i].style.transform = "scale(1.2) translate(" + ((-(event.width + 14) * event.friendlist.length) / 2 + 7 + i * (event.width + 14)) + str;
 					}
 				} else {
 					if (!event.imchoosing) return;
@@ -7241,10 +6913,7 @@ export class Game {
 						}
 					}
 					if (this.classList.contains("moved")) return;
-					event.moveAvatar(
-						this,
-						event.friend.length + event.config.width * (event.config.height - 1)
-					);
+					event.moveAvatar(this, event.friend.length + event.config.width * (event.config.height - 1));
 					event.friend.push(this.link);
 					this.classList.add("moved");
 					game.resume();
@@ -7394,7 +7063,7 @@ export class Game {
 			for (let i = 0; i < event.config.size; i++) {
 				ui.window.appendChild(event.nodes[i]);
 			}
-			"step 1";
+			("step 1");
 			let rand1 = event.config.first;
 			if (rand1 == "rand") {
 				rand1 = Math.random() < 0.5;
@@ -7409,12 +7078,7 @@ export class Game {
 			if (!event.list2) {
 				event.list2 = event.list.randomGets(event.config.width * 2);
 				for (let i = 0; i < event.config.width * 2; i++) {
-					event.avatars.push(
-						ui.create.div(
-							".shadowed.shadowed2.reduce_radius.character.choosedouble",
-							event.clickAvatar
-						)
-					);
+					event.avatars.push(ui.create.div(".shadowed.shadowed2.reduce_radius.character.choosedouble", event.clickAvatar));
 					let name = event.list2[i];
 					event.avatars[i].setBackground(name, "character");
 					event.avatars[i].link = name;
@@ -7436,7 +7100,7 @@ export class Game {
 			}
 			game.delay();
 			lib.init.onfree();
-			"step 2";
+			("step 2");
 			if (event.checkredo()) return;
 			if (event._skiprest) return;
 			if (event.side < 2) {
@@ -7452,7 +7116,7 @@ export class Game {
 				event.aiMove();
 				game.delay();
 			}
-			"step 3";
+			("step 3");
 			if (typeof event.fast == "number" && get.time() - event.fast <= 1000) {
 				event.fast = true;
 			} else {
@@ -7487,7 +7151,7 @@ export class Game {
 					game.delay();
 				}
 			}
-			"step 4";
+			("step 4");
 			if (event.checkredo()) return;
 			if (event.skipnode) event.skipnode.delete();
 			if (event.replacenode) event.replacenode.delete();
@@ -7496,10 +7160,7 @@ export class Game {
 			for (let i = 0; i < event.avatars.length; i++) {
 				if (!event.avatars[i].classList.contains("moved")) {
 					if (event.side < 2) {
-						event.moveAvatar(
-							event.avatars[i],
-							event.friend.length + event.config.width * (event.config.height - 1)
-						);
+						event.moveAvatar(event.avatars[i], event.friend.length + event.config.width * (event.config.height - 1));
 						event.friend.push(event.avatars[i]);
 					} else {
 						event.moveAvatar(event.avatars[i], event.enemy.length);
@@ -7509,7 +7170,7 @@ export class Game {
 				}
 			}
 			game.delay();
-			"step 5";
+			("step 5");
 			event.prompt("选择" + get.cnNumber(event.config.num) + "名出场武将");
 			event.enemylist = [];
 			for (let i = 0; i < event.avatars.length; i++) {
@@ -7539,7 +7200,7 @@ export class Game {
 				event.nodes[i].hide();
 			}
 			game.pause();
-			"step 6";
+			("step 6");
 			event.promptbar.delete();
 			if (ui.cardPileButton) ui.cardPileButton.style.display = "";
 			lib.onresize.remove(event.resize);
@@ -7572,20 +7233,21 @@ export class Game {
 	}
 	/**
 	 * @param { Player[] } players
-	 * @param { number | number[] | (player: Player) => number } num
+	 * @param { number | number[] | (player: Player) => number } [num]
 	 * @param { { drawDeck: boolean } } [drawDeck]
 	 * @param { boolean } [bottom]
 	 */
-	asyncDraw(players, num, drawDeck, bottom) {
-		return players.forEach((value, index) => {
+	async asyncDraw(players, num, drawDeck, bottom) {
+		for (let index = 0; index < players.length; index++) {
+			const value = players[index];
 			let num2 = 1;
 			if (typeof num == "number") num2 = num;
 			else if (Array.isArray(num)) num2 = num[index];
 			else if (typeof num == "function") num2 = num(value);
-			if (drawDeck && drawDeck.drawDeck) value.draw(num2, false, drawDeck);
-			else if (bottom) value.draw(num2, "nodelay", "bottom");
-			else value.draw(num2, "nodelay");
-		});
+			if (drawDeck && drawDeck.drawDeck) await value.draw(num2, false, drawDeck);
+			else if (bottom) await value.draw(num2, "nodelay", "bottom");
+			else await value.draw(num2, "nodelay");
+		}
 	}
 	/**
 	 * @param { Player[] } players
@@ -7611,21 +7273,15 @@ export class Game {
 		if (info.alter) {
 			lib.translate[`${iInfo}_origin`] = lib.translate[iInfo];
 			if (!lib.config.vintageSkills.includes(i)) lib.translate[iInfo] = lib.translate[`${iInfo}_alter`];
-		} else if (_status.mode && lib.translate[iInfo + "_" + mode + "_" + _status.mode])
-			lib.translate[iInfo] = lib.translate[iInfo + "_" + mode + "_" + _status.mode];
+		} else if (_status.mode && lib.translate[iInfo + "_" + mode + "_" + _status.mode]) lib.translate[iInfo] = lib.translate[iInfo + "_" + mode + "_" + _status.mode];
 		else if (lib.translate[`${iInfo}_${mode}`]) lib.translate[iInfo] = lib.translate[`${iInfo}_${mode}`];
-		else if (
-			lib.translate[`${iInfo}_zhu`] &&
-			(mode == "identity" || (mode == "guozhan" && _status.mode == "four"))
-		)
-			lib.translate[iInfo] = lib.translate[`${iInfo}_zhu`];
-		else if (lib.translate[`${iInfo}_combat`] && get.is.versus())
-			lib.translate[iInfo] = lib.translate[`${iInfo}_combat`];
+		else if (lib.translate[`${iInfo}_zhu`] && (mode == "identity" || (mode == "guozhan" && _status.mode == "four"))) lib.translate[iInfo] = lib.translate[`${iInfo}_zhu`];
+		else if (lib.translate[`${iInfo}_combat`] && get.is.versus()) lib.translate[iInfo] = lib.translate[`${iInfo}_combat`];
 		let deleteSkill = function (skill, iInfo) {
 			let skillx = {},
 				info = get.info(skill);
 			if (info) {
-				["audio", "audioname", "audioname2"].forEach((name) => {
+				["audio", "audioname", "audioname2"].forEach(name => {
 					if (info[name]) skillx[name] = info[name];
 				});
 			}
@@ -7633,11 +7289,7 @@ export class Game {
 			if (lib.translate[iInfo]) lib.translate[iInfo] = "此模式下不可用";
 			if (lib.dynamicTranslate[skill]) lib.dynamicTranslate[skill] = () => "此模式下不可用";
 		};
-		if (
-			(info.forbid && info.forbid.includes(mode)) ||
-			(info.mode && info.mode.includes(mode) == false) ||
-			(info.available && info.available(mode) == false)
-		) {
+		if ((info.forbid && info.forbid.includes(mode)) || (info.mode && info.mode.includes(mode) == false) || (info.available && info.available(mode) == false)) {
 			deleteSkill(i, iInfo);
 			return;
 		}
@@ -7654,30 +7306,24 @@ export class Game {
 			const skill = info.ai,
 				card = lib.card[info.viewAs.name].ai;
 			if (card)
-				Object.keys(card).forEach((value) => {
+				Object.keys(card).forEach(value => {
 					if (skill[value] == undefined) skill[value] = card[value];
 					else if (typeof skill[value] == "object")
-						Object.keys(card[value]).forEach((element) => {
-							if (skill[value][element] == undefined)
-								skill[value][element] = card[value][element];
+						Object.keys(card[value]).forEach(element => {
+							if (skill[value][element] == undefined) skill[value][element] = card[value][element];
 						});
 				});
 		}
 		if (info.inherit) {
 			const skill = lib.skill[info.inherit];
 			if (skill)
-				Object.keys(skill).forEach((value) => {
+				Object.keys(skill).forEach(value => {
 					if (info[value] != undefined) return;
-					if (
-						value == "audio" &&
-						(typeof info[value] == "number" || typeof info[value] == "boolean")
-					)
-						info[value] = info.inherit;
+					if (value == "audio" && (typeof info[value] == "number" || typeof info[value] == "boolean")) info[value] = info.inherit;
 					else info[value] = skill[value];
 				});
 			if (lib.translate[i] == undefined) lib.translate[i] = lib.translate[info.inherit];
-			if (lib.translate[iInfo] == undefined)
-				lib.translate[iInfo] = lib.translate[`${info.inherit}_info`];
+			if (lib.translate[iInfo] == undefined) lib.translate[iInfo] = lib.translate[`${info.inherit}_info`];
 		}
 		if (info.limited) {
 			if (info.mark === undefined) info.mark = true;
@@ -7687,16 +7333,15 @@ export class Game {
 			if (info.init === undefined) info.init = (player, skill) => (player.storage[skill] = false);
 		}
 		if (info.subSkill && !sub)
-			Object.keys(info.subSkill).forEach((value) => {
+			Object.keys(info.subSkill).forEach(value => {
 				const iValue = `${i}_${value}`;
 				lib.skill[iValue] = info.subSkill[value];
 				lib.skill[iValue].sub = true;
+				if (!info.subSkill[value].sourceSkill) lib.skill[iValue].sourceSkill = i;
 				if (info.subSkill[value].name) lib.translate[iValue] = info.subSkill[value].name;
 				else lib.translate[iValue] = lib.translate[iValue] || lib.translate[i];
-				if (info.subSkill[value].description)
-					lib.translate[`${iValue}_info`] = info.subSkill[value].description;
-				if (info.subSkill[value].marktext)
-					lib.translate[`${iValue}_bg`] = info.subSkill[value].marktext;
+				if (info.subSkill[value].description) lib.translate[`${iValue}_info`] = info.subSkill[value].description;
+				if (info.subSkill[value].marktext) lib.translate[`${iValue}_bg`] = info.subSkill[value].marktext;
 				game.finishSkill(iValue, true);
 			});
 		if (info.round) {
@@ -7705,7 +7350,7 @@ export class Game {
 			else if (Array.isArray(info.group)) info.group.add(k);
 			else info.group = [k];
 			lib.skill[k] = ((round, name) => ({
-				init: (player) => {
+				init: player => {
 					if (typeof player.storage[name] !== "number") player.storage[name] = 1 - round;
 				},
 				intro: {
@@ -7725,12 +7370,7 @@ export class Game {
 				popup: false,
 				silent: true,
 				content: () => {
-					if (
-						lib.skill[event.name.slice(0, event.name.indexOf("_roundcount"))].round -
-							(game.roundNumber - player.storage[event.name]) >
-						0
-					)
-						player.updateMarks();
+					if (lib.skill[event.name.slice(0, event.name.indexOf("_roundcount"))].round - (game.roundNumber - player.storage[event.name]) > 0) player.updateMarks();
 					else player.unmarkSkill(event.name);
 				},
 			}))(info.round, k);
@@ -7782,24 +7422,18 @@ export class Game {
 				return Math.max(0.1, equipValue - value);
 			},
 			aiResultTarget = (player, target, card) => get.equipResult(player, target, card.name);
-		Object.keys(lib.card).forEach((libCardKey) => {
+		Object.keys(lib.card).forEach(libCardKey => {
 			const info = `${libCardKey}_info`;
 			if (lib.translate[`${info}_${mode}`]) lib.translate[info] = lib.translate[`${info}_${mode}`];
-			else if (
-				lib.translate[`${info}_zhu`] &&
-				(mode == "identity" || (mode == "guozhan" && _status.mode == "four"))
-			)
-				lib.translate[info] = lib.translate[`${info}_zhu`];
-			else if (lib.translate[`${info}_combat`] && get.is.versus())
-				lib.translate[info] = lib.translate[`${info}_combat`];
+			else if (lib.translate[`${info}_zhu`] && (mode == "identity" || (mode == "guozhan" && _status.mode == "four"))) lib.translate[info] = lib.translate[`${info}_zhu`];
+			else if (lib.translate[`${info}_combat`] && get.is.versus()) lib.translate[info] = lib.translate[`${info}_combat`];
 			const card = lib.card[libCardKey];
 			if (card.filterTarget && card.selectTarget == undefined) card.selectTarget = 1;
 			if (card.autoViewAs) {
 				if (!card.ai) card.ai = {};
 				if (!card.ai.order) {
 					card.ai.order = lib.card[card.autoViewAs].ai.order;
-					if (!card.ai.order && lib.card[card.autoViewAs].ai.basic)
-						card.ai.order = lib.card[card.autoViewAs].ai.basic.order;
+					if (!card.ai.order && lib.card[card.autoViewAs].ai.basic) card.ai.order = lib.card[card.autoViewAs].ai.basic.order;
 				}
 			}
 			if (card.type == "equip") {
@@ -7835,7 +7469,7 @@ export class Game {
 				if (card.allowMultiple == undefined) card.allowMultiple = false;
 			}
 		});
-		Object.keys(lib.skill).forEach((value) => game.finishSkill(value));
+		Object.keys(lib.skill).forEach(value => game.finishSkill(value));
 	}
 	/**
 	 * 这玩意至少19种重载了吧
@@ -7856,7 +7490,7 @@ export class Game {
 			skills.sort((a, b) => get.priority(a) - get.priority(b));
 		}
 		const arg = argumentArray.slice(0, -2);
-		skills.forEach((value) => {
+		skills.forEach(value => {
 			var mod = get.info(value).mod[name];
 			if (!mod) return;
 			const result = mod.call(this, ...arg);
@@ -7878,7 +7512,7 @@ export class Game {
 	clearArena() {
 		ui.control.innerHTML = "";
 		ui.arenalog.innerHTML = "";
-		Array.from(ui.arena.childNodes).forEach((value) => {
+		Array.from(ui.arena.childNodes).forEach(value => {
 			if (value == ui.canvas) return;
 			if (value == ui.control) return;
 			if (value == ui.arenalog) return;
@@ -7923,7 +7557,7 @@ export class Game {
 			delete ui.startServer;
 		}
 		if (ui.rooms) {
-			ui.rooms.forEach((value) => value.remove());
+			ui.rooms.forEach(value => value.remove());
 			delete ui.rooms;
 		}
 		if (ui.roombase) {
@@ -7952,16 +7586,12 @@ export class Game {
 			["g", "green"],
 			["b", "blue"],
 		]);
-		Array.from(arguments).forEach((value) => {
+		Array.from(arguments).forEach(value => {
 			const itemtype = get.itemtype(value);
 			if (itemtype == "player" || itemtype == "players") {
 				str += `<span class="bluetext">${get.translation(value)}</span>`;
 				str2 += get.translation(value);
-			} else if (
-				itemtype == "cards" ||
-				itemtype == "card" ||
-				(typeof value == "object" && value && value.name)
-			) {
+			} else if (itemtype == "cards" || itemtype == "card" || (typeof value == "object" && value && value.name)) {
 				str += `<span class="yellowtext">${get.translation(value)}</span>`;
 				str2 += get.translation(value);
 			} else if (typeof value == "object") {
@@ -7975,9 +7605,7 @@ export class Game {
 					str += `<span class="greentext">${get.translation(value)}</span>`;
 					str2 += get.translation(value);
 				} else if (value[0] == "#") {
-					str += `<span class="${color.get(value[1]) || ""}text">${get.translation(
-						value.slice(2)
-					)}</span>`;
+					str += `<span class="${color.get(value[1]) || ""}text">${get.translation(value.slice(2))}</span>`;
 					str2 += get.translation(value.slice(2));
 				} else {
 					str += get.translation(value);
@@ -7994,8 +7622,7 @@ export class Game {
 		game.addVideo("log", null, lib.config.log_highlight ? str : str2);
 		game.broadcast((str, str2) => game.log(lib.config.log_highlight ? str : str2), str, str2);
 		if (!_status.video && !game.online) {
-			if (logvid)
-				game.logv(logvid, `<div class="text center">${lib.config.log_highlight ? str : str2}</div>`);
+			if (logvid) game.logv(logvid, `<div class="text center">${lib.config.log_highlight ? str : str2}</div>`);
 			else logvid = _status.event.getLogv();
 		}
 		if (lib.config.show_log == "off" || game.chess) return;
@@ -8014,7 +7641,7 @@ export class Game {
 		}
 		if (!lib.config.clear_log) return;
 		nodeentry.timeout = setTimeout(() => nodeentry.delete(), 1000);
-		Array.from(ui.arenalog.childNodes).forEach((value) => {
+		Array.from(ui.arenalog.childNodes).forEach(value => {
 			if (!value.timeout) value.remove();
 		});
 	}
@@ -8022,7 +7649,7 @@ export class Game {
 	 * @param { Player } player
 	 * @param { string | Card[] } card
 	 * @param { Player[] } [targets]
-	 * @param { import('../library/index.js').GameEventPromise } [event]
+	 * @param { GameEventPromise } [event]
 	 * @param { boolean } [forced]
 	 * @param { string } [logvid]
 	 */
@@ -8036,7 +7663,7 @@ export class Game {
 		logvid = logvid || get.id();
 		game.broadcast(game.logv, player, card, targets, event, forced, logvid);
 		if (typeof player == "string") {
-			const childNode = Array.from(ui.historybar.childNodes).find((value) => value.logvid == player);
+			const childNode = Array.from(ui.historybar.childNodes).find(value => value.logvid == player);
 			if (childNode) childNode.added.push(card);
 			return;
 		}
@@ -8083,8 +7710,7 @@ export class Game {
 			node.cards = card[1].slice(0);
 			card = card[0];
 			const info = [card.suit || "", card.number || "", card.name || "", card.nature || ""];
-			if (!Array.isArray(node.cards) || !node.cards.length)
-				node.cards = [ui.create.card(node, "noclick", true).init(info)];
+			if (!Array.isArray(node.cards) || !node.cards.length) node.cards = [ui.create.card(node, "noclick", true).init(info)];
 			if (card.name == "wuxie") {
 				if (ui.historybar.firstChild && ui.historybar.firstChild.type == "wuxie") {
 					ui.historybar.firstChild.players.push(player);
@@ -8110,12 +7736,7 @@ export class Game {
 			avatar.style.transform = "";
 			avatar.classList.add("avatar2");
 			node.appendChild(avatar);
-			if (
-				targets &&
-				targets.length == 1 &&
-				targets[0] != player &&
-				get.itemtype(targets[0]) == "player"
-			)
+			if (targets && targets.length == 1 && targets[0] != player && get.itemtype(targets[0]) == "player")
 				(() => {
 					let avatar2;
 					const target = targets[0];
@@ -8156,7 +7777,7 @@ export class Game {
 			value.style.transform = `scale(1) translateY(${fullheight}px)`;
 			value.removetimeout = setTimeout(
 				(
-					(current) => () =>
+					current => () =>
 						current.remove()
 				)(value),
 				500
@@ -8192,11 +7813,11 @@ export class Game {
 						storeName,
 						idbValidKey,
 						value,
-						(event) => {
+						event => {
 							if (typeof onSuccess == "function") onSuccess(event);
 							resolve(event);
 						},
-						(event) => {
+						event => {
 							if (typeof onError == "function") {
 								onError(event);
 								resolve();
@@ -8207,11 +7828,8 @@ export class Game {
 			);
 		lib.status.reload++;
 		return new Promise((resolve, reject) => {
-			const record = lib.db
-				.transaction([storeName], "readwrite")
-				.objectStore(storeName)
-				.put(value, idbValidKey);
-			record.onerror = (event) => {
+			const record = lib.db.transaction([storeName], "readwrite").objectStore(storeName).put(structuredClone(value), idbValidKey);
+			record.onerror = event => {
 				if (typeof onError == "function") {
 					onError(event);
 					game.reload2();
@@ -8221,7 +7839,7 @@ export class Game {
 					reject(event);
 				}
 			};
-			record.onsuccess = (event) => {
+			record.onsuccess = event => {
 				if (typeof onSuccess == "function") {
 					_status.dburgent = true;
 					onSuccess(event);
@@ -8241,7 +7859,7 @@ export class Game {
 	 */
 	getDB(storeName, query, onSuccess, onError) {
 		if (!lib.db)
-			return new Promise((resolve) => {
+			return new Promise(resolve => {
 				if (typeof onSuccess == "function") onSuccess(null);
 				resolve(null);
 			});
@@ -8252,11 +7870,11 @@ export class Game {
 					[
 						storeName,
 						query,
-						(result) => {
+						result => {
 							if (typeof onSuccess == "function") onSuccess(result);
 							resolve(result);
 						},
-						(event) => {
+						event => {
 							if (typeof onError == "function") {
 								onError(event);
 								resolve();
@@ -8269,11 +7887,8 @@ export class Game {
 			query
 				? (resolve, reject) => {
 						lib.status.reload++;
-						const idbRequest = lib.db
-							.transaction([storeName], "readwrite")
-							.objectStore(storeName)
-							.get(query);
-						idbRequest.onerror = (event) => {
+						const idbRequest = lib.db.transaction([storeName], "readwrite").objectStore(storeName).get(query);
+						idbRequest.onerror = event => {
 							if (typeof onError == "function") {
 								onError(event);
 								game.reload2();
@@ -8283,7 +7898,7 @@ export class Game {
 								reject(event);
 							}
 						};
-						idbRequest.onsuccess = (event) => {
+						idbRequest.onsuccess = event => {
 							const result = event.target.result;
 							if (typeof onSuccess == "function") {
 								_status.dburgent = true;
@@ -8293,15 +7908,12 @@ export class Game {
 							game.reload2();
 							resolve(result);
 						};
-				  }
+					}
 				: (resolve, reject) => {
 						lib.status.reload++;
-						const idbRequest = lib.db
-								.transaction([storeName], "readwrite")
-								.objectStore(storeName)
-								.openCursor(),
+						const idbRequest = lib.db.transaction([storeName], "readwrite").objectStore(storeName).openCursor(),
 							object = {};
-						idbRequest.onerror = (event) => {
+						idbRequest.onerror = event => {
 							if (typeof onError == "function") {
 								onError(event);
 								game.reload2();
@@ -8311,7 +7923,7 @@ export class Game {
 								reject(event);
 							}
 						};
-						idbRequest.onsuccess = (event) => {
+						idbRequest.onsuccess = event => {
 							const result = event.target.result;
 							if (result) {
 								object[result.key] = result.value;
@@ -8326,7 +7938,7 @@ export class Game {
 							game.reload2();
 							resolve(object);
 						};
-				  }
+					}
 		);
 	}
 	/**
@@ -8337,7 +7949,7 @@ export class Game {
 	 */
 	deleteDB(storeName, query, onSuccess, onError) {
 		if (!lib.db)
-			return new Promise((resolve) => {
+			return new Promise(resolve => {
 				if (typeof onSuccess == "function") onSuccess(false);
 				resolve(false);
 			});
@@ -8348,11 +7960,11 @@ export class Game {
 					[
 						storeName,
 						query,
-						(event) => {
+						event => {
 							if (typeof onSuccess == "function") onSuccess(event);
 							resolve(event);
 						},
-						(event) => {
+						event => {
 							if (typeof onError == "function") {
 								onError(event);
 								resolve();
@@ -8364,11 +7976,8 @@ export class Game {
 		return query
 			? new Promise((resolve, reject) => {
 					lib.status.reload++;
-					const record = lib.db
-						.transaction([storeName], "readwrite")
-						.objectStore(storeName)
-						.delete(query);
-					record.onerror = (event) => {
+					const record = lib.db.transaction([storeName], "readwrite").objectStore(storeName).delete(query);
+					record.onerror = event => {
 						if (typeof onError == "function") {
 							onError(event);
 							game.reload2();
@@ -8378,33 +7987,33 @@ export class Game {
 							reject(event);
 						}
 					};
-					record.onsuccess = (event) => {
+					record.onsuccess = event => {
 						if (typeof onSuccess == "function") onSuccess(event);
 						game.reload2();
 						resolve(event);
 					};
-			  })
-			: game.getDB(storeName).then((object) => {
+				})
+			: game.getDB(storeName).then(object => {
 					const keys = Object.keys(object);
 					lib.status.reload += keys.length;
 					const store = lib.db.transaction([storeName], "readwrite").objectStore(storeName);
 					return Promise.allSettled(
 						keys.map(
-							(key) =>
+							key =>
 								new Promise((resolve, reject) => {
 									const request = store.delete(key);
-									request.onerror = (event) => {
+									request.onerror = event => {
 										game.reload2();
 										reject(event);
 									};
-									request.onsuccess = (event) => {
+									request.onsuccess = event => {
 										game.reload2();
 										resolve(event);
 									};
 								})
 						)
 					);
-			  });
+				});
 	}
 	/**
 	 * @param { string } key
@@ -8425,7 +8034,7 @@ export class Game {
 				lib.storage.version = lib.version;
 				game.putDB("data", mode, lib.storage);
 			} else
-				game.getDB("data", mode, (config) => {
+				game.getDB("data", mode, config => {
 					if (!config) config = {};
 					if (value == undefined) delete config[key];
 					else config[key] = value;
@@ -8463,16 +8072,16 @@ export class Game {
 		let players = null,
 			cards = null;
 		if (lib.version != lib.config.version)
-			lib.changeLog.forEach((value) => {
+			lib.changeLog.forEach(value => {
 				if (value.startsWith("players://"))
 					try {
-						players = JSON.parse(value.slice(10)).filter((value) => lib.character[value]);
+						players = JSON.parse(value.slice(10)).filter(value => lib.character[value]);
 					} catch (e) {
 						players = null;
 					}
 				else if (value.startsWith("cards://"))
 					try {
-						cards = JSON.parse(value.slice(8)).filter((value) => lib.card[value]);
+						cards = JSON.parse(value.slice(8)).filter(value => lib.card[value]);
 					} catch (e) {
 						cards = null;
 					}
@@ -8484,7 +8093,7 @@ export class Game {
 			});
 		game.saveConfig("version", lib.version);
 		if (_status.extensionChangeLog)
-			Object.keys(_status.extensionChangeLog).forEach((value) => {
+			Object.keys(_status.extensionChangeLog).forEach(value => {
 				const li = document.createElement("li");
 				li.innerHTML = `${value}：${_status.extensionChangeLog[value]}`;
 				ul.appendChild(li);
@@ -8501,7 +8110,7 @@ export class Game {
 			dialog.classList.add("withbg");
 		}
 		if (cards && cards.length) {
-			dialog.addSmall([cards.map((value) => [get.translation(get.type(value)), "", value]), "vcard"]);
+			dialog.addSmall([cards.map(value => [get.translation(get.type(value)), "", value]), "vcard"]);
 			dialog.classList.add("forcebutton");
 			dialog.classList.add("withbg");
 		}
@@ -8600,8 +8209,8 @@ export class Game {
 	clearModeConfig(mode) {
 		if (_status.reloading) return;
 		if (lib.db) {
-			game.getDB("config", null, (config) =>
-				Object.keys(config).forEach((value) => {
+			game.getDB("config", null, config =>
+				Object.keys(config).forEach(value => {
 					if (value.substr(value.indexOf("_mode_config") + 13) == mode) game.saveConfig(value);
 				})
 			);
@@ -8614,7 +8223,7 @@ export class Game {
 		} catch (err) {
 			config = {};
 		}
-		Object.keys(config).forEach((value) => {
+		Object.keys(config).forEach(value => {
 			if (value.substr(value.indexOf("_mode_config") + 13) == mode) delete config[value];
 		});
 		localStorage.setItem(`${lib.configprefix}config`, JSON.stringify(config));
@@ -8626,13 +8235,11 @@ export class Game {
 	 * @param { string } [character2]
 	 */
 	addPlayer(position, character, character2) {
-		if (position < 0 || position > game.players.length + game.dead.length || position == undefined)
-			position = Math.ceil(Math.random() * (game.players.length + game.dead.length));
+		if (position < 0 || position > game.players.length + game.dead.length || position == undefined) position = Math.ceil(Math.random() * (game.players.length + game.dead.length));
 		const players = game.players.concat(game.dead);
 		ui.arena.setNumber(players.length + 1);
-		players.forEach((value) => {
-			if (parseInt(value.dataset.position) >= position)
-				value.dataset.position = parseInt(value.dataset.position) + 1;
+		players.forEach(value => {
+			if (parseInt(value.dataset.position) >= position) value.dataset.position = parseInt(value.dataset.position) + 1;
 		});
 		const player = ui.create.player(ui.arena).addTempClass("start");
 		if (character) player.init(character, character2);
@@ -8673,13 +8280,11 @@ export class Game {
 	restorePlayer(player) {
 		if (game.players.includes(player) || game.dead.includes(player)) return;
 		let position = parseInt(player.dataset.position);
-		if (position < 0 || position > game.players.length + game.dead.length || position == undefined)
-			position = Math.ceil(Math.random() * (game.players.length + game.dead.length));
+		if (position < 0 || position > game.players.length + game.dead.length || position == undefined) position = Math.ceil(Math.random() * (game.players.length + game.dead.length));
 		const players = game.players.concat(game.dead);
 		ui.arena.setNumber(players.length + 1);
-		players.forEach((value) => {
-			if (parseInt(value.dataset.position) >= position)
-				value.dataset.position = parseInt(value.dataset.position) + 1;
+		players.forEach(value => {
+			if (parseInt(value.dataset.position) >= position) value.dataset.position = parseInt(value.dataset.position) + 1;
 		});
 		game.players.push(player);
 		delete player.removed;
@@ -8693,16 +8298,14 @@ export class Game {
 	 * @param { Player } player
 	 */
 	removePlayer(player) {
-		if (_status.roundStart == player)
-			_status.roundStart = player.next || player.getNext() || game.players[0];
+		if (_status.roundStart == player) _status.roundStart = player.next || player.getNext() || game.players[0];
 		const players = game.players.concat(game.dead);
 		player.style.left = `${player.getLeft()}px`;
 		player.style.top = `${player.getTop()}px`;
 		if (player == undefined) player = game.dead[0] || game.me.next;
 		const position = parseInt(player.dataset.position);
-		players.forEach((value) => {
-			if (parseInt(value.dataset.position) > position)
-				value.dataset.position = parseInt(value.dataset.position) - 1;
+		players.forEach(value => {
+			if (parseInt(value.dataset.position) > position) value.dataset.position = parseInt(value.dataset.position) - 1;
 		});
 		if (player.isAlive()) {
 			player.next.previous = player.previous;
@@ -8763,7 +8366,7 @@ export class Game {
 				enemyCount = 0;
 			const rand = Math.random() < 0.5,
 				sortCount = new Map();
-			game.players.forEach((value) => {
+			game.players.forEach(value => {
 				if (value.side == game.me.side) {
 					if (rand)
 						if (value == game.friendZhu) sortCount.set(value, -2);
@@ -8806,7 +8409,7 @@ export class Game {
 	filterSkills(skills, player, exclude) {
 		const out = skills.slice().removeArray(Object.keys(player.disabledSkills));
 		if (!player.storage.skill_blocker || !player.storage.skill_blocker.length) return out;
-		return out.filter((value) => (exclude && exclude.includes(value)) || !get.is.blocked(value, player));
+		return out.filter(value => (exclude && exclude.includes(value)) || !get.is.blocked(value, player));
 	}
 	/**
 	 * @param { string[] } skills
@@ -8817,9 +8420,7 @@ export class Game {
 				const info = get.info(currentValue);
 				if (info) {
 					if (info.group) {
-						const adds = (Array.isArray(info.group) ? info.group : [info.group]).filter(
-							(i) => lib.skill[i]
-						);
+						const adds = (Array.isArray(info.group) ? info.group : [info.group]).filter(i => lib.skill[i]);
 						previousValue.push(...adds);
 					}
 				} else console.log(currentValue);
@@ -8831,7 +8432,7 @@ export class Game {
 	 * @param { { [key:string]: any } } style
 	 */
 	css(style) {
-		return Object.keys(style).forEach((value) => {
+		return Object.keys(style).forEach(value => {
 			let uiStyle = ui.style[value];
 			if (!uiStyle) {
 				uiStyle = ui.style[value] = document.createElement("style");
@@ -8845,14 +8446,14 @@ export class Game {
 	 * @param { boolean } [includeOut]
 	 */
 	hasPlayer(func, includeOut) {
-		return game.players.some((value) => (includeOut || !value.isOut()) && func(value));
+		return game.players.some(value => (includeOut || !value.isOut()) && func(value));
 	}
 	/**
 	 * @param { (player: Player) => boolean } func
 	 * @param { boolean } [includeOut]
 	 */
 	hasPlayer2(func, includeOut) {
-		return game.players.concat(game.dead).some((value) => (includeOut || !value.isOut()) && func(value));
+		return game.players.concat(game.dead).some(value => (includeOut || !value.isOut()) && func(value));
 	}
 	/**
 	 * @param { (player: Player) => boolean } func
@@ -8896,7 +8497,7 @@ export class Game {
 	filterPlayer(func, list, includeOut) {
 		if (!Array.isArray(list)) list = [];
 		if (typeof func != "function") func = lib.filter.all;
-		return list.addArray(game.players.filter((value) => (includeOut || !value.isOut()) && func(value)));
+		return list.addArray(game.players.filter(value => (includeOut || !value.isOut()) && func(value)));
 	}
 	/**
 	 * @overload
@@ -8912,33 +8513,28 @@ export class Game {
 	filterPlayer2(func, list, includeOut) {
 		if (!Array.isArray(list)) list = [];
 		if (typeof func != "function") func = lib.filter.all;
-		return list.addArray(
-			game.players.concat(game.dead).filter((value) => (includeOut || !value.isOut()) && func(value))
-		);
+		return list.addArray(game.players.concat(game.dead).filter(value => (includeOut || !value.isOut()) && func(value)));
 	}
 	/**
 	 * @param { (player: Player) => boolean } func
 	 * @param { boolean } [includeOut]
 	 */
 	findPlayer(func, includeOut) {
-		return game.players.find((value) => (includeOut || !value.isOut()) && func(value)) || null;
+		return game.players.find(value => (includeOut || !value.isOut()) && func(value)) || null;
 	}
 	/**
 	 * @param { (player: Player) => boolean } func
 	 * @param { boolean } [includeOut]
 	 */
 	findPlayer2(func, includeOut) {
-		return (
-			game.players.concat(game.dead).find((value) => (includeOut || !value.isOut()) && func(value)) ||
-			null
-		);
+		return game.players.concat(game.dead).find(value => (includeOut || !value.isOut()) && func(value)) || null;
 	}
 	/**
 	 * @param { (player: Player) => boolean } func
 	 * @param { boolean } [all]
 	 */
 	findCards(func, all) {
-		return Object.keys(lib.card).filter((value) => {
+		return Object.keys(lib.card).filter(value => {
 			if (!lib.translate[`${value}_info`]) return false;
 			if (lib.card[value].mode && lib.card[value].mode.includes(lib.config.mode) == false) return false;
 			if (!all && !lib.inpile.includes(value)) return false;
@@ -8947,7 +8543,7 @@ export class Game {
 	}
 	countGroup() {
 		const list = lib.group.slice(0);
-		return game.countPlayer((current) => {
+		return game.countPlayer(current => {
 			if (!list.includes(current.group)) return false;
 			list.remove(current.group);
 			return true;
@@ -8987,7 +8583,7 @@ export let game = new Game();
 /**
  * @param { InstanceType<typeof Game> } [instance]
  */
-export let setGame = (instance) => {
+export let setGame = instance => {
 	game = instance || new Game();
 	if (lib.config.dev) {
 		window.game = game;
