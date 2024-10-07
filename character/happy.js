@@ -1396,8 +1396,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					order: 5.5,
 					result: {
 						target(player, target) {
-							return -get.damageEffect(target, player, player, "fire");
-						}
+							return Math.sign(get.damageEffect(target, player, target, "fire"));
+						},
 					},
 				}
 			},
