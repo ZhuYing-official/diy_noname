@@ -1273,7 +1273,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					content: 'mark',
 				},
 				forced: true,
-				trigger: { player: 'damageEnd' },
+				trigger: { player: ['damageEnd', 'loseHpEnd'] },
 				content() {
 					'step 0'
 					event.num = trigger.num;
@@ -1282,10 +1282,11 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 2'
 					player.loseMaxHp(trigger.num);
 					event.num--;
+					'step 3'
 					if (event.num == 0 || !player.hasMark('hok_temp_hp')) {
 						event.finish();
 					}
-					'step 3'
+					'step 4'
 					event.goto(1);
 				}
 			},
@@ -4618,9 +4619,12 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					if (player.hasSkill('hok_bailu_round')) {
 						return false;
 					}
-					return !game.hasPlayer(function (current) {
+					if (!game.hasPlayer(function (current) {
 						return current.countMark('hok_bailu_2');
-					});
+					})) {
+						player.removeSkill('hok_bailu_effect');
+						return true;
+					} else return false;
 				},
 				filterTarget: lib.filter.notMe,
 				content() {
@@ -4629,7 +4633,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					target.addMark('hok_bailu_2', 1);
 					target.addSkill('hok_bailu_2');
 					target.maxHp += 2;
-					// target.maxHp++;
 					target.recover(2);
 					target.addMark('hok_temp_hp', 2);
 					target.addSkill('hok_temp_hp');
@@ -4655,7 +4658,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						},
 						mod: {
 							targetEnabled(card, player, target) {
-								if (card.name != 'tao') {
+								if (card.name != 'tao' || card.name != 'jiu') {
 									return false;
 								}
 							},
@@ -4723,9 +4726,6 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				ai: {
 					result: {
 						target(player, target) {
-							// if (get.threaten(target) > 3 && get.attitude(player, target) > 0) {
-							// 	return get.threaten(target);
-							// }
 							if (get.attitude(player, target) > 0) return 1;
 							return 0;
 						},
@@ -6836,7 +6836,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			hok_silie: '撕裂',
 			hok_silie_info: '锁定技，当你使用牌时，你弃置一张手牌，否则失去1点体力。',
 			hok_temp_hp: '临时体力',
-			hok_temp_hp_info: '锁定技，当你受到伤害时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
+			hok_temp_hp_info: '锁定技，当你受到伤害或失去体力时，你失去1枚“临时体力”，体力上限-1。当你以其他方式失去“临时体力”时，你失去等量的体力与体力上限。',
 			// 安琪拉
 			hok_anqila: '王者安琪拉',
 			hok_huoqiu: '火球',
