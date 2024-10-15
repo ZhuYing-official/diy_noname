@@ -1226,12 +1226,38 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						}
 						if (list.length > 2) break;
 					}
-					if (skills.length) player.chooseControl(skills).set('dialog', ['请选择获得的技能', [list, 'character']]);
+					if (skills.length) player.chooseControl(skills, 'cancel2').set('dialog', ['请选择获得的技能', [list, 'character']]);
 					else event.finish();
 					'step 1'
-					player.markAuto('lao_roguelike_skill', [result.control]);
-					player.addSkill(result.control);
-					player.loseMaxHp();
+					if (result.control != "cancel2") {
+						'step 0'
+						player.markAuto('lao_roguelike_skill', [result.control]);
+						player.addSkill(result.control);
+						player.loseMaxHp();
+						'step 1'
+						event.skillslist = player.getSkills(null, false, false).filter(function (i) {
+							var info = get.info(i);
+							return info && !info.charlotte;
+						});
+						if (event.skillslist.length > 4) {
+							var next = game.createEvent('laoroguelike_insert');
+							next.player = player;
+							next.event = event;
+							next.setContent(lib.skill.lao_roguelike_skill.contentx);
+						}
+					} else {
+						event.finish();
+					}
+				},
+				contentx: function () {
+					'step 0'
+					event.skillslist = player.getSkills(null, false, false).filter(function (i) {
+						var info = get.info(i);
+						return info && !info.charlotte;
+					});
+					player.chooseControl(event.skillslist).set('prompt', "失去" + get.translation(player) + "武将牌上的一个技能");
+					'step 1'
+					player.removeSkill(result.control);
 				},
 			},
 
@@ -1279,9 +1305,9 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 0'
 					event.num = trigger.num;
 					'step 1'
-					player.removeMark('hok_temp_hp', trigger.num);
+					player.removeMark('hok_temp_hp', 1);
 					'step 2'
-					player.loseMaxHp(trigger.num);
+					player.loseMaxHp();
 					event.num--;
 					'step 3'
 					if (event.num == 0 || !player.hasMark('hok_temp_hp')) {
@@ -6829,7 +6855,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// 肉鸽
 			lao_roguelike: '肉鸽',
 			lao_roguelike_skill: '肉鸽',
-			lao_roguelike_skill_info: '锁定技，游戏开始时或一名角色进入濒死状态时，你随机获得三张未加入游戏的武将牌，选该武将牌的一项技能获得之，然后减1点体力上限。',
+			lao_roguelike_skill_info: '锁定技，游戏开始时或一名角色进入濒死状态时，你可以随机获得三张未加入游戏的武将牌，选该武将牌的一项技能获得之，然后减1点体力上限。当你的技能数大于4时，你需移除一个已拥有的技能。',
 
 			// 王者公共技
 			hok_yinshen: '隐身',
