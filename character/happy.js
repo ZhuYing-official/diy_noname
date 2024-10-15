@@ -1175,6 +1175,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			},
 			// 肉鸽
 			lao_roguelike_skill: {
+				forced: true,
 				getList: function () {
 					const list = Object.keys(lib.characterPack.MiNikill).concat(_status.extra_pingjianList || []);
 					return list.filter(i => !get.character(i, 4) || !get.character(i, 4).includes('unseen'));
