@@ -7,7 +7,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 		connect: true,
 		characterSort: {
 			happy: {
-				correction_history: ['lao_caofang', 'lao_caohuan', 'lao_caoyu', 'lao_cuishi', 'lao_liucong', 'lao_tuanxini', 'lao_tuan', 'lao_xini', 'lao_yanxing', 'lao_sp_wanglang'],
+				correction_history: ['lao_caofang', 'lao_caohuan', 'lao_caoyu', 'lao_cuishi', 'lao_liucong', 'lao_tuanxini', 'lao_tuan', 'lao_xini', 'lao_yanxing', 'lao_sp_chenshou', 'lao_sp_wanglang'],
 				honor_of_kings_clashlane: ['hok_hainuo', 'hok_lixin', 'hok_miyue', 'hok_sikongzhen', 'hok_sp_lixin'],
 				honor_of_kings_jungling: ['hok_bailixuance', 'hok_dasiming', 'hok_lanlingwang', 'hok_sunwukong'],
 				honor_of_kings_midlane: ['hok_anqila', 'hok_daji', 'hok_gaojianli', 'hok_wuzetian'],
@@ -37,10 +37,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			// lao_xini: ['male', 'qun', '4/7', ['lao_tengbing', 'lao_ranyong']],
 			// 阎行
 			lao_yanxing: ['male', 'qun', 4, ['lao_mengjue', 'lao_sudi', 'lao_duanmao']],
+			// 陈寿
+			lao_sp_chenshou: ['male', 'jin', '4/5', ['lao_zhuzhi'], ['doublegroup:shu:jin']],
 			// SP王朗
 			lao_sp_wanglang: ['male', 'qun', 3, ['lao_yayu', 'lao_shanshi']],
-			// 肉鸽
-			lao_roguelike: ['male', 'qun', '4/5', ['lao_roguelike_skill']],
 
 			// 安琪拉
 			hok_anqila: ['female', 'shu', 3, ['hok_huoqiu', 'hok_hunhuo', 'hok_chihui']],
@@ -109,6 +109,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_tuan: '土安，《三国演义》里的人物，长乌戈国主兀突骨手下的一个藤甲领兵长，身穿藤甲，后被诸葛施计引入盘蛇谷中阵亡。',
 			lao_xini: '奚泥，小说《三国演义》中的人物。乌戈国国主兀突骨部下的藤甲领兵俘长。曾大败蜀军，后为蜀相诸葛亮施计引入盘蛇谷中，尽烧其众，无所生还。',
 			lao_yanxing: '阎行（生卒年不详），字彦明，后改名为阎艳，金城人（今甘肃省兰州市附近），东汉末年人物。初为韩遂部将，建安初，阎行与马超互相攻击，一次，阎行用矛刺马超，矛折断了，接着阎行用断矛击打马超脖子，几乎杀死马超。后与韩遂反目，举兵相攻，不能胜，于是投靠曹操，被封为列侯。',
+			lao_sp_chenshou: '陈寿（233年－297年），字承祚，巴西郡安汉县（今四川省南充市）人。三国蜀汉时至西晋官员、史学家。陈寿少时好学，师事同郡学者谯周，在蜀汉时曾任卫将军主簿、东观秘书郎、观阁令史、散骑黄门侍郎等职。当时，宦官黄皓专权，大臣都曲意附从。陈寿因为不肯屈从黄皓，所以屡遭遣黜。蜀汉灭亡后，“沉滞者累年”。后受张华荐举，在西晋历任著作郎、长广太守、治书侍御史、太子中庶子等职。晚年多次被贬，屡次受人非议。元康七年（297年）病逝，享年六十五岁。太康元年（280年），晋灭吴结束了分裂局面后，陈寿历经十年的艰辛，终于完成了纪传体史学巨著《三国志》。此书脱稿后，颇受称赞，时人谓其善叙史，有良史之才。《三国志》完整地记叙了自汉末至晋初近百年间中国由分裂走向统一的历史全貌，与《史记》《汉书》《后汉书》并称“前四史”。',
 			lao_sp_wanglang: '王朗（？－228年），本名王严，字景兴。东海郡郯县（今山东省临沂市郯城县）人。汉末至三国曹魏时期重臣、经学家。王朗早年师从太尉杨赐，因通晓经籍而被拜为郎中。后因杨赐去世而弃官服丧，不应孝廉之命。徐州刺史陶谦举其为茂才，拜徐州治中从事。后升任会稽太守，任内获百姓爱戴。建安元年（196年），孙策南攻会稽，王朗率军抵御，终为其所败，并在逃亡途中被孙策擒获，受到礼遇。之后应丞相曹操辟命，被拜为谏议大夫、参司空军事。魏王国建立后，王朗以军祭酒兼领魏郡太守，又任少府、奉常、大理等职。曹丕继王位时，迁御史大夫，封安陵亭侯。曹魏建立后，王朗改任司空，进封乐平乡侯。曹叡继位后，进封王朗为兰陵侯。太和二年（228年），王朗去世。其子王肃袭爵兰陵侯。王朗博学多闻，校注儒家经典，很有名气。王朗有文集三十卷，著有《周易传》《春秋传》《孝经传》等。在魏国朝廷以其所作的《周易传》作为学习《易》学的人必须考核的内容。后世把王朗注解里的思想称为“王学”。',
 
 			hok_ailin: '艾琳是黄金森林的在逃精灵公主，日落圣殿的不速之客。公主艾琳天性机灵活泼，对一切未知充满好奇心与探索欲。然而“继承人”的责任始终压在她的肩膀上，她被要求收起不稳重的一面，遵循精灵族舞蹈的优雅与绝对的秩序，做好一个“真正的公主”。成年仪式前夕，艾琳决定打破族群禁令，逃去森林外的“危险古怪的人类世界”开启一场自由的冒险。旅程却并没有想象中那样顺遂，人类对精灵同样存在“不详邪恶”的重重误解。越是未知，越是有趣，越是困难，越有斗志。她以舞蹈为表达自我的“语言”，与红头发的法师小女孩成为密友，给圣殿严肃守序的骑士团带来了诸多意外麻烦，甚至组成了圣殿小分队在西方大陆的各个地方冒险……',
@@ -1173,8 +1174,8 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					},
 				},
 			},
-			// 肉鸽
-			lao_roguelike_skill: {
+			// 陈寿
+			lao_zhuzhi: {
 				forced: true,
 				getList: function () {
 					const list = Object.keys(lib.characterPack.MiNikill).concat(_status.extra_pingjianList || []);
@@ -1193,15 +1194,15 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 				},
 				content: function () {
 					'step 0'
-					var allList = ((!_status.connectMode && lib.config.extension_活动武将_PingJianName) ? lib.config.extension_活动武将_PingJianName : lib.skill.lao_roguelike_skill.getList()).filter(i => lib.character[i]);
+					var allList = ((!_status.connectMode && lib.config.extension_活动武将_PingJianName) ? lib.config.extension_活动武将_PingJianName : lib.skill.lao_zhuzhi.getList()).filter(i => lib.character[i]);
 					var list = [], skills = [], map = [];
 					allList.randomSort();
 					for (var i = 0; i < allList.length; i++) {
 						var name = allList[i];
 						var skills2 = lib.character[name][3];
 						for (var j = 0; j < skills2.length; j++) {
-							if (player.getStorage('lao_roguelike_skill').includes(skills2[j])) continue;
-							if (skills2[j] == 'lao_roguelike_skill') continue;
+							if (player.getStorage('lao_zhuzhi').includes(skills2[j])) continue;
+							if (skills2[j] == 'lao_zhuzhi') continue;
 							if (skills.includes(skills2[j])) {
 								list.add(name);
 								if (!map[name]) map[name] = [];
@@ -1231,7 +1232,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 1'
 					if (result.control != "cancel2") {
 						'step 0'
-						player.markAuto('lao_roguelike_skill', [result.control]);
+						player.markAuto('lao_zhuzhi', [result.control]);
 						player.addSkill(result.control);
 						player.loseMaxHp();
 						'step 1'
@@ -1247,7 +1248,7 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 							var next = game.createEvent('laoroguelike_insert');
 							next.player = player;
 							next.event = event;
-							next.setContent(lib.skill.lao_roguelike_skill.contentx);
+							next.setContent(lib.skill.lao_zhuzhi.contentx);
 						}
 					} else {
 						event.finish();
@@ -6860,10 +6861,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 			lao_yayu_info: '回合开始时，你可以和一名其他角色拼点。赢的角色弃置所有手牌，没赢的角色非锁定技失效直到其回合结束并弃置手牌数的一半（向下取整）。',
 			lao_shanshi: '善施',
 			lao_shanshi_info: '锁定技。摸牌阶段开始时，你可以多摸两张牌。然后摸牌阶段结束时，若你的手牌数大于5，则你将手牌数的一半（向下取整）交给一名手牌最少其他角色并获得如下效果直到你下回合开始：当你成为【杀】或普通锦囊牌的目标后，其可以交给你一张手牌。',
-			// 肉鸽
-			lao_roguelike: '肉鸽',
-			lao_roguelike_skill: '肉鸽',
-			lao_roguelike_skill_info: '锁定技，游戏开始时或一名角色进入濒死状态时，你可以随机获得三张未加入游戏的武将牌，选该武将牌的一项技能获得之，然后减1点体力上限。当你的技能数大于4时，你需移除一个已拥有的技能。',
+			// 陈寿
+			lao_sp_chenshou: 'SP陈寿',
+			lao_zhuzhi: '著志',
+			lao_zhuzhi_info: '锁定技，游戏开始时或一名角色进入濒死状态时，你可以随机获得三张未加入游戏的武将牌，选择该武将牌的一项技能记录并获得之，然后减1点体力上限。当你的技能数大于4时，你需移除一个已拥有的技能。',
 
 			// 王者公共技
 			hok_yinshen: '隐身',
