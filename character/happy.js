@@ -1237,6 +1237,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 						'step 1'
 						event.skillslist = player.getSkills(null, false, false).filter(function (i) {
 							var info = get.info(i);
+							if (info.silent || info.limited || info.juexingji || info.hiddenSkill || info.dutySkill
+								|| (info.zhuSkill && !player.isZhu2()) || info.groupSkill || (info.priority && typeof info.priority == 'number') || info.firstDo || info.lastDo) return false;
+							if (info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) return false;
+
 							return info && !info.charlotte;
 						});
 						if (event.skillslist.length > 4) {
@@ -1253,6 +1257,10 @@ game.import('character', function (lib, game, ui, get, ai, _status) {
 					'step 0'
 					event.skillslist = player.getSkills(null, false, false).filter(function (i) {
 						var info = get.info(i);
+						if (info.silent || info.limited || info.juexingji || info.hiddenSkill || info.dutySkill
+							|| (info.zhuSkill && !player.isZhu2()) || info.groupSkill || (info.priority && typeof info.priority == 'number') || info.firstDo || info.lastDo) return false;
+						if (info.ai && (info.ai.combo || info.ai.notemp || info.ai.neg)) return false;
+
 						return info && !info.charlotte;
 					});
 					player.chooseControl(event.skillslist).set('prompt', "失去" + get.translation(player) + "武将牌上的一个技能");
