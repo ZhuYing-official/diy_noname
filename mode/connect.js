@@ -1,8 +1,12 @@
-"use strict";
-game.import("mode", function (lib, game, ui, get, ai, _status) {
+import { lib, game, ui, get, ai, _status } from "../noname.js";
+export const type = "mode";
+/**
+ * @type { () => importModeConfig }
+ */
+export default () => {
 	return {
 		name: "connect",
-		start: function () {
+		start() {
 			var directstartmode = lib.config.directstartmode;
 			ui.create.menu(true);
 			event.textnode = ui.create.div("", "输入联机地址");
@@ -12,8 +16,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					ui.exitroom = ui.create.system(
 						"退出房间",
 						function () {
-						game.saveConfig("directstartmode");
-						game.reload();
+							game.saveConfig("directstartmode");
+							game.reload();
 						},
 						true
 					);
@@ -24,9 +28,9 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 					ui.startServer = ui.create.system(
 						"启动服务器",
 						function (e) {
-						ui.click.shortcut(false);
-						e.stopPropagation();
-						ui.click.connectMenu();
+							ui.click.shortcut(false);
+							e.stopPropagation();
+							ui.click.connectMenu();
 						},
 						true
 					);
@@ -102,8 +106,8 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				ui.hall_button = ui.create.system(
 					"联机大厅",
 					function () {
-					node.textContent = get.config("hall_ip") || lib.hallURL;
-					connect();
+						node.textContent = get.config("hall_ip") || lib.hallURL;
+						connect();
 					},
 					true
 				);
@@ -118,41 +122,35 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 				lib.setPopped(
 					ui.recentIP,
 					function () {
-					if (!lib.config.recentIP.length) return;
-					var uiintro = ui.create.dialog("hidden");
-					uiintro.listen(function (e) {
-						e.stopPropagation();
-					});
-					var list = ui.create.div(".caption");
-					for (var i = 0; i < lib.config.recentIP.length; i++) {
-							ui.create.div(".text.textlink", list, clickLink).textContent = get.trimip(
-								lib.config.recentIP[i]
-							);
-					}
-					uiintro.add(list);
+						if (!lib.config.recentIP.length) return;
+						var uiintro = ui.create.dialog("hidden");
+						uiintro.listen(function (e) {
+							e.stopPropagation();
+						});
+						var list = ui.create.div(".caption");
+						for (var i = 0; i < lib.config.recentIP.length; i++) {
+							ui.create.div(".text.textlink", list, clickLink).textContent = get.trimip(lib.config.recentIP[i]);
+						}
+						uiintro.add(list);
 						var clear = uiintro.add('<div class="text center">清除</div>');
-					clear.style.paddingTop = 0;
-					clear.style.paddingBottom = "3px";
-					clear.listen(function () {
-						lib.config.recentIP.length = 0;
-						game.saveConfig("recentIP", []);
-						uiintro.delete();
-					});
-					return uiintro;
+						clear.style.paddingTop = 0;
+						clear.style.paddingBottom = "3px";
+						clear.listen(function () {
+							lib.config.recentIP.length = 0;
+							game.saveConfig("recentIP", []);
+							uiintro.delete();
+						});
+						return uiintro;
 					},
 					220
 				);
 				if (get.config("read_clipboard", "connect")) {
 					var ced = false;
-					var read = (text) => {
+					var read = text => {
 						try {
 							var text2 = text.split("\n")[2];
 							var ip = text2.slice(5);
-							if (
-								ip.length > 0 &&
-								text2.startsWith("联机地址:") &&
-								(ced || confirm("是否根据剪贴板的邀请链接以进入联机地址和房间？"))
-							) {
+							if (ip.length > 0 && text2.startsWith("联机地址:") && (ced || confirm("是否根据剪贴板的邀请链接以进入联机地址和房间？"))) {
 								node.innerHTML = ip;
 								event.textnode.innerHTML = "正在连接...";
 								clearTimeout(event.timeout);
@@ -167,14 +165,14 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 							}
 						} catch (e) {
 							console.log(e);
-					}
+						}
 					};
 					window.focus();
 					if (navigator.clipboard && lib.node) {
 						navigator.clipboard
 							.readText()
 							.then(read)
-							.catch((_) => {});
+							.catch(_ => {});
 					} else {
 						var input = ui.create.node("textarea", ui.window, { opacity: "0" });
 						input.select();
@@ -207,4 +205,4 @@ game.import("mode", function (lib, game, ui, get, ai, _status) {
 			setTimeout(lib.init.onfree, 1000);
 		},
 	};
-});
+};

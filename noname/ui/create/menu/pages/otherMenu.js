@@ -1273,7 +1273,7 @@ export const otherMenu = function (/** @type { boolean | undefined } */ connectM
 				// 	const game=window.game;
 				// 	const ui=window.ui;
 				// 	const get=window.get;
-				// 	const ai=window.ai;
+				// 	const ai=window.nonameAI;
 				// 	// const cheat=window.lib.cheat; // 不再允许使用 cheat，因为它是不允许访问的变量
 				// 	//使用正则匹配绝大多数的普通obj对象，避免解析成代码块。
 				// 	const reg=${/^\{([^{}]+:\s*([^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\)))(?:,\s*([^{}]+:\s*(?:[^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\))))*\}$/};
@@ -1289,7 +1289,7 @@ export const otherMenu = function (/** @type { boolean | undefined } */ connectM
 					const game=window.game;
 					const ui=window.ui;
 					const get=window.get;
-					const ai=window.ai;
+					const ai=window.nonameAI;
 					const cheat=window.lib.cheat;
 					//使用正则匹配绝大多数的普通obj对象，避免解析成代码块。
 					const reg=${/^\{([^{}]+:\s*([^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\)))(?:,\s*([^{}]+:\s*(?:[^\s,]*|'[^']*'|"[^"]*"|\{[^}]*\}|\[[^\]]*\]|null|undefined|([a-zA-Z$_][a-zA-Z0-9$_]*\s*:\s*)?[a-zA-Z$_][a-zA-Z0-9$_]*\(\))))*\}$/};
@@ -1373,7 +1373,12 @@ export const otherMenu = function (/** @type { boolean | undefined } */ connectM
 								if (Array.isArray(obj)) {
 									return `[${obj.map((v) => parse(v))}]`;
 								} else if (typeof obj == "function") {
-									return `[Function ${obj.name}]`;
+									if (typeof obj.name == "string"){
+										return `[Function ${obj.name}]`;
+									}
+									else {
+										return `[Function]`;
+									}
 								} else if (typeof obj != "string") {
 									if (obj instanceof Error) {
 										return `<span style="color:red;">${String(obj)}</span>`;
@@ -1430,6 +1435,10 @@ export const otherMenu = function (/** @type { boolean | undefined } */ connectM
 			clearButton.listen(() => {
 				pre.innerHTML = "";
 			});
+			if (typeof window.noname_shijianInterfaces?.showDevTools == "function") {
+				game.print("点击以下按钮\n将开启诗笺版内置的控制台");
+				game.print("<button onclick='window.noname_shijianInterfaces.showDevTools();'>开启DevTools</button>");
+			}
 		};
 		if (!get.config("menu_loadondemand")) node._initLink();
 	})();
@@ -1484,6 +1493,7 @@ export const otherMenu = function (/** @type { boolean | undefined } */ connectM
 		lib.videos = [];
 		ui.create.videoNode = (video, before) => {
 			lib.videos.remove(video);
+			if (_status.over) return;
 			lib.videos[before === true ? "unshift" : "push"](video);
 		};
 		node._initLink = function () {

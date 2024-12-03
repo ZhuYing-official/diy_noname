@@ -3,7 +3,26 @@ import { lib } from "../library/index.js";
 import { game } from "../game/index.js";
 import { _status } from "../status/index.js";
 import { ui } from "../ui/index.js";
-
+/**
+ * 为元素添加右击或长按弹出的提示信息
+ * @param {string} title 标题
+ * @param {string} content 提示的具体内容
+ * @returns {HTMLElement}
+ */
+HTMLElement.prototype.setNodeIntro = function (title, content) {
+	this.classList.add('nodeintro');
+	this.nodeTitle = title;
+	this.nodeContent = content;
+	if (!lib.config.touchscreen) {
+		if (lib.config.hover_all) {
+			lib.setHover(this, ui.click.hoverplayer);
+		}
+		if (lib.config.right_info) {
+			this.oncontextmenu = ui.click.rightplayer;
+		}
+	}
+	return this;
+};
 // 废弃覆盖原型的HTMLDivElement.prototype.animate
 // 改为HTMLDivElement.prototype.addTempClass
 /**
@@ -147,7 +166,7 @@ Reflect.defineProperty(HTMLDivElement.prototype, "setBackground", {
 					if (mode == "guozhan") {
 						if (name.startsWith("gz_shibing")) name = name.slice(3, 11);
 						else {
-							if (lib.config.mode_config.guozhan.guozhanSkin && nameinfo && nameinfo.hasSkinInGuozhan){
+							if (lib.config.mode_config.guozhan.guozhanSkin && nameinfo && nameinfo.hasSkinInGuozhan) {
 								gzbool = true;
 							}
 							name = name.slice(3);
@@ -161,23 +180,27 @@ Reflect.defineProperty(HTMLDivElement.prototype, "setBackground", {
 				}
 			}
 			let imgPrefixUrl;
-			if (!modeimage && nameinfo && nameinfo.trashBin) {
-				for (const value of nameinfo.trashBin) {
-					if (value.startsWith("img:")) {
-						imgPrefixUrl = value.slice(4);
-						break;
-					} else if (value.startsWith("ext:")) {
-						extimage = value;
-						break;
-					} else if (value.startsWith("db:")) {
-						dbimage = value;
-						break;
-					} else if (value.startsWith("mode:")) {
-						modeimage = value.slice(5);
-						break;
-					} else if (value.startsWith("character:")) {
-						name = value.slice(10);
-						break;
+			if (!modeimage && nameinfo) {
+				if (nameinfo.img) {
+					imgPrefixUrl = nameinfo.img;
+				} else if (nameinfo.trashBin) {
+					for (const value of nameinfo.trashBin) {
+						if (value.startsWith("img:")) {
+							imgPrefixUrl = value.slice(4);
+							break;
+						} else if (value.startsWith("ext:")) {
+							extimage = value;
+							break;
+						} else if (value.startsWith("db:")) {
+							dbimage = value;
+							break;
+						} else if (value.startsWith("mode:")) {
+							modeimage = value.slice(5);
+							break;
+						} else if (value.startsWith("character:")) {
+							name = value.slice(10);
+							break;
+						}
 					}
 				}
 			}
@@ -187,8 +210,7 @@ Reflect.defineProperty(HTMLDivElement.prototype, "setBackground", {
 				this.setBackgroundDB(dbimage.slice(3));
 				return this;
 			} else if (modeimage) src = `image/mode/${modeimage}/character/${name}${ext}`;
-			else if (type == "character" && lib.config.skin[name] && arguments[2] != "noskin")
-				src = `image/skin/${name}/${lib.config.skin[name]}${ext}`;
+			else if (type == "character" && lib.config.skin[name] && arguments[2] != "noskin") src = `image/skin/${name}/${lib.config.skin[name]}${ext}`;
 			else if (type == "character") {
 				src = `image/character/${gzbool ? "gz_" : ""}${name}${ext}`;
 			} else src = `image/${type}/${subfolder}/${name}${ext}`;
@@ -210,7 +232,7 @@ Reflect.defineProperty(HTMLDivElement.prototype, "setBackground", {
  * @type { typeof HTMLDivElement['prototype']['setBackgroundDB'] }
  */
 HTMLDivElement.prototype.setBackgroundDB = function (img) {
-	return game.getDB("image", img).then((src) => {
+	return game.getDB("image", img).then(src => {
 		this.style.backgroundImage = `url('${src}')`;
 		this.style.backgroundSize = "cover";
 		return this;
@@ -224,7 +246,7 @@ HTMLDivElement.prototype.setBackgroundImage = function (img) {
 	if (Array.isArray(img)) {
 		this.style.backgroundImage = img
 			.unique()
-			.map((v) => `url("${lib.assetURL}${v}")`)
+			.map(v => `url("${lib.assetURL}${v}")`)
 			.join(",");
 	} else if (URL.canParse(img)) {
 		this.style.backgroundImage = `url("${img}")`;
@@ -303,10 +325,10 @@ HTMLDivElement.prototype.setPosition = function () {
 	return this;
 };
 /**
- * @this HTMLDivElement
- * @type { typeof HTMLDivElement['prototype']['css'] }
+ * @this HTMLElement
+ * @type { typeof HTMLElement['prototype']['css'] }
  */
-HTMLDivElement.prototype.css = function (style) {
+HTMLElement.prototype.css = function (style) {
 	for (var i in style) {
 		if (i == "innerHTML" && typeof style["innerHTML"] == "string") {
 			this.innerHTML = style["innerHTML"];
@@ -409,7 +431,7 @@ Object.defineProperty(Array.prototype, "filterInD", {
 	value: function (pos = "o") {
 		if (typeof pos != "string") pos = "o";
 		// @ts-ignore
-		return this.filter((card) => pos.includes(get.position(card, true)));
+		return this.filter(card => pos.includes(get.position(card, true)));
 	},
 });
 Object.defineProperty(Array.prototype, "someInD", {
@@ -423,7 +445,7 @@ Object.defineProperty(Array.prototype, "someInD", {
 	value: function (pos = "o") {
 		if (typeof pos != "string") pos = "o";
 		// @ts-ignore
-		return this.some((card) => pos.includes(get.position(card, true)));
+		return this.some(card => pos.includes(get.position(card, true)));
 	},
 });
 Object.defineProperty(Array.prototype, "everyInD", {
@@ -437,7 +459,7 @@ Object.defineProperty(Array.prototype, "everyInD", {
 	value: function (pos = "o") {
 		if (typeof pos != "string") pos = "o";
 		// @ts-ignore
-		return this.every((card) => pos.includes(get.position(card, true)));
+		return this.every(card => pos.includes(get.position(card, true)));
 	},
 });
 /**
@@ -465,7 +487,7 @@ Object.defineProperty(Array.prototype, "containsSome", {
 	 * @type { typeof Array['prototype']['containsSome'] }
 	 */
 	value: function () {
-		return Array.from(arguments).some((i) => this.includes(i));
+		return Array.from(arguments).some(i => this.includes(i));
 	},
 });
 Object.defineProperty(Array.prototype, "containsAll", {
@@ -477,7 +499,7 @@ Object.defineProperty(Array.prototype, "containsAll", {
 	 * @type { typeof Array['prototype']['containsAll'] }
 	 */
 	value: function () {
-		return Array.from(arguments).every((i) => this.includes(i));
+		return Array.from(arguments).every(i => this.includes(i));
 	},
 });
 
@@ -524,7 +546,7 @@ Object.defineProperty(Array.prototype, "remove", {
 		for (const item of arguments) {
 			let pos = -1;
 			if (typeof item == "number" && isNaN(item)) {
-				pos = this.findIndex((v) => isNaN(v));
+				pos = this.findIndex(v => isNaN(v));
 			} else {
 				pos = this.indexOf(item);
 			}

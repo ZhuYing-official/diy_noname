@@ -1,4 +1,12 @@
 export default {
+	"#xiemu1": "暴戾之气，伤人害己。",
+	"#xiemu2": "休要再起战事！",
+	"#naman1": "慢着，让我来！",
+	"#naman2": "弃暗投明，光耀门楣。",
+	"#old_maliang:die": "皇叔为何不听我之言？",
+	"#youdi1": "无名小卒，可敢再前进一步！",
+	"#youdi2": "予以小利，必有大获。",
+	"#old_zhuhuan:die": "这巍巍巨城，吾竟无力撼动……",
 	"#xinzhan1": "吾通晓兵法，世人皆知。",
 	"#xinzhan2": "用兵之道，攻心为上。",
 	"#huilei1": "丞相视某如子，某以丞相为父。",
@@ -40,6 +48,8 @@ export default {
 	"#yuji:die": "竟然……被猜到了……",
 	"#old_fuhun1": "呐喊破敌，锐不可挡！",
 	"#old_fuhun2": "匹夫之勇，插标卖首！",
+	"#wusheng_old_guanzhang": "武圣之名，威震华夏！",
+	"#paoxiao_old_guanzhang": "杀呀！",
 	"#old_guanzhang:die": "父亲，我来了……",
 	"#huangzhong:die": "不得不服老啦~",
 };
