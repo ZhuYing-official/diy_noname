@@ -110,16 +110,6 @@ window.noname_character_rank = {
 		"bianyue",
 		"kongshu",
 		"mb_sp_zhenji",
-
-		// 捞德一
-		"hok_sp_lixin",
-		"hok_sp_mingshiyin",
-		"hok_aoyin",
-		"hok_sunwukong",
-		"shen_caozhi",
-		"shen_dongzhuo",
-		"shen_lusu",
-		"shen_xusheng",
 	],
 	a: [
 		"scl_caoying",
@@ -338,36 +328,6 @@ window.noname_character_rank = {
 		"jsrg_malong",
 		"xin_simayi",
 		"new_simayi",
-
-
-		// 捞德一
-		"lao_caofang",
-		"lao_caoyu",
-		"lao_cuishi",
-		"lao_tuanxini",
-		"lao_tuan",
-		"lao_xini",
-		"lao_yanxing",
-		"lao_sp_wanglang",
-
-		"hok_anqila",
-		"hok_ailin",
-		"hok_bailishouyue",
-		"hok_bailixuance",
-		"hok_daji",
-		"hok_dasiming",
-		"hok_donghuangtaiyi",
-		"hok_duoliya",
-		"hok_gaojianli",
-		"hok_hainuo",
-		"hok_lanlingwang",
-		"hok_lixin",
-		"hok_makeboluo",
-		"hok_mingshiyin",
-		"hok_miyue",
-		"hok_sikongzhen",
-		"hok_wuzetian",
-		"hok_yao",
 	],
 	am: [
 		"scl_pangdegong",
@@ -636,9 +596,6 @@ window.noname_character_rank = {
 		"sb_gongsunzan",
 		"yue_zoushi",
 		"yue_diaochan",
-
-		// 捞德一
-		"lao_liucong",
 	],
 	bp: [
 		"dc_sb_huanggai",
@@ -1815,18 +1772,6 @@ window.noname_character_rank = {
 			"key_mia",
 			"jsrg_yuanshao",
 			"jd_simayan",
-
-			// 捞德一
-			"lao_sp_chenshou",
-
-			"hok_sp_lixin",
-			"hok_sp_mingshiyin",
-			"hok_aoyin",
-			"hok_sunwukong",
-			"shen_caozhi",
-			"shen_dongzhuo",
-			"shen_lusu",
-			"shen_xusheng",
 		],
 		epic: [
 			"dc_sb_huanggai",
@@ -2161,36 +2106,6 @@ window.noname_character_rank = {
 			"ol_sb_huaxiong",
 			"jsrg_tufashujineng",
 			"jsrg_lukang",
-
-			// 捞德一
-			"lao_caofang",
-			"lao_caoyu",
-			"lao_cuishi",
-			"lao_tuanxini",
-			"lao_tuan",
-			"lao_xini",
-			"lao_yanxing",
-			"lao_sp_wanglang",
-
-			"hok_anqila",
-			"hok_ailin",
-			"hok_bailishouyue",
-			"hok_bailixuance",
-			"hok_daji",
-			"hok_dasiming",
-			"hok_donghuangtaiyi",
-			"hok_duoliya",
-			"hok_gaojianli",
-			"hok_hainuo",
-			"hok_lanlingwang",
-			"hok_lixin",
-			"hok_makeboluo",
-			"hok_mingshiyin",
-			"hok_miyue",
-			"hok_sikongzhen",
-			"hok_wuzetian",
-			"hok_yao",
-			// 欢乐三国杀
 		],
 		rare: [
 			"yj_jiling",
@@ -2809,10 +2724,6 @@ window.noname_character_rank = {
 			"mb_jiachong",
 			"sb_jiaxu",
 			"sb_zhugejin",
-
-			// 捞德一
-			"lao_caohuan",
-			"lao_liucong",
 		],
 		junk: ["liuxiecaojie", "std_pengyang", "shen_huangzhong", "ol_peixiu", "ol_sb_guanyu", "junk_guanyu", "sunshao", "gongsunzan", "chengpu", "zangba", "tianfeng", "dingyuan", "caiyong", "xin_chengpu", "junk_zhangrang", "wolongfengchu", "re_chenqun", "sp_ol_zhanghe", "key_youta", "sp_xujing", "fanjiangzhangda", "wangxiang", "duji", "dc_liuba", "dc_lifeng", "bianxi", "clan_wuban", "clan_wukuang", "ahuinan", "sp_caosong", "yangfu", "wangjun", "xin_wuyi", "xin_zhuzhi", "tw_xiahouen", "ol_maliang", "old_bulianshi", "junk_huangyueying", "junk_liubei", "new_caoren", "old_zhoutai", "dongtuna", "junk_lidian", "junk_duanwei", "zerong", "std_panfeng", "re_caochong", "re_caorui", "junk_xuyou", "re_zhongyao", "zhupeilan", "jsrg_dongbai"],
 	},

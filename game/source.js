@@ -116,7 +116,6 @@ window.noname_source_list = [
 	"card/zhulu.js",
 
 	// 捞德一
-	"character/happy.js",
 	// "character/gujian.js",
 	// "character/gwent.js",
 	// "character/hearth.js",

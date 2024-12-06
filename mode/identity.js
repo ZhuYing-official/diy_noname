@@ -2394,9 +2394,7 @@ export default () => {
 							list2x.sort(lib.sort.character);
 							return list2x;
 						};
-						// list = getZhuList(list2).concat(list3.randomGets(5));
-						// 捞德一 联机主公候选武将数
-						list = getZhuList(list2).concat(list3.randomGets(6));
+						list = getZhuList(list2).concat(list3.randomGets(5));
 					}
 					var next = game.zhu.chooseButton(true);
 					next.set("selectButton", lib.configOL.double_character ? 2 : 1);

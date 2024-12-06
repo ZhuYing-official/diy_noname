@@ -1,5 +1,4 @@
 window.noname_package = {
-	// 捞德一
 	character: {
 		//经典标包＋神话再临
 		standard: "标准",
@@ -34,7 +33,6 @@ window.noname_package = {
 		//DIY系列
 		diy: "DIY",
 		ddd: "3D精选",
-		happy: "捞德一",
 		// key: "Key",
 		// yxs: "英雄杀",
 		// hearth: "炉石传说",
@@ -119,7 +117,7 @@ window.noname_package = {
 		// noname_bg: "璀璨",
 		// wuming_bg: "无名",
 		zhulin_bg: "竹林",
-		shengshi_bg: "盛世",
+		// shengshi_bg: "盛世",
 		taoyuan_bg: "桃园",
 		zhanhuo_bg: "战火",
 		huangtian_bg: "黄天",
