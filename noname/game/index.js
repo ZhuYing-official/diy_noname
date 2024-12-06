@@ -5633,14 +5633,14 @@ export class Game extends GameCompatible {
 				// 捞德一 评分
 				td = document.createElement("td");
 				num = 0;
-				for (j = 0; j < game.players[i].stat.length; j++) {
-					if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
-					if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
-					if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
-					for (k in game.players[i].stat[j].card) {
-						num += game.players[i].stat[j].card[k] * useValue;
+				for (j = 0; j < game.dead[i].stat.length; j++) {
+					if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
+					if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
+					if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
+					for (k in game.dead[i].stat[j].card) {
+						num += game.dead[i].stat[j].card[k] * useValue;
 					}
-					if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
+					if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
 				}
 				td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
 				if (num.toFixed(1) == laodeyiMvp) {
