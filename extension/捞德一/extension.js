@@ -17,8 +17,7 @@ game.laoShowNewPack = function () {
 	];
 	//更新武将
 	var Lao_players = [
-		// 'hok_houyi', 'hok_wangzhaojun', 'hok_lan', 'hok_yase', 'hok_mozi',
-		'hok_houyi', 'hok_wangzhaojun',
+		'hok_houyi', 'hok_wangzhaojun', 'hok_lan', 'hok_yase', 'hok_mozi',
 	];
 	//加载
 	var dialog = ui.create.dialog(
