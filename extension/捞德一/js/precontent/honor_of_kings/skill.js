@@ -960,6 +960,8 @@ const skills = {
 	hok_duoqi: {
 		enable: 'phaseUse',
 		usable: 1,
+		skillAnimation: true,
+		animationColor: 'water',
 		filter(event, player) {
 			if (player.countMark('hok_rishi') == 3) {
 				return true;
@@ -1082,8 +1084,9 @@ const skills = {
 			});
 			'step 1'
 			if (result.bool) {
-				player.logSkill('hok_huange', result.targets);
 				var target = result.targets[0];
+				player.logSkill('hok_huange', target);
+				player.line(target);
 				if (target.hasMark('hok_yinshen')) {
 					target.removeMark('hok_yinshen', 1);
 					target.removeSkill('hok_yinshen');
@@ -1119,6 +1122,7 @@ const skills = {
 			if (result.bool) {
 				player.logSkill('hok_zhulang', result.targets);
 				event.hok_zhulang_target = result.targets[0];
+				player.line(event.hok_zhulang_target, 'green');
 				event.hok_zhulang_target.recover();
 				event.hok_zhulang_target.draw(1);
 			}
@@ -1136,7 +1140,7 @@ const skills = {
 	hok_tianlai: {
 		trigger: { player: 'phaseUseBegin' },
 		filter(event, player) {
-			return player.countCards('hs') > 0;
+			return player.countCards('hs') > 1;
 		},
 		direct: true,
 		content() {
@@ -1154,7 +1158,7 @@ const skills = {
 			player.chooseCardTarget({
 				prompt: get.prompt2('hok_tianlai'),
 				filterCard: lib.filter.cardDiscardable,
-				selectCard: 1,
+				selectCard: 2,
 				position: 'hs',
 				filterTarget: true,
 				complexSelect: true,
@@ -1173,6 +1177,8 @@ const skills = {
 			if (result.bool) {
 				var cards = result.cards,
 					target = result.targets[0];
+				player.logSkill('hok_tianlai', target);
+				player.line(target, 'green');
 				target.addSkill('hok_tianlai_effect');
 				if (cards && cards.length) {
 					player.discard(cards);
@@ -1781,7 +1787,7 @@ const skills = {
 			player.awakenSkill('hok_zhuorizhishi');
 			'step 1'
 			player.chooseTarget(get.prompt2('hok_zhuorizhishi'), function (card, player, target) {
-				return player != target;
+				return player != target && player.inRange(target);
 			}).set('ai', function (target) {
 				if (target == player || !player.inRange(target)) {
 					return false;
@@ -1813,6 +1819,133 @@ const skills = {
 	},
 
 	// L
+	// 澜
+	hok_polang: {
+		trigger: {
+			player: 'phaseUseBegin',
+		},
+		direct: true,
+		content: function () {
+			'step 0';
+			player.chooseControl('获得【杀】', '获得【闪】', 'cancel2').set('prompt', get.prompt2('hok_polang')).set('ai', function () {
+				if (player.hasCard({ name: 'shan' })) {
+					return '获得【杀】';
+				} else {
+					return '获得【闪】';
+				}
+			});
+			'step 1'
+			if (result.control != 'cancel2') {
+				player.logSkill('hok_polang');
+				if (result.control == '获得【杀】') {
+					let card = get.cardPile(function (card) {
+						return card.name == 'sha';
+					});
+					if (card) player.gain(card, 'gain2');
+				}
+				else {
+					let card = get.cardPile(function (card) {
+						return card.name == 'shan';
+					});
+					if (card) player.gain(card, 'gain2');
+				}
+			}
+			else event.finish();
+		},
+	},
+	hok_duankong: {
+		trigger: { source: 'damageSource' },
+		forced: true,
+		filter(event, player) {
+			return event.card.name == 'sha' && (get.distance(player, event.player) <= 1) && player.isDamaged();
+		},
+		async content(event, trigger, player) {
+			await player.recover();
+		},
+		mod: {
+			cardUsableTarget(card, player, target) {
+				if (!player.isPhaseUsing()) return;
+				if (card.name == 'sha' && (get.distance(player, target) <= 1) && !player.getStorage('hok_duankong_mark').includes(target)) return true;
+			},
+		},
+		group: ['hok_duankong_load', 'hok_duankong_mark'],
+		subSkill: {
+			load: {
+				trigger: { player: 'useCard1' },
+				filter: function (event, player) {
+					if (!player.isPhaseUsing()) return false;
+					return event.card.name == 'sha' && event.targets && event.targets.some(target => !player.getStorage('hok_duankong_mark').includes(target));
+				},
+				forced: true,
+				popup: false,
+				firstDo: true,
+				content: function () {
+					player.addTempSkill('hok_duankong_mark', 'phaseUseAfter');
+					player.markAuto(
+						'hok_duankong_mark',
+						trigger.targets.filter(target => !player.getStorage('hok_duankong_mark').includes(target))
+					);
+				},
+			},
+			mark: {
+				onremove: true,
+			},
+		},
+	},
+	hok_chujue: {
+		unique: true,
+		skillAnimation: true,
+		animationColor: 'wood',
+		limited: true,
+		enable: 'phaseUse',
+		content() {
+			'step 0'
+			player.awakenSkill('hok_chujue');
+			'step 1'
+			player.chooseTarget(get.prompt2('hok_chujue'), function (card, player, target) {
+				return player != target && player.inRange(target);
+			}).set('ai', function (target) {
+				if (target == player || !player.inRange(target)) {
+					return false;
+				}
+				return get.attitude(_status.event.player, target) < -1;
+			});
+			'step 2'
+			if (result.bool) {
+				var target = result.targets[0];
+				if (target.countDiscardableCards(player, 'he')) {
+					player.line(target);
+					player.discardPlayerCard('he', target, true);
+				}
+				if (target.countDiscardableCards(player, 'he')) {
+					player.line(target);
+					player.discardPlayerCard('he', target, true);
+				}
+				game.broadcastAll(
+					function (target1, target2) {
+						game.swapSeat(target1, target2, null, true);
+					},
+					player,
+					target.getNext()
+				);
+			}
+		},
+		ai: {
+			order: 10,
+			expose: 0.2,
+			result: {
+				player(player) {
+					var list = game.filterPlayer(function (target) {
+						return player.inRange(target) && !target.isDead() && target != player && get.attitude(_status.event.player, target) < -1 ? true : false;
+					});
+					if (list.length >= 1) {
+						return 1;
+					}
+					return 0;
+				}
+			},
+		},
+	},
 	// 兰陵王
 	hok_yinni: {
 		derivation: 'hok_yinshen',
@@ -1893,7 +2026,7 @@ const skills = {
 			boom: {
 				forced: true,
 				locked: false,
-				marktext: '影蚀',
+				marktext: '蚀',
 				intro: {
 					name: '影蚀',
 					content: '回合结束时，受到1点来自“影蚀”角色的伤害',
@@ -2935,6 +3068,116 @@ const skills = {
 			},
 		}
 	},
+	// 墨子
+	hok_jianaifeigong: {
+		marktext: '墨',
+		intro: {
+			name: '兼爱',
+			content: 'mark',
+		},
+		frequent: true,
+		trigger: { source: 'damageEnd' },
+		filter(event, player) {
+			return event.num > 0 && player.hujia < 3;
+		},
+		content() {
+			player.changeHujia(1, null, true);
+		},
+		group: ['hok_jianaifeigong_loseHujia',],
+		subSkill: {
+			loseHujia: {
+				forced: true,
+				trigger: { player: 'phaseBegin' },
+				filter(event, player) {
+					return player.hujia > 0;
+				},
+				content() {
+					let hasMark = player.countMark('hok_jianaifeigong');
+					if (hasMark < 3) {
+						if (hasMark + player.hujia > 3) {
+							player.addMark('hok_jianaifeigong', 3 - hasMark);
+						} else {
+							player.addMark('hok_jianaifeigong', player.hujia);
+						}
+					}
+					player.changeHujia(-player.hujia);
+				},
+			},
+		},
+	},
+	hok_jipao: {
+		trigger: {
+			player: 'phaseUseBegin',
+		},
+		direct: true,
+		content: function () {
+			'step 0';
+			var card = get.cardPile(function (card) {
+				return card.name == 'sha' && card.nature == 'thunder';
+			});
+			if (card) player.gain(card, 'gain2');
+			'step 1';
+			player.chooseToUse({ name: 'sha' }, get.prompt2('hok_jipao')).set('targetRequired', true).set('complexSelect', true).set('filterTarget', lib.filter.targetEnabled);
+			'step 2'
+			if (game.hasPlayer2(function (current) {
+				return current.getHistory('damage', function (evt) {
+					return evt.getParent(4) == event;
+				}).length > 0
+			})
+			) {
+				result.targets.forEach(target => {
+					if (target.countDiscardableCards(target, 'he')) {
+						target.chooseToDiscard('he', 2, true).set('ai', function (card) {
+							return 6 - get.value(card);
+						});
+					}
+				});
+			}
+		},
+	},
+	hok_moshouchenggui: {
+		trigger: {
+			player: 'phaseUseBegin',
+		},
+		skillAnimation: true,
+		animationColor: 'wood',
+		frequent: true,
+		filter(event, player) {
+			return player.countMark('hok_jianaifeigong') >= 3;
+		},
+		content() {
+			'step 0'
+			player.chooseTarget(get.prompt2('hok_moshouchenggui'), function (card, player, target) {
+				return player != target && player.inRange(target);
+			}).set('ai', target => {
+				var player = _status.event.player;
+				if (target == player || !player.inRange(target)) {
+					return false;
+				}
+				if (get.attitude(player, target) < 0) return get.effect(target, { name: 'guohe' }, player, player) + get.damageEffect(target, player, player, 'thunder');
+				return 0;
+			});
+			'step 1'
+			if (result.bool) {
+				var target = result.targets[0];
+				player.removeMark('hok_jianaifeigong', 3);
+				player.logSkill('hok_moshouchenggui', target);
+				player.line(target);
+				target.damage();
+				target.turnOver();
+				trigger.cancel();
+			}
+			else event.finish();
+		},
+		ai: {
+			threaten: 1,
+			order: 4,
+			expose: 0.2,
+			result: {
+				player: 1,
+			},
+		}
+	},
 
 	// S
 	// 司空震
@@ -2943,10 +3186,10 @@ const skills = {
 		zhuSkill: true,
 		trigger: { player: 'damageBefore' },
 		filter(event) {
-			if (event.nature == 'thunder') return true;
+			if (event.nature == 'thunder') return event.num > 1;
 		},
 		content() {
-			trigger.cancel();
+			trigger.num = 1;
 		},
 		ai: {
 			effect: {
@@ -3827,6 +4070,291 @@ const skills = {
 			threaten: 1,
 			expose: 0.25,
 		}
+	},
+	// 亚瑟
+	hok_shengguang: {
+		marktext: '圣',
+		intro: {
+			name: '圣光',
+			content: 'mark',
+		},
+		trigger: { player: 'phaseBegin', },
+		frequent: true,
+		content() {
+			player.recover();
+			if (player.countMark('hok_shengguang') < 3) {
+				player.addMark('hok_shengguang', 1);
+			}
+		},
+	},
+	hok_shidun: {
+		init(player, skill) {
+			if (!player.storage.hok_shidun) player.storage.hok_shidun = [];
+		},
+		trigger: {
+			source: 'damageSource',
+		},
+		filter(event, player) {
+			if (player.storage.hok_shidun.length) return false;
+			if (!event.card || event.card.name != 'sha') return false;
+			return event.player.isIn() && _status.currentPhase == player && event.num > 0;
+		},
+		check(event, player) {
+			if (get.attitude(_status.event.player, event.player) >= 0) return false;
+			return true;
+		},
+		bannedList: ['bifa', 'buqu', 'gzbuqu', 'songci', 'funan', 'xinfu_guhuo', 'reguhuo', 'huashen', 'rehuashen', 'old_guhuo', 'shouxi', 'xinpojun', 'taoluan', 'xintaoluan', 'yinbing', 'xinfu_yingshi', 'zhenwei', 'zhengnan', 'xinzhengnan', 'zhoufu'],
+		logTarget: 'player',
+		content() {
+			'step 0';
+			var list = [];
+			var listm = [];
+			var listv = [];
+			if (trigger.player.name1 != undefined) listm = lib.character[trigger.player.name1][3];
+			else listm = lib.character[trigger.player.name][3];
+			if (trigger.player.name2 != undefined) listv = lib.character[trigger.player.name2][3];
+			listm = listm.concat(listv);
+			var func = function (skill) {
+				var info = get.info(skill);
+				if (!info || info.charlotte || info.persevereSkill || info.hiddenSkill || info.zhuSkill || info.juexingji || info.limited || info.dutySkill || (info.unique && !info.gainable) || lib.skill.hok_shidun.bannedList.includes(skill)) return false;
+				return true;
+			};
+			for (var i = 0; i < listm.length; i++) {
+				if (func(listm[i])) list.add(listm[i]);
+			}
+			event.skills = list;
+			'step 1';
+			if (event.skills.length > 0) {
+				player
+					.chooseControl(event.skills)
+					.set('prompt', '请选择令其失效的技能')
+					.set('ai', function () {
+						return event.skills.randomGet();
+					});
+			} else event.finish();
+			'step 2';
+			player.storage.hok_shidun = [result.control];
+			player.storage.hok_shidun_player = trigger.player;
+			trigger.player.storage.hok_shidun = [result.control];
+			trigger.player.addTempSkill('hok_shidun_banned', { player: 'phaseAfter' });
+		},
+		group: ['hok_shidun_clear'],
+		subSkill: {
+			clear: {
+				trigger: { global: ['phaseAfter', 'dieAfter'] },
+				filter(event, player) {
+					if (!player.storage.hok_shidun_player || !player.storage.hok_shidun) return false;
+					return player.storage.hok_shidun_player == event.player && player.storage.hok_shidun.length;
+				},
+				silent: true,
+				forced: true,
+				popup: false,
+				content() {
+					player.removeSkills(player.storage.hok_shidun[0]);
+					delete player.storage.hok_shidun_player;
+					player.storage.hok_shidun = [];
+				},
+			},
+			banned: {
+				init(player, skill) {
+					player.disableSkill(skill, player.storage.hok_shidun);
+				},
+				onremove(player, skill) {
+					player.enableSkill(skill);
+				},
+				locked: true,
+				mark: true,
+				charlotte: true,
+				intro: {
+					content(storage, player, skill) {
+						var list = [];
+						for (var i in player.disabledSkills) {
+							if (player.disabledSkills[i].includes(skill)) list.push(i);
+						}
+						if (list.length) {
+							var str = '失效技能：';
+							for (var i = 0; i < list.length; i++) {
+								if (lib.translate[list[i] + '_info']) str += get.translation(list[i]) + '、';
+							}
+							return str.slice(0, str.length - 1);
+						}
+					},
+				},
+			},
+		},
+	},
+	hok_huixuan: {
+		trigger: { global: 'cardsDiscardAfter' },
+		filter(event, player) {
+			if (
+				!player.getPrevious() ||
+				!event.cards.filterInD('d').some(card => {
+					return get.tag(card, 'damage') && player.canUse(card, player.getPrevious());
+				})
+			)
+				return false;
+			if (
+				!player.getNext() ||
+				!event.cards.filterInD('d').some(card => {
+					return get.tag(card, 'damage') && player.canUse(card, player.getNext());
+				})
+			)
+				return false;
+			if (player.getNext() == player.getPrevious()) return false;
+			const evt = event.getParent();
+			if (evt.name != 'orderingDiscard') return false;
+			const evtx = evt.relatedEvent || evt.getParent();
+			return player.hasHistory('useCard', evtxx => {
+				if (evtxx.getParent().name === 'hok_huixuan') return false;
+				if (evtxx.targets.length > 1) return false;
+				if (evtxx.targets[0] != player.getPrevious() && evtxx.targets[0] != player.getNext()) return false;
+				return evtx.getParent() == (evtxx.relatedEvent || evtxx.getParent()) && get.tag(evtxx.card, 'damage');
+			});
+		},
+		async cost(event, trigger, player) {
+			const evtx = event.getParent(4).relatedEvent || event.getParent(5);
+			if (evtx.targets) {
+				const target = ((evtx.targets[0] == player.getPrevious()) ? player.getNext() : player.getPrevious());
+				const cards = trigger.cards.filterInD('d').filter(card => get.tag(card, 'damage'));
+				event.result = await player
+					.chooseButton([get.prompt2('hok_huixuan', target), cards])
+					.set('filterButton', button => {
+						const player = get.player(),
+							target = get.event().target;
+						return player.canUse(button.link, target);
+					})
+					.set('target', target)
+					.set('ai', button => {
+						const player = get.player(),
+							target = get.event().target;
+						return get.effect(target, button.link, player, player);
+					})
+					.forResult();
+				if (event.result.bool) {
+					event.result.cards = event.result.links;
+				}
+			}
+		},
+		logTarget(event, player) {
+			const evtx = event.getParent().relatedEvent || event.getParent(2);
+			const target = ((evtx.targets[0] == player.getPrevious()) ? player.getNext() : player.getPrevious());
+			return target;
+		},
+		async content(event, trigger, player) {
+			player.$gain2(event.cards, false);
+			await game.delayx();
+			const useCardEvent = player.useCard(event.cards[0], event.targets[0], false);
+			await useCardEvent;
+		},
+		onremove(player, skill) {
+			const cards = player.getExpansions(skill);
+			if (cards.length) player.loseToDiscardpile(cards);
+		},
+	},
+	hok_shengjiancaijue: {
+		enable: 'phaseUse',
+		useable: 1,
+		direct: true,
+		filter(event, player) {
+			if (player.countMark('hok_shengguang') == 3) {
+				return true;
+			}
+			return false;
+		},
+		content() {
+			'step 0'
+			player.chooseTarget(get.prompt2('hok_shengjiancaijue'), function (card, player, target) {
+				return player != target && player.inRange(target);
+			}).set('ai', target => {
+				var player = _status.event.player;
+				if (target == player || !player.inRange(target)) {
+					return false;
+				}
+				if (get.attitude(player, target) < 0) return get.effect(target, { name: 'guohe' }, player, player) + get.damageEffect(target, player, player, 'thunder');
+				return 0;
+			});
+			'step 1'
+			if (result.bool) {
+				var target = result.targets[0];
+				player.removeMark('hok_shengguang', 3);
+				player.logSkill('hok_shengjiancaijue', target);
+				player.line(target);
+				let num = target.getDamagedHp() - 1;
+				if (num > 0) {
+					target.damage(num, 'thunder');
+				} else {
+					target.damage('thunder', 'unreal');
+				}
+				var cards = target.getCards('h', function (card) {
+					return lib.filter.cardDiscardable(card, target, 'hok_ningbingzhixi_skill');
+				});
+				if (cards.length > 0) target.discard(cards.randomGet());
+			}
+			else event.finish();
+		},
+		ai: {
+			threaten: 1,
+			order: 4,
+			expose: 0.2,
+			result: {
+				player: 1,
+			},
+		}
+	},
+	hok_wangzhe: {
+		trigger: {
+			global: 'phaseBefore',
+			player: 'enterGame',
+		},
+		zhuSkill: true,
+		frequent: true,
+		preHidden: true,
+		global: 'hok_wangzhe_global',
+		filter(event, player) {
+			if (!player.hasZhuSkill('hok_wangzhe')) return false;
+			if (event.name != 'phase' || game.phaseNumber == 0)
+				return player.countMark('hok_shengguang') < 3;
+			return false;
+		},
+		content() {
+			player.addMark('hok_shengguang', 1);
+		},
+		group: ['hok_wangzhe_global'],
+		subSkill: {
+			global: {
+				trigger: { player: 'phaseUseEnd' },
+				filter(event, player) {
+					var zhuplayer = game.filterPlayer(current => {
+						return current.hasZhuSkill('hok_wangzhe', player);
+					})[0];
+					if (zhuplayer) {
+						return player.group == 'qun' && player.countCards('he') > 0 && !player.hasZhuSkill('hok_wangzhe') && zhuplayer.isDamaged();
+					}
+					return false;
+				},
+				direct: true,
+				content() {
+					'step 0'
+					event.hok_wangzheplayer = game.filterPlayer(current => {
+						return current.hasZhuSkill('hok_wangzhe', player);
+					})[0];
+					player.chooseToDiscard('he', '是否弃置一张牌，令' + get.translation(event.hok_wangzheplayer) + '回复1点体力？').set('ai', function (card) {
+						if (get.attitude(player, event.hok_wangzheplayer) < 1) return 0;
+						if (event.hok_wangzheplayer.isDamaged()) {
+							return 7 - get.value(card);
+						}
+						return 0;
+					});
+					'step 1'
+					if (result.bool) {
+						player.logSkill('hok_wangzhe_global');
+						player.line(event.hok_wangzheplayer, 'green');
+						event.hok_wangzheplayer.recover();
+					}
+					else event.finish();
+				}
+			},
+		},
 	},
 
 	// SP

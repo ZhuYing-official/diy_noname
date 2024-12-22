@@ -44,7 +44,7 @@ const characters = {
 
 	// L
 	// 澜
-	hok_lan: ['male', 'wei', 4, ['hok_pokong', 'hok_duankong', 'hok_chujue'], ['doublegroup:wei:wu', 'unseen']],
+	hok_lan: ['male', 'wei', 4, ['hok_polang', 'hok_duankong', 'hok_chujue'], ['doublegroup:wei:wu']],
 	// 兰陵王
 	hok_lanlingwang: ['male', 'jin', 4, ['hok_yinni', 'hok_yingshi', 'hok_anxi']],
 	// 李信
@@ -58,7 +58,7 @@ const characters = {
 	// 芈月
 	hok_miyue: ['female', 'jin', 4, ['hok_shengxue', 'hok_anlian', 'hok_anyue']],
 	// 墨子
-	hok_mozi: ['male', 'wu', 4, ['hok_jianaifeigong', 'hok_jipao', 'hok_moshouchenggui'], ['unseen']],
+	hok_mozi: ['male', 'wu', 4, ['hok_jianaifeigong', 'hok_jipao', 'hok_moshouchenggui']],
 
 	// N
 	// O
@@ -88,7 +88,7 @@ const characters = {
 	// 瑶
 	hok_yao: ['female', 'wei', 3, ['hok_shangui', 'hok_bailu']],
 	// 亚瑟
-	hok_yase: ['male', 'qun', 4, ['hok_shengguang', 'hok_shidun', 'hok_huixuan', 'hok_shengjiancaijue'], ['zhu', 'unseen']],
+	hok_yase: ['male', 'qun', 4, ['hok_shengguang', 'hok_shidun', 'hok_huixuan', 'hok_shengjiancaijue', 'hok_wangzhe'], ['zhu']],
 
 	// Z
 

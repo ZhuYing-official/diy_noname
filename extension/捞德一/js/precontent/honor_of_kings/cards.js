@@ -13,7 +13,7 @@ const packs = function () {
                 distance: { attackFrom: -2 },
                 ai: {
                     basic: {
-                        equipValue: 3,
+                        equipValue: 2,
                     },
                 },
                 skills: ['hok_ningbingzhixi_skill'],

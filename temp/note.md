@@ -669,6 +669,21 @@ content:function(){//内容:
 ```
 ---
 ```javascript
+animationColor: 'gray',//白
+animationColor: 'metal',//黄色
+animationColor: 'water',//蓝色
+animationColor: 'wood',//绿色
+animationColor: 'thunder',//紫色
+animationColor: 'soil',//红色
+animationColor: 'fire',//紫红
+animationColor: 'orange',//橙色
+animationColor: '',//
+
+```
+---
+
+---
+```javascript
 
 ```
 ---

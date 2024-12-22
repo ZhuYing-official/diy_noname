@@ -1381,7 +1381,6 @@ const skills = {
 	lao_cannue: {
 		audio: 'olbaonue',
 		forced: true,
-		unique: true,
 		group: ['lao_cannue2', 'lao_cannue3', 'lao_cannue4'],
 		marktext: '虐',
 		trigger: {
@@ -1492,7 +1491,7 @@ const skills = {
 	},
 	lao_xiehan3: {
 		forced: true,
-		trigger: { global: 'phaseUseBegin' },
+		trigger: { global: 'phaseUseBefore' },
 		filter(event, player) {
 			return event.player.isAlive() && event.player.hasUseTarget({ name: 'jiu' }, null, true);
 		},
