@@ -4602,14 +4602,9 @@ const skills = {
 			return true;
 		},
 		content() {
-			'step 0'
-			player.removeSkill('hok_minggua2');
-			'step 1'
 			player.damage();
-			'step 2'
 			player.line(target, 'green');
 			target.recover();
-			player.addSkill('hok_minggua2');
 		},
 		ai: {
 			order: 2,
@@ -4626,7 +4621,7 @@ const skills = {
 	},
 	hok_minggua: {
 		forced: true,
-		group: ['hok_minggua3'],
+		group: ['hok_minggua_2', 'hok_minggua_3'],
 		trigger: {
 			player: 'damageBegin2',
 		},
@@ -4640,6 +4635,30 @@ const skills = {
 					player.storage.gua5 = false,
 					player.storage.gua6 = false;
 			}
+		},
+		mark: true,
+		intro: {
+			content(storage, player) {
+				if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
+					player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
+				}
+				if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
+					player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
+				}
+				if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
+					player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
+				}
+				if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
+					player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
+				}
+				if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
+					player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
+				}
+				if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
+					player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
+				}
+				return `<div class='text center'><span class=thundertext>` + player.storage.guaList + `</span></div>`;
+			},
 		},
 		content() {
 			var r = Math.random();
@@ -4717,223 +4736,203 @@ const skills = {
 				}
 			}
 		},
-		mark: true,
-		intro: {
-			content(storage, player) {
-				if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
-					player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
-				}
-				if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
-					player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
-				}
-				if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
-					player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
-				}
-				if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
-					player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
-				}
-				if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
-					player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
-				}
-				if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
-					player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
-				}
-				return `<div class='text center'><span class=thundertext>' + player.storage.guaList + '</span></div>`
+		subSkill: {
+			2: {
+				forced: true,
+				trigger: {
+					source: 'damageBegin2',
+				},
+				filter(event, player) {
+					return event.getParent().name!='hok_sptaigua';
+				},
+				content() {
+					var r = Math.random();
+					var tar = trigger.player;
+					var cards = tar.getCards('hej');
+
+					var str = '';
+					if (r < 0.05) {
+						// 1
+						str += '大吉';
+					} else if (r < 0.2) {
+						// 2
+						str += '中吉';
+					} else if (r < 0.5) {
+						// 3
+						str += '小吉';
+					} else if (r < 0.8) {
+						// 4
+						str += '小凶';
+					} else if (r < 0.95) {
+						// 5
+						str += '中凶';
+					} else {
+						str += '大凶';
+					}
+					player.popup(str);
+					game.delay(0.5);
+					game.log(str);
+
+					if (r < 0.05) {
+						// 1
+						if (!player.storage.gua1) {
+							tar.die();
+							trigger.cancel();
+						}
+					} else if (r < 0.2) {
+						// 2
+						if (!player.storage.gua2) {
+							trigger.num++;
+							if (cards.length > 0) {
+								tar.discard(cards.randomGet());
+							}
+						}
+					} else if (r < 0.5) {
+						// 3
+						if (!player.storage.gua3) {
+							if (cards.length > 0) {
+								tar.discard(cards.randomGet());
+							}
+						}
+					} else if (r < 0.8) {
+						// 4
+						if (!player.storage.gua4) {
+							tar.draw();
+						}
+					} else if (r < 0.95) {
+						// 5
+						if (!player.storage.gua5) {
+							trigger.cancel();
+							tar.recover(trigger.num);
+							tar.draw();
+						}
+					} else {
+						if (!player.storage.gua6) {
+							trigger.cancel();
+							tar.recover((tar.maxHp - tar.hp));
+							tar.draw(4);
+						}
+					}
+					if (player.hasSkill('hok_biangua')) {
+						if (player.countMark('hok_biangua2') < 8) {
+							player.addMark('hok_biangua2', 1);
+						}
+					}
+				},
 			},
-		},
-	},
-	hok_minggua2: {
-		forced: true,
-		trigger: {
-			source: 'damageBegin2',
-		},
-		content() {
-			var r = Math.random();
-			var tar = trigger.player;
-			var cards = tar.getCards('hej');
-
-			var str = '';
-			if (r < 0.05) {
-				// 1
-				str += '大吉';
-			} else if (r < 0.2) {
-				// 2
-				str += '中吉';
-			} else if (r < 0.5) {
-				// 3
-				str += '小吉';
-			} else if (r < 0.8) {
-				// 4
-				str += '小凶';
-			} else if (r < 0.95) {
-				// 5
-				str += '中凶';
-			} else {
-				str += '大凶';
-			}
-			player.popup(str);
-			game.delay(0.5);
-			game.log(str);
-
-			if (r < 0.05) {
-				// 1
-				if (!player.storage.gua1) {
-					tar.die();
-					trigger.cancel();
-				}
-			} else if (r < 0.2) {
-				// 2
-				if (!player.storage.gua2) {
-					trigger.num++;
-					if (cards.length > 0) {
-						tar.discard(cards.randomGet());
+			3: {
+				forceDie: true,
+				trigger: { player: 'die' },
+				skillAnimation: true,
+				animationColor: 'gray',
+				direct: true,
+				filter(event, player) {
+					return game.hasPlayer(function (current) {
+						return current.maxHp >= player.maxHp;
+					});
+				},
+				content() {
+					'step 0'
+					if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
 					}
-				}
-			} else if (r < 0.5) {
-				// 3
-				if (!player.storage.gua3) {
-					if (cards.length > 0) {
-						tar.discard(cards.randomGet());
+					if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
 					}
-				}
-			} else if (r < 0.8) {
-				// 4
-				if (!player.storage.gua4) {
-					tar.draw();
-				}
-			} else if (r < 0.95) {
-				// 5
-				if (!player.storage.gua5) {
-					trigger.cancel();
-					tar.recover(trigger.num);
-					tar.draw();
-				}
-			} else {
-				if (!player.storage.gua6) {
-					trigger.cancel();
-					tar.recover((tar.maxHp - tar.hp));
-					tar.draw(4);
-				}
-			}
-			if (player.hasSkill('hok_biangua')) {
-				if (player.countMark('hok_biangua2') < 8) {
-					player.addMark('hok_biangua2', 1);
-				}
-			}
-		},
-	},
-	hok_minggua3: {
-		forceDie: true,
-		trigger: { player: 'die' },
-		skillAnimation: true,
-		animationColor: 'gray',
-		direct: true,
-		filter(event, player) {
-			return game.hasPlayer(function (current) {
-				return current.maxHp >= player.maxHp;
-			});
-		},
-		content() {
-			'step 0'
-			if (player.storage.gua1 && player.storage.guaList.indexOf('大吉') >= 0) {
-				player.storage.guaList.splice(player.storage.guaList.indexOf('大吉'), 1);
-			}
-			if (player.storage.gua2 && player.storage.guaList.indexOf('中吉') >= 0) {
-				player.storage.guaList.splice(player.storage.guaList.indexOf('中吉'), 1);
-			}
-			if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
-				player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
-			}
-			if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
-				player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
-			}
-			if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
-				player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
-			}
-			if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
-				player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
-			} else {
-				return;
-			}
-			'step 1'
-			player.chooseControl(player.storage.guaList, 'cancel2').set('ai', function (event, player) {
-				var goodGua = !player.storage.gua1 + !player.storage.gua2 + !player.storage.gua3;
-				var badGua = !player.storage.gua4 + !player.storage.gua5 + !player.storage.gua6;
-				if (goodGua <= badGua) {
-					if (goodGua == 0) {
-						return '取消';
+					if (player.storage.gua3 && player.storage.guaList.indexOf('小吉') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('小吉'), 1);
 					}
-					return player.storage.guaList[0];
-				} else {
-					if (badGua == 0) {
-						return '取消';
+					if (player.storage.gua4 && player.storage.guaList.indexOf('小凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('小凶'), 1);
 					}
-					return player.storage.guaList[player.storage.guaList.length - 1];
-				}
-			});
-			'step 2'
-			switch (result.control) {
-				case '大吉':
-					player.storage.gua1 = true;
-					break;
-				case '中吉':
-					player.storage.gua2 = true;
-					break;
-				case '小吉':
-					player.storage.gua3 = true;
-					break;
-				case '小凶':
-					player.storage.gua4 = true;
-					break;
-				case '中凶':
-					player.storage.gua5 = true;
-					break;
-				case '大凶':
-					player.storage.gua6 = true;
-					break;
-				default:
-			}
-			result.control = result.control == 'cancel2' ? '取消' : result.control;
-			var str = get.translation(player) + '选择了：#y' + result.control;
-			// event.dialog = ui.create.dialog(str);
-			player.popup(result.control);
-			game.log(str);
-			player.markSkill('hok_minggua');
-			'step 3'
-			player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
-				return target.maxHp >= player.maxHp;
-			}).set('forceDie', true).set('ai', function (target) {
-				var goodGua = (player.storage.gua1 ? 0 : 1) + (player.storage.gua2 ? 0 : 1) + (player.storage.gua3 ? 0 : 1);
-				var badGua = (player.storage.gua4 ? 0 : 1) + (player.storage.gua5 ? 0 : 1) + (player.storage.gua6 ? 0 : 1);
-				if (get.attitude(_status.event.player, target) > 0 && goodGua > badGua) {
-					return 5;
-				}
-				if (get.attitude(_status.event.player, target) <= 0 && goodGua > badGua) {
-					return 0;
-				}
-				if (get.attitude(_status.event.player, target) > 0 && goodGua <= badGua) {
-					return 0;
-				}
-				return 2;
-			});
-			'step 4'
-			if (result.bool) {
-				var target = result.targets[0];
-				event.target = target;
-				player.logSkill('hok_minggua', target);
-			}
-			else event.finish();
-			'step 5'
-			target.storage.guaList = player.storage.guaList;
-			target.storage.gua1 = player.storage.gua1,
-				target.storage.gua2 = player.storage.gua2,
-				target.storage.gua3 = player.storage.gua3,
-				target.storage.gua4 = player.storage.gua4,
-				target.storage.gua5 = player.storage.gua5,
-				target.storage.gua6 = player.storage.gua6;
-			target.addSkillLog('hok_minggua');
-			target.addSkill('hok_minggua2');
-		},
+					if (player.storage.gua5 && player.storage.guaList.indexOf('中凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('中凶'), 1);
+					}
+					if (player.storage.gua6 && player.storage.guaList.indexOf('大凶') >= 0) {
+						player.storage.guaList.splice(player.storage.guaList.indexOf('大凶'), 1);
+					} else {
+						return;
+					}
+					'step 1'
+					player.chooseControl(player.storage.guaList, 'cancel2').set('ai', function (event, player) {
+						var goodGua = !player.storage.gua1 + !player.storage.gua2 + !player.storage.gua3;
+						var badGua = !player.storage.gua4 + !player.storage.gua5 + !player.storage.gua6;
+						if (goodGua <= badGua) {
+							if (goodGua == 0) {
+								return '取消';
+							}
+							return player.storage.guaList[0];
+						} else {
+							if (badGua == 0) {
+								return '取消';
+							}
+							return player.storage.guaList[player.storage.guaList.length - 1];
+						}
+					});
+					'step 2'
+					switch (result.control) {
+						case '大吉':
+							player.storage.gua1 = true;
+							break;
+						case '中吉':
+							player.storage.gua2 = true;
+							break;
+						case '小吉':
+							player.storage.gua3 = true;
+							break;
+						case '小凶':
+							player.storage.gua4 = true;
+							break;
+						case '中凶':
+							player.storage.gua5 = true;
+							break;
+						case '大凶':
+							player.storage.gua6 = true;
+							break;
+						default:
+					}
+					result.control = result.control == 'cancel2' ? '取消' : result.control;
+					var str = get.translation(player) + '选择了：#y' + result.control;
+					// event.dialog = ui.create.dialog(str);
+					player.popup(result.control);
+					game.log(str);
+					player.markSkill('hok_minggua');
+					'step 3'
+					player.chooseTarget(get.prompt('hok_minggua'), '令一名体力上限大于等于你的其他角色获得〖命卦〗', function (card, player, target) {
+						return target.maxHp >= player.maxHp;
+					}).set('forceDie', true).set('ai', function (target) {
+						var goodGua = (player.storage.gua1 ? 0 : 1) + (player.storage.gua2 ? 0 : 1) + (player.storage.gua3 ? 0 : 1);
+						var badGua = (player.storage.gua4 ? 0 : 1) + (player.storage.gua5 ? 0 : 1) + (player.storage.gua6 ? 0 : 1);
+						if (get.attitude(_status.event.player, target) > 0 && goodGua > badGua) {
+							return 5;
+						}
+						if (get.attitude(_status.event.player, target) <= 0 && goodGua > badGua) {
+							return 0;
+						}
+						if (get.attitude(_status.event.player, target) > 0 && goodGua <= badGua) {
+							return 0;
+						}
+						return 2;
+					});
+					'step 4'
+					if (result.bool) {
+						var target = result.targets[0];
+						event.target = target;
+						player.logSkill('hok_minggua', target);
+					}
+					else event.finish();
+					'step 5'
+					target.storage.guaList = player.storage.guaList;
+					target.storage.gua1 = player.storage.gua1,
+						target.storage.gua2 = player.storage.gua2,
+						target.storage.gua3 = player.storage.gua3,
+						target.storage.gua4 = player.storage.gua4,
+						target.storage.gua5 = player.storage.gua5,
+						target.storage.gua6 = player.storage.gua6;
+					target.addSkillLog('hok_minggua');
+				},
+			},
+		}
 	},
 	hok_biangua: {
 		global: ['hok_biangua2', 'hok_biangua3'],

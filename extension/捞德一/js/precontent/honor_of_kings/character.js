@@ -96,7 +96,7 @@ const characters = {
 	// SP李信
 	hok_sp_lixin: ['male', 'shen', 4, ['hok_wangming', 'hok_dengshen',], ['qun']],
 	// SP明世隐
-	hok_sp_mingshiyin: ['male', 'shu', 4, ['hok_sptaigua', 'hok_minggua', 'hok_minggua2', 'hok_biangua']],
+	hok_sp_mingshiyin: ['male', 'shu', 4, ['hok_sptaigua', 'hok_minggua', 'hok_biangua']],
 };
 
 export default characters;
