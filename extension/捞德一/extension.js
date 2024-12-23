@@ -24,7 +24,7 @@ game.laoShowNewPack = function () {
 		'<span class="text center">' +
 		'本扩展像名字一样捞德一，轻喷' +
 		'<br>' +
-		'<a href="https://github.com/">点击前往《捞德一》扩展Github仓库</a>' +
+		// '<a href="https://github.com/">点击前往《捞德一》扩展Github仓库</a>' +
 		'<br>' +
 		'捞德一 ' + lib.extensionPack.捞德一.version + ' 更新内容' +
 		'</span>', 'hidden');
@@ -53,17 +53,73 @@ game.laoShowNewPack = function () {
 		game.resume();
 	});
 
-	// 移动扩展图片素材到本体
-	game.getFileList('extension/捞德一/image', (folders, files) => {
-		if (folders) {
-			const fs = require('fs');
+	if (/Android/i.test(navigator.userAgent)) {
+		// Android环境
+
+		// 假设你要在应用的私有文档目录中创建一个名为"myNewFolder"的文件夹
+		var folderName = "myNewFolder";
+		var docsDir = "_documents/";
+
+		// 解析文档目录的路径
+		plus.io.resolveLocalFileSystemURL(docsDir, function (rootDir) {
+			// 在文档目录中创建新文件夹
+			rootDir.getDirectory(folderName, { create: true, exclusive: false }, function (newFolder) {
+				// 获取新文件夹的路径
+				newFolder.toURL(function (path) {
+					// 在这里，你可以通过控制台输出路径，或者将路径传递给前端页面
+					alert('新文件夹的路径是: ' + path);
+
+					// 如果你想在页面上显示路径，你可以使用uniapp的数据绑定机制
+					// 例如，假设你有一个名为"folderPath"的data属性，你可以这样设置它：
+					// that.setData({
+					//     folderPath: path
+					// });
+					// 然后在页面上通过{{folderPath}}来显示路径
+				}, function (error) {
+					alert('获取文件夹路径失败: ' + error.message);
+				});
+			}, function (error) {
+				alert('创建文件夹失败: ' + error.message);
+			});
+		}, function (error) {
+			alert('解析文档目录路径失败: ' + error.message);
+		});
+
+		// var sourcePath = 'resources/app/extension/捞德一/image'; // 源文件夹路径
+		// var targetPath = 'resources/app/image'; // 目标文件夹路径
+
+		// plus.io.resolveLocalFileSystemURL(sourcePath, function (entry) {
+		// 	plus.io.resolveLocalFileSystemURL(targetPath, function (root) {
+		// 		entry.copyTo(root, 'w', function (res) {
+		// 			alert('复制目录成功');
+		// 			alert(res);
+		// 		}, function (err) {
+		// 			alert('复制目录失败:');
+		// 			alert(err);
+		// 		});
+		// 	}, function (err) {
+		// 		alert('获取目标目录失败:');
+		// 		alert(err);
+		// 	});
+		// }, function (err) {
+		// 	alert('获取源目录失败:');
+		// 	alert(err);
+		// });
+
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
+		//Node.js环境
+		const fs = require('fs');
+		// 移动扩展图片素材到本体
+		if (fs.existsSync('resources/app/extension/捞德一/image')) {
 			fs.cp('resources/app/extension/捞德一/image', 'resources/app/image', { recursive: true }, (err) => {
 				if (err) {
 					alert(err);
 				}
 			});
-		}
-	});
+		};
+	} else {
+		alert('其他环境，反馈请联系扩展作者捞德一');
+	}
 };
 
 let extensionPackage = {
