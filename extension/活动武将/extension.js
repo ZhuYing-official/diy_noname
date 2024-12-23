@@ -12,14 +12,14 @@ game.bolShowNewPack = function () {
 	//更新告示
 	var HuoDong_update = [
 		'/setPlayer/',
-		'部分素材替换',
-		'添加欢杀武将管宁、谋姜维、韩遂、毌丘俭、精卫、潘璋马忠、阚泽、界太史慈',
+		'bugfix',
+		'添加新武将眼睛👁（施工ing）',
+		'添加欢杀武将欢杀郑浑',
 		'To be continued...',
 	];
 	//更新武将
 	var HuoDong_players = [
-		'Mbaby_guanning', 'Mbaby_ol_sb_jiangwei', 'Mbaby_re_hansui', 'Mbaby_guanqiujian',
-		'Mbaby_jingwei', 'Mbaby_panzhangmazhong', 'Mbaby_kanze', 'Mbaby_taishici',
+		'bilibili_yanjing', 'Mbaby_zhenghun',
 	];
 	//加载
 	var dialog = ui.create.dialog(
@@ -74,7 +74,7 @@ let extensionPackage = {
 		author: '萌新（转型中）',
 		diskURL: '',
 		forumURL: '',
-		version: '0.3.4 - 待定',
+		version: '0.3.5 - 待定',
 		//新人制作扩展，希望大家支持。
 		//新人技术不足，希望大家包涵。
 		//壹、贰、叁、肆、伍、陆、柒、捌、玖、拾

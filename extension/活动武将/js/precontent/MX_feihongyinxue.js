@@ -17,7 +17,7 @@ const packs = function () {
             },
         },
         character: {
-            mx_fh_sp_bianfuren: ['female', 'wei', 3, ['fh_fuding', 'fh_yuejian']],
+            mx_fh_sp_bianfuren: ['female', 'wei', 3, ['fh_fuding', 'fh_yuejian'], ['name:卞|null']],
             mx_fh_sp_chenzhen: ['male', 'shu', 3, ['fh_shameng']],
             mx_fh_feiyi: ['male', 'shu', 3, ['fyjianyu', 'fh_shengxi']],
             mx_fh_luotong: ['male', 'wu', 4, ['fh_minshi', 'fh_xianming']],
@@ -25,11 +25,11 @@ const packs = function () {
             mx_fh_sp_duyu: ['male', 'qun', 4, ['fh_wuku', 'fh_sanchen']],
             mx_fh_sp_xunchen: ['male', 'qun', 3, ['fh_weipo', 'fh_chenshi', 'fh_mouzhi']],
             mx_fh_wangling: ['male', 'wei', 4, ['fh_xingqi', 'fh_zifu', 'fh_mibei']],
-            mx_fh_sp_mifuren: ['female', 'shu', 3, ['fh_guixiu', 'qingyu']],
+            mx_fh_sp_mifuren: ['female', 'shu', 3, ['fh_guixiu', 'qingyu'], ['name:糜|null']],
             mx_fh_zhouchu: ['male', 'wu', 4, ['xianghai', 'fh_chuhai']],
             mx_fh_wujing: ['male', 'wu', 4, ['fh_heji', 'liubing']],
             mx_fh_sp_yanghu: ['male', 'qun', 3, ['fh_mingfa', 'fh_rongbei']],
-            mx_fh_caizhenji: ['female', 'wei', 3, ['sheyi', 'fh_tianyin']],
+            mx_fh_caizhenji: ['female', 'wei', 3, ['sheyi', 'fh_tianyin'], ['name:蔡|null']],
             mx_fh_sp_huaxin: ['male', 'wei', 3, ['fh_yuanqing', 'shuchen']],
             mx_fh_xiangchong: ['male', 'shu', 4, ['fh_guying', 'muzhen']],
             mx_fh_sp_xujing: ['male', 'shu', 3, ['fh_boming', 'fh_ejian']],
@@ -44,8 +44,8 @@ const packs = function () {
             mx_fh_sp_lvfan: ['male', 'wu', 3, ['fh_diaodu', 'mbdiancai', 'spyanji']],
             mx_fh_shen_guojia: ['male', 'shen', 3, ['fh_shuishi', 'fh_tianyi', 'fh_sghuishi'], ['wei']],
             mx_fh_shen_xunyu: ['male', 'shen', 3, ['tianzuo', 'fh_lingce', 'fh_dinghan'], ['wei']],
-            mx_fh_shen_taishici: ['male', 'shen', 4, ['dulie', 'fh_powei'], ['wu']],
-            mx_fh_dc_sunziliufang: ['male', 'wei', 3, ['dcqinshen', 'fh_weidang']],
+            mx_fh_shen_taishici: ['male', 'shen', 4, ['dulie', 'fh_powei'], ['wu', 'name:太史|慈']],
+            mx_fh_dc_sunziliufang: ['male', 'wei', 3, ['dcqinshen', 'fh_weidang'], ['name:孙|资-刘|放']],
             mx_fh_liyan: ['male', 'shu', 3, ['fh_duliang', 'fh_fulin']],
             mx_fh_dc_huanghao: ['male', 'shu', 3, ['fh_qinqing', 'huisheng', 'dccunwei'], ['tempname:dc_huanghao']],
             mx_fh_re_sundeng: ['male', 'wu', 4, ['fh_kuangbi']],
@@ -53,15 +53,15 @@ const packs = function () {
             mx_fh_wuxian: ['female', 'shu', 3, ['fumian', 'fh_daiyan']],
             mx_fh_caojie: ['female', 'qun', 3, ['fh_shouxi', 'fh_huimin']],
             mx_fh_jikang: ['male', 'wei', 3, ['fh_qingxian', 'fh_juexiang']],
-            mx_fh_zhugeshang: ['male', 'shu', 3, ['fh_sangu', 'yizu']],
+            mx_fh_zhugeshang: ['male', 'shu', 3, ['fh_sangu', 'yizu'], ['name:诸葛|尚']],
             mx_fh_lukai: ['male', 'wu', 4, ['fh_bushi', 'lkzhongzhuang']],
             mx_fh_kebineng: ['male', 'qun', 3, ['fh_kousheng']],
             mx_fh_re_huangyueying: ['female', 'shu', 3, ['fh_jizhi', 'reqicai']],
             mx_fh_re_zhenji: ['female', 'wei', 3, ['qingguo', 'fh_luoshen'], ['tempname:re_zhenji']],
             mx_fh_gz_huangzhong: ['male', 'shu', 4, ['fh_liegong'], ['die:huangzhong']],
             mx_fh_zhoutai: ['male', 'wu', 4, ['fh_buqu', 'fh_fenji']],
-            mx_fh_ol_sp_zhugeliang: ['male', 'shu', 3, ['bazhen', 'olhuoji', 'olkanpo', 'fh_cangzhuo'], ['tempname:ol_sp_zhugeliang']],
-            mx_fh_re_taishici: ['male', 'wu', 4, ['tianyi', 'fh_hanzhan'], ['tempname:re_taishici']],
+            mx_fh_ol_sp_zhugeliang: ['male', 'shu', 3, ['bazhen', 'olhuoji', 'olkanpo', 'fh_cangzhuo'], ['tempname:ol_sp_zhugeliang', 'name:诸葛|亮']],
+            mx_fh_re_taishici: ['male', 'wu', 4, ['tianyi', 'fh_hanzhan'], ['tempname:re_taishici', 'name:太史|慈']],
             mx_fh_yanwen: ['male', 'qun', 4, ['fh_shuangxiong', 'fh_xiayong']],
             mx_fh_guanqiujian: ['male', 'wei', 4, ['fh_zhengrong', 'fh_hongju']],
             mx_fh_xin_lingtong: ['male', 'wu', 4, ['fh_xuanfeng', 'yongjin'], ['tempname:xin_lingtong']],
@@ -581,7 +581,7 @@ const packs = function () {
                     return game.hasPlayer2(current => {
                         if (current == player) return false;
                         var evt = event.getl(current);
-                        return evt && evt.player == current && evt.es && evt.es.length;
+                        return evt?.player == current && evt.es?.length;
                     });
                 },
                 forced: true,
@@ -592,7 +592,7 @@ const packs = function () {
                         num--;
                         game.filterPlayer2(target => target != player).forEach(current => {
                             var evt = trigger.getl(current);
-                            if (evt && evt.player == current && evt.es && evt.es.length) num += evt.es.length;
+                            if (evt?.player == current && evt.es?.length) num += evt.es.length;
                         });
                     }
                     num = Math.min(num, 3 - player.countMark('fh_wuku'));
@@ -1702,7 +1702,7 @@ const packs = function () {
                         trigger: { player: ['useCardBefore', 'respondBefore'] },
                         filter(event, player) {
                             var cards = player.getCards('s', card => card.hasGaintag('fh_songshu_buff') && card._cardid);
-                            return event.cards && event.cards.some(card => cards.includes(card));
+                            return event.cards?.some(card => cards.includes(card));
                         },
                         forced: true,
                         popup: false,
@@ -2329,8 +2329,7 @@ const packs = function () {
                     'step 1'
                     player.judge(function (result) {
                         var evt = _status.event.getParent('fh_shuishi');
-                        if (evt && evt.suits && evt.suits.includes(get.suit(result))) return 0;
-                        return 1;
+                        return 1 - evt?.suits?.includes(get.suit(result));
                     }).set('callback', lib.skill.fh_shuishi.callback).judge2 = function (result) {
                         return result.bool ? true : false;
                     };
@@ -2416,8 +2415,7 @@ const packs = function () {
                     var result = yield player.chooseTarget(get.prompt2('fh_sghuishi')).set('ai', target => {
                         var player = _status.event.player;
                         var list = target.getSkills(null, false, false).filter(skill => {
-                            var info = lib.skill[skill];
-                            return info && info.juexingji;
+                            return lib.skill[skill]?.juexingji;
                         });
                         if (list.length) return get.attitude(player, target);
                         return get.attitude(player, target) + 5;
@@ -2427,8 +2425,7 @@ const packs = function () {
                         player.logSkill('fh_sghuishi', target);
                         player.awakenSkill('fh_sghuishi');
                         var list = target.getSkills(null, false, false).filter(skill => {
-                            var info = lib.skill[skill];
-                            return info && info.juexingji;
+                            return lib.skill[skill]?.juexingji;
                         });
                         if (!list.length) {
                             yield target.draw(4);
@@ -2792,7 +2789,7 @@ const packs = function () {
                         });
                         player.when('fh_qinqingEnd').then(() => {
                             var zhu = game.filterPlayer(current => current.getSeatNum() == 1)[0];
-                            if (zhu && zhu.isIn()) {
+                            if (zhu?.isIn()) {
                                 var num = targets.filter(target => target.countCards('h') > zhu.countCards('h')).length;
                                 if (num > 0) player.draw(num);
                             }
@@ -2871,7 +2868,7 @@ const packs = function () {
                             if (event.draw) {
                                 player.draw('nodelay');
                                 var target = player.getStorage('fh_kuangbi_effect')[0];
-                                if (target && target.isIn()) target.draw();
+                                if (target?.isIn()) target.draw();
                             }
                             else player.draw();
                         },
@@ -3220,7 +3217,7 @@ const packs = function () {
                         else event.finish();
                     }
                     'step 2'
-                    if (result && result.cards) event.card = result.cards[0];
+                    if (result?.cards?.length) event.card = result.cards[0];
                     'step 3'
                     if (event.card && get.suit(event.card) == 'club') player.draw();
                 },
@@ -4135,13 +4132,13 @@ const packs = function () {
                     if (event.name == 'phaseDiscard') {
                         var cards = [];
                         player.getHistory('lose', function (evt) {
-                            if (evt && evt.type == 'discard' && evt.getParent('phaseDiscard') == event && evt.hs) cards.addArray(evt.hs);
+                            if (evt?.type == 'discard' && evt.getParent('phaseDiscard') == event && evt.hs) cards.addArray(evt.hs);
                         });
                         return cards.length > 1;
                     }
                     else {
                         var evt = event.getl(player);
-                        return evt && evt.es && evt.es.length > 0;
+                        return evt?.es?.length > 0;
                     }
                 },
                 *content(event, map) {
@@ -4757,7 +4754,7 @@ const packs = function () {
             filter(event, player) {
                 if (event.name == 'equip') return event.card.fh_extra;
                 if (event.getg) return event.getg(player).some(card => card.fh_extra);
-                return event.cards && event.cards.some(card => card.fh_extra);
+                return event.cards?.some(card => card.fh_extra);
             },
             priority: 114514,
             forced: true,

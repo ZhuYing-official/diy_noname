@@ -10,6 +10,7 @@ const packs = function () {
                 CLongZhou: ['lz_sufei', 'lz_tangzi', 'lz_liuqi', 'lz_huangquan'],
                 CZhengHuo: ['bilibili_zhengxuan', 'bilibili_sp_xuyou', 'old_zuoci'],
                 Chuodong: ['bilibili_shengxunyu', 'bilibili_Firewin', 'bilibili_jinglingqiu', 'bilibili_suixingsifeng', 'bilibili_Emptycity', 'bilibili_thunderlei', 'bilibili_lonelypatients', 'bilibili_ningjingzhiyuan', 'bilibili_xizhicaikobe'],
+                CDormitory: ['bilibili_yanjing'],
                 Cothers: ['bilibili_daxiao', 'bilibili_wangtao', 'bilibili_wangyue', 'bilibili_x_wangtao', 'bilibili_x_wangyue', 'bilibili_xushao', 'bilibili_shen_guojia', 'bilibili_re_xusheng', 'bilibili_kuangshen04', 'bilibili_adong', 'bilibili_zhangrang', 'bilibili_litiansuo', 'decade_huangwudie', 'bilibili_huanggai', 'bilibili_ekeshaoge', 'bilibili_guanning', 'bilibili_wangwang', 'bilibili_zhouxiaomei', 'diy_lvmeng'],
                 CDanJi: ['DJ_caiyang', 'DJ_pujing', 'DJ_huban'],
                 CSCS: ['biliscs_shichangshi', 'biliscs_zhangrang', 'biliscs_zhaozhong', 'biliscs_sunzhang', 'biliscs_bilan', 'biliscs_xiayun', 'biliscs_hankui', 'biliscs_lisong', 'biliscs_duangui', 'biliscs_guosheng', 'biliscs_gaowang'],
@@ -17,18 +18,18 @@ const packs = function () {
             },
         },
         character: {
-            bilibili_daxiao: ['female', 'wu', 3, ['bilibili_qiqin', 'dczixi', 'dcweiwan'], ['die:yue_daqiao', 'die:yue_xiaoqiao']],
-            bilibili_zhouxiaomei: ['female', 'wu', 3, ['dchuishu', 'dcyishu', 'yingzi', 'biyue']],
+            bilibili_daxiao: ['female', 'wu', 3, ['bilibili_qiqin', 'dczixi', 'dcweiwan'], ['die:yue_daqiao', 'die:yue_xiaoqiao', 'name:桥|null-桥|null']],
+            bilibili_zhouxiaomei: ['female', 'wu', 3, ['dchuishu', 'dcyishu', 'yingzi', 'biyue'], ['name:周|null']],
             bilibili_zhangrang: ['male', 'qun', 3, ['bilibili_taoluan']],
             diy_lvmeng: ['male', 'wu', 4, ['BTkongju', 'BThouqi'], ['die:lvmeng']],
-            bilibili_wangwang: ['female', 'shu', 3, ['huguan', 'yaopei', 'mingluan'], ['die:wangtao', 'die:wangyue']],
+            bilibili_wangwang: ['female', 'shu', 3, ['huguan', 'yaopei', 'mingluan'], ['die:wangtao', 'die:wangyue', 'name:王|桃-王|悦']],
             bilibili_wangtao: ['female', 'shu', 3, ['huguan', 'yaopei', 'dualside'], ['dualside:bilibili_x_wangyue', 'character:wangtao', 'die:wangtao']],
             bilibili_wangyue: ['female', 'shu', 3, ['huguan', 'mingluan', 'dualside'], ['dualside:bilibili_x_wangtao', 'character:wangyue', 'tempname:wangyue', 'die:wangyue']],
             bilibili_x_wangtao: ['female', 'shu', 3, ['huguan', 'yaopei', 'dualside'], ['unseen', 'character:wangtao', 'die:wangtao']],
             bilibili_x_wangyue: ['female', 'shu', 3, ['huguan', 'mingluan', 'dualside'], ['unseen', 'character:wangyue', 'tempname:wangyue', 'die:wangyue']],
             bilibili_guanning: ['male', 'qun', '3/7', ['BTdunshi'], ['forbidai', 'die:guanning']],
             bilibili_huanggai: ['male', 'wu', 4, ['bilibili_kurou', 'bilibili_zhaxiang'], ['die:re_huanggai']],
-            bilibili_ekeshaoge: ['male', 'qun', 4, ['bilibili_xueji', 'bilibili_hanran']],
+            bilibili_ekeshaoge: ['male', 'qun', 4, ['bilibili_xueji', 'bilibili_hanran'], ['name:null|null']],
             decade_huangwudie: ['female', 'shu', 3, ['decadexiwu', 'decadehongzhuang']],
             bilibili_litiansuo: ['male', 'qun', 4, ['qin_jugu', 'yijin', 'twzhouhu', 'twharvestinori', 'twzuhuo', 'twzhouzu', 'twhuangjin', 'twguimen', 'twdidao']],
             bilibili_sp_xuyou: ['male', 'qun', 3, ['spshicai', 'bilibili_fushi'], ['character:sp_xuyou', 'die:sp_xuyou']],
@@ -36,28 +37,29 @@ const packs = function () {
             lz_liuqi: ['male', 'shu', 3, ['spwenji', 'lztunjiang'], ['character:liuqi', 'doublegroup:shu:qun', 'die:sp_liuqi']],
             lz_tangzi: ['male', 'wu', 4, ['lzxingzhao'], ['character:tangzi', 'doublegroup:wu:wei', 'die:xf_tangzi']],
             lz_huangquan: ['male', 'wei', 3, ['lzdianhu', 'xinfu_jianji'], ['character:xf_huangquan', 'doublegroup:wei:shu', 'die:xf_huangquan']],
-            bilibili_adong: ['male', 'qun', 4, ['jueman', 'oljianman'], ['die:ahuinan', 'die:dongtuna']],
+            bilibili_adong: ['male', 'qun', 4, ['jueman', 'oljianman'], ['die:ahuinan', 'die:dongtuna', 'name:null|null']],
             old_zuoci: ['male', 'qun', 3, ['gz_huashen', 'gz_xinsheng']],
-            bilibili_shengxunyu: ['male', 'key', 4, ['bilibili_hehu', 'bilibili_jinyan', 'bilibili_yutai'], ['clan:宿舍群', 'clan:肘击群']],
-            bilibili_Firewin: ['male', 'key', 4, ['jsrgfeiyang', 'jsrgbahu', 'bilibili_tixiang'], ['clan:宿舍群', 'clan:肘击群', 'clan:活动群']],
-            bilibili_jinglingqiu: ['male', 'key', '3/4', ['bilibili_tiyi', 'bilibili_zili'], ['clan:活动群']],
-            bilibili_suixingsifeng: ['female', 'key', 4, ['bilibili_liaoxing', 'bilibili_daili', 'bilibili_duoyang'], ['clan:肘家军', 'clan:宿舍群', 'clan:肘击群', 'clan:活动群']],
-            bilibili_Emptycity: ['male', 'key', 4, ['bilibili_zhiyou', 'bilibili_guanli'], ['clan:活动群', 'clan:Thunder群']],
-            bilibili_thunderlei: ['male', 'key', '2/4/3', ['bilibili_Thunder', 'bilibili_qianxi'], ['clan:Thunder群']],
+            bilibili_shengxunyu: ['male', 'key', 4, ['bilibili_hehu', 'bilibili_jinyan', 'bilibili_yutai'], ['clan:宿舍群', 'clan:肘击群', 'name:熏|鱼']],
+            bilibili_Firewin: ['male', 'key', 4, ['jsrgfeiyang', 'jsrgbahu', 'bilibili_tixiang'], ['clan:宿舍群', 'clan:肘击群', 'clan:活动群', 'name:火|赢']],
+            bilibili_jinglingqiu: ['male', 'key', '3/4', ['bilibili_tiyi', 'bilibili_zili'], ['clan:活动群', 'name:精灵|球']],
+            bilibili_suixingsifeng: ['female', 'key', 4, ['bilibili_liaoxing', 'bilibili_daili', 'bilibili_duoyang'], ['clan:肘家军', 'clan:宿舍群', 'clan:肘击群', 'clan:活动群', 'name:萌新|转型中']],
+            bilibili_Emptycity: ['male', 'key', 4, ['bilibili_zhiyou', 'bilibili_guanli'], ['clan:活动群', 'clan:Thunder群', 'name:空|城']],
+            bilibili_thunderlei: ['male', 'key', '2/4/3', ['bilibili_Thunder', 'bilibili_qianxi'], ['clan:Thunder群', 'name:雷|null']],
             bilibili_zhengxuan: ['male', 'qun', 3, ['bilibili_zhengjing'], ['character:zhengxuan', 'die:zhengxuan']],
-            bilibili_lonelypatients: ['male', 'key', 4, ['bilibili_meihua', 'bilibili_gongyou'], ['clan:活动群']],
+            bilibili_lonelypatients: ['male', 'key', 4, ['bilibili_meihua', 'bilibili_gongyou'], ['clan:活动群', 'name:独孤|null']],
             'bilibili_kuangshen04': ['male', 'shen', '4/6', ['BTmakeBug', 'BTtequ', 'BTguoshou', 'reqimou', 'zhaxiang', 'tairan']],
             bilibili_shen_guojia: ['male', 'wei', '9/9/5', ['stianyi', 'resghuishi', 'bilibili_huishi'], ['doublegroup:shen:wei:wu', 'die:shen_guojia']],
             bilibili_re_xusheng: ['male', 'wu', 4, ['bilibili_pojun', 'kuangcai', 'bilibili_baodao'], ['die:re_xusheng']],
             bilibili_xushao: ['male', 'qun', '1/6', ['bilibili_pingjian'], ['ext:活动武将/image/character/old_xushao.jpg', 'InitFilter:noZhuHp']],
-            bilibili_ningjingzhiyuan: ['male', 'key', 4, ['bilibili_liaoxing', 'bilibili_xiezhi', 'bilibili_fazhou'], ['clan:肘家军', 'clan:宿舍群', 'clan:肘击群', 'clan:活动群']],
-            bilibili_xizhicaikobe: ['male', 'key', 4, ['bilibili_biexiao', 'bilibili_xingshi', 'bilibili_zhangcai'], ['doublegroup:wei:shu:wu:qun:jin', 'clan:肘家军', 'clan:肘击群', 'clan:活动群']],
+            bilibili_ningjingzhiyuan: ['male', 'key', 4, ['bilibili_liaoxing', 'bilibili_xiezhi', 'bilibili_fazhou'], ['clan:肘家军', 'clan:宿舍群', 'clan:肘击群', 'clan:活动群', 'name:闹动|导近']],
+            bilibili_xizhicaikobe: ['male', 'key', 4, ['bilibili_biexiao', 'bilibili_xingshi', 'bilibili_zhangcai'], ['doublegroup:wei:shu:wu:qun:jin', 'clan:肘家军', 'clan:肘击群', 'clan:活动群', 'name:戏|子宓']],
+            bilibili_yanjing: ['male', 'key', 3, ['bilibili_dongcha', 'bilibili_mingcha', 'bilibili_huiyan'], ['clan:宿舍群', 'clan:肘击群', 'clan:活动群', 'name:tooenough|眼睛']],
             //千里走单骑 
             DJ_caiyang: ['male', 'qun', 1, ['yinka', 'zhuixi'], ['character:caiyang']],
             DJ_pujing: ['male', 'qun', 1, ['yinka'], ['character:pujing']],
             DJ_huban: ['male', 'qun', 2, ['yinka'], ['character:huban']],
             //十常侍
-            biliscs_shichangshi: ['male', 'qun', 1, ['scstaoluan', 'scschiyan', 'scszimou', 'scspicai', 'scsyaozhuo', 'scsxiaolu', 'scskuiji', 'scschihe', 'scsniqu', 'scsmiaoyu'], ['character:shichangshi']],
+            biliscs_shichangshi: ['male', 'qun', 1, ['scstaoluan', 'scschiyan', 'scszimou', 'scspicai', 'scsyaozhuo', 'scsxiaolu', 'scskuiji', 'scschihe', 'scsniqu', 'scsmiaoyu'], ['character:shichangshi', 'name:张|让-赵|忠-孙|璋-毕|岚-夏|恽-韩|悝-栗|嵩-段|珪-郭|胜-高|望']],
             biliscs_zhangrang: ['male', 'qun', 1, ['scstaoluan'], ['character:scs_zhangrang']],
             biliscs_zhaozhong: ['male', 'qun', 1, ['scschiyan'], ['character:scs_zhaozhong']],
             biliscs_sunzhang: ['male', 'qun', 1, ['scszimou'], ['character:scs_sunzhang']],
@@ -107,6 +109,7 @@ const packs = function () {
             'kuangshen04': '狂神，无名杀究极更新者，但因为其过于超前的思想和当前时间线的发展完全脱轨而致其PR惨遭扑杀，遂黑化为狂神1103形态，别名牢狂，蠢蠢欲动，准备于未来继续打破历史。',
             ningjingzhiyuan: '宁静致远，俗称牢宁，赛尔号抽象玩家，“科密”萌新转型中的心腹，喜爱肘击群，现负责维持群内秩序并将违规群友抓进小黑屋肘击群，肘家军大将之一，抽象集大成者。',
             xizhicaikobe: '戏志才，抽象社恐人士，肘家军大将之一，无名杀<span style="text-decoration: line-through;">非</span>专业人士和爱好者，萌新转型中的任务召唤人。孩子们，其实牢戏<span style="text-decoration: line-through;">并不</span>想要。',
+            yanjing: '路边一条',
         },
         characterTitle: {
             'bilibili_kuangshen04': (() => (new Date().getDate() == 8 || new Date().getDate() == 24 || (new Date().getMonth() + 1 == 7 && new Date().getDate() == 2)) ? '孩子们，我回来了' : '复活赛ing')(),
@@ -789,7 +792,7 @@ const packs = function () {
                         if (i.group == 'qun') quns++;
                     }
                     var skills = player.additionalSkills.bilibili_fushi;
-                    if (skills && skills.length) {
+                    if (skills?.length) {
                         if (weis > quns && !skills.includes('bilibili_chenggong')) player.addAdditionalSkills('bilibili_fushi', ['bilibili_chenggong']);
                         else if (quns > weis && !skills.includes('bilibili_zezhu')) player.addAdditionalSkills('bilibili_fushi', ['bilibili_zezhu']);
                         else player.removeAdditionalSkill('bilibili_fushi');
@@ -1221,7 +1224,7 @@ const packs = function () {
                         filter(event, player) {
                             if (event.revealed) return false;
                             var info = get.info(event.skill);
-                            if (info && info.charlotte) return false;
+                            if (info?.charlotte) return false;
                             var skills = lib.skill.gz_huashen.getSkills(player.getStorage('gz_huashen'), player);
                             game.expandSkills(skills);
                             return skills.includes(event.skill);
@@ -1678,7 +1681,7 @@ const packs = function () {
                     combo: 'old_yingba',
                     directHit_ai: true,
                     skillTagFilter(player, tag, arg) {
-                        return arg && arg.target && arg.target.hasMark('old_yingba_mark')
+                        return arg?.target && arg.target.hasMark('old_yingba_mark')
                     },
                 },
                 subSkill: {
@@ -2021,8 +2024,7 @@ const packs = function () {
                 filter(event, player) {
                     if (event.name == 'useCardToTargeted') return event.targets.length == 1;
                     if (player == event.player) return false;
-                    var targets = event.targets;
-                    return targets && targets.includes(player) && event.type == 'player';
+                    return event.targets?.includes(player) && event.type == 'player';
                 },
                 forced: true,
                 logTarget: 'player',
@@ -2515,12 +2517,11 @@ const packs = function () {
                         var skill = storage.current2;
                         if (skill) dialog.add('<div><div class="skill">【' + get.translation(lib.translate[skill + '_ab'] || get.translation(skill).slice(0, 2)) + '】</div>' + '<div>' + get.skillInfoTranslation(skill, player) + '</div></div>');
                     },
-                    content(storage, player) {
+                    content(storage) {
                         return '共有' + get.cnNumber(storage.character.length) + '张「化身」'
                     },
-                    markcount(storage, player) {
-                        if (storage && storage.character) return storage.character.length;
-                        return 0;
+                    markcount(storage) {
+                        return storage?.character?.length || 0;
                     },
                 },
                 changeSex(sex, player) {
@@ -3956,7 +3957,7 @@ const packs = function () {
                                 })) return;
                                 if (player.isPhaseUsing()) {
                                     var evt = player.getLastUsed();
-                                    if (evt && evt.targets && evt.targets.length && evt.isPhaseUsing(player) && game.hasPlayer(function (current) {
+                                    if (evt?.targets && evt.targets.length && evt.isPhaseUsing(player) && game.hasPlayer(function (current) {
                                         return evt.targets.includes(current) && player.canUse(card, current) && get.effect(current, card, player, player) > 0;
                                     })) return num + 10;
                                 }
@@ -4409,7 +4410,7 @@ const packs = function () {
                 juexingji: true,
                 filter(event, player) {
                     var zhu = get.zhu(player);
-                    if (zhu && zhu.isZhu) {
+                    if (zhu?.isZhu) {
                         if (lib.translate[zhu.name].indexOf('曹操') != -1 || (zhu.name2 && lib.translate[zhu.name2].indexOf('曹操') != -1)) {
                             if (player.countCards('h') > player.hp) return true;
                         }
@@ -4641,7 +4642,7 @@ const packs = function () {
                     return game.hasPlayer(function (current) {
                         if (!list.includes(current)) return false;
                         var evt = event.getl(current);
-                        return evt && evt.hs && evt.hs.length && current.countCards('h') == 0;
+                        return evt?.hs?.length && current.countCards('h') == 0;
                     });
                 },
                 logTarget(event, player) {
@@ -4650,7 +4651,7 @@ const packs = function () {
                     return game.filterPlayer(function (current) {
                         if (!list.includes(current)) return false;
                         var evt = event.getl(current);
-                        return evt && evt.hs && evt.hs.length && current.countCards('h') == 0;
+                        return evt?.hs?.length && current.countCards('h') == 0;
                     }).sortBySeat();
                 },
                 forced: true,
@@ -5041,10 +5042,7 @@ const packs = function () {
                         var skill = evt.sourceSkill || evt.skill, targets = evt.targets;
                         var info = get.info(skill);
                         if (!info || info.charlotte) return false;
-                        if (targets && targets.length) {
-                            if (targets.filter(i => player.differentSexFrom(i)).length) return true;
-                        }
-                        return false;
+                        return targets?.some(i => player.differentSexFrom(i));
                     });
                     if (history.length) return history[0].targets.filter(i => player.differentSexFrom(i));
                     return [];
@@ -6771,7 +6769,7 @@ const packs = function () {
                         filter(event, player) {
                             return game.hasPlayer2(current => {
                                 var evt = event.getl(current);
-                                return evt && evt.cards2 && evt.cards2.some(card => card.name == 'ying');
+                                return evt?.cards2?.some(card => card.name == 'ying');
                             });
                         },
                         forced: true,
@@ -6779,7 +6777,7 @@ const packs = function () {
                             var num = 0;
                             game.countPlayer2(current => {
                                 var evt = trigger.getl(current);
-                                if (evt && evt.cards2) num += evt.cards2.filter(card => card.name == 'ying').length;
+                                if (evt?.cards2) num += evt.cards2.filter(card => card.name == 'ying').length;
                             });
                             if (num) player.draw(num);
                         },
@@ -6805,7 +6803,7 @@ const packs = function () {
                     if (!skill || skill == 'bilibili_mx_kanpo') return false;
                     var info = get.info(skill);
                     if (!info || info.charlotte || info.ruleSkill) return false;
-                    return targets && targets.includes(player);
+                    return targets?.includes(player);
                 },
                 prompt2(event, player) {
                     var skill = ['chooseTarget', 'chooseCardTarget', 'chooseToUseEnd', 'chooseToCompareEnd',
@@ -7052,7 +7050,7 @@ const packs = function () {
                                     if (!player.hasSkill(skill, null, null, false)) await player.addSkills(skill);
                                     else await player.draw(3);
                                     const evt = event.getParent();
-                                    if (evt && evt.name == 'useCard' && (evt.cards || []).length == 1 && evt.cards[0].name == event.card.name) {
+                                    if (evt?.name == 'useCard' && evt.cards?.length == 1 && evt.cards[0].name == event.card.name) {
                                         const cards = evt.cards.filterInD();
                                         if (cards.length) {
                                             if (!cards[0].decadeSkill) {
@@ -7314,7 +7312,7 @@ const packs = function () {
                         filter(event, player) {
                             if (event.name.indexOf('lose') == 0) {
                                 var evt = event.getl(player);
-                                return evt && evt.player == player && evt.cards && evt.cards.some(card => card.bilibili_meihua);
+                                return evt?.player == player && evt.cards?.some(card => card.bilibili_meihua);
                             }
                             return event.cards.some(card => card.bilibili_meihua);
                         },
@@ -7417,7 +7415,7 @@ const packs = function () {
                         var bool = false;
                         game.countPlayer(function (current) {
                             var evt = event.getl(current);
-                            if (evt && evt.es) bool = true;
+                            if (evt?.es?.length) bool = true;
                         });
                         if (event.name == 'equip') bool = true;
                         if (!bool) return false;
@@ -8546,12 +8544,10 @@ const packs = function () {
                     'step 1'
                     player.judge(result => {
                         var evt = _status.event.getParent('bilibili_huishi');
-                        if (evt && evt.suits && evt.suits.includes(get.suit(result))) return 0;
-                        return 1;
-                    })
-                        .set('callback', lib.skill.bilibili_huishi.callback).judge2 = function (result) {
-                            return result.bool ? true : false;
-                        };
+                        return 1 - evt?.suits?.includes(get.suit(result));
+                    }).set('callback', lib.skill.bilibili_huishi.callback).judge2 = function (result) {
+                        return result.bool ? true : false;
+                    };
                     'step 2'
                     var cards = cards.filterInD();
                     if (cards.length) {
@@ -8824,7 +8820,7 @@ const packs = function () {
                 filter(event, player) {
                     if (!lib.skill.bol_wuqibingfa.countSkill(player)) return false;
                     const evt = event.getl(player);
-                    return evt && evt.es.some(card => card.name == 'bol_wuqibingfa');
+                    return evt?.es?.some(card => card.name == 'bol_wuqibingfa');
                 },
                 forced: true,
                 async content(event, trigger, player) {
@@ -8946,7 +8942,7 @@ const packs = function () {
                     if (humans.length > 0) {
                         const solve = function (resolve, reject) {
                             return function (result, player) {
-                                if (result && result.bool) {
+                                if (result?.bool) {
                                     choice[player.playerid] = result.links;
                                     resolve();
                                 } else reject();
@@ -8975,7 +8971,7 @@ const packs = function () {
                     if (locals.length > 0) {
                         for (let current of locals) {
                             const result = await lib.skill.bolfenfou.chooseButton(current).forResult();
-                            if (result && result.bool) {
+                            if (result?.bool) {
                                 choice[current.playerid] = result.links;
                             }
                         }
@@ -9096,14 +9092,13 @@ const packs = function () {
                 },
                 trigger: { source: 'damageBegin1' },
                 filter(event, player) {
-                    const evt = event.getParent(2);
-                    return evt && evt.name == 'useCard';
+                    return event.getParent(2)?.name == 'useCard';
                 },
                 forced: true,
                 logTarget: 'player',
                 content() {
                     const evt = trigger.getParent(2);
-                    trigger.num = (evt.cards || []).reduce((sum, card) => sum + get.cardNameLength(card), 0)
+                    trigger.num = (evt.cards || []).reduce((sum, card) => sum + get.cardNameLength(card), 0);
                 },
                 ai: {
                     effect: {
@@ -9377,7 +9372,7 @@ const packs = function () {
                             const nums = game.filterPlayer(target => target.hasSkill('bolyifu')).map(target => target.countMark('bolyifu') % 3);
                             const history = player.getHistory('useCard', evt => get.type(evt.card) == 'basic' || get.type(evt.card) == 'trick');
                             const evt = history[history.length - 1];
-                            if (evt && evt.card.name == name && nums.includes(1)) return true;
+                            if (evt?.card?.name == name && nums.includes(1)) return true;
                             return (name == 'shandian' && nums.includes(0)) || (name == 'tiesuo' && nums.includes(2));
                         },
                         ai: {
@@ -9445,7 +9440,7 @@ const packs = function () {
                         ai: {
                             effect: {
                                 target(card, player) {
-                                    if (card && card.name == 'shandian' && game.hasPlayer(target => get.attitude(player, target) > 0 && target.hasSkill('boltianjie'))) return [1, 2];
+                                    if (card?.name == 'shandian' && game.hasPlayer(target => get.attitude(player, target) > 0 && target.hasSkill('boltianjie'))) return [1, 2];
                                 },
                             },
                         },
@@ -10041,6 +10036,96 @@ const packs = function () {
                     },
                 },
             },
+            //眼睛哥
+            bilibili_dongcha: {
+                trigger: { target: 'useCardToTargeted' },
+                filter(event, player) {
+                    return event.player != player;
+                },
+                usable: 1,
+                check(event, player) {
+                    if (event.getParent().excluded.includes(player)) return false;
+                    return get.effect(player, event.card, event.player, player) < 0;
+                },
+                logTarget: 'player',
+                async content(event, trigger, player) {
+                    const judgeEvent = player.judge(card => get.color(card) == 'black' ? 2 : -2);
+                    judgeEvent.judge2 = result => result.bool;
+                    const { result: { judge } } = await judgeEvent;
+                    if (judge > 0) {
+                        player.chat('喜！也够能奈我何？');
+                        trigger.getParent().excluded.add(player);
+                        await player.draw();
+                    } else {
+                        player.chat('悲！（转圈圈.jpg）');
+                    }
+                },
+            },
+            bilibili_mingcha: {
+                enable: 'phaseUse',
+                usable: 1,
+                filter(event, player) {
+                    return game.hasPlayer(current => get.info('bilibili_mingcha').filterTarget(null, player, current));
+                },
+                filterTarget(card, player, target) {
+                    return target.countCards('h') && target != player;
+                },
+                async content(event, trigger, player) {
+                    const { target } = event;
+                    const cards = await player.choosePlayerCard(target, true, 'h').forResultCards();
+                    if (!cards?.length) return;
+                    await player.showCards(cards, get.translation(player) + '对' + get.translation(target) + '发动了【明察】');
+                    const goon1 = player.countCards('he'), goon2 = target.countCards('he');
+                    if (goon1 || goon2) {
+                        let result;
+                        if (goon1 && goon2) result = await player.chooseControl().set('choiceList', [`令${get.translation(target)}交给你一张牌`, `交给${get.translation(target)}一张牌`]).set('ai', () => {
+                            const player = get.player(), target = get.event().getParent().target;
+                            const card = get.event().cards[0];
+                            return get.attitude(player, target) > 4 ? 1 : 0;
+                        }).set('cards', cards).forResult();
+                        else result = { index: goon2 ? 0 : 1 };
+                        if (result.index == 0) await target.chooseToGive(player, 'he', true);
+                        else {
+                            const give = await player.chooseToGive(target, 'he', true).set('ai', card => {
+                                const { player, target } = get.event();
+                                const cardx = get.event().cards[0];
+                                if (get.attitude(player, target) > 0 && get.type2(card) != get.type2(cardx)) return 10;
+                                return 6 - get.value(card);
+                            }).set('cards', cards).forResultCards();
+                            if (give?.length && get.type2(give[0]) != get.type2(cards[0])) await player.draw();
+                        };
+                    }
+                },
+                ai: {
+                    order: 8,
+                    result: { player: 1 },
+                },
+            },
+            bilibili_huiyan: {
+                trigger: { player: 'phaseZhunbeiBegin' },
+                filter(event, player) {
+                    return game.hasPlayer(current => player != current);
+                },
+                locked: true,
+                async cost(event, trigger, player) {
+                    event.result = await player.chooseTarget(get.prompt2(event.name.slice(0, -5)), lib.filter.notMe, true).set('ai', target => {
+                        const player = get.player();
+                        return get, attitude(player, target);
+                    }).forResult();
+                },
+                async content(event, trigger, player) {
+                    const { targets: [target] } = event;
+                    let result;
+                    if (player.isDamaged()) result = await target.chooseControl().set('choiceList', [`${get.translation(player)}}回复1点体力`, `${get.translation(target)}摸一张牌`]).set('ai', () => {
+                        const player = get.player(), target = get.event().getParent().player;
+                        const eff1 = get.recoverEffect(target, player, player), eff2 = get.effect(target, { name: 'draw' }, player, player);
+                        return eff2 > eff1 ? 1 : 0;
+                    }).forResult();
+                    else result = { index: 1 };
+                    if (result.index == 0) await player.recover();
+                    else await player.draw();
+                },
+            },
         },
         dynamicTranslate: {
             bilibili_xueji(player) {
@@ -10126,6 +10211,7 @@ const packs = function () {
                 '<br><span style="font-family: yuanli">作用的人。</span>' +
                 '<br>' +
                 '活动群名人堂',
+            CDormitory: '寝室/肘击群杂谈',
             Cothers: '自嗨',
             CDanJi: '彩蛋·千里走单骑',
             CSCS: '彩蛋·十常侍',
@@ -10592,6 +10678,14 @@ const packs = function () {
             bilibili_daxiao_prefix: '乐',
             bilibili_qiqin: '绮琴',
             bilibili_qiqin_info: '锁定技。①你的起始手牌数×2；游戏开始时，你将所有手牌标记为“琴”。②你的“琴”牌不计入手牌上限。③准备阶段，你获得位于弃牌堆的所有“琴”。',
+            bilibili_yanjing: '👁👃👁',
+            bilibili_yanjing_ab: '眼睛👁',
+            bilibili_dongcha: '洞察',
+            bilibili_dongcha_info: '每回合限一次。当你成为其他角色使用牌的目标后，你可以判定，若结果为黑色，你令此牌对你无效且你摸一张牌。',
+            bilibili_mingcha: '明察',
+            bilibili_mingcha_info: '出牌阶段限一次，你可以展示一名其他角色的手牌，然后选择一项：1.其交给一张牌；2.你交给其一张牌。若你以此法交出的牌与其以此法展示的牌类别不同，你摸一张牌。',
+            bilibili_huiyan: '慧眼',
+            bilibili_huiyan_info: '锁定技。准备阶段，你令一名其他角色选择一项：1.你回复1点体力；2.你摸一张牌。',
         },
     };
     for (var i in huodongcharacter.character) {

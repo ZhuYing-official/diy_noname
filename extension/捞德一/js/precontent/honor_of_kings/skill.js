@@ -1868,7 +1868,7 @@ const skills = {
 				if (card.name == 'sha' && (get.distance(player, target) <= 1) && !player.getStorage('hok_duankong_mark').includes(target)) return true;
 			},
 		},
-		group: ['hok_duankong_load', 'hok_duankong_mark'],
+		group: ['hok_duankong_load'],
 		subSkill: {
 			load: {
 				trigger: { player: 'useCard1' },
@@ -1880,15 +1880,17 @@ const skills = {
 				popup: false,
 				firstDo: true,
 				content: function () {
-					player.addTempSkill('hok_duankong_mark', 'phaseUseAfter');
 					player.markAuto(
 						'hok_duankong_mark',
 						trigger.targets.filter(target => !player.getStorage('hok_duankong_mark').includes(target))
 					);
+					player.addTempSkill('hok_duankong_mark', 'phaseUseAfter');
 				},
 			},
 			mark: {
 				onremove: true,
+				mark: 'character',
+				intro: { content: '已对$使用杀' },
 			},
 		},
 	},
