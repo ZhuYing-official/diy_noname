@@ -3224,6 +3224,7 @@ const skills = {
 				trigger: { player: 'damageBefore' },
 				filter(event) {
 					if (event.nature == 'thunder') return event.player.countMark('hok_tianlei') > 0;
+					return false;
 				},
 				content() {
 					trigger.cancel();
