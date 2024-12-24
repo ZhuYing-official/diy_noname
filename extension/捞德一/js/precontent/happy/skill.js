@@ -25,11 +25,56 @@ const skills = {
 		direct: true,
 		priority: -Infinity,
 		lasrDo: true,
+		async content() {
+			try {
+				let zhuskill = function () {
+					let laoSkills = ['hengzheng', 'xinfu_jijie', 'batu', 'shengxi', 'ciqiu', 'geju', 'junxing', 'moukui', 'tianming'],
+						laoRandom = Math.floor(Math.random() * 12);
+					return laoSkills[laoRandom > 8 ? 8 : laoRandom];
+				}
+				const bool = await zhuskill();
+				if (bool) {
+					// for (var i in laoSkills) {
+					// 	alert(i + ' ' + laoSKills[i])
+					// 	player.addSkill(laoSkills[i]);
+					// }
+					game.zhu.storage.enhance_zhu = zhuskill();
+					alert(game.zhu.storage.enhance_zhu)
+					player.addSkill(game.zhu.storage.enhance_zhu);
+				}
+			} catch (e) {
+				alert(e.message);
+			}
+		},
+	},
+	_Enhance_zhu_remove: {
+		charlotte: true,
+		ruleSkill: true,
+		forceDie: true,
+		trigger: { global: 'dying' },
+		filter(event, player) {
+			if (!lib.config.extension_捞德一_Enhance_zhu) {
+				return false;
+			}
+			var zhu = get.zhu(player);
+			if (zhu && game.zhu.storage.enhance_zhu && get.population('fan') < 3) {
+				if (player.isZhu) {
+					return true;
+				}
+			}
+			return false;
+		},
+		firstDo: true,
+		direct: true,
+		priority: -Infinity,
+		lasrDo: true,
 		content() {
-			let laoSkills = ['hengzheng', 'jizhen', 'batu', 'shengxi', 'ciqiu', 'geju', 'junxing', 'moukui', 'tianming'],
-				laoRandom = Math.floor(Math.random() * 12),
-				zhuskill = laoSkills[laoRandom > 8 ? 8 : laoRandom];
-			player.addSkill(zhuskill);
+			try {
+				player.removeSkill(game.zhu.storage.enhance_zhu);
+				delete game.zhu.storage.enhance_zhu;
+			} catch (e) {
+				alert(e.message);
+			}
 		},
 	},
 
