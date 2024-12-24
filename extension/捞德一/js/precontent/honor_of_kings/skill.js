@@ -3184,25 +3184,25 @@ const skills = {
 	// S
 	// 司空震
 	hok_tianlei: {
-		forced: true,
 		zhuSkill: true,
-		trigger: { player: 'damageBefore' },
-		filter(event) {
-			if (event.nature == 'thunder') return event.num > 1;
+		trigger: { global: 'phaseBefore', player: 'enterGame' },
+		forced: true,
+		unique: true,
+		filter: function (event, player) {
+			return (event.name != 'phase' || game.phaseNumber == 0) && player.hasZhuSkill('hok_tianlei');
 		},
-		content() {
-			trigger.num = 1;
+		content: function () {
+			var num = game.countPlayer(function (current) {
+				return current.group == 'qun';
+			});
+			if (num) player.addMark('hok_tianlei', num);
 		},
-		ai: {
-			effect: {
-				target(card, player, target, current) {
-					if (card.name == 'tiesuo') return 0;
-					if (get.tag(card, 'thunderDamage')) return 0;
-				}
-			},
-			threaten: 0.5
+		marktext: '雷',
+		intro: {
+			name2: '天雷',
+			content: 'mark',
 		},
-		group: 'hok_tianlei_shandian',
+		group: ['hok_tianlei_shandian', 'hok_tianlei_wulie'],
 		subSkill: {
 			shandian: {
 				forced: true,
@@ -3219,6 +3219,25 @@ const skills = {
 					player.chooseUseTarget(cardShandian, true);
 				},
 			},
+			wulie: {
+				forced: true,
+				trigger: { player: 'damageBefore' },
+				filter(event) {
+					if (event.nature == 'thunder') return event.player.countMark('hok_tianlei') > 0;
+				},
+				content() {
+					trigger.cancel();
+					player.removeMark('hok_tianlei', 1);
+				},
+				ai: {
+					effect: {
+						target(card, player, target, current) {
+							if (get.tag(card, 'thunderDamage') && target.countMark('hok_tianlei') > 0) return [1, 0.65];
+						}
+					},
+					threaten: 0.5
+				},
+			}
 		},
 	},
 	hok_benlei: {
@@ -3256,6 +3275,7 @@ const skills = {
 	hok_leitingwanjun: {
 		unique: true,
 		limited: true,
+		marktext: '霆',
 		enable: 'phaseUse',
 		skillAnimation: true,
 		animationColor: 'gray',
@@ -4270,7 +4290,7 @@ const skills = {
 			}).set('ai', target => {
 				var player = _status.event.player;
 				if (target == player || !player.inRange(target)) {
-					return false;
+					return 0;
 				}
 				if (get.attitude(player, target) < 0) return get.effect(target, { name: 'guohe' }, player, player) + get.damageEffect(target, player, player, 'thunder');
 				return 0;
@@ -4296,7 +4316,7 @@ const skills = {
 		},
 		ai: {
 			threaten: 1,
-			order: 4,
+			order: get.order({ name: 'sha' }) - 0.2,
 			expose: 0.2,
 			result: {
 				player: 1,
@@ -4743,7 +4763,7 @@ const skills = {
 					source: 'damageBegin2',
 				},
 				filter(event, player) {
-					return event.getParent().name!='hok_sptaigua';
+					return event.getParent().name != 'hok_sptaigua';
 				},
 				content() {
 					var r = Math.random();
