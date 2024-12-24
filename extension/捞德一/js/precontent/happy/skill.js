@@ -3,12 +3,16 @@ import { lib, game, ui, get, ai, _status } from '../../../../../noname.js';
 /** @type { importCharacterConfig['skill'] } */
 const skills = {
 	// 扩展用
+	// 强化主公
 	_Enhance_zhu: {
 		charlotte: true,
 		ruleSkill: true,
 		forceDie: true,
-		trigger: { global: 'gameDrawAfter' },
+		trigger: { global: 'gameStart', player: 'enterGame' },
 		filter(event, player) {
+			if (!lib.config.extension_捞德一_Enhance_zhu) {
+				return false;
+			}
 			var zhu = get.zhu(player);
 			if (zhu) {
 				if (player.isZhu) {
