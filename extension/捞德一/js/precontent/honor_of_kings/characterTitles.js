@@ -24,7 +24,7 @@ export default {
 	hok_wangzhaojun: '#b捞德一评级:3.8',
 	hok_wuzetian: '#b捞德一评级:3.8',
 	hok_yao: '#b捞德一评级:3.8',
-	hok_yases: '#b捞德一评级:3.8',
+	hok_yase: '#b捞德一评级:3.8',
 	hok_sp_lixin: '#r捞德一评级:4.0',
 	hok_sp_mingshiyin: '#r耀世圣手评级:4.0',
 };

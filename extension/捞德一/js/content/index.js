@@ -22,7 +22,7 @@ export function content(config, pack) {
 				game.laoShowNewPack();
 			},
 		};
-		
+
 		var week = new Date().getDay();
 		switch (week) {
 			case 0:
@@ -66,15 +66,17 @@ export function content(config, pack) {
 					// 捞德一
 					'lao_sp_chenshou',
 
-					// 王者荣耀
-					'hok_sp_lixin',
-					'hok_sp_mingshiyin',
-					'hok_aoyin',
-					'hok_sunwukong',
 					'shen_caozhi',
 					'shen_dongzhuo',
 					'shen_lusu',
 					'shen_xusheng',
+
+					// 王者荣耀
+					'hok_aoyin',
+					'hok_sunwukong',
+
+					'hok_sp_lixin',
+					'hok_sp_mingshiyin',
 				],
 				//史诗
 				epic: [
@@ -99,14 +101,19 @@ export function content(config, pack) {
 					'hok_duoliya',
 					'hok_gaojianli',
 					'hok_hainuo',
+					'hok_houyi',
+					'hok_lan',
 					'hok_lanlingwang',
 					'hok_lixin',
 					'hok_makeboluo',
 					'hok_mingshiyin',
 					'hok_miyue',
+					'hok_mozi',
 					'hok_sikongzhen',
+					'hok_wangzhaojun',
 					'hok_wuzetian',
 					'hok_yao',
+					'hok_yase',
 				],
 				//稀有
 				rare: [
@@ -115,8 +122,8 @@ export function content(config, pack) {
 					'lao_liucong',
 				],
 				//普通
-				common: [
-				],
+				// common: [
+				// ],
 				//平凡
 				junk: [
 					//捞德一
@@ -128,6 +135,8 @@ export function content(config, pack) {
 			],
 			ap: [
 				// 捞德一
+				'lao_sp_chenshou',
+
 				'shen_caozhi',
 				'shen_dongzhuo',
 				'shen_lusu',
@@ -160,14 +169,19 @@ export function content(config, pack) {
 				'hok_duoliya',
 				'hok_gaojianli',
 				'hok_hainuo',
+				'hok_houyi',
+				'hok_lan',
 				'hok_lanlingwang',
 				'hok_lixin',
 				'hok_makeboluo',
 				'hok_mingshiyin',
 				'hok_miyue',
+				'hok_mozi',
 				'hok_sikongzhen',
+				'hok_wangzhaojun',
 				'hok_wuzetian',
 				'hok_yao',
+				'hok_yase',
 			],
 			am: [
 				// 捞德一
@@ -189,7 +203,21 @@ export function content(config, pack) {
 		var addRank = function (rank) {
 			if (!lib.rank) return;
 			for (var i in rank) {
-				lib.rank[i].addArray(rank[i]);
+				if (i == 'rarity') {
+					for (var j in rank[i]) {
+						try {
+							Array.prototype.push.apply(lib.rank[i][j], rank[i][j]);
+						} catch (e) {
+							alert(e.message)
+						}
+					}
+				} else {
+					try {
+						Array.prototype.push.apply(lib.rank[i], rank[i]);
+					} catch (e) {
+						alert(e.message)
+					}
+				}
 			}
 		};
 		addRank(rank);
