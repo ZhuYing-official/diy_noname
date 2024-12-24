@@ -718,6 +718,35 @@ const lao_noname = function () {
             setTimeout(game.reload, 15000);
         }
     };
+
+    // 强化主公
+    if (lib.config.extension_捞德一_Enhance_zhu) {
+        lib.skill._Enhance_zhu = {
+            charlotte: true,
+            ruleSkill: true,
+            forceDie: true,
+            trigger: { global: 'gameDrawAfter' },
+            filter(event, player) {
+                var zhu = get.zhu(player);
+                if (zhu) {
+                    if (player.isZhu) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            firstDo: true,
+            direct: true,
+            priority: -Infinity,
+            lasrDo: true,
+            content() {
+                let laoSkills = ['hengzheng', 'jizhen', 'batu', 'shengxi', 'ciqiu', 'geju', 'junxing', 'moukui', 'tianming'],
+                    laoRandom = Math.floor(Math.random() * 12),
+                    zhuskill = laoSkills[laoRandom > 8 ? 8 : laoRandom];
+                player.addSkill(zhuskill);
+            },
+        }
+    }
 };
 
 export default lao_noname;

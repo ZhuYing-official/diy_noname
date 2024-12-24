@@ -24,7 +24,7 @@ game.laoShowNewPack = function () {
 		'<span class="text center">' +
 		'本扩展像名字一样捞德一，轻喷' +
 		'<br>' +
-		// '<a href="https://github.com/">点击前往《捞德一》扩展Github仓库</a>' +
+		'<a href="https://github.com/ZhuYing-official/diy_noname/tree/diy/extension/%E6%8D%9E%E5%BE%B7%E4%B8%80">点击前往《捞德一》扩展Github仓库</a>' +
 		'<br>' +
 		'捞德一 ' + lib.extensionPack.捞德一.version + ' 更新内容' +
 		'</span>', 'hidden');
@@ -131,7 +131,7 @@ let extensionPackage = {
 	help: help,
 	package: {
 		intro: '本扩展像名字一样捞德一，轻喷' +
-			'<br><a href="https://github.com/">点击前往《捞德一》扩展Github仓库</a>' +
+			'<br><a href="https://github.com/ZhuYing-official/diy_noname/tree/diy/extension/%E6%8D%9E%E5%BE%B7%E4%B8%80">点击前往《捞德一》扩展Github仓库</a>' +
 			'<br>' +
 			'本扩展完全免费，仅供交流学习使用。' +
 			'<br>' +

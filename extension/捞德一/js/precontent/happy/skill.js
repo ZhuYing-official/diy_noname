@@ -2,6 +2,33 @@ import { lib, game, ui, get, ai, _status } from '../../../../../noname.js';
 
 /** @type { importCharacterConfig['skill'] } */
 const skills = {
+	// 扩展用
+	_Enhance_zhu: {
+		charlotte: true,
+		ruleSkill: true,
+		forceDie: true,
+		trigger: { global: 'gameDrawAfter' },
+		filter(event, player) {
+			var zhu = get.zhu(player);
+			if (zhu) {
+				if (player.isZhu) {
+					return true;
+				}
+			}
+			return false;
+		},
+		firstDo: true,
+		direct: true,
+		priority: -Infinity,
+		lasrDo: true,
+		content() {
+			let laoSkills = ['hengzheng', 'jizhen', 'batu', 'shengxi', 'ciqiu', 'geju', 'junxing', 'moukui', 'tianming'],
+				laoRandom = Math.floor(Math.random() * 12),
+				zhuskill = laoSkills[laoRandom > 8 ? 8 : laoRandom];
+			player.addSkill(zhuskill);
+		},
+	},
+
 	// 曹芳
 	lao_shouwei: {
 		trigger: { player: 'damageAfter' },
@@ -763,7 +790,7 @@ const skills = {
 					mark(dialog, content, player) {
 						var content = player.getExpansions('lao_mengjue_init');
 						// return '还有' + get.cnNumber(content.length) + '张牌';
-						return '<div class="text center"><span class=thundertext>杀：' + (content.length - 1) + '张</span><br><span class=firetext>决斗：1张</span></div>'
+						return `<div class='text center'><span class=thundertext>杀：` + (content.length - 1) + `张</span><br><span class=firetext>决斗：1张</span></div>`;
 					},
 				},
 			}
