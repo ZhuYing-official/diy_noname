@@ -2063,11 +2063,12 @@ const skills = {
 			return player.canUse({ name: 'sha', isCard: true }, target);
 		},
 		check: (card) => 6 - get.value(card),
-		prompt: '弃置一张【杀】，视为对场上的一名角色使用了一张计入次数的【杀】，此【杀】造成的伤害+1。',
+		prompt: '弃置一张【杀】，视为对场上的一名角色使用了一张不计入次数的【杀】，此【杀】造成的伤害+1。',
 		content() {
 			player.awakenSkill('hok_anxi');
 			player.useCard({ name: 'sha', isCard: true }, target).set('oncard', card => {
 				_status.event.baseDamage = 2;
+				_status.event.addCount = false;
 			});
 		},
 		ai: {
