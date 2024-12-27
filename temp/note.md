@@ -684,6 +684,16 @@ animationColor: '',//
 
 ---
 ```javascript
+var str = '';
+Object.keys(obj).forEach(function (key) {
+  str += (key + ": " + obj[key] + '\n');
+});
+alert(str)
+```
+---
+
+---
+```javascript
 
 ```
 ---

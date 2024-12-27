@@ -39,7 +39,6 @@ const skills = {
 					// 	player.addSkill(laoSkills[i]);
 					// }
 					game.zhu.storage.enhance_zhu = zhuskill();
-					alert(game.zhu.storage.enhance_zhu)
 					player.addSkill(game.zhu.storage.enhance_zhu);
 				}
 			} catch (e) {

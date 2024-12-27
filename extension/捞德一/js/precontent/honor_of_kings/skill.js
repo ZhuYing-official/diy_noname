@@ -1923,13 +1923,15 @@ const skills = {
 					player.line(target);
 					player.discardPlayerCard('he', target, true);
 				}
-				game.broadcastAll(
-					function (target1, target2) {
-						game.swapSeat(target1, target2, null, true);
-					},
-					player,
-					target.getNext()
-				);
+				if (target.getNext() != player) {
+					game.broadcastAll(
+						function (target1, target2) {
+							game.swapSeat(target1, target2, null, true);
+						},
+						player,
+						target.getNext()
+					);
+				}
 			}
 		},
 		ai: {
@@ -1997,7 +1999,6 @@ const skills = {
 		prompt: '弃置一张【杀】，视为对场上的一名角色使用一张无距离限制的【杀】，若此【杀】造成伤害，目标角色获得标记“影蚀”，失去一张【闪】',
 		content() {
 			'step 0'
-			game.log(target.getCards('h'))
 			player.useCard({ name: 'sha', isCard: true }, target, true);
 			'step 1'
 			let bool = game.hasPlayer2(function (current) {
@@ -2062,7 +2063,7 @@ const skills = {
 			return player.canUse({ name: 'sha', isCard: true }, target);
 		},
 		check: (card) => 6 - get.value(card),
-		prompt: '弃置一张【杀】，视为对场上的一名角色使用了一张不计入次数的【杀】，此【杀】造成的伤害+1。',
+		prompt: '弃置一张【杀】，视为对场上的一名角色使用了一张计入次数的【杀】，此【杀】造成的伤害+1。',
 		content() {
 			player.awakenSkill('hok_anxi');
 			player.useCard({ name: 'sha', isCard: true }, target).set('oncard', card => {
@@ -2508,6 +2509,9 @@ const skills = {
 		trigger: { player: 'useCard' },
 		filter(event, player) {
 			return event.card.name == 'sha' && player.countCards('h', 'sha') >= 1 && player.isPhaseUsing();
+		},
+		filter(event, player) {
+			return player.countCards('h', { name: 'sha' }) > 0;
 		},
 		content() {
 			'step 0'
