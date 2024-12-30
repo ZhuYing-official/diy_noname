@@ -423,6 +423,8 @@ const skills = {
 			}
 			if (event.getParent(4).name == 'wukong_chuogun_effect' || event.getParent(4).skill == 'wukong_chuogun_effect')
 				return false;
+			if (event.getParent(4).name == 'wukong_chuogun_buff' || event.getParent(4).skill == 'wukong_chuogun_buff')
+				return false;
 			return event.card && event.card.name == 'sha' && event.num > 0;
 		},
 		content() {
@@ -688,7 +690,6 @@ const skills = {
 					}
 					return false;
 				},
-				logTarget: 'player',
 				content() {
 					player.addTempSkill('wukong_gunshi_lose');
 					trigger.player.addTempSkill('wukong_pigun_debuff');
@@ -997,6 +998,7 @@ const skills = {
 						} catch (e) { alert(e.message) }
 					}
 					'step 2'
+					player.storage.gunshiNum = 0;
 					player.removeSkill('wukong_chuogun_buff');
 				},
 				async content_effect(event, trigger, player) {
@@ -1006,23 +1008,20 @@ const skills = {
 						case 1:
 							const result1 = await player.useCard({ name: 'sha', nature: 'thunder' }, trigger.player, true).forResult();
 							if (result1.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
+								player.removeMark('wukong_gunshi', player.storage.gunshiNum);
 							}
 							break;
 						case 2:
 							const result2 = await player.useCard({ name: 'sha', nature: 'thunder' }, trigger.player, false).forResult();
 							if (result2.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
+								player.removeMark('wukong_gunshi', player.storage.gunshiNum);
 							}
 							break;
 						case 3:
 							directHit.addArray([trigger.player]);
 							const result3 = await player.useCard({ name: 'sha', nature: 'thunder' }, trigger.player, false).set('directHit', directHit).forResult();
 							if (result3.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
+								player.removeMark('wukong_gunshi', player.storage.gunshiNum);
 							}
 							break;
 						case 4:
@@ -1031,7 +1030,6 @@ const skills = {
 							const result4 = await player.useCard({ name: 'sha', nature: 'thunder' }, trigger.player, false).set('directHit', directHit).set('baseDamage', baseDamage).forResult();
 							if (result4.bool) {
 								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
 							}
 							break;
 						default:
