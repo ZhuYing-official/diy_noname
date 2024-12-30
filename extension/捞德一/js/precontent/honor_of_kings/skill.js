@@ -1361,6 +1361,38 @@ const skills = {
 			player.awakenSkill('hok_moyin');
 			player.addTempSkill('hok_moyin_aige');
 		},
+		ai: {
+			order: 13,
+			result: {
+				player(player) {
+					let list = game.filterPlayer(function (target) {
+						return player.inRange(target) && !target.isDead() && target != player && get.attitude(_status.event.player, target) < 0 ? true : false;
+					});
+					for (let target of list) {
+						let shaBool = false;
+						let hs = player.countCards('h', card => {
+							if (!get.tag(card, 'damage') || get.effect(target, card, player, player) <= 0) return 0;
+							if (shaBool) return 0;
+							else if (get.name(card, player) === 'sha') {
+								shaBool = true;
+								if (target.getEquip('bagua')) return 0.5;
+								if (target.getEquip('rewrite_bagua')) return 0.25;
+							}
+							return 1;
+						}),
+							ts =
+								target.hp +
+								target.hujia +
+								game.countPlayer(current => {
+									if (get.attitude(current, target) > 0) return current.countCards('hs') / 8;
+									return 0;
+								});
+						if (hs >= ts) return hs;
+					}
+					return 0;
+				},
+			},
+		},
 		subSkill: {
 			aige: {
 				trigger: { player: 'useCard' },
@@ -3168,7 +3200,6 @@ const skills = {
 			if (result.bool) {
 				var target = result.targets[0];
 				player.removeMark('hok_jianaifeigong', 3);
-				player.logSkill('hok_moshouchenggui', target);
 				player.line(target);
 				target.damage();
 				target.turnOver();
@@ -4322,7 +4353,7 @@ const skills = {
 		},
 		ai: {
 			threaten: 1,
-			order: get.order({ name: 'sha' }) - 0.2,
+			order: () => get.order({ name: 'sha' }) - 0.2,
 			expose: 0.2,
 			result: {
 				player: 1,

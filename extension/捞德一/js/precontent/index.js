@@ -13,7 +13,7 @@ export function precontent(捞德一) {
         //王者荣耀
         game.import('character', honor_of_kings);
         // 黑神话：悟空
-        // game.import('character', black_myth_wukong);
+        game.import('character', black_myth_wukong);
         //--------------------卡牌包--------------------//
         // 王者荣耀
         game.import('card', honor_of_kings_cards);
