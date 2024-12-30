@@ -280,6 +280,7 @@ const skills = {
 				preHidden: true,
 				content() {
 					trigger.getParent().directHit.add(trigger.target);
+					player.removeSkill('wukong_juxingsanqi_tieji');
 				},
 				ai: {
 					directHit_ai: true,
@@ -901,9 +902,7 @@ const skills = {
 				usable: 1,
 				filter(event, player) {
 					if (player.countMark('wukong_gunshi') == 1) {
-						if (!lib.filter.cardUsable({ name: 'sha' }, player) || !game.hasPlayer(function (current) {
-							return player.canUse('sha', current);
-						})) {
+						if (!lib.filter.cardUsable({ name: 'sha' }, player)) {
 							return false;
 						}
 					}
