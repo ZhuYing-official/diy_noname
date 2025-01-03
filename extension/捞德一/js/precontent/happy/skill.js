@@ -10,7 +10,7 @@ const skills = {
 		forceDie: true,
 		trigger: { global: 'gameStart', player: 'enterGame' },
 		filter(event, player) {
-			if (!lib.config.extension_捞德一_Enhance_zhu) {
+			if (!lib.config.extension_捞德一_Enhance_zhu || game.zhu.isInitFilter('noZhuSkill')) {
 				return false;
 			}
 			var zhu = get.zhu(player);
@@ -34,10 +34,6 @@ const skills = {
 				}
 				const bool = await zhuskill();
 				if (bool) {
-					// for (var i in laoSkills) {
-					// 	alert(i + ' ' + laoSKills[i])
-					// 	player.addSkill(laoSkills[i]);
-					// }
 					game.zhu.storage.enhance_zhu = zhuskill();
 					player.addSkill(game.zhu.storage.enhance_zhu);
 				}
@@ -52,7 +48,7 @@ const skills = {
 		forceDie: true,
 		trigger: { global: 'dying' },
 		filter(event, player) {
-			if (!lib.config.extension_捞德一_Enhance_zhu) {
+			if (!lib.config.extension_捞德一_Enhance_zhu || game.zhu.isInitFilter('noZhuSkill')) {
 				return false;
 			}
 			var zhu = get.zhu(player);
@@ -1642,7 +1638,6 @@ const skills = {
 			if (!cards.length) event.finish();
 			else {
 				event.cards = cards;
-				// game.cardsGotoOrdering(cards);
 
 				for (var i of cards) {
 					var info = lib.card[i.name];

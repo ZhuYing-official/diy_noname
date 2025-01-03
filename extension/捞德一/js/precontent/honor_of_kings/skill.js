@@ -2552,13 +2552,11 @@ const skills = {
 			player.addSkill('hok_qianglin_draw');
 			'step 1'
 			trigger.cancel();
-			// player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, '视为使用两张【雷杀】');
 			for (target of trigger.targets) {
-				player.useCard({ name: 'sha', nature: 'thunder' }, target);
-				player.useCard({ name: 'sha', nature: 'thunder' }, target);
+				if (target.isIn()) player.useCard({ name: 'sha', nature: 'thunder' }, target);
+				if (target.isIn()) player.useCard({ name: 'sha', nature: 'thunder' }, target);
 			}
 			'step 2'
-			// 'step 3'
 			player.removeSkill('hok_qianglin_draw');
 		},
 		group: ['hok_qianglin_begin'],
@@ -2593,6 +2591,7 @@ const skills = {
 			result: {
 				player(player) {
 					var qianglin = game.filterPlayer(function (target) {
+						if (target == _status.event.player) return 0;
 						return get.attitude(_status.event.player, target) < 0;
 					});
 					return qianglin.length > 0 ? 1 : 0;
