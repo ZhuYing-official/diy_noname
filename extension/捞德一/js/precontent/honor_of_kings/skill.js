@@ -1179,7 +1179,7 @@ const skills = {
 					target = result.targets[0];
 				player.logSkill('hok_tianlai', target);
 				player.line(target, 'green');
-				target.addSkill('hok_tianlai_effect');
+				target.addTempSkill('hok_tianlai_effect');
 				if (cards && cards.length) {
 					player.discard(cards);
 				}
@@ -2541,10 +2541,7 @@ const skills = {
 		usable: 1,
 		trigger: { player: 'useCard' },
 		filter(event, player) {
-			return event.card.name == 'sha' && player.countCards('h', 'sha') >= 1 && player.isPhaseUsing();
-		},
-		filter(event, player) {
-			return player.countCards('h', { name: 'sha' }) > 0;
+			return event.card.name == 'sha' && player.countCards('h', 'sha') >= 1 && player.isPhaseUsing() && player.countCards('h', { name: 'sha' }) > 0;
 		},
 		content() {
 			'step 0'

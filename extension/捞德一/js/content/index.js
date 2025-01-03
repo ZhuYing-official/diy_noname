@@ -77,6 +77,9 @@ export function content(config, pack) {
 
 					'hok_sp_lixin',
 					'hok_sp_mingshiyin',
+
+					// 黑猴
+					'wukong_tianmingren',
 				],
 				//史诗
 				epic: [
@@ -146,6 +149,9 @@ export function content(config, pack) {
 				'hok_sp_mingshiyin',
 				'hok_aoyin',
 				'hok_sunwukong',
+
+				// 黑猴
+				'wukong_tianmingren',
 			],
 			a: [
 				// 捞德一

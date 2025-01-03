@@ -85,7 +85,7 @@ const translates = {
 	hok_zhulang: '逐浪',
 	hok_zhulang_info: '出牌阶段开始时，你可以令一名角色回复1点体力，然后制衡一张牌。',
 	hok_tianlai: '天籁',
-	hok_tianlai_info: '出牌阶段开始时，你弃置两张牌并选择一名角色，令其下一个技能发动后额外结算一次。',
+	hok_tianlai_info: '出牌阶段开始时，你弃置两张牌并选择一名角色，令其下一个技能发动后额外结算一次直到其回合结束。',
 
 	// G
 	// 高渐离
