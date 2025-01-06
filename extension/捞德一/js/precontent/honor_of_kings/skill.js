@@ -563,6 +563,8 @@ const skills = {
 			if (result.bool) {
 				player.chooseUseTarget('sha', true, false);
 			}
+			'step 3'
+			player.storage.hok_kuangju = 0;
 		},
 		group: 'hok_kuangju_effect',
 		subSkill: {

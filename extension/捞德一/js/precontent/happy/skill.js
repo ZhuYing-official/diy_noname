@@ -1905,7 +1905,7 @@ const skills = {
 		trigger: { player: 'useCardToPlayered' },
 		direct: true,
 		filter(event, player) {
-			return event.card.name == 'sha' && event.target.countCards('h') > 0;
+			return event.card.name == 'sha';
 		},
 		content() {
 			'step 0'
