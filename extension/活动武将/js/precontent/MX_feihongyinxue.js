@@ -33,7 +33,7 @@ const packs = function () {
             mx_fh_sp_huaxin: ['male', 'wei', 3, ['fh_yuanqing', 'shuchen']],
             mx_fh_xiangchong: ['male', 'shu', 4, ['fh_guying', 'muzhen']],
             mx_fh_sp_xujing: ['male', 'shu', 3, ['fh_boming', 'fh_ejian']],
-            mx_fh_qiaogong: ['male', 'wu', 3, ['fh_yizhu', 'gonghuan']],
+            mx_fh_qiaogong: ['male', 'wu', 3, ['fh_yizhu', 'luanchou']],
             mx_fh_sp_zhangwen: ['male', 'wu', 3, ['gebo', 'fh_songshu']],
             mx_fh_liuzhang: ['male', 'qun', 3, ['fh_yinge', 'fh_shiren', 'fh_juyi'], ['zhu']],
             mx_fh_zhangzhongjing: ['male', 'qun', 3, ['fh_jishi', 'fh_liaoyi', 'fh_binglun']],
@@ -4545,7 +4545,7 @@ const packs = function () {
             fh_weidang: '伪谠',
             fh_weidang_info: '其他角色的结束阶段，你可以使用一张字数为X的牌（X为本回合未进入过弃牌堆的花色数）。',
             fh_duliang: '督粮',
-            fh_duliang_info: '出牌阶段限一次，你可以获得一名其他角色的至多X张手牌（X为其已损失体力值且X至少为1），然后你选择一项：①令其下个摸牌阶段多模等量的牌；②令其观看牌堆顶两倍数量的牌，然后其可以正面朝上获得其中任意张基本牌。',
+            fh_duliang_info: '出牌阶段限一次，你可以获得一名其他角色的至多X张手牌（X为其已损失体力值且X至少为1），然后你选择一项：①令其下个摸牌阶段多摸等量的牌；②令其观看牌堆顶两倍数量的牌，然后其可以正面朝上获得其中任意张基本牌。',
             fh_fulin: '腹麟',
             fh_fulin_info: '当你于回合内不因此技能获得牌后，你可以将其中任意张牌置于牌堆顶，然后你于回合结束时摸等量的牌。',
             fh_qinqing: '寝情',
@@ -4752,7 +4752,7 @@ const packs = function () {
                 global: ['loseAsyncEnd', 'cardsGotoSpecialEnd'],
             },
             filter(event, player) {
-                if (event.name == 'equip') return event.card.fh_extra;
+                if (event.name == 'equip') return event.card?.fh_extra;
                 if (event.getg) return event.getg(player).some(card => card.fh_extra);
                 return event.cards?.some(card => card.fh_extra);
             },

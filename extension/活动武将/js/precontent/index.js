@@ -624,19 +624,19 @@ export function precontent(bilibilicharacter) {
     if (bilibilicharacter.enable) {
         //--------------------武将包--------------------//
         //诸侯伐董
-        // game.import('character', FaDongCharacter);
+        game.import('character', FaDongCharacter);
         //生肖年兽
-        // game.import('character', NianShouCharacter);
+        game.import('character', NianShouCharacter);
         //合纵抗秦
-        // game.import('character', hezongkangqincharacter);
+        game.import('character', hezongkangqincharacter);
         //戚宦之争——我补完了！！！
-        // game.import('character', decadeQiHuan);
+        game.import('character', decadeQiHuan);
         //捉鬼驱邪
-        // game.import('character', decadeZhuoGui);
+        game.import('character', decadeZhuoGui);
         //魁拔
-        // game.import('character', decadeKuiBa);
+        game.import('character', decadeKuiBa);
         //超时空密探
-        // game.import('character', HD_chaoshikong);
+        game.import('character', HD_chaoshikong);
         //欢乐三国杀
         game.import('character', MiNikill);
         //微信三国杀
@@ -644,7 +644,7 @@ export function precontent(bilibilicharacter) {
         //线下--飞鸿印雪
         game.import('character', MX_feihongyinxue);
         //没想到吧，我换前缀了
-        // game.import('character', huodongcharacter);
+        game.import('character', huodongcharacter);
         //--------------------卡牌包--------------------//
     }
 }

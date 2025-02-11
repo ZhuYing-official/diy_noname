@@ -13,13 +13,18 @@ game.bolShowNewPack = function () {
 	var HuoDong_update = [
 		'/setPlayer/',
 		'bugfix',
-		'添加新武将眼睛👁（施工ing）',
-		'添加欢杀武将欢杀郑浑',
+		'技能修改，配音补充',
+		'添加怀旧武将：许劭、袁姬、蒋干',
+		'添加欢杀武将：高览、卢植、甘糜、二赵、孟节',
+		'添加微信武将：极何太后、极张春华、极曹叡、极张飞、极贾诩、李昭焦伯、嵇康',
 		'To be continued...',
 	];
 	//更新武将
 	var HuoDong_players = [
-		'bilibili_yanjing', 'Mbaby_zhenghun',
+		'old_xushao', 'old_ol_yuanji', 'Mbaby_gaolan', 'Mbaby_yl_luzhi', 'Mbaby_ganfurenmifuren',
+		'Mbaby_zhaotongzhaoguang', 'wechat_zhiyin_jiaxu', 'wechat_zhiyin_zhangfei', 'wechat_zhiyin_caorui',
+		'wechat_zhiyin_zhangchunhua', 'wechat_zhiyin_hetaihou', 'wechat_lizhaojiaobo', 'wechat_jikang',
+		'old_sp_jianggan', 'Mbaby_mengjie',
 	];
 	//加载
 	var dialog = ui.create.dialog(
@@ -74,7 +79,7 @@ let extensionPackage = {
 		author: '萌新（转型中）',
 		diskURL: '',
 		forumURL: '',
-		version: '0.3.5 - 待定',
+		version: '0.3.6 - 待定',
 		//新人制作扩展，希望大家支持。
 		//新人技术不足，希望大家包涵。
 		//壹、贰、叁、肆、伍、陆、柒、捌、玖、拾

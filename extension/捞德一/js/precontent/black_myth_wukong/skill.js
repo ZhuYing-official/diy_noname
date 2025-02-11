@@ -206,8 +206,8 @@ const skills = {
 			return (event.name != 'phase' || game.phaseNumber == 0);
 		},
 		content() {
-			player.gainMaxHp();
-			player.recover();
+			// player.gainMaxHp();
+			// player.recover();
 		},
 		group: ['wukong_jinzifa_yingzi', 'wukong_jinzifa_paoxiao'],
 		subSkill: {

@@ -17,7 +17,7 @@ game.laoShowNewPack = function () {
 	];
 	//更新武将
 	var Lao_players = [
-		'hok_houyi', 'hok_wangzhaojun', 'hok_lan', 'hok_yase', 'hok_mozi',
+		'wukong_tianmingren',
 	];
 	//加载
 	var dialog = ui.create.dialog(
@@ -142,7 +142,7 @@ let extensionPackage = {
 		author: '捞德一',
 		diskURL: '',
 		forumURL: '',
-		version: '0.0.1',
+		version: '0.0.2',
 		//壹、贰、叁、肆、伍、陆、柒、捌、玖、拾
 	},
 	files: {}
