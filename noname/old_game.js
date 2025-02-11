@@ -58928,7 +58928,7 @@ new Promise(resolve => {
 		},
 		numOf: (obj, item) => obj.filter(element => element == item).length,
 		connectNickname: function () {
-			if (lib.config.connect_nickname == '捞德num') {
+			if (lib.config.connect_nickname.startsWith('捞德')) {
 				var week = new Date().getDay();
 				switch (week) {
 					case 0:

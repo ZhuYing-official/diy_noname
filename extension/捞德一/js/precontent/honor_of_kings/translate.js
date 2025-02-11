@@ -209,7 +209,7 @@ const translates = {
 	hok_benlei: '奔雷',
 	hok_benlei_info: '锁定技。你造成的无属性伤害始终为雷属性。每回合可使用的【杀】的次数+1。当你对与你距离为1的角色造成伤害后，你获得1点护甲。你的回合开始时，你失去所有护甲。',
 	hok_leitingwanjun: '雷霆万钧',
-	hok_leitingwanjun_info: '限定技，本回合你造成的雷属性伤害+1；你每造成2点雷属性伤害，你回复1点体力。',
+	hok_leitingwanjun_info: '限定技，本回合你造成的雷属性伤害+1；你造成雷属性伤害每达到2点时，你回复1点体力。',
 	// 孙悟空
 	hok_sunwukong: '王者孙悟空',
 	hok_qitian: '齐天',

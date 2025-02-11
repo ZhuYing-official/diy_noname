@@ -167,7 +167,7 @@ const skills = {
 			order: 5.5,
 			result: {
 				target(player, target) {
-					return Math.sign(get.damageEffect(target, player, target, 'fire'));
+					return -get.damageEffect(target, player, target, 'fire');
 				},
 			},
 		}
@@ -3716,10 +3716,10 @@ const skills = {
 			player.useCard({ name: 'sha', nature: 'ice' }, target, false);
 		},
 		ai: {
-			order: 4,
+			order: 3,
 			result: {
 				target(player, target) {
-					return get.effect(target, { name: 'sha', nature: 'ice' }, player, player);
+					return -get.effect(target, { name: 'sha', nature: 'ice' }, player, player);
 				},
 			},
 		}
@@ -4354,7 +4354,11 @@ const skills = {
 			order: () => get.order({ name: 'sha' }) - 0.2,
 			expose: 0.2,
 			result: {
-				player: 1,
+				player(player) {
+					return game.hasPlayer((current) => {
+						return player != current && player.inRange(current) && get.attitude(player, current) < 0;
+					}) ? 1 : 0;
+				},
 			},
 		}
 	},
