@@ -259,7 +259,7 @@ const translates = {
 	hok_wangzhe: '王者',
 	hok_wangzhe_info: '主公技，游戏开始时，你获得1枚“圣光”标记；其他群势力出牌阶段结束时，其可以弃置一张牌，令你回复1点体力。',
 	hok_shengguang: '圣光',
-	hok_shengguang_info: '回合开始时，你回复1点体力并获得1枚“圣光”标记（最多3枚）。',
+	hok_shengguang_info: '回合开始时，若你已受伤则回复1点体力；否则你获得1枚“圣光”标记（最多3枚）。',
 	hok_shidun: '誓盾',
 	hok_shidun_info: '出牌阶段限一次，你的【杀】造成伤害后，你令目标角色的一个技能失效直到其下回合结束或死亡(觉醒技，限定技，主公技，隐匿技，使命技等特殊技能除外)。',
 	hok_huixuan: '回旋',
