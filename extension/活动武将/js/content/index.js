@@ -7,9 +7,13 @@ export function content(config, pack) {
 			const result = originLoading.apply(this, arguments);
 			const extensionPack = Array.from(document.getElementsByTagName('div')).find(div => div.innerHTML === '扩展');
 			if (extensionPack) {
+<<<<<<< HEAD
 				const originClick = extensionPack.onclick || function () { };
 				extensionPack.onclick = () => {
 					originClick.apply(this, arguments);
+=======
+				extensionPack.onclick = () => {
+>>>>>>> 4d4b5e016fdda43d7ca037e55c3d52011a36932d
 					const plagueExtension = Array.from(document.querySelectorAll('.menubutton.large')).find(div => div.innerHTML === '活动武将');
 					if (plagueExtension) plagueExtension.innerHTML = "<img style=width:100px src=" + lib.assetURL + "extension/活动武将/image/default/活动武将.png>";
 				};
@@ -1191,6 +1195,7 @@ export function content(config, pack) {
 
 	//名称重置
 	if (lib.config.extension_活动武将_HD_REname) {
+<<<<<<< HEAD
 		const changeMap = {
 			'张机': '张仲景',
 			'蔡琰': '蔡文姬',
@@ -1215,6 +1220,20 @@ export function content(config, pack) {
 			*/
 			if (item) lib.translate[name] = lib.translate[name].replace(item, changeMap[item]);
 		}
+=======
+		var list = Object.keys(lib.translate);
+		var list2 = ['jsrg_zhenji', 'wolong_card', 'pcaudio_wolong_card'];//不修改名称的ID白名单
+		var list3 = ['卧龙凤雏', '祭风卧龙', '卧龙演策'];//不修改名称的translate白名单
+		[['张机', '张仲景'], ['蔡琰', '蔡文姬'], ['卧龙', '卧龙诸葛'],
+		['严虎', '严白虎'], ['甄宓', '甄姬'], ['伏寿', '伏皇后'],
+		['吉本', '吉平']].forEach(name => {
+			list.filter(name2 => !list2.includes(name2) && typeof lib.translate[name2] === "string" && list3.filter(name4 => lib.translate[name2].includes(name4)).length == 0 && lib.translate[name2].includes(name[0])).forEach(name3 => {
+				var str = lib.translate[name3];
+				var num = str.indexOf(name[0]);
+				lib.translate[name3] = str.slice(0, num) + name[1] + str.slice(num + name[0].length, str.length);
+			});
+		});
+>>>>>>> 4d4b5e016fdda43d7ca037e55c3d52011a36932d
 	}
 
 	//虎牢关

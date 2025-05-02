@@ -4356,7 +4356,11 @@ const skills = {
 			result: {
 				player(player) {
 					return game.hasPlayer((current) => {
+<<<<<<< HEAD
 						return player != current && player.inRange(current) && get.attitude(player, current) < 0;
+=======
+						return player != current && player.inRange(current);
+>>>>>>> 4d4b5e016fdda43d7ca037e55c3d52011a36932d
 					}) ? 1 : 0;
 				},
 			},
