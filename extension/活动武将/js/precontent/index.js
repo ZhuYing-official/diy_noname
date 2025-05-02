@@ -11,78 +11,39 @@ import WeChatkill from './WeChatkill.js';
 import MX_feihongyinxue from './MX_feihongyinxue.js';
 import huodongcharacter from './huodongcharacter.js';
 
-export function precontent(bilibilicharacter) {
-    //判断是否有XX扩展
-    game.TrueHasExtension = game.TrueHasExtension || function (ext) {
-        return lib.config.extensions && lib.config.extensions.includes(ext);
-    };
-    game.HasExtension = game.HasExtension || function (ext) {
-        return game.TrueHasExtension(ext) && lib.config['extension_' + ext + '_enable'];
-    };
-    //阵亡配音
-    lib.skill._HD_die = {
-        charlotte: true,
-        ruleSkill: true,
-        trigger: { player: 'dieBegin' },
-        filter(event, player) {
-            return lib.config.background_speak && event.player.name;
-        },
-        firstDo: true,
-        direct: true,
-        priority: -Infinity,
-        lasrDo: true,
-        content() {
-            game.broadcastAll(function (name) {
-                game.playAudio('..', 'extension', '活动武将/audio/die', name);
-            }, trigger.player.name);
-        },
-    };
-    //困难年兽体力上限和体力值为所有其他角色的体力上限和
-    lib.skill._YJplusmaxHp = {
-        charlotte: true,
-        ruleSkill: true,
-        trigger: { global: 'gameStart', player: 'enterGame' },
-        filter(event, player) {
-            return player.name == 'NS_nianshouC' || player.name2 == 'NS_nianshouC';
-        },
-        priority: 114514,//恶臭(划掉)
-        direct: true,
-        content() {
-            for (var i = 0; i < game.players.length; i++) {
-                if (game.players[i] == player) continue;
-                player.maxHp += game.players[i].maxHp;
+export async function precontent(bilibilicharacter) {
+    //存储活动武将扩展的文件和文件夹分布
+    _status['extension_活动武将_files'] = await (async () => {
+        const getFileList = async function (path = 'extension/活动武将') {
+            const [folders, files] = await game.promises.getFileList(path);
+            const map = { files };
+            if (Array.isArray(folders) && folders.length > 0) {
+                for (const folder of folders) map[folder] = await getFileList(`${path}/${folder}`);
             }
-            player.hp = player.maxHp;
-            player.update();
-        },
+            return map;
+        };
+        return await getFileList();
+    })();
+    //判断是否有XX扩展
+    game.TrueHasExtension = function (ext) {
+        const extensionMenu = Object.keys(lib.extensionMenu);
+        return extensionMenu.includes(ext) || extensionMenu.includes(`extension_${ext}`);
     };
-    //一轮的结束
-    lib.skill._bilibili_roundEnd = {
-        charlotte: true,
-        ruleSkill: true,
-        trigger: { player: ['phaseAfter', 'phaseCancelled', 'phaseSkipped'] },//伪·一轮的结束
-        filter(event, player) {
-            return !event.skill && player.next == _status.roundStart;
-        },
-        forceDie: true,
-        direct: true,
-        priority: -Infinity,
-        lastDo: true,
-        content() {
-            'step 0'
-            event.trigger('roundEnd');//End时机常用于技能结算
-            'step 1'
-            event.trigger('roundAfter');//After时机常用于效果清除
-        },
+    game.HasExtension = function (ext) {
+        return game.TrueHasExtension(ext) && lib.config['extension_' + ext + '_enable'];
     };
     //闪闪节
     lib.arenaReady.push(() => {
         if (lib.config.extension_活动武将_HD_shanshan) {
-            for (var i = 0; i < lib.card.list.length; i++) {
+            let num = 0;
+            for (let i = 0; i < lib.card.list.length; i++) {
                 if (lib.card.list[i][2] != 'shan' || lib.card.list[i][0] != 'diamond') continue;
-                if ([5, 6, 7].includes(lib.card.list[i][1])) lib.card.list[i][2] = 'bol_shanshan';
+                if ([5, 6, 7].includes(lib.card.list[i][1])) {
+                    num++;
+                    lib.card.list[i][2] = 'bol_shanshan';
+                }
             }
-            game.log('三张', '#g【闪闪】', '已加入牌堆');
+            if (num > 0) game.log(`${get.cnNumber(num)}张`, '#g【闪闪】', '已加入牌堆');
         }
     });
     //合纵抗秦、官渡之战模式特殊规则
@@ -205,53 +166,19 @@ export function precontent(bilibilicharacter) {
         },
     };
     //座位号显示
-    lib.skill._firstPlayer = {
-        charlotte: true,
-        ruleSkill: true,
-        trigger: { global: 'phaseBefore' },
-        filter(event, player) {
-            if (!lib.config.extension_活动武将_ShowSeatNum) return false;
-            return !game.firstPlayer && game.phaseNumber == 0;
-        },
-        direct: true,
-        priority: 1145141919810,
-        content() {
-            game.firstPlayer = true;
-            game.players.forEach(i => {
-                if (i.getSeatNum() != 0) i.setNickname(get.cnNumber(i.getSeatNum(), true) + '号位');
-            });
-            var originSwapSeat = game.swapSeat;
-            game.swapSeat = function (player1, player2, prompt, behind, noanimate) {
-                originSwapSeat.apply(this, arguments);
-                if (player1.getSeatNum() != 0) player1.setNickname(get.cnNumber(player1.getSeatNum(), true) + '号位');
-                if (player2.getSeatNum() != 0) player2.setNickname(get.cnNumber(player2.getSeatNum(), true) + '号位');
-            };
-        },
-    };
-    //弃牌阶段相关技能
-    lib.skill._bilibili_phaseDiscard_audio = {
-        charlotte: true,
-        ruleSkill: true,
-        trigger: { player: 'phaseDiscardBegin' },
-        filter(event, player) {
-            return player.countCards('h') > player.hp;
-        },
-        direct: true,
-        firstDo: true,
-        priority: 15,
-        content() {
-            if (player.hasSkill('zongshi')) player.logSkill('zongshi');
-            if (player.hasSkill('rezongshi')) player.logSkill('rezongshi');
-            if (player.hasSkill('decadezongshi')) player.logSkill('decadezongshi');
-            if (player.hasSkill('huaibi') && player.storage.yinlang && game.hasPlayer(function (current) {
-                return current.group == player.storage.yinlang;
-            })) player.logSkill('huaibi');
-            if (player.hasSkill('rehuaibi') && player.storage.yaohu && game.hasPlayer(function (current) {
-                return current.group == player.storage.yaohu;
-            })) player.logSkill('rehuaibi');
-            if (player.hasSkill('sbxueyi') && game.hasPlayer(current => player != current && current.group == 'qun')) player.logSkill('sbxueyi');
-        },
-    };
+    if (lib.config.extension_活动武将_ShowSeatNum) {
+        const originSetSeatNum = lib.element.player.setSeatNum;
+        lib.element.player.setSeatNum = function () {
+            originSetSeatNum.apply(this, arguments);
+            if (this.getSeatNum() != 0) this.setNickname(get.cnNumber(this.getSeatNum(), true) + '号位');
+        };
+        const originSwapSeat = game.swapSeat;
+        game.swapSeat = function (player1, player2) {
+            originSwapSeat.apply(this, arguments);
+            if (player1.getSeatNum() != 0) player1.setNickname(get.cnNumber(player1.getSeatNum(), true) + '号位');
+            if (player2.getSeatNum() != 0) player2.setNickname(get.cnNumber(player2.getSeatNum(), true) + '号位');
+        };
+    }
     //失去体力上限配音
     lib.skill._bilibili_loseMaxHp = {
         charlotte: true,
@@ -303,13 +230,8 @@ export function precontent(bilibilicharacter) {
             });
         },
     };
+    /*
     //点击显示
-    //低配+仅限电脑版
-    get.bolInform = function (str1, str2) {
-        return '<abbr title=\"' + str2 + '\"><ins>' + str1 + '</ins></abbr>';
-    };
-    //高配
-    //感谢 雷 的技术支持
     game.getBolPhone = function () {
         //获取浏览器navigator对象的userAgent属性（浏览器用于HTTP请求的用户代理头的值）
         var info = navigator.userAgent;
@@ -318,6 +240,19 @@ export function precontent(bilibilicharacter) {
         //如果包含“Mobile”（是手机设备）则返回true
         return isPhone;
     };
+    //低配
+    get.bolInform = function (str1, str2) {
+        if ((() => {
+            return game.getBolPhone();
+            //const info = navigator.userAgent;
+            //return /mobile|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|OperaMini/i.test(info);
+        })()) {
+            return `<span onclick="alert('${str2}')"style="text-decoration:underline; cursor:pointer;">${str1}</span>`;
+        }
+        return `<abbr title=\"${str2}\"><ins>${str1}</ins></abbr>`;
+    };
+    //高配
+    //感谢 雷 的技术支持
     get.bolskillTips = function (tipname, id) {
         var dibeijing = ui.create.div('.bol-dibeijing', document.body);
         dibeijing.style.zIndex = 16;
@@ -340,11 +275,38 @@ export function precontent(bilibilicharacter) {
         const id = Math.random().toString(36).slice(-8);
         return "<a id='" + id + "' style='color:unset' href=\"javascript:get.bolskillTips('" + str2 + "','" + id + "');\">" + str1 + "※</a>";
     };
-    get.YunLvInform = () => get.bolInformX('韵律技', '韵律技分为平和仄两种状态，韵律技初始默认状态为平，满足转韵条件时韵律技会转成另一种状态并重置技能的发动次数');
-    get.RenWangInform = () => get.bolInformX('仁望值', '拥有涉及仁望值技能的角色于游戏开始时获得1点仁望值，且其出牌阶段结束时，其根据以下满足的条件数增加等量的仁望值：①本阶段有角色获得过累计两张牌；②本阶段有角色回复过体力；③本阶段未对其他角色造成过伤害。一名角色的仁望值上限为5。');
-    get.ZhengSuInform = () => get.bolInformX('整肃', '<li>技能发动者从“擂进”、“变阵”、“鸣止”三个选项中选择一个令目标执行，若其于其本回合弃牌阶段结束后达成选项条件，则选择整肃奖励。<br><li>整肃奖励：选择摸两张牌或回复1点体力<br><li>擂进：回合内所有于出牌阶段使用的牌点数递增且不少于三张。<br><li>变阵：回合内所有于出牌阶段使用的牌花色相同且不少于两张。<br><li>鸣止：回合内所有于弃牌阶段弃置的牌花色均不相同且不少于两张。');
-    get.MouLveInform = () => get.bolInformX('谋略值', '上限为5，拥有谋略值的角色可以发动技能【妙计】（每回合限一次，你可以：①失去1点谋略值，视为使用【过河拆桥】；②失去2点谋略值，视为使用【无懈可击】；③失去3点谋略值，视为使用【无中生有】）');
-    get.ShiwuInform = () => get.bolInformX('奋武技', '奋武技的使用次数为本轮你造成和受到的伤害值+1，至多为5');
+    */
+    //适配poptip
+    lib.poptip.add({
+        name: '韵律技',
+        id: 'rule_yunlvSkill',
+        info: '三国杀微服机制，和转换技类似，韵律技分为平和仄两种状态，韵律技初始默认状态为平，满足转韵条件时韵律技会转成另一种状态并重置技能的发动次数。',
+    });
+    lib.poptip.add({
+        name: '仁望值',
+        id: 'rule_renwangnum',
+        info: '三国杀外服机制（已废弃），拥有涉及仁望值技能的角色于游戏开始时获得1点仁望值，且其出牌阶段结束时，其根据以下满足的条件数增加等量的仁望值：①本阶段有角色获得过累计两张牌；②本阶段有角色回复过体力；③本阶段未对其他角色造成过伤害。一名角色的仁望值上限为5。',
+    });
+    lib.poptip.add({
+        name: '整肃',
+        id: 'rule_zhengsu',
+        info: '<li>技能发动者从“擂进”、“变阵”、“鸣止”三个选项中选择一个令目标执行，若其于其本回合弃牌阶段结束后达成选项条件，则选择整肃奖励。<br><li>整肃奖励：选择摸两张牌或回复1点体力<br><li>擂进：回合内所有于出牌阶段使用的牌点数递增且不少于三张。<br><li>变阵：回合内所有于出牌阶段使用的牌花色相同且不少于两张。<br><li>鸣止：回合内所有于弃牌阶段弃置的牌花色均不相同且不少于两张。',
+    });
+    lib.poptip.add({
+        name: '谋略值',
+        id: 'rule_moulvenum',
+        info: `上限为5，拥有谋略值的角色可以发动技能${get.poptip('wechatmiaoji')}。`,
+    });
+    lib.poptip.add({
+        name: '奋武技',
+        id: 'rule_shiwuSkill',
+        info: '奋武技的使用次数为本轮你造成和受到的伤害值+1，至多为5。',
+    });
+    lib.poptip.add({
+        name: '牢大',
+        id: 'rule_mamba',
+        info: 'Man! What can I say? Mamba out!',
+    });
     //----------------游戏播报·始----------------
     lib.skill._OpenTheGame = {
         charlotte: true,
@@ -368,10 +330,10 @@ export function precontent(bilibilicharacter) {
     lib.skill._bilibili_miaoshou = {
         charlotte: true,
         ruleSkill: true,
-        trigger: { global: 'xmiaoshou' },
+        trigger: { player: 'xmiaoshou' },
         filter(event, player) {
             const config = lib.config.extension_活动武将_HDfightAudio;
-            return config && config !== 'off' && event.player == player;
+            return config && config !== 'off';
         },
         direct: true,
         firstDo: true,
@@ -387,10 +349,10 @@ export function precontent(bilibilicharacter) {
     lib.skill._bilibili_yishu = {
         charlotte: true,
         ruleSkill: true,
-        trigger: { global: 'xyishu' },
+        trigger: { player: 'xyishu' },
         filter(event, player) {
             const config = lib.config.extension_活动武将_HDfightAudio;
-            return config && config !== 'off' && event.player == player;
+            return config && config !== 'off';
         },
         direct: true,
         firstDo: true,
@@ -434,16 +396,16 @@ export function precontent(bilibilicharacter) {
     lib.skill._jishaAudio = {
         charlotte: true,
         ruleSkill: true,
-        trigger: { global: 'dieBegin' },
+        trigger: { source: 'dieBegin' },
         filter(event, player) {
             const config = lib.config.extension_活动武将_HDfightAudio;
-            return config && config !== 'off' && event.source == player && event.player != player;
+            return config && config !== 'off' && event.player != player;
         },
         direct: true,
         firstDo: true,
         content() {
             'step 0'
-            if (!player.storage.bilibili_kill) player.storage.bilibili_kill = 0;
+            player.storage.bilibili_kill ??= 0;
             player.storage.bilibili_kill++;
             'step 1'
             let config = lib.config.extension_活动武将_HDfightAudio;
@@ -585,41 +547,6 @@ export function precontent(bilibilicharacter) {
     };
     //----------------游戏播报·末----------------
 
-    //设定势力+颜色显示
-    game.bolAddGroupNature = function (name, mapping, gradient, push) {
-        var n;
-        if (!name || !Array.isArray(name)) return;
-        n = name[0];
-        if (!mapping || !Array.isArray(mapping) || mapping.length != 3) mapping = [199, 21, 133];
-        var y = "(" + mapping[0] + "," + mapping[1] + "," + mapping[2];
-        var y1 = y + ",1)", y2 = y + ")";
-        var s = document.createElement('style');
-        var l = ".player .identity[data-color='diy" + n + "'],";
-        l += "div[data-nature='diy" + n + "'],";
-        l += "span[data-nature='diy" + n + "'] {text-shadow: black 0 0 1px,rgba" + y1 + " 0 0 2px,rgba" + y1 + " 0 0 5px,rgba" + y1 + " 0 0 10px,rgba" + y1 + " 0 0 10px}";
-        l += "div[data-nature='diy" + n + "m'],";
-        l += "span[data-nature='diy" + n + "m'] {text-shadow: black 0 0 1px,rgba" + y1 + " 0 0 2px,rgba" + y1 + " 0 0 5px,rgba" + y1 + " 0 0 5px,rgba" + y1 + " 0 0 5px,black 0 0 1px;}";
-        l += "div[data-nature='diy" + n + "mm'],";
-        l += "span[data-nature='diy" + n + "mm'] {text-shadow: black 0 0 1px,rgba" + y1 + " 0 0 2px,rgba" + y1 + " 0 0 2px,rgba" + y1 + " 0 0 2px,rgba" + y1 + " 0 0 2px,black 0 0 1px;}";
-        s.innerHTML = l;
-        document.head.appendChild(s);
-        if (gradient && Array.isArray(gradient) && Array.isArray(gradient[0]) && gradient[0].length == 3) {
-            var str = "", st2 = [];
-            for (var i = 0; i < gradient.length; i++) {
-                str += ",rgb(" + gradient[i][0] + "," + gradient[i][1] + "," + gradient[i][2] + ")";
-                if (i < 2) st2[i] = "rgb(" + gradient[i][0] + "," + gradient[i][1] + "," + gradient[i][2] + ")";
-            }
-            var tenUi = document.createElement('style');
-            tenUi.innerHTML = ".player>.camp-zone[data-camp='" + n + "']>.camp-back {background: linear-gradient(to bottom" + str + ");}";
-            tenUi.innerHTML += ".player>.camp-zone[data-camp='" + n + "']>.camp-name {text-shadow: 0 0 5px " + st2[0] + ", 0 0 10px " + st2[1] + ";}";
-            document.head.appendChild(tenUi);
-        }
-        if (push === true) lib.group.add(n);
-        if (!_status.mx_group) _status.mx_group = '夏商周秦汉晋南北隋唐宋元明清';
-        lib.translate[n] = name[1];
-        lib.translate[n + '2'] = (name[2] ? name[2] : (name[1] + (_status.mx_group.includes(name[1]) ? '朝' : '国')));
-        lib.groupnature[n] = "diy" + n;
-    };
     //武将包和卡包
     if (bilibilicharacter.enable) {
         //--------------------武将包--------------------//

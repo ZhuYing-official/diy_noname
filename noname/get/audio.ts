@@ -53,7 +53,7 @@ export class Audio {
 	 * @param args
 	 */
 	static die({ player, info, args }: { player: Player | string; info?: AudioInfo; args?: any[] }): Audio {
-		if (player == void 0) throw new ReferenceError(`player is not defined`);
+		if (player == void 0) throw new ReferenceError(`player is not defined(可能原因：非本体武将)`);
 
 		let formatedInfo;
 		if (info != void 0 && (typeof info !== "object" || Array.isArray(info))) formatedInfo = { dieAudios: info };

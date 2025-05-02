@@ -3171,10 +3171,11 @@ export class Create {
 				for (var i of game.connectPlayers) {
 					if (!i.nickname && !i.classList.contains("unselectable2")) num++;
 				}
-				if (num >= lib.configOL.number - 1) {
-					alert("至少要有两名玩家才能开始游戏！");
-					return;
-				}
+				// 捞
+				// if (num >= lib.configOL.number - 1) {
+				// 	alert("至少要有两名玩家才能开始游戏！");
+				// 	return;
+				// }
 				game.resume();
 			}
 			button.delete();

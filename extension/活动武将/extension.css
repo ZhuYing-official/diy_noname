@@ -14,7 +14,7 @@
 	text-align: center;
 	color: #ac9a82;
 	text-shadow: -1.3px 0px 2.2px #000, 0px -1.3px 2.2px #000, 1.3px 0px 2.2px #000, 0px 1.3px 2.2px #000;
-	font-family: shousha;
+	font-family: "shousha";
 	font-size: 18px;
 	font-weight: 700;
 	z-index: 8 !important;
@@ -36,7 +36,7 @@
 	text-align: center;
 	color: #ac9a82;
 	text-shadow: -1.3px 0px 2.2px #000, 0px -1.3px 2.2px #000, 1.3px 0px 2.2px #000, 0px 1.3px 2.2px #000;
-	font-family: shousha;
+	font-family: "shousha";
 	font-size: 17px;
 	font-weight: 500;
 	z-index: 8 !important;
@@ -58,7 +58,7 @@
 	text-align: center;
 	color: #ac9a82;
 	text-shadow: -1.3px 0px 2.2px #000, 0px -1.3px 2.2px #000, 1.3px 0px 2.2px #000, 0px 1.3px 2.2px #000;
-	font-family: shousha;
+	font-family: "shousha";
 	font-size: 17px;
 	font-weight: 500;
 	z-index: 8 !important;
@@ -85,12 +85,13 @@
 	text-align: center;
 	color: #e2e0dc;
 	text-shadow: -1.3px 0px 2.2px #000, 0px -1.3px 2.2px #000, 1.3px 0px 2.2px #000, 0px 1.3px 2.2px #000;
-	font-family: shousha;
+	font-family: "shousha";
 	font-size: 17px;
 	font-weight: 900;
 	z-index: 8 !important;
 }
-/*感谢 雷 的技术支持*/
+
+/*感谢 雷 的技术支持
 .bol-dibeijing {
 	height: 100%;
 	width: 100%;
@@ -99,6 +100,7 @@
 	top: 0;
 	z-index: 8;
 }
+
 .bol-skilltip {
 	width: 20%;
 	min-height: 5%;
@@ -115,4 +117,218 @@
 	padding: 8px;
 	transform: translate(-50%, -50%);
 	transition: none;
+}
+*/
+
+/*曹丕登阶*/
+.dialog.dengjie-game:not(.player) {
+	width: fit-content;
+	height: fit-content;
+}
+
+.dialog.dengjie-game > .content-container {
+	position: relative;
+}
+
+.dialog.dengjie-game > .content-container > .content {
+	position: relative;
+}
+
+.dialog.dengjie-game .dengjie-game-container {
+	position: relative;
+}
+
+table.dengjie-game {
+	--cell-spacing: 10px;
+	border-spacing: var(--cell-spacing);
+}
+
+td.dengjie-game {
+	--block-size: 40px;
+	--border-radius: calc(var(--block-size) / 8);
+	width: var(--block-size);
+	height: var(--block-size);
+	background: rgba(0, 0, 0, 0.4);
+	border-radius: var(--border-radius);
+	display: block;
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	margin-left: var(--cell-spacing);
+	float: left;
+}
+
+td.dengjie-game > .arrow-container {
+	position: absolute;
+	font-size: 100%;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--border-radius);
+}
+
+td.dengjie-game > .arrow-container > .arrow {
+	border-radius: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 50%;
+	height: 50%;
+	z-index: 3;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px;
+}
+
+td.dengjie-game > .arrow-container.new-gain > .arrow {
+	background-color: #007dbd;
+}
+
+td.dengjie-game > .arrow-container.new-lose > .arrow {
+	background-color: #c50000;
+}
+
+td.dengjie-game > .arrow-container.old > .arrow {
+	background-color: #494949;
+}
+
+td.dengjie-game > .arrow-container.new-gain {
+	background-color: #007dbd;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(0, 125, 189, 1) 0 0 5px, rgba(0, 125, 189, 1) 0 0 5px, rgba(0, 125, 189, 1) 0 0 10px, rgba(0, 125, 189, 1) 0 0 10px !important;
+}
+
+td.dengjie-game > .arrow-container.new-lose {
+	background-color: #c50000;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(197, 0, 0, 1) 0 0 5px, rgba(197, 0, 0, 1) 0 0 5px, rgba(197, 0, 0, 1) 0 0 10px, rgba(197, 0, 0, 1) 0 0 10px !important;
+}
+
+td.dengjie-game > .arrow-container.old {
+	background-color: #494949;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(73, 73, 73, 1) 0 0 5px, rgba(73, 73, 73, 1) 0 0 5px, rgba(73, 73, 73, 1) 0 0 10px, rgba(73, 73, 73, 1) 0 0 10px !important;
+}
+
+td.dengjie-game.selectable {
+	cursor: pointer;
+}
+
+td.dengjie-game:first-child {
+	margin: 0px;
+}
+
+.dialog.dengjie-game > .content-container > .content > div:last-child {
+	padding-bottom: 0px;
+}
+
+td.dengjie-game > .button.character {
+	--expand-size: calc(var(--cell-spacing) - 4px);
+	width: var(--block-size);
+	height: var(--block-size);
+	border-radius: var(--border-radius);
+	margin: 0px;
+	pointer-events: none;
+	z-index: 2;
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+}
+
+td.dengjie-game > .button.character > .score {
+	border-radius: var(--border-radius);
+	font-size: 12px;
+	width: 35%;
+	height: 35%;
+}
+
+td.dengjie-game > .button.character > .score.gain {
+	background-color: #007dbd;
+}
+
+td.dengjie-game > .button.character > .score.lose {
+	background-color: #c50000;
+}
+
+/*吕布踏阵*/
+.button.character.tazhen {
+	width: 108px !important;
+	height: 150px !important;
+}
+
+.button.card.tazhen {
+	width: 108px !important;
+	height: 150px !important;
+}
+
+/*诸葛亮定乱*/
+.dingluan-tube-container {
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	gap: 20px;
+	flex-wrap: wrap;
+	padding: 20px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.dingluan-tube {
+	width: 60px;
+	height: 200px;
+	background: #221a0f;
+	border: 2px solid #8b6f45;
+	border-radius: 10px;
+	position: relative;
+	display: block;
+	padding: 0 5px;
+	margin: 0 10px;
+	box-sizing: border-box;
+	cursor: pointer;
+	transition: border-color 0.2s;
+	flex-shrink: 0;
+	overflow: visible;
+}
+
+.dingluan-tube.selected {
+	border-color: #ffdf66;
+	box-shadow: 0 0 10px #ffdf66;
+}
+
+.dingluan-piece {
+	display: block;
+	width: 48px;
+	height: 24px;
+	background: #ccb183;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	margin: 0;
+	text-align: center;
+	line-height: 24px;
+	font-size: 14px;
+	font-family: "shousha";
+	color: #000;
+	border-radius: 6px;
+	box-shadow: inset 0 0 3px #000;
+	pointer-events: none;
+	box-sizing: border-box;
+	/*transition: bottom 0.3s ease;移除动画，懒得加*/
+}
+
+/*神左慈幻术卡牌颜色*/
+.card.minihuanshu-glow:before {
+	opacity: 0.2;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgb(255, 109, 12) 0 0 5px, rgb(255, 0, 0) 0 0 10px;
+	background-color: #0000ff;
+	-webkit-filter: blur(5px);
+	filter: blur(5px);
+}
+
+/*神左慈幻化卡牌颜色*/
+.card.minihuanhua-glow:before {
+	opacity: 0.2;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgb(255, 109, 12) 0 0 5px, rgb(255, 0, 0) 0 0 10px;
+	background-color: yellow;
+	-webkit-filter: blur(5px);
+	filter: blur(5px);
 }

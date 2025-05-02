@@ -10,7 +10,7 @@ export class Audio {
 		return new Audio(new SkillAudio(skill, formatedPlayer, formatedInfo), args);
 	}
 	static die({ player, info, args }) {
-		if (player == void 0) throw new ReferenceError(`player is not defined`);
+		if (player == void 0) throw new ReferenceError(`player is not defined(可能原因：非本体武将)`);
 		let formatedInfo;
 		if (info != void 0 && (typeof info !== "object" || Array.isArray(info))) formatedInfo = { dieAudios: info };
 		else formatedInfo = info;
