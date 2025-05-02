@@ -20,7 +20,7 @@ image/*.TXT
 app
 app.html
 ehthumbs.db
-# extension
+extension
 Home
 jsconfig.json
 localStorage.json
@@ -32,6 +32,7 @@ package.json
 Thumbs.db
 bun.lockb
 deno.lock
+pnpm-lock.yaml
 game/*.zip  
 
 downloadExtension.html

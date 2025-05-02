@@ -106,8 +106,6 @@ window.config = {
 	favouriteCharacter: [],
 	favouriteMode: [],
 	recentIP: [],
-	vintageSkills: [],
-	alteredSkills: [],
 	brokenFile: [],
 
 	theme: "simple",
