@@ -117,6 +117,6 @@ a{
     display: none;
 }
 @font-face {
-	font-family: 'xinwei';
-	src: local('华文新魏_GBK'), url('xinwei.woff2');
+    font-family: 'xinwei';
+    src: url('xinwei.ttf');
 }

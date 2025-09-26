@@ -109,7 +109,7 @@
 				window.__dirname = path.join(path.resolve(), "resources/app");
 			}
 			const oldData = Object.entries(window.require);
-			// @ts-expect-error ignore
+			// @ts-expect-error ignore`
 			window.require = function (moduleId) {
 				try {
 					return module.require(moduleId);

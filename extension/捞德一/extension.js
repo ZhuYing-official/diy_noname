@@ -117,6 +117,14 @@ game.laoShowNewPack = function () {
 				}
 			});
 		};
+		// 移动扩展音乐素材到本体
+		if (fs.existsSync('resources/app/extension/捞德一/audio')) {
+			fs.cp('resources/app/extension/捞德一/audio', 'resources/app/audio', { recursive: true }, (err) => {
+				if (err) {
+					alert(err);
+				}
+			});
+		};
 	} else {
 		alert('其他环境，反馈请联系扩展作者捞德一');
 	}
