@@ -178,7 +178,7 @@ const characters = {
 		group: "wei",
 		hp: 4,
 		maxHp: 4,
-		hujia: 1,
+		hujia: 2,
 		skills: ["sbjushou", "sbjiewei"],
 	},
 	sb_xiahoushi: {
@@ -263,7 +263,7 @@ const characters = {
 		sex: "male",
 		group: "qun",
 		hp: 3,
-		skills: ["sbmingce", "sbzhichi"],
+		skills: ["twmingce", "sbzhichi"],
 	},
 	sb_diaochan: {
 		sex: "female",

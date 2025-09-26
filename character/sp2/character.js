@@ -1,9 +1,15 @@
 const characters = {
+	star_zhangrang: {
+		sex: "male",
+		group: "qun",
+		hp: 3,
+		skills: ["starduhai", "starlingse"],
+	},
 	star_wenchou: {
 		sex: "male",
 		group: "qun",
 		hp: 4,
-		skills: ["starlianzhan", "starwenming"],
+		skills: ["starlianzhan", "starweiming"],
 	},
 	star_dingfeng: {
 		sex: "male",
@@ -21,7 +27,7 @@ const characters = {
 		sex: "male",
 		group: "qun",
 		hp: 4,
-		skills: ["dczhuiwang", "dcquxian"],
+		skills: ["twodcspzhuiji", "dcquxian"],
 	},
 	hansong: {
 		sex: "male",
