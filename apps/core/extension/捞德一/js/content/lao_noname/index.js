@@ -22,11 +22,284 @@ const lao_noname = function () {
                 ui.historybar.style.borderRadius = '0 0 0 4px';
             }
         }
+
+        // 播放音效
+        if (lib.config.background_audio) {
+            if (result === true) {
+                game.playAudio('effect', 'win');
+            } else if (result === false) {
+                game.playAudio('effect', 'lose');
+            } else {
+                game.playAudio('effect', 'tie');
+            }
+        }
+
+        // 创建基础对话框
+        let resultbool = result;
+        if (typeof resultbool !== 'boolean') {
+            resultbool = null;
+        }
+        if (result === true) result = '战斗胜利';
+        if (result === false) result = '战斗失败';
+        if (result == undefined) result = '战斗结束';
+        dialog = ui.create.dialog(result);
+        dialog.noforcebutton = true;
+        dialog.forcebutton = true;
+        if (game.addOverDialog) {
+            game.addOverDialog(dialog, result);
+        }
+
+        // 捞德一评分统计
+        var laodeyiNum = 0;
+        var laodeyiMvp = 0;
+        var damageValue = 1.0;
+        var damagedValue = 0.45;
+        var gainValue = 0.1;
+        var useValue = 0.6;
+        var killValue = 1.65;
+
+        if (game.players.length) {
+            for (i = 0; i < game.players.length; i++) {
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
+                    if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
+                    if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
+                    for (k in game.players[i].stat[j].card) {
+                        num += game.players[i].stat[j].card[k] * useValue;
+                    }
+                    if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
+                }
+                laodeyiMvp = Math.max(laodeyiMvp, num.toFixed(1));
+                laodeyiNum += num;
+            }
+        }
+
+        if (game.dead.length) {
+            for (i = 0; i < game.dead.length; i++) {
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
+                    if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
+                    if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
+                    for (k in game.dead[i].stat[j].card) {
+                        num += game.dead[i].stat[j].card[k] * useValue;
+                    }
+                    if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
+                }
+                laodeyiMvp = Math.max(laodeyiMvp, num.toFixed(1));
+                laodeyiNum += num;
+            }
+        }
+
+        // 显示评分表格
+        if (game.players.length) {
+            table = document.createElement('table');
+            tr = document.createElement('tr');
+            tr.appendChild(document.createElement('td'));
+            td = document.createElement('td');
+            td.innerHTML = '伤害';
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerHTML = '受伤';
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerHTML = '摸牌';
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerHTML = '出牌';
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerHTML = '杀敌';
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerHTML = '评分';
+            tr.appendChild(td);
+            table.appendChild(tr);
+
+            for (i = 0; i < game.players.length; i++) {
+                tr = document.createElement('tr');
+                td = document.createElement('td');
+                td.innerHTML = get.translation(game.players[i]) + (game.players[i].ai.stratagem_camouflage ? '(被伪装)' : '');
+                tr.appendChild(td);
+
+                // 伤害
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 受伤
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 摸牌
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 出牌
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    for (k in game.players[i].stat[j].card) {
+                        num += game.players[i].stat[j].card[k];
+                    }
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 杀敌
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 评分
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.players[i].stat.length; j++) {
+                    if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
+                    if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
+                    if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
+                    for (k in game.players[i].stat[j].card) {
+                        num += game.players[i].stat[j].card[k] * useValue;
+                    }
+                    if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
+                }
+                td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
+                if (num.toFixed(1) == laodeyiMvp) {
+                    td.innerHTML = `<b style='color:red'>MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
+                }
+                tr.appendChild(td);
+
+                table.appendChild(tr);
+            }
+            dialog.add(ui.create.div('.placeholder'));
+            dialog.content.appendChild(table);
+        }
+
+        if (game.dead.length) {
+            table = document.createElement('table');
+            table.style.opacity = '0.5';
+            if (game.players.length == 0) {
+                tr = document.createElement('tr');
+                tr.appendChild(document.createElement('td'));
+                td = document.createElement('td');
+                td.innerHTML = '伤害';
+                tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerHTML = '受伤';
+                tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerHTML = '摸牌';
+                tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerHTML = '出牌';
+                tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerHTML = '杀敌';
+                tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerHTML = '评分';
+                tr.appendChild(td);
+                table.appendChild(tr);
+            }
+
+            for (i = 0; i < game.dead.length; i++) {
+                tr = document.createElement('tr');
+                td = document.createElement('td');
+                td.innerHTML = get.translation(game.dead[i]) + (game.dead[i].ai.stratagem_camouflage ? '(被伪装)' : '');
+                tr.appendChild(td);
+
+                // 伤害
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 受伤
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 摸牌
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 出牌
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    for (k in game.dead[i].stat[j].card) {
+                        num += game.dead[i].stat[j].card[k];
+                    }
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 杀敌
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill;
+                }
+                td.innerHTML = num;
+                tr.appendChild(td);
+
+                // 评分
+                td = document.createElement('td');
+                num = 0;
+                for (j = 0; j < game.dead[i].stat.length; j++) {
+                    if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
+                    if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
+                    if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
+                    for (k in game.dead[i].stat[j].card) {
+                        num += game.dead[i].stat[j].card[k] * useValue;
+                    }
+                    if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
+                }
+                td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
+                if (num.toFixed(1) == laodeyiMvp) {
+                    td.innerHTML = `<b style='color:red'>MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
+                }
+                tr.appendChild(td);
+
+                table.appendChild(tr);
+            }
+            dialog.add(ui.create.div('.placeholder'));
+            dialog.content.appendChild(table);
+        }
+
+        // 联机模式特殊处理
         if (game.online) {
-            let dialog = ui.create.dialog();
-            dialog.noforcebutton = true;
-            dialog.content.innerHTML = result;
-            dialog.forcebutton = true;
             let result2 = arguments[1];
             if (result2 == true) {
                 dialog.content.firstChild.innerHTML = '战斗胜利';
@@ -52,15 +325,6 @@ const lao_noname = function () {
             }
 
             dialog.add(ui.create.div('.placeholder.slim'));
-            if (lib.config.background_audio) {
-                if (result2 === true) {
-                    game.playAudio('effect', 'win');
-                } else if (result2 === false) {
-                    game.playAudio('effect', 'lose');
-                } else {
-                    game.playAudio('effect', 'tie');
-                }
-            }
             if (!ui.exit) {
                 ui.create.exit();
             }
@@ -90,28 +354,8 @@ const lao_noname = function () {
             }
             return;
         }
-        if (lib.config.background_audio) {
-            if (result === true) {
-                game.playAudio('effect', 'win');
-            } else if (result === false) {
-                game.playAudio('effect', 'lose');
-            } else {
-                game.playAudio('effect', 'tie');
-            }
-        }
-        let resultbool = result;
-        if (typeof resultbool !== 'boolean') {
-            resultbool = null;
-        }
-        if (result === true) result = '战斗胜利';
-        if (result === false) result = '战斗失败';
-        if (result == undefined) result = '战斗结束';
-        dialog = ui.create.dialog(result);
-        dialog.noforcebutton = true;
-        dialog.forcebutton = true;
-        if (game.addOverDialog) {
-            game.addOverDialog(dialog, result);
-        }
+
+        // 单机模式后续处理
         if (typeof _status.coin == 'number' && !_status.connectMode) {
             let coeff = Math.random() * 0.4 + 0.8;
             let added = 0;
@@ -186,6 +430,8 @@ const lao_noname = function () {
             }
             game.changeCoin(_status.coin);
         }
+
+        // 天梯积分处理
         if (get.mode() == 'versus' && _status.ladder) {
             let mmr = _status.ladder_mmr;
             mmr += 10 - get.rank(game.me.name, true) * 2;
@@ -228,230 +474,8 @@ const lao_noname = function () {
                 ui.ladder.innerHTML = game.getLadderName(lib.storage.ladder.current);
             }
         }
-        // if(true){
 
-        // 捞 总评分
-        var laodeyiNum = 0;
-        var laodeyiMvp = 0;
-        var damageValue = 1.0;
-        var damagedValue = 0.45;
-        var gainValue = 0.1;
-        var useValue = 0.6;
-        var killValue = 1.65;
-        if (game.players.length) {
-            for (i = 0; i < game.players.length; i++) {
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
-                    if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
-                    if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
-                    for (k in game.players[i].stat[j].card) {
-                        num += game.players[i].stat[j].card[k] * useValue;
-                    }
-                    if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
-                }
-                laodeyiMvp = Math.max(laodeyiMvp, num.toFixed(1));
-                laodeyiNum += num;
-            }
-        }
-        if (game.dead.length) {
-            for (i = 0; i < game.dead.length; i++) {
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
-                    if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
-                    if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
-                    for (k in game.dead[i].stat[j].card) {
-                        num += game.dead[i].stat[j].card[k] * useValue;
-                    }
-                    if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
-                }
-                laodeyiMvp = Math.max(laodeyiMvp, num.toFixed(1));
-                laodeyiNum += num;
-            }
-        }
-
-        if (game.players.length) {
-            table = document.createElement('table');
-            tr = document.createElement('tr');
-            tr.appendChild(document.createElement('td'));
-            td = document.createElement('td');
-            td.innerHTML = '伤害';
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerHTML = '受伤';
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerHTML = '摸牌';
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerHTML = '出牌';
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerHTML = '杀敌';
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerHTML = '评分';
-            tr.appendChild(td);
-            table.appendChild(tr);
-            for (i = 0; i < game.players.length; i++) {
-                tr = document.createElement('tr');
-                td = document.createElement('td');
-                td.innerHTML = get.translation(game.players[i]) + (game.players[i].ai.stratagem_camouflage ? '(被伪装)' : '');
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    for (k in game.players[i].stat[j].card) {
-                        num += game.players[i].stat[j].card[k];
-                    }
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-
-                // 捞德一 评分
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.players[i].stat.length; j++) {
-                    if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
-                    if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
-                    if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
-                    for (k in game.players[i].stat[j].card) {
-                        num += game.players[i].stat[j].card[k] * useValue;
-                    }
-                    if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
-                }
-                td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
-                if (num.toFixed(1) == laodeyiMvp) {
-                    td.innerHTML = `<b style='color:red'>MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
-                }
-                tr.appendChild(td);
-
-                table.appendChild(tr);
-            }
-            dialog.add(ui.create.div('.placeholder'));
-            dialog.content.appendChild(table);
-        }
-        if (game.dead.length) {
-            table = document.createElement('table');
-            table.style.opacity = '0.5';
-            if (game.players.length == 0) {
-                tr = document.createElement('tr');
-                tr.appendChild(document.createElement('td'));
-                td = document.createElement('td');
-                td.innerHTML = '伤害';
-                tr.appendChild(td);
-                td = document.createElement('td');
-                td.innerHTML = '受伤';
-                tr.appendChild(td);
-                td = document.createElement('td');
-                td.innerHTML = '摸牌';
-                tr.appendChild(td);
-                td = document.createElement('td');
-                td.innerHTML = '出牌';
-                tr.appendChild(td);
-                td = document.createElement('td');
-                td.innerHTML = '杀敌';
-                tr.appendChild(td);
-                td = document.createElement('td');
-                td.innerHTML = '评分';
-                tr.appendChild(td);
-                table.appendChild(tr);
-            }
-            for (i = 0; i < game.dead.length; i++) {
-                tr = document.createElement('tr');
-                td = document.createElement('td');
-                td.innerHTML = get.translation(game.dead[i]) + (game.dead[i].ai.stratagem_camouflage ? '(被伪装)' : '');
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    for (k in game.dead[i].stat[j].card) {
-                        num += game.dead[i].stat[j].card[k];
-                    }
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill;
-                }
-                td.innerHTML = num;
-                tr.appendChild(td);
-
-                // 捞德一 评分
-                td = document.createElement('td');
-                num = 0;
-                for (j = 0; j < game.dead[i].stat.length; j++) {
-                    if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
-                    if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
-                    if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
-                    for (k in game.dead[i].stat[j].card) {
-                        num += game.dead[i].stat[j].card[k] * useValue;
-                    }
-                    if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
-                }
-                td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
-                if (num.toFixed(1) == laodeyiMvp) {
-                    td.innerHTML = `<b style='color:red'>MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
-                }
-                tr.appendChild(td);
-
-                table.appendChild(tr);
-            }
-            dialog.add(ui.create.div('.placeholder'));
-            dialog.content.appendChild(table);
-        }
+        // 处理额外死亡角色
         if (game.additionaldead && game.additionaldead.length) {
             table = document.createElement('table');
             table.style.opacity = '0.5';
@@ -502,9 +526,8 @@ const lao_noname = function () {
             dialog.add(ui.create.div('.placeholder'));
             dialog.content.appendChild(table);
         }
-        // }
-        dialog.add(ui.create.div('.placeholder'));
 
+        // 发送结算信息给联机客户端
         let clients = game.players.concat(game.dead);
         for (let i = 0; i < clients.length; i++) {
             if (clients[i].isOnline2()) {
@@ -532,6 +555,8 @@ const lao_noname = function () {
         }
         dialog.add(ui.create.div('.placeholder.slim'));
         game.addVideo('over', null, dialog.content.innerHTML);
+
+        // 视频录制处理
         let vinum = parseInt(lib.config.video);
         if (!_status.video && vinum && game.getVideoName && window.indexedDB && _status.videoInited) {
             let store = lib.db.transaction(['video'], 'readwrite').objectStore('video');
@@ -599,9 +624,9 @@ const lao_noname = function () {
             store.put(newvid);
             ui.create.videoNode(newvid, true);
         }
-        // _status.auto=false;
+
+        // 清理UI
         if (ui.auto) {
-            // ui.auto.classList.remove('glow');
             ui.auto.hide();
         }
         if (ui.wuxie) ui.wuxie.hide();
@@ -635,10 +660,12 @@ const lao_noname = function () {
             }
             setTimeout(game.reload, 500);
         }
+
         if (game.controlOver) {
             game.controlOver();
             return;
         }
+
         if (!_status.brawl) {
             if (lib.config.mode == 'boss') {
                 ui.create.control('再战', function () {
@@ -675,6 +702,7 @@ const lao_noname = function () {
                 ui.continue_game = ui.create.control('再战', game.reloadCurrent);
             }
         }
+
         if (!ui.restart) {
             if (game.onlineroom && typeof game.roomId == 'string') {
                 ui.restart = ui.create.control('restart', function () {
@@ -691,6 +719,7 @@ const lao_noname = function () {
                 ui.restart = ui.create.control('restart', game.reload);
             }
         }
+
         if (ui.tempnowuxie) {
             ui.tempnowuxie.close();
             delete ui.tempnowuxie;
@@ -704,12 +733,15 @@ const lao_noname = function () {
             ui.swap.close();
             delete ui.swap;
         }
+
         for (let i = 0; i < lib.onover.length; i++) {
             lib.onover[i](resultbool);
         }
+
         if (game.addRecord) {
             game.addRecord(resultbool);
         }
+
         if (window.isNonameServer) {
             lib.configOL.gameStarted = false;
             game.saveConfig('pagecfg' + window.isNonameServer, [lib.configOL, game.roomId, _status.onlinenickname, _status.onlineavatar]);

@@ -12,37 +12,37 @@ export function content(config, pack) {
 		};
 	}
 
-	var week = new Date().getDay();
-	switch (week) {
-		case 0:
-			lib.config.connect_nickname = '捞德日';
-			break;
-		case 1:
-			lib.config.connect_nickname = '捞德一';
-			break;
-		case 2:
-			lib.config.connect_nickname = '捞德二';
-			break;
-		case 3:
-			lib.config.connect_nickname = '捞德三';
-			break;
-		case 4:
-			lib.config.connect_nickname = '捞德四';
-			break;
-		case 5:
-			lib.config.connect_nickname = '捞德五';
-			break;
-		case 6:
-			lib.config.connect_nickname = '捞德六';
-			break;
-		default:
-			lib.config.connect_nickname = '捞德一';
-	}
-	game.saveConfig("connect_nickname", lib.config.connect_nickname);
-	game.saveConfig("connect_nickname", lib.config.connect_nickname, "connect");
-
 	//联机名称
 	if (/^\u635e\u5fb7[\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u65e5]{1}$/.test(lib.config.connect_nickname)) {
+		var week = new Date().getDay();
+		switch (week) {
+			case 0:
+				lib.config.connect_nickname = '捞德日';
+				break;
+			case 1:
+				lib.config.connect_nickname = '捞德一';
+				break;
+			case 2:
+				lib.config.connect_nickname = '捞德二';
+				break;
+			case 3:
+				lib.config.connect_nickname = '捞德三';
+				break;
+			case 4:
+				lib.config.connect_nickname = '捞德四';
+				break;
+			case 5:
+				lib.config.connect_nickname = '捞德五';
+				break;
+			case 6:
+				lib.config.connect_nickname = '捞德六';
+				break;
+			default:
+				lib.config.connect_nickname = '捞德一';
+		}
+		game.saveConfig("connect_nickname", lib.config.connect_nickname);
+		game.saveConfig("connect_nickname", lib.config.connect_nickname, "connect");
+
 		//检查公告
 		lib.extensionMenu['extension_捞德一'].checkNew = {
 			name: '检查更新公告',
