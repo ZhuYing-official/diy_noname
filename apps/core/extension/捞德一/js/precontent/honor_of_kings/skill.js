@@ -2911,21 +2911,31 @@ const skills = {
 			return target != player && (get.distance(player, target) <= 2);
 		},
 		content() {
+			// 清理旧目标
 			if (player.storage.hok_lingua2) {
-				player.storage.hok_lingua2.removeSkill('hok_lingua_effect');
+				const oldTarget = player.storage.hok_lingua2;
+				if (oldTarget.hasSkill('hok_lingua_effect')) {
+					oldTarget.removeSkill('hok_lingua_effect');
+				}
+				// if (oldTarget.hasMark('hok_lingua_effect')) {
+				// 	oldTarget.removeMark('hok_lingua_effect', oldTarget.countMark('hok_lingua_effect'));
+				// }
 			}
 			player.removeSkill('hok_lingua2');
+
+			// 设置新目标
 			player.logSkill('hok_lingua');
 			player.line('hok_lingua', target);
 			player.storage.hok_lingua2 = target;
 			player.addSkill('hok_lingua2');
 			target.addSkill('hok_lingua_effect');
+			// target.addMark('hok_lingua_effect');
 		},
-		group: ['hok_lingua_listen'],
+		group: ['hok_lingua_listen', 'hok_gua_clear'],
 		subSkill: {
 			effect: {
-				usable: 2, // 添加每回合限两次的限制
-				mark: true, // 添加标记以显示剩余次数
+				usable: 2,
+				mark: true,
 				marktext: '临',
 				intro: {
 					name: '临卦',
@@ -2942,27 +2952,45 @@ const skills = {
 				}
 			},
 			listen: {
-				// 仅在可能影响攻击范围的全局事件发生时检查一次
-				trigger: { global: ['phaseBegin', 'changeSeat', 'equipAfter', 'loseAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter', 'addJudgeAfter', 'dieAfter'] },
+				trigger: {
+					global: ['phaseBegin', 'changeSeat', 'equipAfter', 'loseAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+				},
 				silent: true,
 				forced: true,
 				firstDo: true,
 				popup: false,
+				filter(event, player) {
+					// 检查是否有目标
+					if (!player.storage.hok_lingua2) return false;
+
+					// 检查触发技能的角色是否是 player 或 player.storage.hok_lingua2
+					if (event.player !== player && event.player !== player.storage.hok_lingua2) {
+						return false;
+					}
+
+					// 检查目标是否死亡或距离超过2
+					const target = player.storage.hok_lingua2;
+					if (target.isDead() || !(get.distance(player, target) <= 2)) {
+						return true;
+					}
+
+					// 如果目标状态正常，则不需要触发
+					return false;
+				},
 				content(event) {
 					const target = player.storage.hok_lingua2;
 					if (!target) return;
-					// 针对大多数全局事件，只在事件与玩家或目标相关时执行检查，减少无关开销
-					if (event && event.player && event.player !== player && event.player !== target) return;
-					// 如果目标已死亡或不在攻击范围，则清理绑定
-					if (player.isDead() || target.isDead() || !(get.distance(player, target) <= 2)) {
-						if (typeof target.hasSkill === 'function' && target.hasSkill('hok_lingua_effect')) {
-							target.removeSkill('hok_lingua_effect');
-						}
-						if (typeof player.hasSkill === 'function' && player.hasSkill('hok_lingua2')) {
-							player.removeSkill('hok_lingua2');
-						}
-						delete player.storage.hok_lingua2;
+
+					// 移除目标技能效果
+					if (target.hasSkill('hok_lingua_effect')) {
+						target.removeSkill('hok_lingua_effect');
 					}
+					// 清除目标标记
+					// if (target.hasMark('hok_lingua_effect')) {
+					// 	target.removeMark('hok_lingua_effect', target.countMark('hok_lingua_effect'));
+					// }
+					// 清理绑定
+					delete player.storage.hok_lingua2;
 				}
 			}
 		},
@@ -2989,7 +3017,7 @@ const skills = {
 			order: 9,
 			threaten: 3,
 			expose: 0.2,
-		}
+		},
 	},
 	hok_lingua2: {
 		charlotte: true,
@@ -2997,6 +3025,7 @@ const skills = {
 		mark: 'character',
 		intro: { content: '临卦：$' },
 	},
+	// 师卦
 	hok_shigua: {
 		enable: 'phaseUse',
 		usable: 1,
@@ -3004,55 +3033,93 @@ const skills = {
 			return target != player && (get.distance(player, target) <= 2);
 		},
 		content() {
+			// 清理旧目标
+			if (player.storage.hok_shigua2) {
+				const oldTarget = player.storage.hok_shigua2;
+				if (oldTarget.hasSkill('hok_shigua_effect')) {
+					oldTarget.removeSkill('hok_shigua_effect');
+				}
+				// if (oldTarget.hasMark('hok_shigua_effect')) {
+				// 	oldTarget.removeMark('hok_shigua_effect', oldTarget.countMark('hok_shigua_effect'));
+				// }
+			}
 			player.removeSkill('hok_shigua2');
+
+			// 设置新目标
 			player.logSkill('hok_shigua');
 			player.line('hok_shigua', target);
 			player.storage.hok_shigua2 = target;
 			player.addSkill('hok_shigua2');
 			target.addSkill('hok_shigua_effect');
+			// target.addMark('hok_shigua_effect');
 		},
-		group: ['hok_shigua_listen'],
+		group: ['hok_shigua_listen', 'hok_gua_clear'], // 添加hok_gua_clear到group
 		subSkill: {
 			effect: {
+				mark: true,
+				marktext: '师',
+				intro: {
+					name: '师卦',
+					content: 'mark',
+				},
 				trigger: { player: 'phaseJieshuBegin' },
 				forced: true,
 				locked: false,
 				filter(event, player) {
-					// 检查是否有玩家将当前玩家作为hok_shigua的目标
 					return game.hasPlayer(current => {
 						return current.storage.hok_shigua2 == player;
 					});
 				},
 				content() {
-					let current = game.findPlayer(current => {
+					const source = game.findPlayer(current => {
 						return current.storage.hok_shigua2 == player;
 					});
-					if (!current.storage.hok_shigua2) return;
-					current.storage.hok_shigua2.chooseToDiscard('hes', '师卦：你的回合结束时，弃置1张牌。').set('ai', function (card) {
+					if (!source.storage.hok_shigua2) return;
+					source.storage.hok_shigua2.chooseToDiscard('hes', '师卦：你的回合结束时，弃置1张牌。').set('ai', function (card) {
 						return 8 - get.value(card);
 					});
 				}
 			},
 			listen: {
-				// 监听可能影响攻击范围的全局事件，目标离开时取消效果
-				trigger: { global: ['phaseBegin', 'changeSeat', 'equipAfter', 'loseAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter', 'addJudgeAfter', 'dieAfter'] },
+				trigger: {
+					global: ['phaseBegin', 'changeSeat', 'equipAfter', 'loseAfter', 'gainAfter', 'loseAsyncAfter', 'addToExpansionAfter'],
+				},
 				silent: true,
 				forced: true,
 				firstDo: true,
 				popup: false,
+				filter(event, player) {
+					// 检查是否有目标
+					if (!player.storage.hok_shigua2) return false;
+
+					// 检查触发技能的角色是否是 player 或 player.storage.hok_shigua2
+					if (event.player !== player && event.player !== player.storage.hok_shigua2) {
+						return false;
+					}
+
+					// 检查目标是否死亡或距离超过2
+					const target = player.storage.hok_shigua2;
+					if (target.isDead() || !(get.distance(player, target) <= 2)) {
+						return true;
+					}
+
+					// 如果目标状态正常，则不需要触发
+					return false;
+				},
 				content(event) {
 					const target = player.storage.hok_shigua2;
 					if (!target) return;
-					if (event && event.player && event.player !== player && event.player !== target) return;
-					if (player.isDead() || target.isDead() || !(get.distance(player, target) <= 2)) {
-						if (typeof target.hasSkill === 'function' && target.hasSkill('hok_shigua_effect')) {
-							target.removeSkill('hok_shigua_effect');
-						}
-						if (typeof player.hasSkill === 'function' && player.hasSkill('hok_shigua2')) {
-							player.removeSkill('hok_shigua2');
-						}
-						delete player.storage.hok_shigua2;
+
+					// 移除目标技能效果
+					if (target.hasSkill('hok_shigua_effect')) {
+						target.removeSkill('hok_shigua_effect');
 					}
+					// 清除目标标记
+					// if (target.hasMark('hok_shigua_effect')) {
+					// 	target.removeMark('hok_shigua_effect', target.countMark('hok_shigua_effect'));
+					// }
+					// 清理绑定
+					delete player.storage.hok_shigua2;
 				}
 			}
 		},
@@ -3079,7 +3146,7 @@ const skills = {
 			order: 9,
 			threaten: 3,
 			expose: 0.2,
-		}
+		},
 	},
 	hok_shigua2: {
 		charlotte: true,
@@ -3087,17 +3154,52 @@ const skills = {
 		mark: 'character',
 		intro: { content: '师卦：$' },
 	},
+	hok_gua_clear: {
+		trigger: {
+			player: 'dieBefore',
+		},
+		silent: true,
+		forced: true,
+		firstDo: true,
+		popup: false,
+		content(event) {
+			// 清理临卦效果
+			if (player.storage.hok_lingua2) {
+				const target = player.storage.hok_lingua2;
+				if (target.hasSkill('hok_lingua_effect')) {
+					target.removeSkill('hok_lingua_effect');
+				}
+				// if (target.hasMark('hok_lingua_effect')) {
+				// 	target.removeMark('hok_lingua_effect', target.countMark('hok_lingua_effect'));
+				// }
+				delete player.storage.hok_lingua2;
+			}
+
+			// 清理师卦效果
+			if (player.storage.hok_shigua2) {
+				const target = player.storage.hok_shigua2;
+				if (target.hasSkill('hok_shigua_effect')) {
+					target.removeSkill('hok_shigua_effect');
+				}
+				if (target.hasMark('hok_shigua_effect')) {
+					target.removeMark('hok_shigua_effect', target.countMark('hok_shigua_effect'));
+				}
+				delete player.storage.hok_shigua2;
+			}
+		}
+	},
 	hok_taigua: {
 		enable: 'phaseUse',
-		chargeSkill: 3,
+		useable: 1,
+		chargeSkill: 2,
 		group: ['hok_taigua_charge', 'hok_taigua_gain'],
 		filter(event, player) {
-			return player.countCharge && player.countCharge() >= 3 &&
+			return player.countCharge && player.countCharge() >= 2 &&
 				(player.storage.hok_shigua2 || player.storage.hok_lingua2);
 		},
 		content() {
-			// 消耗3点蓄力点
-			player.removeCharge(3);
+			// 消耗2点蓄力点
+			player.removeCharge(2);
 			const shigua = player.storage && player.storage.hok_shigua2;
 			const lingua = player.storage && player.storage.hok_lingua2;
 			// 检查目标是否存在
@@ -3161,8 +3263,8 @@ const skills = {
 				content() {
 					// 处理死亡事件
 					if (trigger.name === 'die') {
-						// 额外获得2点蓄力值
-						player.addCharge(2);
+						// 额外获得1点蓄力值
+						player.addCharge(1);
 						return;
 					}
 					// 处理伤害事件
@@ -3181,7 +3283,7 @@ const skills = {
 			order: 8,
 			result: {
 				player(player) {
-					if (!player.countCharge || player.countCharge() < 3) return 0;
+					if (!player.countCharge || player.countCharge() < 2) return 0;
 					const shigua = player.storage.hok_shigua2;
 					const lingua = player.storage.hok_lingua2;
 					// 优先在能回复友方或令敌方受伤的场合使用

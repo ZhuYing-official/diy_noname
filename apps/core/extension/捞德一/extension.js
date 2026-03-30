@@ -12,7 +12,7 @@ game.laoShowNewPack = function () {
 	var Lao_update = [
 		'/setPlayer/',
 		'更新内容：',
-		'修复增强主公的bug',
+		'修复：评分结算的bug，增强主公的bug',
 		'优化<王者荣耀>司空震AI',
 		'增强<王者荣耀>李信(光暗、烈华、暴冲、残撕)',
 		'调整<王者荣耀>明世隐(临卦、师卦)',
@@ -21,7 +21,7 @@ game.laoShowNewPack = function () {
 	];
 	//更新武将
 	var Lao_players = [
-		'hok_lixing',
+		'hok_lixin',
 		'hok_mingshiyin',
 		'hok_miyue',
 	];
@@ -145,7 +145,7 @@ let extensionPackage = {
 	help: help,
 	package: {
 		intro: '本扩展像名字一样捞德一，轻喷' +
-			'<br><a href="https://github.com/ZhuYing-official/diy_noname/tree/diy/extension/%E6%8D%9E%E5%BE%B7%E4%B8%80">点击前往《捞德一》扩展Github仓库</a>' +
+			'<br><a href="https://github.com/ZhuYing-official/diy_noname/tree/main/apps/core/extension/%E6%8D%9E%E5%BE%B7%E4%B8%80">点击前往《捞德一》扩展Github仓库</a>' +
 			'<br>' +
 			'本扩展完全免费，仅供交流学习使用。' +
 			'<br>' +
@@ -156,7 +156,7 @@ let extensionPackage = {
 		author: '捞德一',
 		diskURL: '',
 		forumURL: '',
-		version: '0.0.3',
+		version: '0.0.4',
 		//壹、贰、叁、肆、伍、陆、柒、捌、玖、拾
 	},
 	files: {},
