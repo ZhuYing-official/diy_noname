@@ -17,7 +17,7 @@ import { DynamicStyle } from "./dynamic-style/index.js";
 import { GamePromises } from "./promises.js";
 import { Check } from "./check.js";
 
-import { security } from "@/util/sandbox.js"
+import { security } from "@/util/sandbox.js";
 import { save } from "@/util/config.js";
 import { debounce } from "@/util/utils.js";
 
@@ -1147,7 +1147,7 @@ export class Game {
 				gaintag_map: {},
 				vcard_map: new Map(),
 			};
-			player.checkHistory("lose", function (evt) {
+			player.checkAllHistory("lose", function (evt) {
 				if (evt.parent == that) {
 					map.hs.addArray(evt.hs);
 					map.es.addArray(evt.es);
@@ -1406,12 +1406,12 @@ export class Game {
 	 * @template { keyof GameHistory } T
 	 * @param {T} key
 	 * @param {(event:GameEvent)=>boolean} filter 筛选条件，不填写默认为lib.filter.all
+	 * @param {GameEvent} [last] 代表最后一个事件，获取该事件之前的历史
 	 * @param {number} [num] 获取倒数第num轮的历史，默认为0，表示当前轮
 	 * @param {boolean} [keep] 若为true,则获取倒数第num轮到现在的所有历史
-	 * @param {GameEvent} last 代表最后一个事件，获取该事件之前的历史
 	 * @returns { GameHistory[T] }
 	 */
-	getRoundHistory(key, filter = lib.filter.all, num = 0, keep, last) {
+	getRoundHistory(key, filter = lib.filter.all, last, num = 0, keep) {
 		if (!filter || typeof filter != "function") {
 			filter = lib.filter.all;
 		}
@@ -2975,15 +2975,17 @@ export class Game {
 	async loadExtension(object) {
 		let stopImporting = false;
 		if (typeof object === "function") {
-			const extensionFilter = object.filter || function () {
-				return true;
-			}
+			const extensionFilter =
+				object.filter ||
+				function () {
+					return true;
+				};
 			if (isClass(object)) {
 				object = (await object.init?.()) ?? new object();
 			} else {
 				object = await object(lib, game, ui, get, ai, _status);
 			}
-			if (await extensionFilter() !== true) {
+			if ((await extensionFilter()) !== true) {
 				stopImporting = true;
 			}
 		}
@@ -3015,6 +3017,9 @@ export class Game {
 					nopointer: true,
 				};
 				Object.defineProperty(extensionMenu.intro, "name", intro);
+			}
+			if (object.package.translation) {
+				lib.translate[extensionName] = object.package.translation;
 			}
 		}
 		const addOptions = (target, source) => {
@@ -3107,7 +3112,7 @@ export class Game {
 					skill: [],
 					audio: [],
 					...object.package.files,
-				}
+				};
 			} else {
 				extensionPack = {};
 			}
@@ -3137,7 +3142,7 @@ export class Game {
 					alert(`加载《${name}》扩展的precontent时出现错误。
 该错误本身可能并不影响扩展运行。您可以在“设置→通用→无视扩展报错”中关闭此弹窗。
 错误信息: 
-${(e instanceof Error ? e.stack : String(e))}`);
+${e instanceof Error ? e.stack : String(e)}`);
 				}
 			}
 
@@ -3245,7 +3250,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 	 * @type { (data: any, name?: string) => void }
 	 */
 	export;
-	
+
 	async importExtension(data, finishLoad, exportExtension) {
 		//by 来瓶可乐加冰、Rintim、Tipx-L、诗笺
 		const zip = await get.promises.zip();
@@ -6068,32 +6073,21 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 		return;
 
 		/**
-		 * @param {Record<string, Character>} content 
+		 * @param {Record<string, Character>} content
 		 */
 		function processCharacter(content) {
 			for (const name in content) {
-				const character = get.convertedCharacter(content[name]);
+				const character = (content[name] = get.convertedCharacter(content[name]));
 
 				// 处理武将图像和阵亡音效
-				const audiosrc = `die:ext:${extname}/${name}.mp3`;
-				let imgsrc;
-				if (_status.evaluatingExtension) {
-					imgsrc = `db:extension-${extname}:${name}.jpg`;
-				} else {
-					imgsrc = `ext:${extname}/${name}.jpg`;
-				}
-
-				character.img ??= imgsrc;
 				if (character.dieAudios.length === 0) {
-					character.dieAudios.push(audiosrc);
+					character.dieAudios.push(`ext:${extname}/audio/die:true`);
 				}
+				character.img ??= `extension/${extname}/${name}.jpg`;
 
 				// 处理AI禁用
-				if (character.isBoss || character.isHiddenBoss) {
+				if (character.isBoss || character.isHiddenBoss || lib.config.forbidai_user?.includes(name)) {
 					lib.config.forbidai.add(name);
-				}
-				if (lib.config.forbidai_user && lib.config.forbidai_user.includes(name)) {
-					lib.config.forbidai.add(name)
 				}
 
 				// 将武将技能加入技能列表
@@ -6115,7 +6109,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 		}
 
 		/**
-		 * @param {Record<string, Skill>} content 
+		 * @param {Record<string, Skill>} content
 		 */
 		function processSkill(content) {
 			for (const name in content) {
@@ -6125,7 +6119,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 					skill.audio = `ext:${extname}:${skill.audio}`;
 				}
 
-				lib.skill[name] ??= skill
+				lib.skill[name] ??= skill;
 			}
 		}
 	}
@@ -6778,48 +6772,6 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 			}
 		}
 		// if(true){
-
-		// 捞 总评分
-		var laodeyiNum = 0;
-		var laodeyiMvp = 0;
-		var damageValue = 1.0;
-		var damagedValue = 0.45;
-		var gainValue = 0.1;
-		var useValue = 0.6;
-		var killValue = 1.65;
-		if (game.players.length) {
-			for (i = 0; i < game.players.length; i++) {
-				num = 0;
-				for (j = 0; j < game.players[i].stat.length; j++) {
-					if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
-					if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
-					if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
-					for (k in game.players[i].stat[j].card) {
-						num += game.players[i].stat[j].card[k] * useValue;
-					}
-					if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
-				}
-				laodeyiMvp = Math.max(laodeyiMvp, num.toFixed(1));
-				laodeyiNum += num;
-			}
-		}
-		if (game.dead.length) {
-			for (i = 0; i < game.dead.length; i++) {
-				num = 0;
-				for (j = 0; j < game.dead[i].stat.length; j++) {
-					if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
-					if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
-					if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
-					for (k in game.dead[i].stat[j].card) {
-						num += game.dead[i].stat[j].card[k] * useValue;
-					}
-					if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
-				}
-				laodeyiMvp = Math.max(laodeyiMvp, num.toFixed(1));
-				laodeyiNum += num;
-			}
-		}
-
 		if (game.players.length) {
 			table = document.createElement("table");
 			tr = document.createElement("tr");
@@ -6890,25 +6842,6 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 				}
 				td.innerHTML = num;
 				tr.appendChild(td);
-
-				// 捞德一 评分
-				td = document.createElement("td");
-				num = 0;
-				for (j = 0; j < game.players[i].stat.length; j++) {
-					if (game.players[i].stat[j].damage != undefined) num += game.players[i].stat[j].damage * damageValue;
-					if (game.players[i].stat[j].damaged != undefined) num += game.players[i].stat[j].damaged * damagedValue;
-					if (game.players[i].stat[j].gain != undefined) num += game.players[i].stat[j].gain * gainValue;
-					for (k in game.players[i].stat[j].card) {
-						num += game.players[i].stat[j].card[k] * useValue;
-					}
-					if (game.players[i].stat[j].kill != undefined) num += game.players[i].stat[j].kill * killValue;
-				}
-				td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
-				if (num.toFixed(1) == laodeyiMvp) {
-					td.innerHTML = `<b style="color:red">MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
-				}
-				tr.appendChild(td);
-
 				table.appendChild(tr);
 			}
 			dialog.add(ui.create.div(".placeholder"));
@@ -7045,25 +6978,6 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 				}
 				td.innerHTML = num;
 				tr.appendChild(td);
-
-				// 捞德一 评分
-				td = document.createElement("td");
-				num = 0;
-				for (j = 0; j < game.dead[i].stat.length; j++) {
-					if (game.dead[i].stat[j].damage != undefined) num += game.dead[i].stat[j].damage * damageValue;
-					if (game.dead[i].stat[j].damaged != undefined) num += game.dead[i].stat[j].damaged * damagedValue;
-					if (game.dead[i].stat[j].gain != undefined) num += game.dead[i].stat[j].gain * gainValue;
-					for (k in game.dead[i].stat[j].card) {
-						num += game.dead[i].stat[j].card[k] * useValue;
-					}
-					if (game.dead[i].stat[j].kill != undefined) num += game.dead[i].stat[j].kill * killValue;
-				}
-				td.innerHTML = (num / laodeyiNum * 100).toFixed(1);
-				if (num.toFixed(1) == laodeyiMvp) {
-					td.innerHTML = `<b style="color:red">MVP</b>` + (num.toFixed(1) / laodeyiNum * 100).toFixed(1);
-				}
-				tr.appendChild(td);
-
 				table.appendChild(tr);
 			}
 			dialog.add(ui.create.div(".placeholder"));
@@ -8075,12 +7989,15 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 		return next;
 	}
 	/**
-	 * @param { Player } [player]
+	 * @param { Player } player
+	 * @param { number } num
+	 * @param { Player[] } targets
 	 */
-	gameDraw(player, num = 4) {
+	gameDraw(player = game.me, num = 4, targets = game.players) {
 		let next = game.createEvent("gameDraw");
-		next.player = player || game.me;
+		next.player = player;
 		next.num = num;
+		next.targets = targets;
 		next.setContent("gameDraw");
 		return next;
 	}
@@ -10231,7 +10148,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 		return game.players.concat(game.dead).some(value => (includeOut || !value.isOut()) && func(value));
 	}
 	/**
-	 * @param { (player: Player) => boolean } func
+	 * @param { (player: Player) => boolean } [func]
 	 * @param { boolean } [includeOut]
 	 */
 	countPlayer(func, includeOut) {
@@ -10290,7 +10207,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 	}
 	/**
 	 * @overload
-	 * @param { (player: Player) => boolean } func
+	 * @param { (player: Player) => boolean } [func]
 	 * @param { Player[] } [list]
 	 * @param { boolean } [includeOut]
 	 * @returns { Player[] }
@@ -10362,7 +10279,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 	 * 此方法用于对所有targets按顺序执行一个async函数。
 	 *
 	 * @param { Player[] } targets 需要执行async方法的目标
-	 * @param { (player: Player, i: number) => Promise<any | void> } asyncFunc 需要执行的async方法
+	 * @param { (player: Player, i: number) => PromiseLike<any | void> |  } asyncFunc 需要执行的async方法
 	 * @param { (a: Player, b: Player) => number } [sort] 排序器，默认为lib.sort.seat
 	 */
 	async doAsyncInOrder(targets, asyncFunc, sort) {
@@ -10535,19 +10452,40 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 		return null;
 	}
 	/**
+	 * 用于主机同步手牌状态
+	 * @param { Player } player 要同步的角色
+	 * @param { string[] } id_list 要同步的手牌id序列
+	 */
+	syncHandcard(player, id_list) {
+		game.broadcastAll(
+			(player, id_list) => {
+				const sortFunc = (a, b) => id_list.indexOf(a.cardid) - id_list.indexOf(b.cardid);
+				player.sortHandcard(sortFunc);
+			},
+			player,
+			id_list.slice().reverse()
+		);
+	}
+	/**
 	 * 添加一个新玩家到target的上家或下家（默认为上家）
 	 * @param { Player } target 新玩家的下家
 	 * @param { string|undefined|null } [character] 新玩家主将
 	 * @param { string|undefined|null } [character2] 新玩家副将
 	 * @param { boolean } [isNext] 是否添加到下家
+	 * @param { object } [config] 一些别的参数塞这来！
+	 * @param { Player } [config.source] addPlayer的来源，不填就是没有
+	 * @param { ((player: Player) => Promise) | false } [config.animate] 添加player的动画，有默认动画，自定义动画须返回一个promise；false则不生成动画
 	 * @returns { Player }
 	 */
-	addPlayerOL(target, character, character2, isNext) {
+	async addPlayerOL(target, character, character2, isNext, config = {}) {
 		if (get.itemtype(target) != "player") {
 			return;
 		}
-		const addPlayer = function (id, target, character, character2, isNext) {
+		//用来加入角色的部分，要广播
+		const addPlayer = async function (id, target, character, character2, isNext, config) {
+			let { source, animate } = config;
 			const players = game.players.concat(game.dead);
+			//先把布局安排好空个位置出来
 			ui.arena.setNumber(parseInt(ui.arena.dataset.number) + 1);
 			let position = !isNext ? parseInt(target.dataset.position) : parseInt(target.dataset.position) + 1;
 			if (position == 0) {
@@ -10558,8 +10496,10 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 					value.dataset.position = parseInt(value.dataset.position) + 1;
 				}
 			});
+			//创建角色的dom，把需要的属性赋值
 			const player = ui.create.player(ui.arena).addTempClass("start");
 			player.playerid = id;
+			player._source = source || true;
 			if (_status.connectMode) {
 				lib.playerOL[id] = player;
 			} else {
@@ -10568,15 +10508,110 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 			if (character) {
 				player.init(character, character2);
 			}
+			//push！然后arrangePlayers
 			game.players.push(player);
 			player.dataset.position = position;
 			game.arrangePlayers();
+			if (animate == false) {
+				animate = () =>
+					new Promise(resolve => {
+						resolve();
+					});
+			}
+			//动画，默认动画是天降陨石
+			animate ??= function (player) {
+				const parent = player.parentElement;
+				//创建角色的陨石坠落动画
+				const drop = player.animate(
+					[
+						{
+							transform: "translate(200px, -1000px) scale(0.5) rotate(-15deg)",
+							filter: "brightness(5) blur(10px)",
+							opacity: 0,
+						},
+						{
+							transform: "translate(0, 0) scale(1) rotate(0deg)",
+							filter: "brightness(1) blur(0px)",
+							opacity: 1,
+							offset: 1,
+						},
+					],
+					{
+						duration: 600,
+						easing: "cubic-bezier(0.85, 0, 0.15, 1)",
+					}
+				);
+				return drop.finished.then(result => {
+					const list = [];
+					//落地后开始震动
+					const shock = parent.animate([{ transform: "translate(0, 0)" }, { transform: "translate(-10px, 15px)" }, { transform: "translate(10px, -10px)" }, { transform: "translate(-5px, 5px)" }, { transform: "translate(0, 0)" }], {
+						duration: 300,
+						easing: "ease-out",
+					}).finished;
+					list.push(shock);
+					//生成冲击波
+					const wave = document.createElement("div");
+					Object.assign(wave.style, {
+						position: "absolute",
+						top: `50%`,
+						left: `50%`,
+						width: "10px",
+						height: "10px",
+						marginLeft: "-5px",
+						marginTop: "-5px",
+						borderRadius: "50%",
+						border: "4px solid #FFFFFF",
+						boxShadow: "0 0 15px #FFD700, 0 0 30px #FF4500",
+						zIndex: "5",
+						pointerEvents: "none",
+						mixBlendMode: "screen",
+					});
+					player.appendChild(wave);
+					const shockWave = wave
+						.animate(
+							[
+								{
+									transform: "scale(1)",
+									opacity: 1,
+									borderWidth: "10px",
+									borderColor: "#FFFFFF",
+									boxShadow: "0 0 20px #FFF, 0 0 40px #FFD700",
+								},
+								{
+									transform: "scale(10)",
+									opacity: 0.8,
+									borderWidth: "8px",
+									borderColor: "#FF8C00",
+									boxShadow: "0 0 50px #FF4500, 0 0 100px #8B0000",
+									offset: 0.3,
+								},
+								{
+									transform: "scale(40)",
+									opacity: 0,
+									borderWidth: "0px",
+									borderColor: "#8B0000",
+									boxShadow: "0 0 60px #FF4500, 0 0 100px transparent",
+								},
+							],
+							{
+								duration: 1000,
+								easing: "cubic-bezier(0.1, 0.5, 0.2, 1)",
+								fill: "forwards",
+							}
+						)
+						.finished.then(() => wave.remove());
+					list.push(shockWave);
+					return Promise.all(list);
+				});
+			};
+			await animate(player);
 			return player;
 		};
 		const id = get.id();
 		const players = game.players.concat(game.dead);
-		game.broadcast(addPlayer, id, target, character, character2, isNext);
-		const player = addPlayer(id, target, character, character2, isNext);
+		game.broadcast(addPlayer, id, target, character, character2, isNext, config);
+		const player = await addPlayer(id, target, character, character2, isNext, config);
+		//分配座位号
 		const firstSeat = players.find(value => value.getSeatNum() == 1);
 		if (firstSeat) {
 			const targetSeat = target.getSeatNum();
@@ -10588,6 +10623,7 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 				}
 			});
 		}
+		//初始化history和stat
 		player.actionHistory = new Array(players[0].actionHistory.length).fill({
 			useCard: [],
 			respond: [],
@@ -10609,15 +10645,23 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 	/**
 	 * 移除一名玩家，单机联机都可用
 	 * @param { Player } player 要移除的玩家
+	 * @param { object } [config] 一些别的参数塞这来！
+	 * @param { ((player: Player) => Promise) | false } [config.animate] 移除player的动画，有默认动画，自定义动画须返回一个promise；false则不生成动画
 	 * @returns { Player }
 	 */
-	removePlayerOL(player) {
+	async removePlayerOL(player, config = {}) {
 		if (get.itemtype(player) != "player") {
 			return;
 		}
+		//把牌都弃置掉，不然移除也跟着没了
+		const cards = player.getCards("hejsx");
+		if (cards.length) {
+			//player.$throw(cards, 100);
+			game.log(player, "将", cards, "置入弃牌堆");
+			await player.lose(cards, ui.discardPile).set("_triggered", null);
+		}
+		//处理座位号
 		const players = game.players.concat(game.dead);
-		player.style.left = `${player.getLeft()}px`;
-		player.style.top = `${player.getTop()}px`;
 		if (player.getSeatNum() > 0) {
 			const seatNum = player.getSeatNum();
 			players.forEach(value => {
@@ -10626,38 +10670,180 @@ ${(e instanceof Error ? e.stack : String(e))}`);
 				}
 			});
 		}
-		game.broadcastAll(player => {
+		//处理旁观
+		const ClientElement = lib.element.Client;
+		if (player.ws instanceof ClientElement || player == game.me) {
+			const ws = player.ws;
+			lib.node?.observing?.push(ws);
+			delete player.ws;
+			if (!ui.removeObserve && lib.node?.observing?.length) {
+				ui.removeObserve = ui.create.system(
+					"移除旁观",
+					function () {
+						lib.configOL.observe = false;
+						if (game.onlineroom) {
+							game.send("server", "config", lib.configOL);
+						}
+						while (lib.node.observing.length) {
+							lib.node.observing.shift().ws.close();
+						}
+						this.remove();
+						delete ui.removeObserve;
+					},
+					true,
+					true
+				);
+			}
+		}
+		//联机需要删除掉，不然重进会多一个dead（）
+		if (_status.connectMode) {
+			delete lib.playerOL[player.playerid];
+		}
+		//移除角色的具体步骤
+		const removePlayer = async (player, config, configOL) => {
+			let { animate } = config;
+			//轮首角色变更
 			if (_status.roundStart == player) {
 				_status.roundStart = player.next || player.getNext() || game.players[0];
 			}
-			const players = game.players.concat(game.dead);
-			const position = parseInt(player.dataset.position);
-			players.forEach(value => {
-				if (parseInt(value.dataset.position) > position) {
-					value.dataset.position = parseInt(value.dataset.position) - 1;
-				}
-			});
+			player.style.left = `${player.getLeft()}px`;
+			player.style.top = `${player.getTop()}px`;
+			//修改存活角色的上下家
 			if (player.isAlive()) {
 				player.next.previous = player.previous;
 				player.previous.next = player.next;
 			}
 			player.nextSeat.previousSeat = player.previousSeat;
 			player.previousSeat.nextSeat = player.nextSeat;
-			player.delete();
 			game.players.remove(player);
 			game.dead.remove(player);
-			ui.arena.setNumber(parseInt(ui.arena.dataset.number) - 1);
-			player.removed = true;
-			if (player == game.me) {
-				ui.me.hide();
-				ui.auto.hide();
-				ui.wuxie.hide();
+			if (animate == false) {
+				animate = () =>
+					new Promise(resolve => {
+						resolve();
+					});
 			}
-			setTimeout(() => player.removeAttribute("style"), 500);
-		}, player);
-		if (_status.connectMode) {
-			delete lib.playerOL[player.playerid];
-		}
+			//移除角色的动画，默认为变成碎片消逝
+			animate ??= function (player) {
+				const rect = player.getBoundingClientRect();
+				const shardCount = 30;
+				const container = player.parentElement;
+				const list = [];
+				//生成碎片
+				for (let i = 0; i < shardCount; i++) {
+					const shard = document.createElement("div");
+					shard.style.cssText = `
+						position: absolute;
+						pointer-events: none;
+						background: #e0f7fa;
+						border: 1px solid #222;
+						z-index: 100;
+					`;
+
+					//随机碎片的尺寸
+					const size = Math.random() * 15 + 5;
+					shard.style.width = `${size}px`;
+					shard.style.height = `${size}px`;
+
+					//直接挂在玩家的dom上
+					shard.style.left = `50%`;
+					shard.style.top = `50%`;
+
+					player.appendChild(shard);
+
+					//为每个碎片创建随机爆炸轨迹
+					const destinationX = (Math.random() - 0.5) * 500; // 水平扩散范围
+					const destinationY = (Math.random() - 0.5) * 500; // 垂直扩散范围
+					const rotation = Math.random() * 720 - 360; // 旋转角度
+
+					list.push(
+						shard
+							.animate(
+								[
+									{
+										transform: "translate(0, 0) rotate(0deg) scale(1)",
+										opacity: 1,
+									},
+									{
+										transform: `translate(${destinationX}px, ${destinationY}px) rotate(${rotation}deg) scale(0)`,
+										opacity: 0,
+									},
+								],
+								{
+									duration: 1000 + Math.random() * 500,
+									easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+									fill: "forwards",
+								}
+							)
+							.finished.then(() => shard.remove())
+					);
+				}
+
+				//玩家dom自身的溃散动画（缩小并变灰），建议removePlayer的不要加onfinish后续移除角色的dom需要用到onfinish
+				const animation = player.animate(
+					[
+						{ transform: "scale(1)", filter: "brightness(1) grayscale(0)", opacity: 1 },
+						{ transform: "scale(1.1)", filter: "brightness(2) grayscale(1)", opacity: 0.5, offset: 0.2 },
+						{ transform: "scale(0.8)", filter: "brightness(0) grayscale(1)", opacity: 0 },
+					],
+					{
+						duration: 1000,
+						fill: "forwards",
+					}
+				).finished;
+				list.push(animation);
+				return Promise.all(list);
+			};
+			await animate(player).then(() => {
+				//移除角色的dom，隐藏dom是为了避免动画结束后的拖影（）
+				player.classList.add("dead");
+				player.classList.add("out");
+				player.style.display = "none";
+				player.delete();
+				//调整布局
+				const players = game.players.concat(game.dead);
+				const position = parseInt(player.dataset.position);
+				players.forEach(value => {
+					if (parseInt(value.dataset.position) > position) {
+						value.dataset.position = parseInt(value.dataset.position) - 1;
+					}
+				});
+				ui.arena.setNumber(parseInt(ui.arena.dataset.number) - 1);
+				player.removed = true;
+				if (player == game.me) {
+					//把角色移入旁观，主机不可能真的进旁观的，所以不必在意
+					const func = (player, config) => {
+						game.swapPlayer(game.players.find(i => i != player));
+						const replacePlayer = function (e) {
+							if (!_status.auto || !game.notMe) {
+								return;
+							}
+							game.swapPlayer(this || e.target.parentElement);
+						};
+						game.players.forEach(p => p.addEventListener(lib.config.touchscreen ? "touchend" : "click", replacePlayer));
+						game.notMe = true;
+						_status.auto = true;
+						if (game.online) {
+							if (!config.observe_handcard) {
+								ui.arena.classList.add("observe");
+							}
+							game.observe = true;
+						}
+					};
+					func(player, configOL);
+					//ui.me.hide();
+					ui.auto.hide();
+					ui.wuxie.hide();
+				}
+				setTimeout(() => {
+					player.removeAttribute("style");
+				}, 500);
+			});
+		};
+		game.broadcast(removePlayer, player, config, get.copy(lib.configOL));
+		await removePlayer(player, config, get.copy(lib.configOL));
+		//判断胜负，避免移除后对局变成死局
+		player.dieAfter();
 		return player;
 	}
 }

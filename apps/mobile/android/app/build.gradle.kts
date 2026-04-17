@@ -43,12 +43,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-
-    sourceSets {
-        named("main") {
-            assets.srcDirs("src/main/assets", "public")
-        }
-    }
 }
 
 repositories {
@@ -71,9 +65,6 @@ dependencies {
     implementation(project(":capacitor-android"))
     implementation(project(":capacitor-cordova-android-plugins"))
 
-    // 添加腾讯 X5 内核依赖
-    implementation("com.tencent.tbs:tbssdk:44286")
-
     testImplementation("junit:junit:${rootProject.extra["junitVersion"]}")
     androidTestImplementation("androidx.test.ext:junit:${rootProject.extra["androidxJunitVersion"]}")
     androidTestImplementation("androidx.test.espresso:espresso-core:${rootProject.extra["androidxEspressoCoreVersion"]}")
@@ -89,3 +80,4 @@ if (servicesJSON.exists() && servicesJSON.readText().isNotEmpty()) {
 } else {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
 }
+

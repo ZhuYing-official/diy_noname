@@ -77,7 +77,7 @@ declare type GameHistory = import('@/game/index.js').GameHistory;
 
 declare type Sex = 'male' | 'female' | 'dobule' | 'none';
 declare type Character = [Sex, string, number | string, string[], string[]] | [Sex, string, number | string, string[]] | import('@/library/element/character.js').Character;
-declare type Select = [number, number];
+declare type Select = [begin: number, end: number];
 
 declare interface progress extends HTMLDivElement {
     /** 获取标题 */
@@ -443,7 +443,7 @@ declare interface importExtensionConfig {
      * 
      * 特殊接口：update
      */
-    connect?: Record<string, SelectConfigData>;
+    connect?: boolean;
     /**
      * 扩展的包信息。
      * 
@@ -496,7 +496,8 @@ declare interface importExtensionConfig {
     files?: {
         character?: string[],
         card?: string[],
-        skill?: string[]
+        skill?: string[],
+        audio?: string[]
     };
     /**
      * 【特殊】用于game.addMode添加时，
@@ -730,18 +731,18 @@ declare interface PackageData {
     forumURL?: string,
     /** 扩展版本 */
     version?: string,
+    /** 扩展在UI中显示的名字 */
+    translation?:string;
+    /**
+     * 不将package中的character、card、skill自动拆包导入
+     * @see {@link /apps/core/noname/init/loading.ts} loadExtension `if (extension[4] && !extension[4].nopack)`
+     */
+    nopack?: boolean;
 
     /** 武将导入信息 */
-    character?: {
-        character: Record<string, Character>;
-        translate: Record<string, string>;
-    };
+    character?: Partial<importCharacterConfig> & Required<Pick<importCharacterConfig, "character" | "translate">>;
     /** 卡牌导入信息 */
-    card?: {
-        card: Record<string, Card>;
-        translate: Record<string, string>;
-        list: CardBaseUIData[];
-    };
+    card?: Partial<importCardConfig> & Pick<importCardConfig, "card" | "translate" | "list">;
     /** 技能导入信息 */
     skill?: {
         skill: Record<string, Skill>;
@@ -931,7 +932,6 @@ type Stat = {
     kill?: number;
     /** 使用技能次数（不区分统一计数） */
     allSkills?: number;
-
 }
 
 declare interface menuData {
@@ -964,4 +964,4 @@ declare interface menuData {
     ): void;
     /** 右方html模板 */
     rightPaneTemplate: import("vue").Component;
-  }
+}

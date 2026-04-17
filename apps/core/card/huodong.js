@@ -351,7 +351,11 @@ game.import("card", function () {
 							game.log(target, "选择了", "#y" + color);
 							target.popup(color);
 							const judgeEvent = target.judge(card => {
-								if (get.color(card) == get.event().haoyun_color) {
+								let event = get.event();
+								if (event.name != "judge") {
+									event = event.getParent("judge", true);
+								}
+								if (get.color(card) == event?.haoyun_color) {
 									return 1.5;
 								}
 								return -1.5;
@@ -566,7 +570,6 @@ game.import("card", function () {
 						await target.addJudge(card);
 					}
 				},
-				//ai缝合浮雷和烈火
 				ai: {
 					wuxie() {
 						return Math.random() > 0.75;
@@ -580,11 +583,6 @@ game.import("card", function () {
 						target(player, target) {
 							return lib.card.shandian.ai.result.target(player, target);
 						},
-					},
-					tag: {
-						damage: 0.25,
-						natureDamage: 0.25,
-						thunderDamage: 0.25,
 					},
 				},
 			},
@@ -1964,6 +1962,11 @@ game.import("card", function () {
 						}
 					},
 				},
+				marktext: "梅",
+				mark: true,
+				intro: {
+					content: "梅花牌视为【桃】",
+				},
 			},
 			khquanjiux_skill: {
 				charlotte: true,
@@ -2014,6 +2017,10 @@ game.import("card", function () {
 				},
 				async content(event, trigger, player) {
 					await player.gainPlayerCard(trigger.target, "he", true);
+				},
+				mark: true,
+				intro: {
+					content: "使用牌指定目标后获得其一张牌",
 				},
 				ai: {
 					effect: {

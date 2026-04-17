@@ -1,21 +1,21 @@
-# Capacitor 通用规则
--keepattributes *Annotation*
--keepattributes Exceptions
--keepattributes InnerClasses
--keepattributes Signature
--keepattributes SourceFile
--keepattributes LineNumberTable
+# Add project specific ProGuard rules here.
+# You can control the set of applied configuration files using the
+# proguardFiles setting in build.gradle.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# X5 内核混淆规则
--dontwarn com.tencent.smtt.**
--keep class com.tencent.smtt.** { *; }
--keep class com.tencent.tbs.** { *; }
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
 
-# 保留 WebView 相关类
--keepclassmembers class * extends android.webkit.WebViewClient {
-    public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
-    public boolean *(android.webkit.WebView, java.lang.String);
-}
--keepclassmembers class * extends android.webkit.WebChromeClient {
-    public void *(android.webkit.WebView, java.lang.String);
-}
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+#-keepattributes SourceFile,LineNumberTable
+
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+#-renamesourcefileattribute SourceFile

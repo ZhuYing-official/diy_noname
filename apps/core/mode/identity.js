@@ -380,12 +380,7 @@ export default () => {
 								skill = "moukui";
 								break;
 							default:
-								// 捞
-								// 	skill = "tianming"; 
-								// 	break;
-								var laoSkills = ["hengzheng", "batu", "tiangong", "shengxi", "ciqiu", "geju", "junxing", "moukui", "tianming"];
-								var laoRandom = Math.floor(Math.random() * 12);
-								skill = laoSkills[laoRandom > 8 ? 8 : laoRandom];
+								skill = "tianming";
 								break;
 						}
 					}

@@ -3228,7 +3228,7 @@ export class Library {
 				},
 				autoborder_count: {
 					name: "边框升级方式",
-					intro: "<strong>击杀</strong> 每击杀一人，边框提升两级<br><strong>伤害</strong> 每造成两点伤害，边框提升一级<br><strong>混合</strong> 击杀量决定边框颜色，伤害量决定边框装饰",
+					intro: "<strong>击杀</strong> 每击杀一人，边框提升两级<br><strong>伤害</strong> 每造成2点伤害，边框提升一级<br><strong>混合</strong> 击杀量决定边框颜色，伤害量决定边框装饰",
 					init: "kill",
 					item: {
 						kill: "击杀",
@@ -4586,31 +4586,38 @@ export class Library {
 				recent_character_number: {
 					name: "最近使用武将",
 					intro: "自由选将对话框中最近使用武将的数量",
-					init: "12",
-					item: {
-						5: "5",
-						6: "6",
-						10: "10",
-						12: "12",
-						20: "20",
-						30: "30",
+					init: 12,
+					input: true,
+					restart: true,
+					onblur(e) {
+						let text = e.target,
+							num = Number(text.innerText);
+						if (isNaN(num) || num < 1) {
+							num = 1;
+						} else if (!Number.isInteger(num)) {
+							num = Math.round(num);
+						}
+						text.innerText = num;
+						game.saveConfig("recent_character_number", num);
 					},
-					unfrequent: true,
 				},
 				showMax_character_number: {
 					name: "最大武将数显示",
 					intro: "设置自由选将对话框一页显示的最大武将数<br><span class=firetext>注意事项：<br><li>更改此选项后，需要重启游戏以使用新选项配置<br><li>推荐将此选项设置为偏小数值，可降低加载过多武将时导致的性能损耗</span>",
-					init: "10",
-					item: {
-						5: "5",
-						6: "6",
-						10: "10",
-						12: "12",
-						20: "20",
-						24: "24",
-						0: "∞",
+					init: 10,
+					input: true,
+					restart: true,
+					onblur(e) {
+						let text = e.target,
+							num = Number(text.innerText);
+						if (isNaN(num) || num < 1) {
+							num = 1;
+						} else if (!Number.isInteger(num)) {
+							num = Math.round(num);
+						}
+						text.innerText = num;
+						game.saveConfig("showMax_character_number", num);
 					},
-					unfrequent: true,
 				},
 				popequip: {
 					name: "触屏装备选择",
@@ -4860,12 +4867,12 @@ export class Library {
 					unfrequent: true,
 					onclick(bool) {
 						if (_status.connectMode) {
-							if (confirm("当前为联机模式，修改此设置需重启，是否重启？")) {
+							/*if (confirm("当前为联机模式，修改此设置需重启，是否重启？")) {
 								game.saveConfig("show_deckMonitor", bool);
 								game.reload();
 							} else {
 								this.classList.toggle("on");
-							}
+							}*/
 						} else {
 							game.saveConfig("show_deckMonitor", bool);
 							if (lib.config.show_deckMonitor) {
@@ -5801,8 +5808,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 3;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -5817,10 +5824,28 @@ export class Library {
 					item: {
 						off: "不限制",
 						group: "按势力筛选",
-						3: "三",
-						4: "四",
-						6: "六",
-						8: "八",
+						number: "自选数值",
+					},
+					async onclick(item) {
+						if (item !== "number") {
+							await game.promises.saveConfig("connect_limit_zhu", item, "identity");
+							return;
+						}
+						while (true) {
+							const result = await game.promises.prompt("请输入常备主候选武将数");
+							if (!result) {
+								break;
+							}
+							if (/^-?\d+(\.\d+)?$/.test(result)) {
+								const number = Number(result);
+								if (number > 0 && Number.isInteger(number)) {
+									this.querySelector("div").innerHTML = result;
+									await game.promises.saveConfig("connect_limit_zhu", result, "identity");
+									break;
+								}
+							}
+							alert("请输入大于0的整数");
+						}
 					},
 				},
 				connect_choice_zhong: {
@@ -5831,8 +5856,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 4;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -5854,8 +5879,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 3;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -5871,8 +5896,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 6;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -5906,8 +5931,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 4;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -6446,8 +6471,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 3;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -6462,10 +6487,28 @@ export class Library {
 					item: {
 						off: "不限制",
 						group: "按势力筛选",
-						3: "三",
-						4: "四",
-						6: "六",
-						8: "八",
+						number: "自选数值",
+					},
+					async onclick(item) {
+						if (item !== "number") {
+							await game.promises.saveConfig("limit_zhu", item, "identity");
+							return;
+						}
+						while (true) {
+							const result = await game.promises.prompt("请输入常备主候选武将数");
+							if (!result) {
+								break;
+							}
+							if (/^-?\d+(\.\d+)?$/.test(result)) {
+								const number = Number(result);
+								if (number > 0 && Number.isInteger(number)) {
+									this.querySelector("div").innerHTML = result;
+									await game.promises.saveConfig("limit_zhu", result, "identity");
+									break;
+								}
+							}
+							alert("请输入大于0的整数");
+						}
 					},
 				},
 				choice_zhong: {
@@ -6476,8 +6519,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 4;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -6493,8 +6536,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 6;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -6510,8 +6553,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 3;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -6534,8 +6577,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 4;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -7674,8 +7717,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 5;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -7691,8 +7734,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 3;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -7828,8 +7871,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 5;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -7845,8 +7888,8 @@ export class Library {
 					onblur(e) {
 						let text = e.target,
 							num = Number(text.innerText);
-						if (isNaN(num) || num < 2) {
-							num = 3;
+						if (isNaN(num) || num < 1) {
+							num = 1;
 						} else if (!Number.isInteger(num)) {
 							num = Math.round(num);
 						}
@@ -12005,7 +12048,7 @@ export class Library {
 			 * @this {import("./element/client.js").Client}
 			 */
 			init(version, config, banned_info) {
-				var show_deckMonitor = false;
+				/*var show_deckMonitor = false;
 				if (lib.config.show_deckMonitor) {
 					// && lib.config.show_deckMonitor_online
 					show_deckMonitor = true;
@@ -12016,7 +12059,7 @@ export class Library {
 					} else {
 						ui.deckMonitor.style.display = "none";
 					}
-				}, show_deckMonitor);
+				}, show_deckMonitor);*/
 				this.onlineKey = config.onlineKey;
 				var banBlacklist = lib.config.banBlacklist === undefined ? [] : lib.config.banBlacklist;
 				if (lib.node.banned.includes(banned_info) || banBlacklist.includes(config.onlineKey)) {
@@ -12428,6 +12471,23 @@ export class Library {
 				}
 				this.send("log", items);
 			},
+			/**
+			 * 同步主客机的手牌状态
+			 *
+			 * @this {import("./element/client.js").Client}
+			 * @param {string[]} cardid_list 要同步的手牌id序列
+			 */
+			syncHandcard(cardid_list) {
+				if (lib.node.observing.includes(this)) {
+					return;
+				}
+
+				const player = lib.playerOL[this.id];
+				if (!player) {
+					return;
+				}
+				game.syncHandcard(player, cardid_list);
+			},
 		},
 		client: {
 			log: function (arr) {
@@ -12712,10 +12772,11 @@ export class Library {
 								if (result || input.value.length > 0) {
 									read(input.value);
 								} else if (confirm("是否输入邀请链接以加入房间？")) {
-									var text = prompt("请输入邀请链接");
-									if (typeof text == "string" && text.length > 0) {
-										read(text);
-									}
+									game.prompt("请输入邀请链接", text => {
+										if (typeof text === "string" && text.length > 0) {
+											read(text);
+										}
+									});
 								}
 							}
 						}
@@ -14244,9 +14305,8 @@ export class Library {
 			},
 		],
 		[
-			"手杀合",
+			"骥",
 			{
-				showName: "合",
 				color: "#AAABFF",
 				nature: "blackmm",
 			},
@@ -14528,6 +14588,13 @@ export class Library {
 			{
 				color: "#e8a0b7",
 				nature: "woodmm",
+			},
+		],
+		[
+			"虎牢",
+			{
+				color: "#5A2A1C",
+				nature: "firemm",
 			}
 		]
 	]);

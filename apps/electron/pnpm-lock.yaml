@@ -19,7 +19,7 @@ importers:
         version: link:../../packages/fs
     devDependencies:
       electron:
-        specifier: 39.5.2
+        specifier: ^39.5.2
         version: 39.5.2
       electron-builder:
         specifier: ^26.7.0
