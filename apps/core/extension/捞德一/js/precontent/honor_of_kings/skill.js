@@ -1872,6 +1872,441 @@ const skills = {
 		},
 	},
 
+	// J
+	// 姜子牙
+	hok_fengshen: {
+		trigger: { player: 'phaseZhunbeiBegin' },
+		forced: true,
+		locked: false,
+		filter(event, player) {
+			return true;
+		},
+		async content(event, trigger, player) {
+			// 选择目标
+			const result = await player.chooseTarget(get.prompt('hok_fengshen'), '选择一名角色进行判定', (card, player, target) => {
+				return true;
+			}).set('ai', target => {
+				// 优先对体力不满的队友使用
+				if (get.attitude(player, target) > 0 && target.hp < target.maxHp) {
+					return 2;
+				}
+				if (get.attitude(player, target) > 0) {
+					return 1;
+				}
+				if (player == target) {
+					return 0.5;
+				}
+				// 其次对敌人使用（可能造成负面效果）
+				if (get.attitude(player, target) < 0) {
+					return -1;
+				}
+				return 0;
+			}).forResult();
+
+			if (!result.bool) return;
+
+			const target = result.targets[0];
+			player.logSkill('hok_fengshen', target);
+			player.line(target);
+
+			// 进行判定
+			const judgeEvent = await target.judge(card => {
+				return get.color(card) == 'red' ? 1 : -1;
+			});
+			judgeEvent.judge2 = result => result.bool;
+
+			const { result: { judge } } = await judgeEvent;
+
+			// 根据判定结果执行不同效果
+			if (judge > 0) {
+				// 红色：增加体力上限并回复体力
+				await target.gainMaxHp();
+				await target.recover();
+			} else {
+				// 黑色：摸1张牌，手牌上限+1
+				await target.draw(1);
+				target.addTempSkill('hok_fengshen_maxHandcard', 'roundStart');
+			}
+		},
+		ai: {
+			order: 8,
+			result: {
+				target(player, target) {
+					// 优先对体力不满的队友使用
+					if (get.attitude(player, target) > 0 && target.hp < target.maxHp) {
+						return 2;
+					}
+					if (get.attitude(player, target) > 0) {
+						return 1;
+					}
+					if (player == target) {
+						return 0.5;
+					}
+					// 其次对敌人使用（可能造成负面效果）
+					if (get.attitude(player, target) < 0) {
+						return -1;
+					}
+					return 0;
+				}
+			}
+		},
+		subSkill: {
+			maxHandcard: {
+				mod: {
+					maxHandcard(player, num) {
+						return num + 1;
+					}
+				}
+			}
+		}
+	},
+	// hok_shenyin: {
+	// 	enable: 'phaseUse',
+	// 	usable: 1,
+	// 	filterTarget(card, player, target) {
+	// 		return target != player && player.inRange(target);
+	// 	},
+	// 	async content(event, trigger, player) {
+	// 		const target = event.target;
+	// 		// 造成1点雷电伤害
+	// 		await target.damage('thunder', player);
+	// 	},
+	// 	ai: {
+	// 		order: 6,
+	// 		result: {
+	// 			target(player, target) {
+	// 				// 对敌人使用，优先选择体力较低的角色
+	// 				if (get.attitude(player, target) < 0) {
+	// 					return -1.5 - (target.hp <= 1 ? 1 : 0);
+	// 				}
+	// 				// 对队友使用收益为负
+	// 				return -1;
+	// 			}
+	// 		}
+	// 	}
+	// },
+	hok_shenfa: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard: true,
+		position: 'h',
+		selectCard: 1, filterTarget(card, player, target) {
+			return target != player && player.inRange(target);
+		},
+		async content(event, trigger, player) {
+			const target = event.target;
+			// 弃置一张手牌
+			await player.discard(event.cards);
+
+			// 目标进行判定
+			const judgeEvent = await target.judge(card => {
+				if (get.suit(card) == 'diamond') return -1.5;
+				if (get.suit(card) == 'spade') return -3;
+				if (get.suit(card) == 'club') return -2;
+				return 0;
+			});
+			judgeEvent.judge2 = result => result.bool;
+
+			const { result: { judge, card } } = await judgeEvent;
+
+			// 根据判定结果执行不同效果
+			if (get.suit(card) == 'diamond') {
+				// 方块：受到雷电伤害
+				target.damage('thunder', player);
+			} else if (get.suit(card) == 'club') {
+				// 黑桃：弃置两张牌
+				await target.chooseToDiscard(2, 'he', true);
+			} else if (get.suit(card) == 'spade') {
+				// 梅花：翻面
+				await target.turnOver();
+			}
+		},
+		ai: {
+			order: 7,
+			result: {
+				target(player, target) {
+					// 对敌人使用，优先选择手牌较多的角色
+					if (get.attitude(player, target) < 0) {
+						const discardEffect = -Math.min(2, target.countCards('he')) * 0.5;
+						const turnOverEffect = target.isTurnedOver() ? 0 : -2;
+						return discardEffect + turnOverEffect;
+					}
+					// 对队友使用收益为负
+					return -1;
+				}
+			},
+			check(card) {
+				// 优先弃置价值较低的牌
+				return 6 - get.value(card);
+			}
+		}
+	},
+	hok_tianrenfaze: {
+		enable: 'phaseUse',
+		unique: true,
+		limited: true,
+		skillAnimation: true,
+		animationColor: 'thunder',
+		filter(event, player) {
+			return game.roundNumber >= 4;
+		},
+		filterTarget: lib.filter.notMe,
+		async content(event, trigger, player) {
+			player.awakenSkill('hok_tianrenfaze');
+			const target = event.target;
+
+			// 视为使用3次雷杀
+			for (let i = 0; i < 3; i++) {
+				// 第3次雷杀伤害+1
+				if (i == 2) {
+					await player.useCard({
+						name: 'sha',
+						nature: 'thunder',
+						isCard: true
+					}, target).set('oncard', card => {
+						_status.event.baseDamage = 2;
+					});
+				} else {
+					await player.useCard({
+						name: 'sha',
+						nature: 'thunder',
+						isCard: true
+					}, target);
+				}
+			}
+		},
+		ai: {
+			order: 5,
+			result: {
+				target(player, target) {
+					// 优先对敌人使用，尤其是体力较低的角色
+					if (get.attitude(player, target) < 0) {
+						let damage = 3;
+						if (target.hp <= 2) damage += 1;
+						return -damage;
+					}
+					// 对队友使用收益为负
+					return -3;
+				}
+			}
+		}
+	},
+	hok_tiandiao: {
+		zhuSkill: true,
+		usable: 2,
+		trigger: { global: 'judge' },
+		filter: function (event, player) {
+			if (player.getStat('skill').hok_tiandiao >= 2) return false;
+			return ui.cardPile.childNodes.length > 0;
+		},
+		content: async function (event, trigger, player) {
+			const card = get.cards()[0];
+			player.showCards([card], get.translation(player) + '发动了【天钓】');
+
+			const result = await player.chooseBool(
+				'是否使用【天钓】替换判定牌？',
+				'判定牌：' + get.translation(card)
+			).set('ai', () => {
+				// 计算新判定牌对判定玩家的收益
+				const currentCardEffect = get.effect(trigger.player, card, player, player);
+				// 计算原判定牌对判定玩家的收益
+				const newCardEffect = get.effect(trigger.player, trigger.player.judging[0], player, player);
+				// 判断是否为队友
+				const isAlly = get.attitude(player, trigger.player) > 0;
+				// 如果是队友，希望收益更高；如果是敌人，希望收益更低
+				const decision = isAlly ? (newCardEffect > currentCardEffect) : (newCardEffect < currentCardEffect);
+				return decision;
+			}).forResult();
+
+			if (result.bool) {
+				trigger.player.judging[0] = card;
+				trigger.orderingCards.addArray([card]);
+				await game.delay(2);
+			} else {
+				ui.cardPile.insertBefore(card, ui.cardPile.firstChild);
+			}
+		},
+		ai: {
+			expose: 0.2,
+			threaten: 1.5,
+			rejudge: true,
+			tag: { rejudge: 1 }
+		}
+	},
+
+	// K
+	// 凯
+	hok_xiuluo: {
+		marktext: '铠',
+		intro: {
+			name: '铠',
+			content: (storage, player) => {
+				const count = player.countMark('hok_xiuluo');
+				return `手牌上限+${count}`;
+			},
+		},
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard: true,
+		selectCard: [1, 2],
+		position: 'h',
+		filter: (event, player) => {
+			// 检查玩家是否有手牌
+			if (player.countCards('h') <= 0) return false;
+			return true;
+		},
+		prompt: '将至多2张手牌置于你的武将牌上，称为"铠"',
+		async content(event, trigger, player) {
+			// 将选中的牌作为"铠"标记
+			const cards = event.cards;
+			player.addMark('hok_xiuluo', cards.length + 1);
+			// 显示动画效果
+			player.$gain2(cards, false);
+			game.delayx();
+			// 将牌移出游戏
+			await player.addToExpansion(cards, 'giveAuto', player).set('giver', player).set('log', false);
+		},
+		ai: {
+			order: 7,
+			result: {
+				player: (player) => {
+					// 根据当前手牌数量和"铠"标记数量决定是否发动
+					const handCards = player.countCards('h');
+					const armorCount = player.countMark('hok_xiuluo');
+					// 手牌较多时保留手牌，手牌较少时可以发动
+					if (handCards > 4) return 1;
+					if (handCards > 2 && armorCount < 2) return 0.5;
+					return 0;
+				}
+			},
+			expose: 0.2,
+		},
+		mod: {
+			maxHandcard: (player, num) => {
+				return num + player.countMark('hok_xiuluo');
+			}
+		},
+		group: ['hok_xiuluo_remove', 'hok_xiuluo_reset'],
+		subSkill: {
+			remove: {
+				trigger: {
+					player: 'phaseEnd',
+				},
+				forced: true,
+				async content(event, trigger, player) {
+					// 回合结束时，将"铠"标记对应的牌弃置
+					const armorCount = player.countMark('hok_xiuluo');
+					if (armorCount > 0) {
+						const cards = player.getExpansions('hok_xiuluo');
+						if (cards.length > 0) {
+							await player.loseToDiscardpile(cards);
+							player.removeMark('hok_xiuluo', armorCount);
+						}
+					}
+				}
+			},
+			reset: {
+				trigger: {
+					player: 'phaseBegin',
+				},
+				forced: true,
+				silent: true,
+				content: function () {
+					// 回合开始时，重置已放置的牌数
+					player.storage.hok_xiuluo_placed = 0;
+				}
+			}
+		}
+	},
+	hok_jiren: {
+		trigger: { player: 'useCard' },
+		filter: (event, player) => {
+			return event.card.name == 'sha' && player.countMark('hok_xiuluo') > 0;
+		},
+		async content(event, trigger, player) {
+			// 移去一张"铠"
+			player.removeMark('hok_xiuluo', 1);
+			// 摸1张牌
+			await player.draw();
+		},
+		ai: {
+			expose: 0.3,
+		}
+	},
+	hok_moqu: {
+		enable: 'phaseUse',
+		usable: 1,
+		skillAnimation: true,
+		animationColor: 'thunder',
+		filter: (event, player) => {
+			return player.countMark('hok_xiuluo') >= 4;
+		},
+		prompt: '移去4枚"铠"，召唤"魔铠"直到你下个回合开始',
+		async content(event, trigger, player) {
+			// 移去4枚"铠"
+			player.removeMark('hok_xiuluo', 4);
+			// 添加魔铠效果
+			player.addTempSkill('hok_moqu_effect', { player: 'phaseBeginStart' });
+			// 显示动画效果
+			player.popup('魔铠');
+			game.log(player, '召唤了魔铠');
+		},
+		ai: {
+			order: 8,
+			result: {
+				player: (player) => {
+					// 根据当前局势决定是否召唤魔铠
+					const armorCount = player.countMark('hok_xiuluo');
+					if (armorCount >= 4) {
+						// 体力较低时优先召唤
+						if (player.hp <= 2) return 1.5;
+						// 有多个敌人时优先召唤
+						const enemies = game.filterPlayer(current => get.attitude(player, current) < 0);
+						if (enemies.length >= 2) return 1.2;
+						return 1;
+					}
+					return 0;
+				}
+			},
+			expose: 0.4,
+		},
+		subSkill: {
+			effect: {
+				mark: true,
+				marktext: '魔',
+				intro: {
+					name: '魔铠',
+					content: '你的【杀】造成的伤害+1，你受到的伤害-1',
+				},
+				trigger: {
+					source: 'damageBegin1',
+					player: 'damageBegin4',
+				},
+				forced: true,
+				async content(event, trigger, player) {
+					if (event.triggername == 'damageBegin1' && trigger.card && trigger.card.name == 'sha' && trigger.source == player) {
+						// 杀造成的伤害+1
+						trigger.num++;
+					} else if (event.triggername == 'damageBegin4' && trigger.player == player) {
+						// 受到的伤害-1
+						if (trigger.num > 0) trigger.num--;
+					}
+				},
+				ai: {
+					threaten: 1.5,
+					effect: {
+						target: (card, player, target) => {
+							// 当玩家受到伤害时，减少伤害值
+							if (get.tag(card, 'damage') && player == target) {
+								return [0.5, 0.5];
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+
 	// L
 	// 澜
 	hok_polang: {
@@ -3190,7 +3625,7 @@ const skills = {
 	},
 	hok_taigua: {
 		enable: 'phaseUse',
-		useable: 1,
+		usable: 1,
 		chargeSkill: 2,
 		group: ['hok_taigua_charge', 'hok_taigua_gain'],
 		filter(event, player) {
@@ -3220,7 +3655,6 @@ const skills = {
 		},
 		subSkill: {
 			charge: {
-				audio: 'hok_taigua',
 				trigger: {
 					global: ['phaseBefore'],
 					player: 'enterGame',
@@ -3439,7 +3873,7 @@ const skills = {
 			for (const target of targets) {
 				if (target.isIn()) {
 					player.line(target, 'fire');
-					target.damage();
+					target.damage('thunder', player);
 				}
 			}
 			// 令自己不可选中直到下回合开始
@@ -3590,16 +4024,158 @@ const skills = {
 	},
 
 	// S
+	// 少司缘
+	hok_liangyuan: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterTarget: true,
+		selectTarget: 2,
+		multitarget: true,
+		multiline: true,
+		async content(event, trigger, player) {
+			// 按座位顺序排列目标
+			event.targets.sortBySeat();
+			// 存储两个目标的选择结果
+			const results = [];
+			// 让每个目标选择
+			for (const target of event.targets) {
+				const result = await target.chooseControl('回复1点体力', '摸2张牌')
+					.set('prompt', '请选择一项')
+					.set('ai', () => {
+						const player = _status.event.player;
+						// 使用get.effect计算两种选择的收益
+						const recoverValue = get.effect(player, { name: 'recover' }, player, player);
+						const drawValue = get.effect(player, { name: 'draw', num: 2 }, player, player);
+						// 选择收益更大的选项
+						return recoverValue >= drawValue ? '回复1点体力' : '摸2张牌';
+					})
+					.forResult();
+				// 执行选择的效果
+				if (result.control == '回复1点体力') {
+					await target.recover();
+				} else {
+					await target.draw(2);
+				}
+				results.push(result.control);
+			}
+			// 如果两个目标选择了相同的选项，玩家摸1张牌
+			if (results[0] === results[1]) {
+				await player.draw();
+			}
+		},
+		ai: {
+			order: 8,
+			result: {
+				player(player) {
+					return 1;
+				},
+				target(player, target) {
+					// 计算目标选择"回复体力"的收益
+					const recoverValue = get.effect(target, { name: 'recover' }, player, player);
+					// 计算目标选择"摸牌"的收益
+					const drawValue = get.effect(target, { name: 'draw', num: 2 }, player, player);
+					// 如果是队友，计算其选择"回复体力"或"摸牌"的最大收益
+					if (get.attitude(player, target) > 0) {
+						return Math.max(recoverValue, drawValue);
+					}
+					// 如果是敌人，计算其选择"回复体力"或"摸牌"的最小收益（即对敌人最不利的选择）
+					if (get.attitude(player, target) < 0) {
+						// 需要考虑目标可能从正面效果中获得的收益
+						// 如果目标从正面效果中获得的收益大于0，则不选择
+						const minNegativeValue = Math.min(recoverValue, drawValue);
+						// return minNegativeValue > 0 ? -1 : minNegativeValue;
+						return -minNegativeValue;
+					}
+					// 如果是中立角色，返回-1
+					return -1;
+				}
+			}
+		}
+	},
+	hok_yuanyuan: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterTarget: true,
+		selectTarget: 2,
+		multitarget: true,
+		multiline: true,
+		async content(event, trigger, player) {
+			// 按座位顺序排列目标
+			event.targets.sortBySeat();
+			// 存储两个目标的选择结果
+			const results = [];
+			// 让每个目标选择
+			for (const target of event.targets) {
+				const result = await target.chooseControl('失去1点体力', '弃置2张牌')
+					.set('prompt', '请选择一项')
+					.set('ai', () => {
+						const player = _status.event.player;
+						// 检查目标是否能够弃置两张牌
+						const canDiscard = player.countCards('he') >= 2;
+						// 如果无法弃置两张牌，只能选择失去1点体力
+						if (!canDiscard) {
+							return '失去1点体力'; // 1 代表"失去1点体力"选项
+						} else {
+							// 使用get.effect计算两种选择的收益
+							const loseHpValue = get.effect(player, { name: 'losehp' }, player, player);
+							const discardValue = get.effect(player, { name: 'guohe_copy2' }, player, player);
+							// 选择收益更大的选项（即损失更小的选项）
+							return loseHpValue > discardValue ? '失去1点体力' : '弃置2张牌';
+						}
+					})
+					.forResult();
+				// 执行选择的效果
+				if (result.control == '失去1点体力') {
+					await target.loseHp();
+				} else {
+					const result = await target.chooseToDiscard(2, true, 'he');
+				}
+				results.push(result.control);
+			}
+			// 如果两个目标选择了相同的选项，玩家摸1张牌
+			if (results[0] === results[1]) {
+				await player.draw();
+			}
+		},
+		ai: {
+			order: 9,
+			result: {
+				player(player) {
+					return 1;
+				},
+				target(player, target) {
+					// 计算目标选择"失去体力"的收益
+					const loseHpValue = get.effect(target, { name: 'losehp' }, player, player);
+					// 计算目标选择"弃牌"的收益
+					const discardValue = get.effect(target, { name: 'guohe_copy2' }, player, player);
+					// 如果是队友，计算其选择"失去体力"或"弃牌"的最大收益
+					if (get.attitude(player, target) > 0) {
+						return Math.max(loseHpValue, discardValue);
+					}
+					// 如果是敌人，计算其选择"失去体力"或"弃牌"的最小收益（即对敌人最不利的选择）
+					if (get.attitude(player, target) < 0) {
+						// 需要考虑目标可能从负面效果中获得的收益
+						// 例如黄盖从失去体力中获得收益，邓艾从弃牌中获得收益
+						// 如果目标从负面效果中获得的收益大于0，则不选择
+						const minNegativeValue = Math.min(loseHpValue, discardValue);
+						return minNegativeValue > 0 ? -1 : minNegativeValue;
+					}
+					// 如果是中立角色，返回0
+					return 0;
+				},
+			},
+		},
+	},
 	// 司空震
 	hok_tianlei: {
 		zhuSkill: true,
 		trigger: { global: 'phaseBefore', player: 'enterGame' },
 		forced: true,
 		unique: true,
-		filter: function (event, player) {
+		filter(event, player) {
 			return (event.name != 'phase' || game.phaseNumber == 0) && player.hasZhuSkill('hok_tianlei');
 		},
-		content: function () {
+		content() {
 			var num = game.countPlayer(function (current) {
 				return current.group == 'qun';
 			});
@@ -4307,6 +4883,171 @@ const skills = {
 		},
 	},
 
+	// X
+	// 项羽
+	hok_pofu: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterTarget(card, player, target) {
+			return target != player && player.inRange(target);
+		},
+		filter(event, player) {
+			// 检查玩家是否还能出杀
+			return player.getCardUsable({ name: 'sha' }) > 0;
+		},
+		async content(event, trigger, player) {
+			let target = event.target;
+			// 对目标使用杀
+			await player.useCard({ name: 'sha', isCard: true }, target);
+			// 检查是否造成伤害
+			let damageEvent = event.getParent('useCard').relatedEvent;
+			if (damageEvent && damageEvent.name == 'damage' && damageEvent.num > 0) {
+				// 目标弃置1张手牌
+				await target.chooseToDiscard('h', 1, true);
+				// 若目标体力值大于玩家，玩家摸2张牌
+				if (target.hp > player.hp) {
+					await player.draw(2);
+				}
+			}
+		},
+		ai: {
+			order: 7,
+			result: {
+				target(player, target) {
+					// 基础杀的收益
+					let shaEffect = get.effect(target, { name: 'sha' }, player, player);
+					// 弃牌收益（对目标是负面）
+					let discardEffect = -get.effect(target, { name: 'guohe' }, player, target);
+					// 摸牌收益（若目标体力大于玩家）
+					let drawEffect = target.hp > player.hp ? 2 : 0;
+					return -(shaEffect + discardEffect + drawEffect);
+				}
+			},
+			threaten: 1.5,
+			// 添加skillTag，使AI优先使用技能
+			skillTagFilter(player, tag) {
+				if (tag == 'damage') {
+					return true;
+				}
+				return false;
+			}
+		}
+	},
+	hok_bawangzhan: {
+		derivation: 'wushuang',
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard(card, player) {
+			return player.countCards('h') >= 3;
+		},
+		selectCard: 3,
+		filterTarget(card, player, target) {
+			return target != player && player.canUse({ name: 'sha' }, target);
+		},
+		async content(event, trigger, player) {
+			let target = event.target;
+			// 判断条件并设置效果
+			let extraDamage = (player.maxHp - player.hp >= 2) ? 1 : 0;
+			// 添加"无双"效果：目标需要两张【闪】才能抵消
+			await player.addTempSkill('hok_bawangzhan_wushuang', { player: 'phaseUseAfter' });
+
+			// 使用杀并添加效果
+			await player.useCard({ name: 'sha', isCard: true }, target).set('oncard', card => {
+				// 若玩家已损失体力值大于等于2，伤害+1
+				if (extraDamage > 0) {
+					_status.event.baseDamage = 1 + extraDamage;
+				}
+			});
+		},
+		ai: {
+			order: 5,
+			result: {
+				target(player, target) {
+					// 基础杀的收益
+					let shaEffect = get.effect(target, { name: 'sha' }, player, player);
+					// 若玩家已损失体力值大于等于2，伤害+1
+					if (player.maxHp - player.hp >= 2) {
+						shaEffect *= 1.5;
+					}
+					// 添加"无双"效果的AI评估
+					shaEffect *= 1.2;
+					// 考虑弃置3张牌的代价
+					shaEffect -= 1;
+					return -shaEffect;
+				}
+			},
+			threaten: 1.8
+		},
+		subSkill: {
+			wushuang: {
+				trigger: { player: "useCardToPlayered" },
+				forced: true,
+				filter(event, player) {
+					return event.card.name == "sha" && !event.getParent().directHit.includes(event.target);
+				},
+				logTarget: "target",
+				async content(event, trigger, player) {
+					const id = trigger.target.playerid;
+					const map = trigger.getParent().customArgs;
+					if (!map[id]) {
+						map[id] = {};
+					}
+					if (typeof map[id].shanRequired == "number") {
+						map[id].shanRequired++;
+					} else {
+						map[id].shanRequired = 2;
+					}
+				},
+			}
+		}
+	},
+	hok_xianzhen: {
+		enable: 'phaseUse',
+		usable: 1,
+		zhuSkill: true,
+		filter(event, player) {
+			// 主公技，且手牌数小于体力上限
+			return player.hasZhuSkill('hok_xianzhen') &&
+				player.countCards('h') < player.maxHp &&
+				game.hasPlayer(target => target != player && target.group == 'qun');
+		},
+		filterTarget(card, player, target) {
+			return target != player && target.group == 'qun';
+		},
+		async content(event, trigger, player) {
+			let target = event.target;
+			// 玩家失去1点体力
+			await player.loseHp();
+			// 目标摸2张牌
+			await target.draw(2);
+			// 目标交给玩家2张牌
+			const cards = await target.chooseToGive(player, 2, true);
+			if (cards) {
+				await target.give(cards, player);
+			}
+		},
+		ai: {
+			order: 4,
+			result: {
+				target(player, target) {
+					// 摸2张牌的收益
+					let draw = get.effect(target, { name: 'draw', num: 2 }, player, target);
+					// 给玩家2张牌的收益（对目标是负面）
+					let give = -get.effect(target, { name: 'guohe', num: 2 }, player, target);
+					return draw + give;
+				},
+				player(player) {
+					// 失去1点体力的代价
+					let loseHp = -1;
+					// 获得2张牌的收益
+					let gain = 2;
+					return loseHp + gain;
+				}
+			},
+			threaten: 1.2
+		}
+	},
+
 	// Y
 	// 瑶
 	hok_shangui: {
@@ -4644,7 +5385,7 @@ const skills = {
 	},
 	hok_shengjiancaijue: {
 		enable: 'phaseUse',
-		useable: 1,
+		usable: 1,
 		direct: true,
 		filter(event, player) {
 			if (player.countMark('hok_shengguang') == 3) {
@@ -4751,6 +5492,186 @@ const skills = {
 			},
 		},
 	},
+	// 虞姬
+	hok_chuge: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard: true,
+		position: 'h',
+		selectCard: 1,
+		filter(event, player) {
+			return player.countCards('h') > 0;
+		},
+		check: function (card) {
+			return 7 - get.value(card);
+		},
+		content: async function (event, trigger, player) {
+			await player.discard(event.cards);
+			player.addTempSkill('hok_chuge_effect');
+			player.markSkill('hok_chuge_effect');
+		},
+		ai: {
+			order: 8,
+			result: {
+				player: function (player) {
+					if (player.countCards('h', { type: 'basic' }) > 0) return 1;
+					return 0;
+				}
+			}
+		},
+		subSkill: {
+			effect: {
+				charlotte: true,
+				trigger: { player: 'useCardToPlayered' },
+				filter(event, player) {
+					if (!_status.currentPhase || player != _status.currentPhase) return false;
+					if (event.card.name != 'sha' || !event.isFirstTarget) return false;
+					return true;
+				},
+				forced: true,
+				logTarget: 'targets',
+				content: async function (event, trigger, player) {
+					for (var target of trigger.targets) {
+						target.addTempSkill('qinggang2');
+						target.storage.qinggang2.add(trigger.card);
+						player.addTempSkill('hok_chuge_damage', 'phaseUseAfter');
+						player.storage.hok_chuge_damage = true;
+					}
+					player.unmarkSkill('hok_chuge_effect');
+					player.removeSkill('hok_chuge_effect');
+				},
+				ai: {
+					unequip_ai: true,
+					effect: {
+						target: function (card, player, target, current) {
+							if (card.name == 'sha') {
+								return [1, 1.5];
+							}
+						}
+					}
+				},
+			},
+			damage: {
+				trigger: { source: 'damageBegin1' },
+				forced: true,
+				filter(event, player) {
+					return event.card && event.card.name == 'sha' && player.storage.hok_chuge_damage;
+				},
+				content: function () {
+					trigger.num++;
+					player.storage.hok_chuge_damage = false;
+				},
+			},
+			// 风护
+			hok_fenghu: {
+				trigger: {
+					player: 'useCardToTargeted',
+				},
+				filter: function (event, player) {
+				}
+			},
+		}
+	},
+	hok_fengyou: {
+		trigger: {
+			target: 'useCardToTargeted',
+		},
+		usable: 1,
+		filter: function (event, player) {
+			if (!player.countCards('h') || event.targets.length != 1 || event.player == event.target) return false;
+			if (event.card.name != 'sha' || event.card.nature) return false;
+			return event.target === player || event.cards.someInD();
+		},
+		async cost(event, trigger, player) {
+			var next = player.chooseToDiscard('h'), prompt;
+			event.target = trigger.player;
+			prompt = '令' + get.translation(trigger.card) + '对你无效';
+			next.set('goon', -get.effect(player, trigger.card, trigger.player, player));
+			next.set('prompt', get.prompt('hok_fengyou', event.target));
+			next.set('prompt2', prompt)
+			next.set('ai', function (card) {
+				return _status.event.goon - get.value(card);
+			});
+			next.set('logSkill', ['hok_fengyou', event.target]);
+			event.result = await next.forResult();
+		},
+		popup: false,
+		content() {
+			trigger.excluded.add(player);
+			player.draw();
+		},
+	},
+	hok_zhenqianwu: {
+		trigger: {
+			player: 'phaseUseBegin',
+		},
+		forced: true,
+		unique: true,
+		juexingji: true,
+		skillAnimation: true,
+		animationColor: 'metal',
+		derivation: ['hok_fengge'],
+		chargeSkill: 4,
+		filter: function (event, player) {
+			if (player.hasSkill('hok_fengge')) return false;
+			return player.countCharge && player.countCharge() >= 4;
+		},
+		content: async function (event, trigger, player) {
+			player.removeCharge(4);
+			player.awakenSkill(event.name);
+			await player.addSkills('hok_fengge');
+		},
+		group: ['hok_zhenqianwu_charge'],
+		subSkill: {
+			charge: {
+				trigger: {
+					source: 'damageSource',
+					player: 'damageEnd',
+				},
+				forced: true,
+				filter: function (event, player) {
+					if (player.hasSkill('hok_fengge')) return false;
+					return event.num > 0 && player.countCharge() < 4;
+				},
+				content: function () {
+					const currentCharge = player.countCharge();
+					const addAmount = Math.min(trigger.num, 4 - currentCharge);
+					player.addCharge(addAmount);
+				},
+			},
+		},
+		ai: {
+			combo: 'hok_fengge'
+		}
+	},
+	hok_fengge: {
+		locked: true,
+		mod: {
+			cardUsable(card, player, num) {
+				if (get.name(card, player) == 'sha') return num + 1;
+			},
+		},
+		trigger: {
+			player: 'useCardToPlayered',
+		},
+		filter: function (event, player) {
+			return event.card.name == 'sha' && event.target.countCards('h') < player.countCards('h');
+		},
+		forced: true,
+		content: async function (event, trigger, player) {
+			trigger.getParent().baseDamage++;
+		},
+		ai: {
+			effect: {
+				target: function (card, player, target) {
+					if (card.name == 'sha' && target.countCards('h') < player.countCards('h')) {
+						return [1, -1];
+					}
+				}
+			}
+		}
+	},
+
 
 	// SP
 	// SP李信

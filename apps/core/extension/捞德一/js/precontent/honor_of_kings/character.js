@@ -1,7 +1,7 @@
 const characters = {
 	// A
 	// 艾琳
-	hok_ailin: ['female', 'qun', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
+	hok_ailin: ['female', 'shen', 3, ['hok_lingwu', 'hok_yewu', 'hok_xuanwu', 'hok_yueguishengfang']],
 	// 安琪拉
 	hok_anqila: ['female', 'shu', 3, ['hok_huoqiu', 'hok_hunhuo', 'hok_chihui']],
 	// 敖隐
@@ -40,7 +40,21 @@ const characters = {
 
 	// I
 	// J
+	// 姜子牙
+	hok_jiangziya: ['male', 'shen', 3, ['hok_fengshen', 'hok_shenfa', 'hok_tianrenfaze', 'hok_tiandiao'], ['qun'], ['zhu']],
+	// hok_jiangziya: {
+	// 	sex: "male",
+	// 	group: "shen",
+	// 	hp: 3,
+	// 	maxHp: 3,
+	// 	skills: ["hok_fengshen", "hok_shenyin", "hok_shenfa", "hok_tianrenfaze", "hok_tiandiao"],
+	// 	groupInGuozhan: "qun",
+	// 	isZhugong: true
+	// },
+
 	// K
+	// 凯
+	hok_kai: ['male', 'wei', 4, ['hok_xiuluo', 'hok_jiren', 'hok_moqu']],
 
 	// L
 	// 澜
@@ -67,6 +81,8 @@ const characters = {
 	// R
 
 	// S
+	// 少司缘
+	hok_shaosiyuan: ['female', 'wu', 4, ['hok_liangyuan', 'hok_yuanyuan'], ['doublegroup:wu:shu']],
 	// 司空震
 	hok_sikongzhen: ['male', 'qun', 4, ['hok_tianlei', 'hok_benlei', 'hok_leitingwanjun'], ['zhu']],
 	// 孙悟空
@@ -83,12 +99,16 @@ const characters = {
 	hok_wuzetian: ['female', 'qun', 3, ['hok_dihui', 'hok_diwei', 'hok_shaduo', 'hok_nvdi'], ['zhu']],
 
 	// X
+	// 项羽
+	hok_xiangyu: ['male', 'qun', 5, ['hok_pofu', 'hok_bawangzhan', 'hok_xianzhen'], ['zhu']],
 
 	// Y
 	// 瑶
 	hok_yao: ['female', 'jin', 3, ['hok_shangui', 'hok_bailu']],
 	// 亚瑟
 	hok_yase: ['male', 'qun', 4, ['hok_shengguang', 'hok_shidun', 'hok_huixuan', 'hok_shengjiancaijue', 'hok_wangzhe'], ['zhu']],
+	// 虞姬
+	hok_yuji: ['female', 'qun', 3, ['hok_chuge', 'hok_fengyou', 'hok_zhenqianwu']],
 
 	// Z
 

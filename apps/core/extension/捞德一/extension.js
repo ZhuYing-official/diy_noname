@@ -17,6 +17,8 @@ game.laoShowNewPack = function () {
 		'增强<王者荣耀>李信(光暗、烈华、暴冲、残撕)',
 		'调整<王者荣耀>明世隐(临卦、师卦)',
 		'重做<王者荣耀>芈月',
+		'新增<王者荣耀>项羽、虞姬、姜子牙、凯、澜',
+		'新增<王者荣耀>炽热支配、魔女斗篷',
 		'To be continued...',
 	];
 	//更新武将
@@ -24,6 +26,11 @@ game.laoShowNewPack = function () {
 		'hok_lixin',
 		'hok_mingshiyin',
 		'hok_miyue',
+		'hok_xiangyu',
+		'hok_yuji',
+		'hok_jiangziya',
+		'hok_kai',
+		'hok_lan',
 	];
 	//加载
 	var dialog = ui.create.dialog(
