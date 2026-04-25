@@ -12,25 +12,13 @@ game.laoShowNewPack = function () {
 	var Lao_update = [
 		'/setPlayer/',
 		'更新内容：',
-		'修复：评分结算的bug，增强主公的bug',
-		'优化<王者荣耀>司空震AI',
-		'增强<王者荣耀>李信(光暗、烈华、暴冲、残撕)',
-		'调整<王者荣耀>明世隐(临卦、师卦)',
-		'重做<王者荣耀>芈月',
-		'新增<王者荣耀>项羽、虞姬、姜子牙、凯、澜',
-		'新增<王者荣耀>炽热支配、魔女斗篷',
+		'修复：<王者荣耀>司空震(奔雷)的bug',
+		'削弱<王者荣耀>魔女斗篷：锁定技。你受到的锦囊牌或属性伤害-1 -> 锁定技。每回合限1次，你受到的锦囊牌或属性伤害-1。',
 		'To be continued...',
 	];
 	//更新武将
 	var Lao_players = [
-		'hok_lixin',
-		'hok_mingshiyin',
-		'hok_miyue',
-		'hok_xiangyu',
-		'hok_yuji',
-		'hok_jiangziya',
-		'hok_kai',
-		'hok_lan',
+		'hok_sikongzhen',
 	];
 	//加载
 	var dialog = ui.create.dialog(

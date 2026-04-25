@@ -1960,31 +1960,6 @@ const skills = {
 			}
 		}
 	},
-	// hok_shenyin: {
-	// 	enable: 'phaseUse',
-	// 	usable: 1,
-	// 	filterTarget(card, player, target) {
-	// 		return target != player && player.inRange(target);
-	// 	},
-	// 	async content(event, trigger, player) {
-	// 		const target = event.target;
-	// 		// 造成1点雷电伤害
-	// 		await target.damage('thunder', player);
-	// 	},
-	// 	ai: {
-	// 		order: 6,
-	// 		result: {
-	// 			target(player, target) {
-	// 				// 对敌人使用，优先选择体力较低的角色
-	// 				if (get.attitude(player, target) < 0) {
-	// 					return -1.5 - (target.hp <= 1 ? 1 : 0);
-	// 				}
-	// 				// 对队友使用收益为负
-	// 				return -1;
-	// 			}
-	// 		}
-	// 	}
-	// },
 	hok_shenfa: {
 		enable: 'phaseUse',
 		usable: 1,
@@ -4229,7 +4204,7 @@ const skills = {
 		forced: true,
 		trigger: { source: 'damageBefore' },
 		content() {
-			if (trigger.card.nature == null) {
+			if (trigger.card && trigger.card.nature == null) {
 				game.setNature(trigger, 'thunder');
 			}
 			if (get.distance(player, trigger.player) <= 1) {

@@ -122,6 +122,7 @@ const packs = function () {
             hok_monvdoupeng_skill: {
                 equipSkill: true,
                 forced: true,
+                usable: 1,
                 trigger: { player: 'damageBegin4' },
                 filter: function (event, player) {
                     // 每回合限1次
