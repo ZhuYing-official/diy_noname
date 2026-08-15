@@ -140,7 +140,7 @@ const packs = function () {
                     // 减少伤害值
                     trigger.num--;
                     // 记录技能使用次数
-                    player.addTempSkill('hok_monvdoupeng_count', 'phaseJieshuBegin');
+                    player.addTempSkill('hok_monvdoupeng_skill_count', 'phaseJieshuBegin');
                 },
                 ai: {
                     effect: {
@@ -158,9 +158,12 @@ const packs = function () {
                         charlotte: true,
                         onremove: true,
                         mark: true,
+                        marktext: '⌧',
                         intro: {
                             content: '本回合已发动过魔女斗篷',
                         },
+                        context: {
+                        }
                     },
                 },
             },

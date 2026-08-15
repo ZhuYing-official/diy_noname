@@ -1,61 +1,6 @@
 import { lib, game, ui, get, ai, _status } from '../../../../../noname.js';
 const skills = {
 	// 王者公共技
-	hok_yinshen: {
-		charlotte: true,
-		locked: false,
-		forced: true,
-		marktext: '隐',
-		intro: {
-			name: '隐身',
-			content: '不能成为【杀】和目标数为1的锦囊牌的目标',
-		},
-		mod: {
-			targetEnabled(card, player, target) {
-				if (card.name == 'sha') {
-					return false;
-				}
-				if (card.name == 'wuzhong' || card.name == 'lebu' || card.name == 'bingliang' || card.name == 'shandian'
-					|| card.name == 'guohe' || card.name == 'shunshou' || card.name == 'juedou' || card.name == 'huogong'
-					|| card.name == 'qizhengxiangsheng' || card.name == 'hpp_qizhengxiangsheng') {
-					return false;
-				}
-			}
-		},
-		trigger: { player: ['useCardAfter', 'respond'] },
-		filter(event) {
-			return (get.type(event.card) == 'trick' || get.type(event.card) == 'delay' || event.card.name == 'sha');
-		},
-		content() {
-			player.removeMark('hok_yinshen', 1);
-			player.removeSkill('hok_yinshen');
-		},
-	},
-	hok_temp_hp: {
-		charlotte: true,
-		marktext: '体',
-		intro: {
-			name: '临时体力',
-			content: 'mark',
-		},
-		forced: true,
-		trigger: { player: ['damageEnd', 'loseHpEnd'] },
-		content() {
-			'step 0'
-			event.num = trigger.num;
-			'step 1'
-			player.removeMark('hok_temp_hp', 1);
-			'step 2'
-			player.loseMaxHp();
-			event.num--;
-			'step 3'
-			if (event.num == 0 || !player.hasMark('hok_temp_hp')) {
-				event.finish();
-			}
-			'step 4'
-			event.goto(1);
-		}
-	},
 	hok_bukexuanzhong: {
 		trigger: {
 			player: 'damageBegin4',
@@ -87,6 +32,117 @@ const skills = {
 				},
 			},
 		},
+	},
+	hok_temp_hp: {
+		charlotte: true,
+		marktext: '体',
+		intro: {
+			name: '临时体力',
+			content: 'mark',
+		},
+		forced: true,
+		trigger: { player: ['damageEnd', 'loseHpEnd'] },
+		content() {
+			'step 0'
+			event.num = trigger.num;
+			'step 1'
+			player.removeMark('hok_temp_hp', 1);
+			'step 2'
+			player.loseMaxHp();
+			event.num--;
+			'step 3'
+			if (event.num == 0 || !player.hasMark('hok_temp_hp')) {
+				event.finish();
+			}
+			'step 4'
+			event.goto(1);
+		}
+	},
+	hok_yinshen: {
+		charlotte: true,
+		locked: false,
+		forced: true,
+		marktext: '隐',
+		intro: {
+			name: '隐身',
+			content: '不能成为【杀】和目标数为1的锦囊牌的目标',
+		},
+		mod: {
+			targetEnabled(card, player, target) {
+				if (card.name == 'sha') {
+					return false;
+				}
+				if (card.name == 'wuzhong' || card.name == 'lebu' || card.name == 'bingliang' || card.name == 'shandian'
+					|| card.name == 'guohe' || card.name == 'shunshou' || card.name == 'juedou' || card.name == 'huogong'
+					|| card.name == 'qizhengxiangsheng' || card.name == 'hpp_qizhengxiangsheng') {
+					return false;
+				}
+			}
+		},
+		trigger: { player: ['useCardAfter', 'respond'] },
+		filter(event) {
+			return (get.type(event.card) == 'trick' || get.type(event.card) == 'delay' || event.card.name == 'sha');
+		},
+		content() {
+			player.removeMark('hok_yinshen', 1);
+			player.removeSkill('hok_yinshen');
+		},
+	},
+	hok_zhimang: {
+		trigger: {
+			player: 'useCardToBefore',
+			target: 'useCardToBefore'
+		},
+		forced: true,
+		locked: false,
+		filter: function (event, player, name) {
+			// 检查是否是【杀】或单目标锦囊伤害牌
+			if (name === 'player') {
+				return event.card.name === 'sha';
+			}
+			return get.type(event.card) === 'trick' &&
+				get.tag(event.card, 'damage') &&
+				event.targets.length === 1;
+		},
+		async content(event, trigger, player) {
+			// 如果是玩家使用【杀】，标记无法造成伤害
+			if (event.triggername === 'useCardToBefore' && trigger.player === player) {
+				trigger.card.storage.hok_zhimang = true;
+			}
+			// 如果是单目标锦囊伤害牌，随机指定目标
+			else {
+				// 获取所有合法目标
+				const targets = game.filterPlayer(target => {
+					return lib.filter.targetEnabled(trigger.card, player, target);
+				});
+
+				// 随机选择一个目标
+				if (targets.length > 0) {
+					const randomTarget = targets.randomGet();
+					// 替换原有目标
+					trigger.targets = [randomTarget];
+				}
+			}
+			player.removeSkill('hok_zhimang');
+		},
+		mod: {
+			cardDamage: function (card, player, target, num) {
+				// 检查是否是被标记的【杀】
+				if (card.storage && card.storage.hok_zhimang) {
+					return 0;
+				}
+			}
+		},
+		ai: {
+			effect: {
+				target: function (card, player, target) {
+					// AI评估：如果使用的是【杀】，伤害为0
+					if (card.name === 'sha' && card.storage && card.storage.hok_zhimang) {
+						return [0, 0];
+					}
+				}
+			}
+		}
 	},
 
 	// A
@@ -196,7 +252,8 @@ const skills = {
 			order: 5.5,
 			result: {
 				target(player, target) {
-					return -get.damageEffect(target, player, player, 'fire');
+					const att = get.sgn(get.attitude(player, target));
+					return att * get.damageEffect(target, player, player, 'fire');;
 				},
 			},
 		}
@@ -765,6 +822,178 @@ const skills = {
 			threaten: 1.5,
 			order: 11.1,
 			expose: 0.3,
+		}
+	},
+	// 扁鹊
+	hok_eyi: {
+		audio: 'eyi',
+		forced: true,
+		trigger: {
+			source: 'damageSource',
+		},
+		filter(event, player) {
+			return event.num > 0 && (event.hasNature() || get.type(event.card) == 'trick');
+		},
+		async content(event, trigger, player) {
+			const target = trigger.player;
+			if (!target || !target.isIn()) return;
+
+			await target.addMark('hok_eyi_mark', 1);
+			await target.addSkill('hok_eyi_start');
+		},
+		// group: ['hok_eyi_limit'],
+		subSkill: {
+			mark: {
+				marktext: '☠',
+				intro: {
+					content: '拥有"恶医"标记的角色每个出牌阶段开始时需弃置X张牌（X为"恶医"数量/2）',
+				},
+			},
+			start: {
+				trigger: {
+					player: 'phaseBegin',
+				},
+				filter(event, player) {
+					return player.countMark('hok_eyi_mark') > 0;
+				},
+				async content(event, trigger, player) {
+					const num = Math.floor(player.countMark('hok_eyi_mark') / 2);
+					if (num > 0) {
+						await player.chooseToDiscard(num, 'h', true);
+					}
+				},
+			},
+		},
+	},
+	hok_eyi_limit: {
+		skillAnimation: true,
+		animationColor: 'water',
+		unique: true,
+		mark: true,
+		limited: true,
+		enable: 'phaseUse',
+		usable: 1,
+		filter(event, player) {
+			return game.hasPlayer(target => target.isIn() && target.hp < target.maxHp);
+		},
+		filterTarget(card, player, target) {
+			return target.isIn() && target.hp < target.maxHp;
+		},
+		async content(event, trigger, player) {
+			player.awakenSkill('hok_eyi_limit');
+			const target = event.targets[0];
+			await target.recoverTo(target.maxHp);
+		},
+		ai: {
+			order: 10,
+			result: {
+				target(player, target) {
+					return target.maxHp - target.hp;
+				},
+			},
+		},
+	},
+	hok_jinyao: {
+		enable: 'phaseUse',
+		usable: 2,
+		filterCard: (card, player) => {
+			return get.color(card) === 'black';
+		},
+		filter: (event, player) => {
+			return player.countCards('h', { color: 'black' }) > 0;
+		},
+		position: 'hs',
+		viewAs: { name: 'sha', nature: 'thunder' },
+		filterTarget: (card, player, target) => {
+			return player.canUse({ name: 'sha', nature: 'thunder' }, target);
+		},
+		check: (card) => {
+			return 7 - get.value(card);
+		},
+		prompt: '将一张黑色手牌当雷【杀】使用',
+		mod: {
+			cardUsable(card, player, num) {
+				if (card.name === 'sha') return 2;
+			},
+		},
+		async content(event, trigger, player) {
+			const { result } = event;
+			if (!result.bool) return;
+
+			// 等待杀的使用结算完成
+			await result.card?.forResult();
+
+			// 检查是否造成伤害
+			if (result.targets?.[0]?.isDamaged()) {
+				await result.targets[0].chooseToDiscard(1, 'he', true);
+			}
+		},
+		ai: {
+			order: 8,
+			respondSha: true,
+			skillTagFilter: (player, tag, arg) => {
+				if (tag !== 'respondSha') return false;
+				return player.countCards('h', { color: 'black' }) > 0;
+			},
+			result: {
+				target: (player, target) => {
+					if (player.hasSkill('jueqing')) return -1.5;
+					return -1;
+				},
+			},
+		},
+	},
+	hok_mingzai: {
+		enable: 'phaseUse',
+		usable: 1,
+		filter: function (event, player) {
+			return player.countCards('h', { color: 'red' }) >= 2;
+		},
+		selectTarget: -1, // 选择所有角色
+		content: async function (event, trigger, player) {
+			// 1. 弃置2张红色手牌
+			const result = await player.chooseToDiscard('h', 2, { color: 'red' }).forResult();
+			if (!result.bool) return;
+
+			// 2. 对每个角色分别计算伤害
+			for (const p of game.players) {
+				console.log(p.name, '的恶医标记数量:', p.countMark('hok_eyi_mark'));
+				if (p == player) continue; // 跳过自己
+
+				// 获取该角色身上的"恶医"标记数量
+				const markCount = p.countMark('hok_eyi_mark');
+				if (markCount <= 0) continue;
+
+				// 移除该角色所有的"恶医"标记
+				p.removeMark('hok_eyi_mark', markCount);
+
+				// 计算伤害值（标记数量/2，向下取整）
+				const damage = Math.floor(markCount / 2);
+				if (damage <= 0) continue;
+
+				// 3. 对该角色造成伤害
+				await p.damage(damage, 'thunder', player);
+				if (p.hp < damage) {
+					// 体力值小于伤害值，直接死亡
+					await p.die({ source: player });
+				}
+			}
+		},
+		ai: {
+			order: 5,
+			result: {
+				player: function (player) {
+					// AI评估：检查场上是否有角色有"恶医"标记
+					const hasMarks = game.players.some(p => p.countMark('hok_eyi') > 0);
+					if (hasMarks && player.countCards('h', { color: 'red' }) >= 2) return 1;
+					return 0;
+				},
+				target: function (player, target) {
+					// 对敌人有利，对己方不利
+					if (target.isEnemyOf(player)) return 1;
+					return -1;
+				}
+			}
 		}
 	},
 
@@ -2108,6 +2337,189 @@ const skills = {
 			tag: { rejudge: 1 }
 		}
 	},
+	// 金蝉
+	hok_jinlan: {
+		trigger: {
+			target: 'useCardToBefore',
+		},
+		filter: function (event, player) {
+			// 检查是否是乐不思蜀或兵粮寸断
+			if (!['lebu', 'bingliang'].includes(event.card.name)) return false;
+			// 检查是否是玩家自己成为目标
+			if (event.player === player) return false;
+			// 检查是否是每轮限1次
+			// if (player.getStat('skill').hok_jinlan >= 1) return false;
+			return true;
+		},
+		usable: 1,
+		round: true,
+		check: function (event, player) {
+			// AI判断：总是取消负面效果
+			return true;
+		},
+		content: async function (event, trigger, player) {
+			// 取消牌的效果
+			trigger.cancel();
+		},
+		ai: {
+			order: 5,
+			result: {
+				player: 1,
+			},
+		},
+	},
+	hok_jingu: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard: function (card) {
+			return get.type(card) != 'basic';
+		},
+		filterTarget: function (card, player, target) {
+			return target != player;
+		},
+		filter(event, player) {
+			return player.countCards('hs', card => get.type(card) !== 'basic') > 0;
+		},
+		selectTarget: 1,
+		content: async function (event, trigger, player) {
+			// 添加"箍"标记
+			// await target.addMark('hok_jingu_effect');
+			// 添加临时技能，直到玩家下个回合开始
+			event.target.storage.hok_jingu_source = player;
+			await event.target.addTempSkill('hok_jingu_effect', { player: 'phaseBegin' });
+		},
+		ai: {
+			order: 5,
+			result: {
+				target: -1,
+				player: 1,
+			},
+		},
+		subSkill: {
+			effect: {
+				mod: {
+					globalTo: function (from, to) {
+						if (from.hasMark('hok_jingu')) {
+							return 1;
+						}
+					},
+				},
+				mark: true,
+				marktext: '箍',
+				intro: {
+					name: '紧箍',
+					content: function (storage, player) {
+						// 获取施加"箍"效果的角色
+						const source = player.storage.hok_jingu_source;
+						return `与其他角色的距离视为1，且不能响应${get.translation(source)}使用的【杀】`;
+					},
+				},
+				trigger: {
+					target: 'useCardToPlayered',
+				},
+				filter: function (event, player) {
+					if (!event.player.hasSkill('hok_jingu')) return false;
+					return event.card.name == 'sha';
+				},
+				forced: true,
+				popup: false,
+				content: async function (event, trigger, player) {
+					// 使杀不可被响应
+					trigger.directHit.add(trigger.target);
+				},
+			},
+		},
+	},
+	hok_zhangyin: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard: true,
+		selectCard: 2,
+		filterTarget: lib.filter.notMe,
+		selectTarget: 1,
+		content: async function (event, trigger, player) {
+			const target = event.target;
+			// 令目标摸至2张牌
+			// const num = 2 - target.countCards('h');
+			// if (num > 0) {
+			await target.draw(2);
+			// }
+
+			// 令目标弃置2张手牌
+			const result = await target.chooseToDiscard('h', 2, true)
+				.set('ai', card => {
+					// 获取玩家手牌
+					const handcards = player.getCards('h');
+					// 统计各颜色的牌数
+					const colorCount = {};
+					handcards.forEach(c => {
+						const color = get.color(c);
+						colorCount[color] = (colorCount[color] || 0) + 1;
+					});
+					// 优先弃置颜色相同的牌
+					const cardColor = get.color(card);
+					if (colorCount[cardColor] >= 2) {
+						return 10; // 高优先级
+					}
+					// 否则按牌值弃置
+					return 7 - get.value(card);
+				}).forResult();
+			const cards = result.cards || [];
+			// 计算弃置牌的颜色数量
+			const colors = new Set();
+			cards.forEach(card => {
+				colors.add(get.color(card));
+			});
+
+			// 造成雷电伤害
+			if (colors.size > 0) {
+				for (let i = 0; i < colors.size; i++) {
+					await target.damage('thunder');
+				}
+			}
+		},
+		ai: {
+			order: 5,
+			result: {
+				target: -1,
+				player: 1,
+			},
+		},
+	},
+	hok_due: {
+		zhuSkill: true,
+		trigger: {
+			player: 'damageBegin',
+		},
+		filter: function (event, player) {
+			if (player.countCards('he') <= 0) return false;
+			if (event.num <= 1) return false;
+			if (!player.hasZhuSkill('hok_due', event.source)) return false;
+			return true;
+		},
+		check: function (event, player) {
+			if (event.num > 1 && player.countCards('he') > 0) return true;
+			return false;
+		},
+		content: async function (event, trigger, player) {
+			const target = trigger.source;
+			if (!target) return;
+
+			// 弃置一张牌
+			const result = await player.chooseToDiscard('he', true).forResult();
+
+			if (result.bool) {
+				// 将伤害改为1
+				trigger.num = 1;
+
+				// 添加日志
+				game.log(player, '发动了', '#g【hok_due】', '，将', trigger.source, '受到的伤害改为1');
+			}
+		},
+		ai: {
+			threaten: 1.5,
+		},
+	},
 
 	// K
 	// 凯
@@ -3149,6 +3561,200 @@ const skills = {
 				}
 			},
 		}
+	},
+	// 卢雅那
+	hok_shehuan: {
+		trigger: {
+			player: 'useCardAfter',
+			// target: 'useCardAfter'
+		},
+		forced: true,
+		filter: function (event, player, name) {
+			// 检查是否是伤害牌
+			return get.tag(event.card, 'damage');
+		},
+		async content(event, trigger, player) {
+			if (player.countMark('hok_shehuan_effect') < 3) {
+				player.addMark('hok_shehuan_effect', 1);
+			}
+			player.draw();
+			// 检查是否已经获得过标记
+			if (!player.hasSkill('hok_shehuan_effect')) {
+				// 获得标记
+				player.addTempSkill('hok_shehuan_effect', { player: 'phaseEnd' });
+				player.addTempSkill('hok_shehuan_clear', { player: 'phaseEnd' });
+			}
+		},
+		subSkill: {
+			effect: {
+				mark: true,
+				marktext: '环',
+				intro: {
+					name: '蛇环',
+					content: 'mark',
+				},
+				usable: 1,
+				trigger: { player: 'useCardToPlayered' },
+				filter(event, player) {
+					// 仅在玩家使用【杀】指定第一个目标时触发，且玩家拥有"蛇环"标记
+					return event.card.name === 'sha' && event.isFirstTarget && player.countMark('hok_shehuan_effect') > 0;
+				},
+				direct: true,
+				async content(event, trigger, player) {
+					// 构建选项
+					const choices = ['令此【杀】伤害+1', '额外指定一名目标'];
+					const result = await player.chooseControl(choices.concat('cancel2'))
+						.set('prompt', '蛇环：请选择一项')
+						.set('ai', () => {
+							// AI逻辑：简单判断，若目标手牌较少可能更容易命中，选增伤；否则选多目标
+							if (trigger.target.countCards('h') <= 1) return choices[0];
+							return choices[1];
+						}).forResult();
+
+					if (result.control === 'cancel2') return;
+
+					// 消耗"蛇环"标记
+					player.removeSkill('hok_shehuan_effect');
+					player.removeMark('hok_shehuan_effect', 1);
+					player.logSkill('hok_shehuan_effect', trigger.targets);
+
+					if (result.control === choices[0]) {
+						// 选项1：令此【杀】伤害+1
+						trigger.getParent().baseDamage++;
+					} else {
+						// 选项2：额外指定一名目标
+						// 获取当前【杀】的合法额外目标
+						const targets = game.filterPlayer(current => {
+							return current !== player && !trigger.targets.includes(current) &&
+								lib.filter.targetEnabled(trigger.card, player, current);
+						});
+
+						if (targets.length > 0) {
+							const selectResult = await player.chooseTarget(
+								'请选择额外的一名【杀】的目标',
+								(card, player, target) => targets.includes(target)
+							).set('ai', target => {
+								return get.effect(target, trigger.card, player, player);
+							}).forResult();
+
+							if (selectResult.bool) {
+								trigger.targets.addArray(selectResult.targets);
+								// 绘制连线特效
+								player.line(selectResult.targets, 'green');
+							}
+						}
+					}
+				}
+			},
+			clear: {
+				trigger: { player: 'phaseDiscardAfter' },
+				forced: true,
+				locked: false,
+				content() {
+					player.removeMark('hok_shehuan_effect', player.countMark('hok_shehuan_effect'));
+				}
+			},
+		},
+	},
+	// hok_sheya: {
+	// 	enable: 'phaseUse',
+	// 	usable: 1,
+	// 	filter(event, player) {
+	// 		return player.countMark('hok_shehuan_effect') > 0;
+	// 	},
+	// 	async content(event, trigger, player) {
+	// 		// 弃一枚"蛇环"标记
+	// 		player.removeMark('hok_shehuan_effect', 1);
+
+	// 		// 本回合【杀】无视距离且不可被响应
+	// 		player.addTempSkill('hok_sheya_effect', 'phaseUseAfter');
+	// 	},
+	// 	ai: {
+	// 		order: 5,
+	// 		result: {
+	// 			target(player, target) {
+	// 				return get.damageEffect(target, player, null, player);
+	// 			}
+	// 		}
+	// 	},
+	// 	subSkill: {
+	// 		effect: {
+	// 			forced: true,
+	// 			locked: false,
+	// 			trigger: { player: 'useCardToPlayered' },
+	// 			check(event, player) {
+	// 				return get.attitude(player, event.target) <= 0;
+	// 			},
+	// 			filter(event, player) {
+	// 				return event.card.name == 'sha';
+	// 			},
+	// 			preHidden: true,
+	// 			content() {
+	// 				trigger.getParent().directHit.add(trigger.target);
+	// 			},
+	// 			ai: {
+	// 				directHit_ai: true,
+	// 				skillTagFilter(player, tag, arg) {
+	// 					if (get.attitude(player, arg.target) > 0 || arg.card.name != 'sha') return false;
+	// 				},
+	// 			},
+	// 			mod: {
+	// 				targetInRange(card, player, target) {
+	// 					if (card.name === 'sha') return true;
+	// 				},
+	// 			}
+	// 		},
+	// 	},
+	// },
+	hok_shefen: {
+		enable: 'phaseUse',
+		usable: 1,
+		filter(event, player) {
+			// 拥有至少2枚"蛇环"标记才可发动
+			return player.countMark('hok_shehuan_effect') >= 2;
+		},
+		filterTarget: lib.filter.notMe,
+		async content(event, trigger, player) {
+			// 弃2枚"蛇环"标记
+			player.removeMark('hok_shehuan_effect', 2);
+
+			// 视为使用不计入次数的火【杀】
+			const useRe = await player.useCard({ name: 'sha', nature: 'fire', isCard: true }, event.target, false).forResult();
+
+			// 若此【杀】使用成功且造成伤害
+			if (useRe && useRe.bool) {
+				const target = event.target;
+				// 目标获得"致盲"标记直到其回合结束
+				target.addTempSkill('hok_zhimang');
+				// 本回合你使用的【杀】造成伤害后，其随机弃置一张手牌
+				player.addTempSkill('hok_shefen_effect', 'phaseAfter');
+			}
+		},
+		ai: {
+			order: 5,
+			result: {
+				target(player, target) {
+					return get.damageEffect(target, player, player, 'fire');
+				}
+			}
+		},
+		subSkill: {
+			effect: {
+				trigger: { player: 'damageEnd' },
+				direct: true,
+				filter(event, player) {
+					// 仅当使用【杀】造成伤害时触发
+					return event.card && event.card.name === 'sha';
+				},
+				async content(event, trigger, player) {
+					const target = trigger.player;
+					// 受伤角色随机弃置一张手牌
+					if (target.countCards('h') > 0) {
+						target.discard(target.getCards('h').randomGet());
+					}
+				}
+			},
+		},
 	},
 
 	// M
@@ -4293,72 +4899,240 @@ const skills = {
 		},
 	},
 	// 孙悟空
-	hok_qitian: {
-		enable: ['chooseToRespond', 'chooseToUse'],
-		position: 'hes',
-		viewAs(cards) {
-			var nature = null;
-			switch (get.color(cards[0])) {
-				case 'red':
-					nature = 'fire';
-					break;
-				case 'black':
-					nature = 'thunder';
-					break;
-				default:
-					nature = 'stab';
-			}
-			if (nature) {
-				return { name: 'sha', nature: nature };
-			}
-			return null;
-		},
-		prompt: '红色锦囊当火杀、黑色锦囊当雷杀使用或打出',
-		filterCard(card, player, event) {
-			event = event || _status.event;
-			var filter = event._backup.filterCard;
-			var name = get.color(card, player);
-			if (lib.card[card.name].type != 'trick' && lib.card[card.name].type != 'delay') return false;
-			if (name == 'red' && filter({ name: 'sha', cards: [card], nature: 'fire' }, player, event)) {
-				return true;
-			}
-			if (name == 'black' && filter({ name: 'sha', cards: [card], nature: 'thunder' }, player, event)) {
-				return true;
-			}
-			return false;
-		},
-		filter(event, player) {
-			var filter = event.filterCard;
-			if (filter(get.autoViewAs({ name: 'sha', nature: 'fire' }, 'unsure'), player, event) && player.countCards('hes', card => (get.type(card) == 'trick' || get.type(card) == 'delay') && get.color(card) == 'red')) {
-				return true;
-			}
-			if (filter(get.autoViewAs({ name: 'sha', nature: 'thunder' }, 'unsure'), player, event) && player.countCards('hes', card => (get.type(card) == 'trick' || get.type(card) == 'delay') && get.color(card) == 'black')) {
-				return true;
-			}
-			return false;
-		},
-		check(card) {
-			var val = get.value(card);
-			if (_status.event.name == 'chooseToRespond') return 1 / Math.max(0.1, val);
-			return 5 - val;
-		},
-		ai: {
-			respondSha: true,
-			skillTagFilter(player) {
-				if (!player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' })) return false;
-			},
-		},
-		group: ['hok_qitian_sha'],
-		subSkill: {
-			sha: {
-				mod: {
-					targetInRange(card, player) {
-						if (card.name == 'sha' && (card.nature == 'fire' || card.nature == 'thunder')) return true;
-					},
-				},
-			},
-		}
-	},
+	// hok_qitian: {
+	// 	enable: ['chooseToRespond', 'chooseToUse'],
+	// 	position: 'hes',
+	// 	viewAs(cards) {
+	// 		var nature = null;
+	// 		switch (get.color(cards[0])) {
+	// 			case 'red':
+	// 				nature = 'fire';
+	// 				break;
+	// 			case 'black':
+	// 				nature = 'thunder';
+	// 				break;
+	// 			default:
+	// 				nature = 'stab';
+	// 		}
+	// 		if (nature) {
+	// 			return { name: 'sha', nature: nature };
+	// 		}
+	// 		return null;
+	// 	},
+	// 	prompt: '红色锦囊当火杀、黑色锦囊当雷杀使用或打出',
+	// 	filterCard(card, player, event) {
+	// 		event = event || _status.event;
+	// 		var filter = event._backup.filterCard;
+	// 		var name = get.color(card, player);
+	// 		if (lib.card[card.name].type != 'trick' && lib.card[card.name].type != 'delay') return false;
+	// 		if (name == 'red' && filter({ name: 'sha', cards: [card], nature: 'fire' }, player, event)) {
+	// 			return true;
+	// 		}
+	// 		if (name == 'black' && filter({ name: 'sha', cards: [card], nature: 'thunder' }, player, event)) {
+	// 			return true;
+	// 		}
+	// 		return false;
+	// 	},
+	// 	filter(event, player) {
+	// 		var filter = event.filterCard;
+	// 		if (filter(get.autoViewAs({ name: 'sha', nature: 'fire' }, 'unsure'), player, event) && player.countCards('hes', card => (get.type(card) == 'trick' || get.type(card) == 'delay') && get.color(card) == 'red')) {
+	// 			return true;
+	// 		}
+	// 		if (filter(get.autoViewAs({ name: 'sha', nature: 'thunder' }, 'unsure'), player, event) && player.countCards('hes', card => (get.type(card) == 'trick' || get.type(card) == 'delay') && get.color(card) == 'black')) {
+	// 			return true;
+	// 		}
+	// 		return false;
+	// 	},
+	// 	check(card) {
+	// 		var val = get.value(card);
+	// 		if (_status.event.name == 'chooseToRespond') return 1 / Math.max(0.1, val);
+	// 		return 5 - val;
+	// 	},
+	// 	ai: {
+	// 		respondSha: true,
+	// 		skillTagFilter(player) {
+	// 			if (!player.countCards('h', { type: 'trick' }) && !player.countCards('h', { type: 'delay' })) return false;
+	// 		},
+	// 	},
+	// 	group: ['hok_qitian_sha'],
+	// 	subSkill: {
+	// 		sha: {
+	// 			mod: {
+	// 				targetInRange(card, player) {
+	// 					if (card.name == 'sha' && (card.nature == 'fire' || card.nature == 'thunder')) return true;
+	// 				},
+	// 			},
+	// 		},
+	// 	}
+	// },
+	// hok_shengbang: {
+	// 	locked: true,
+	// 	trigger: {
+	// 		source: 'damageBefore',
+	// 	},
+	// 	filter(event, player) {
+	// 		if (!event.card || event.card.name != 'sha') return false;
+	// 		return event.num > 0;
+	// 	},
+	// 	content() {
+	// 		'step 0'
+	// 		player.storage.shengbangJudge = false;
+	// 		'step 1'
+	// 		player.judge(function (card) {
+	// 			if (get.color(card) == 'red') {
+	// 				player.storage.shengbangJudge = true;
+	// 				return 1.5;
+	// 			} else {
+	// 				player.storage.shengbangJudge = false;
+	// 				return -1.5;
+	// 			}
+	// 		}).judge2 = function (result) {
+	// 			return result.bool;
+	// 		};
+	// 		'step 2'
+	// 		if (player.storage.shengbangJudge) {
+	// 			trigger.num *= 2;
+	// 			if (trigger.num >= 3) {
+	// 				trigger.num = 3;
+	// 			}
+	// 		} else {
+	// 			player.draw();
+	// 		}
+	// 	},
+	// },
+	// hok_houmao: {
+	// 	unique: true,
+	// 	mark: true,
+	// 	skillAnimation: true,
+	// 	animationColor: 'metal',
+	// 	limited: true,
+	// 	trigger: { player: 'phaseZhunbeiBegin' },
+	// 	init(player) {
+	// 		player.storage.hok_houmao = false;
+	// 	},
+	// 	filter(event, player) {
+	// 		if (player.storage.hok_houmao) return false;
+	// 		if (typeof player.storage.hok_houmao2 == 'number') {
+	// 			return player.hp < player.storage.hok_houmao2;
+	// 		}
+	// 		return player.countCards('j') > 0;
+	// 	},
+	// 	check(event, player) {
+	// 		if (player.hp <= 1) return true;
+	// 		return player.hp < player.storage.hok_houmao2 - 1;
+	// 	},
+	// 	content() {
+	// 		player.awakenSkill('hok_houmao');
+	// 		player.recover(player.storage.hok_houmao2 - player.hp);
+	// 		player.discard(player.getCards('j'));
+	// 		var card = get.cardPile(function (card) {
+	// 			switch (Math.floor(Math.random() * 2)) {
+	// 				case 0: return get.name(card, 'leisha') == 'leisha';
+	// 				case 1: return get.name(card, 'huosha') == 'huosha';
+	// 			}
+	// 		})
+	// 		if (card) {
+	// 			player.gain(card, 'gain2');
+	// 		}
+	// 		player.storage.hok_houmao = true;
+	// 	},
+	// 	intro: {
+	// 		mark(dialog, content, player) {
+	// 			if (player.storage.hok_houmao) return;
+	// 			if (typeof player.storage.hok_houmao2 != 'number') {
+	// 				return '上回合体力：无';
+	// 			}
+	// 			return '上回合体力：' + player.storage.hok_houmao2;
+	// 		},
+	// 		content: 'limited'
+	// 	},
+	// 	group: ['hok_houmao2'],
+	// },
+	// hok_houmao2: {
+	// 	trigger: { player: 'phaseJieshuBegin' },
+	// 	priority: -10,
+	// 	silent: true,
+	// 	content() {
+	// 		player.storage.hok_houmao2 = player.hp;
+	// 		game.broadcast(function (player) {
+	// 			player.storage.hok_houmao2 = player.hp;
+	// 		}, player);
+	// 		game.addVideo('storage', player, ['hok_houmao2', player.storage.hok_houmao2]);
+	// 	},
+	// 	intro: {
+	// 		content(storage, player) {
+	// 			if (player.storage.hok_houmao) return;
+	// 			return '上回合体力：' + storage;
+	// 		}
+	// 	}
+	// },
+	// hok_naogong: {
+
+	// 	unique: true,
+	// 	limited: true,
+	// 	enable: 'phaseUse',
+	// 	skillAnimation: true,
+	// 	animationColor: 'metal',
+	// 	content() {
+	// 		player.awakenSkill('hok_naogong');
+	// 		player.addTempSkill('hok_naogong_effect');
+	// 		// player.addTempSkill('hok_naogong_discard');
+	// 	},
+	// 	ai: {
+	// 		order() {
+	// 			return get.order({ name: 'sha' }) - 0.1;
+	// 		},
+	// 		expose: 0.2,
+	// 		result: {
+	// 			player(player) {
+	// 				if (player.getEquip(1) != undefined && player.getEquip(1).name == 'zhuge') {
+	// 					return 0;
+	// 				}
+	// 				var qitianTrick = (player.countCards('hs', { type: 'basic' }) - player.countCards('hs', { name: 'sha' })
+	// 					- player.countCards('hs', { name: 'shan' })
+	// 					- player.countCards('hs', { name: 'tao' })
+	// 					- player.countCards('hs', { name: 'jiu' }));
+	// 				var natureSha = player.countCards('hs', { type: 'trick' })
+	// 					+ qitianTrick;
+	// 				if (player.hp < 2 && natureSha >= 1) return 1;
+	// 				if (player.countCards('hs') >= 3 && natureSha >= 2 && game.hasPlayer(function (current) {
+	// 					return get.effect(current, { name: 'sha' }, player, player) > 0;
+	// 				})) {
+	// 					return 1;
+	// 				}
+	// 				return 0;
+	// 			}
+	// 		}
+	// 	},
+	// 	subSkill: {
+	// 		effect: {
+
+	// 			forced: true,
+	// 			onremove: true,
+	// 			mod: {
+	// 				cardUsable(card, player, num) {
+	// 					if (card.name == 'sha') return 3;
+	// 				}
+	// 			},
+	// 		},
+	// 		discard: {
+	// 			trigger: { player: 'phaseUseEnd' },
+	// 			forced: true,
+	// 			onremove: true,
+	// 			filter(event, player) {
+	// 				return player.countCards('hs') > 0;
+	// 			},
+	// 			content() {
+	// 				'step 0'
+	// 				event.naogongCards = player.getCards('hs');
+	// 				'step 1'
+	// 				if (event.naogongCards != undefined) {
+	// 					player.discard(event.naogongCards);
+	// 				}
+	// 			},
+	// 		},
+	// 	}
+	// },
 	hok_shengbang: {
 		locked: true,
 		trigger: {
@@ -4368,164 +5142,182 @@ const skills = {
 			if (!event.card || event.card.name != 'sha') return false;
 			return event.num > 0;
 		},
-		content() {
-			'step 0'
-			player.storage.shengbangJudge = false;
-			'step 1'
-			player.judge(function (card) {
+		async content(event, trigger, player) {
+			// 进行判定
+			const judgeEvent = await player.judge(card => {
 				if (get.color(card) == 'red') {
-					player.storage.shengbangJudge = true;
 					return 1.5;
 				} else {
-					player.storage.shengbangJudge = false;
 					return -1.5;
 				}
-			}).judge2 = function (result) {
-				return result.bool;
-			};
-			'step 2'
-			if (player.storage.shengbangJudge) {
-				trigger.num *= 2;
-				if (trigger.num >= 3) {
-					trigger.num = 3;
-				}
+			});
+			judgeEvent.judge2 = result => result.bool;
+
+			const { result: { judge } } = await judgeEvent;
+
+			// 根据判定结果执行效果
+			if (judge > 0) {
+				// 红色判定：伤害×2（最大为3）
+				trigger.num = Math.min(trigger.num * 2, 3);
 			} else {
-				player.draw();
+				// 黑色判定：摸1张牌
+				await player.draw();
 			}
 		},
-	},
-	hok_houmao: {
-		unique: true,
-		mark: true,
-		skillAnimation: true,
-		animationColor: 'metal',
-		limited: true,
-		trigger: { player: 'phaseZhunbeiBegin' },
-		init(player) {
-			player.storage.hok_houmao = false;
-		},
-		filter(event, player) {
-			if (player.storage.hok_houmao) return false;
-			if (typeof player.storage.hok_houmao2 == 'number') {
-				return player.hp < player.storage.hok_houmao2;
-			}
-			return player.countCards('j') > 0;
-		},
-		check(event, player) {
-			if (player.hp <= 1) return true;
-			return player.hp < player.storage.hok_houmao2 - 1;
-		},
-		content() {
-			player.awakenSkill('hok_houmao');
-			player.recover(player.storage.hok_houmao2 - player.hp);
-			player.discard(player.getCards('j'));
-			var card = get.cardPile(function (card) {
-				switch (Math.floor(Math.random() * 2)) {
-					case 0: return get.name(card, 'leisha') == 'leisha';
-					case 1: return get.name(card, 'huosha') == 'huosha';
-				}
-			})
-			if (card) {
-				player.gain(card, 'gain2');
-			}
-			player.storage.hok_houmao = true;
-		},
-		intro: {
-			mark(dialog, content, player) {
-				if (player.storage.hok_houmao) return;
-				if (typeof player.storage.hok_houmao2 != 'number') {
-					return '上回合体力：无';
-				}
-				return '上回合体力：' + player.storage.hok_houmao2;
+		group: 'hok_shengbang_range',
+		subSkill: {
+			range: {
+				trigger: {
+					player: 'useCard'
+				},
+				filter(event, player) {
+					return event.player == player && get.type(event.card) != 'basic';
+				},
+				silent: true,
+				content() {
+					// 添加临时技能增加攻击范围
+					player.addTempSkill('hok_shengbang_buff');
+				},
 			},
-			content: 'limited'
-		},
-		group: ['hok_houmao2'],
-	},
-	hok_houmao2: {
-		trigger: { player: 'phaseJieshuBegin' },
-		priority: -10,
-		silent: true,
-		content() {
-			player.storage.hok_houmao2 = player.hp;
-			game.broadcast(function (player) {
-				player.storage.hok_houmao2 = player.hp;
-			}, player);
-			game.addVideo('storage', player, ['hok_houmao2', player.storage.hok_houmao2]);
-		},
-		intro: {
-			content(storage, player) {
-				if (player.storage.hok_houmao) return;
-				return '上回合体力：' + storage;
+			buff: {
+				mod: {
+					attackRange(player, num) {
+						return num + 2;
+					}
+				}
 			}
 		}
 	},
-	hok_naogong: {
+	hok_hushen: {
+		trigger: {
+			target: 'useCardToPlayered',
+		},
+		filter(event, player) {
+			return event.player !== player && event.card && player.countCards('hs', card => get.type(card) !== 'basic') > 0;
+		},
+		check(event, player) {
+			if (get.attitude(player, event.player) >= 0) return false;
+			return get.effect(player, event.card, event.player, player) < 0;
+		},
+		usable: 1,
+		round: true,
+		async content(event, trigger, player) {
+			// 弃置一张牌
+			const {
+				cards: [card],
+			} = await player
+				.chooseToDiscard('hs', card => get.type(card) !== 'basic', true, get.translation(trigger.card) + '对你生效，是否弃置一张非基本牌令其无效？')
+				.forResult();
 
-		unique: true,
-		limited: true,
+			if (!card) return;
+
+			// 令该牌对玩家无效
+			trigger.excluded.add(player);
+
+			// 摸1张牌
+			await player.draw(1);
+		},
+		ai: {
+			effect: {
+				target(card, player, target, current) {
+					if (target.countCards('he', card => get.type(card) !== 'basic') > 0 && get.attitude(target, player) < 0) {
+						if (get.tag(card, 'damage')) return [1, 0.6, 1, 0.5];
+					}
+				},
+			},
+		},
+	},
+	hok_douzhan: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard: card => get.type(card) !== 'basic',
+		position: 'hs',
+		filterTarget: (card, player, target) => player !== target && player.canUse({ name: 'sha' }, target, false) && player.inRange(target),
+		selectCard: 1,
+		filter(event, player) {
+			return player.countCards('hs', card => get.type(card) !== 'basic') > 0;
+		},
+		check: card => 7 - get.value(card),
+		async content(event, trigger, player) {
+			const target = event.target;
+			const card = event.cards[0];
+
+			// 视为使用一张不计入次数的杀
+			const useCardEvent = await player.useCard({ name: 'sha', isCard: true, cardid: card.cardid }, target).set('addCount', false).set('noanimate', true);
+
+			// 检查事件是否存在
+			if (!useCardEvent) {
+				return;
+			}
+
+			// 获取结果
+			const result = await useCardEvent.forResult();
+
+			// 若此杀未造成伤害，摸一张牌
+			if (result && !result.bool) {
+				await player.draw();
+			}
+		},
+		ai: {
+			order: 5,
+			result: {
+				target: (player, target) => {
+					const eff = get.effect(target, { name: 'sha' }, player);
+					if (eff >= 0) return eff;
+					return -1;
+				},
+				player: 1,
+			},
+		},
+	},
+	hok_ruyijingu: {
 		enable: 'phaseUse',
 		skillAnimation: true,
 		animationColor: 'metal',
-		content() {
-			player.awakenSkill('hok_naogong');
-			player.addTempSkill('hok_naogong_effect');
-			// player.addTempSkill('hok_naogong_discard');
-		},
-		ai: {
-			order() {
-				return get.order({ name: 'sha' }) - 0.1;
-			},
-			expose: 0.2,
-			result: {
-				player(player) {
-					if (player.getEquip(1) != undefined && player.getEquip(1).name == 'zhuge') {
-						return 0;
-					}
-					var qitianTrick = (player.countCards('hs', { type: 'basic' }) - player.countCards('hs', { name: 'sha' })
-						- player.countCards('hs', { name: 'shan' })
-						- player.countCards('hs', { name: 'tao' })
-						- player.countCards('hs', { name: 'jiu' }));
-					var natureSha = player.countCards('hs', { type: 'trick' })
-						+ qitianTrick;
-					if (player.hp < 2 && natureSha >= 1) return 1;
-					if (player.countCards('hs') >= 3 && natureSha >= 2 && game.hasPlayer(function (current) {
-						return get.effect(current, { name: 'sha' }, player, player) > 0;
-					})) {
-						return 1;
-					}
-					return 0;
+		limited: true,
+		filterTarget: lib.filter.notMe,
+		selectTarget: 1,
+		line: 'fire',
+		async content(event, trigger, player) {
+			player.awakenSkill('hok_ruyijingu');
+			// 视为使用一张不计入次数的【杀】
+			const useResult = await player.useCard({
+				name: 'sha',
+				isCard: true,
+			}, event.targets[0], false);
+
+			// 判断是否造成伤害
+			if (useResult?.damaged) {
+				const target = event.targets[0];
+				// 弃置防具和坐骑区内的所有牌
+				const cards = target.getCards('e', card => {
+					const subtype = get.subtype(card);
+					return subtype === 'equip2' || subtype === 'equip3' || subtype === 'equip4';
+				});
+
+				if (cards.length > 0) {
+					await target.discard(cards);
 				}
 			}
 		},
-		subSkill: {
-			effect: {
-
-				forced: true,
-				onremove: true,
-				mod: {
-					cardUsable(card, player, num) {
-						if (card.name == 'sha') return 3;
+		ai: {
+			order: 5,
+			result: {
+				target(player, target) {
+					if (get.attitude(player, target) >= 0) return 0;
+					let eff = get.effect(target, { name: 'sha' }, player, target);
+					if (eff < 0) {
+						// 若目标有防具或坐骑，负面效果加重
+						const es = target.getCards('e', card => {
+							const subtype = get.subtype(card);
+							return subtype === 'equip2' || subtype === 'equip3' || subtype === 'equip4';
+						});
+						if (es.length > 0) eff *= 1.5;
 					}
+					return eff;
 				},
 			},
-			discard: {
-				trigger: { player: 'phaseUseEnd' },
-				forced: true,
-				onremove: true,
-				filter(event, player) {
-					return player.countCards('hs') > 0;
-				},
-				content() {
-					'step 0'
-					event.naogongCards = player.getCards('hs');
-					'step 1'
-					if (event.naogongCards != undefined) {
-						player.discard(event.naogongCards);
-					}
-				},
-			},
-		}
+		},
 	},
 
 	// W
@@ -4600,9 +5392,8 @@ const skills = {
 			order: 3,
 			result: {
 				target(player, target) {
-					// 对敌方返回正值（表示应该攻击），对友方返回负值（表示不应攻击）
-					var effect = get.effect(target, { name: 'sha', nature: 'ice' }, player, player);
-					return -effect;
+					const att = get.sgn(get.attitude(player, target));
+					return att * get.damageEffect(target, player, player, 'ice');;
 				},
 			},
 		}
@@ -5022,6 +5813,204 @@ const skills = {
 			threaten: 1.2
 		}
 	},
+	// 心魔六耳
+	hok_xinmo: {
+		locked: true,
+		trigger: {
+			source: 'damageBefore',
+		},
+		filter(event, player) {
+			// 确保是杀造成的伤害
+			if (!event.card || event.card.name != 'sha') return false;
+			return event.num > 0;
+		},
+		async content(event, trigger, player) {
+			// 进行判定
+			const judgeEvent = await player.judge(card => {
+				if (get.color(card) == 'red') {
+					return 1.5;
+				} else {
+					return -1.5;
+				}
+			});
+			judgeEvent.judge2 = result => result.bool;
+
+			const { result: { judge } } = await judgeEvent;
+
+			// 根据判定结果执行效果
+			if (judge > 0) {
+				// 红色判定：伤害×2（最大为3）
+				trigger.num = Math.min(trigger.num * 2, 3);
+			} else {
+				// 黑色判定：摸1张牌
+				await player.draw();
+			}
+		},
+		group: 'hok_xinmo_range',
+		subSkill: {
+			range: {
+				trigger: {
+					player: 'useCard'
+				},
+				filter(event, player) {
+					// 确保是玩家使用的牌
+					return event.player == player;
+				},
+				silent: true,
+				content() {
+					// 添加临时技能增加攻击范围
+					player.addTempSkill('hok_xinmo_buff');
+				},
+			},
+			buff: {
+				mod: {
+					attackRange(player, num) {
+						return num + 1;
+					}
+				}
+			}
+		}
+	},
+	hok_chenmie: {
+		enable: 'phaseUse',
+		usable: 1,
+		filterCard(card) {
+			return get.type(card) !== 'basic';
+		},
+		position: 'hs',
+		filterTarget: (card, player, target) => player !== target && player.canUse({ name: 'sha' }, target, false) && player.inRange(target),
+		selectCard: 1,
+		filter(event, player) {
+			return player.countCards('hs', card => get.type(card) !== 'basic') > 0;
+		},
+		check(card) {
+			return 7 - get.value(card);
+		},
+		async content(event, trigger, player) {
+			const { target } = event;
+			const card = event.cards[0];
+
+			player.addTempSkill('hok_chenmie_recover', 'useCardAfter');
+
+			// 视为使用一张不计入次数的杀
+			const useCardEvent = await player.useCard({ name: 'sha', isCard: true, cardid: card.cardid }, target).set('addCount', false).set('noanimate', true);
+			// 检查事件是否存在
+			if (!useCardEvent) {
+				return;
+			}
+		},
+		ai: {
+			order: 5,
+			result: {
+				target(player, target) {
+					return get.effect(target, { name: 'sha' }, player);
+				},
+			},
+		},
+		subSkill: {
+			recover: {
+				trigger: { source: 'damageEnd' },
+				forced: true,
+				filter(event, player) {
+					// 检查是否是由【杀】造成的伤害
+					if (!event.card || event.card.name !== 'sha') {
+						return false;
+					}
+					// 检查伤害值是否大于1
+					return event.num > 1;
+				},
+				async content(event, trigger, player) {
+					// 回复1点体力
+					await player.recover(1);
+				}
+			}
+		}
+	},
+	hok_chongxiao: {
+		trigger: {
+			target: 'useCardToBefore',
+		},
+		filter: function (event, player) {
+			// 排除自己使用的牌
+			if (event.player === player) return false;
+			return event.card.isCard;
+		},
+		usable: 1,
+		round: true,
+		check: function (event, player) {
+			// 基础AI判断：当牌可能造成伤害时发动
+			if (get.effect(player, event.card, event.player, player) < 0) return true;
+			return false;
+		},
+		content: async function (event, trigger, player) {
+			// 令该牌对玩家无效
+			trigger.cancel();
+			// 摸1张牌
+			// await player.draw();
+		},
+		ai: {
+			order: 5,
+			result: {
+				player: 1,
+			},
+		}
+	},
+	hok_jufen: {
+		enable: 'phaseUse',
+		skillAnimation: true,
+		animationColor: 'metal',
+		limited: true,
+		filter: function (event, player) {
+			return player.hasSkill('hok_jufen');
+		},
+		filterTarget: function (card, player, target) {
+			return target != player;
+		},
+		selectTarget: 1,
+		content: async function (event, trigger, player) {
+			// 记录技能已使用
+			player.awakenSkill('hok_jufen');
+
+			// 对所有其他角色使用不计入次数的杀
+			const targets = game.filterPlayer(target => target != player);
+			for (const target of targets) {
+				await player.useCard({ name: 'sha', isCard: true }, target);
+			}
+
+			// 对选择的目标使用不可被响应的杀
+			await player.useCard({
+				name: 'sha',
+				isCard: true,
+				notrigger: ['hok_xinmo']
+			}, event.targets[0]);
+
+			// 设置不可被响应
+			event.targets[0].addTempSkill('hok_jufen_sha', 'useCardToAfter');
+		},
+		ai: {
+			order: 10,
+			result: {
+				target: -1,
+				player: 1,
+			},
+		},
+		subSkill: {
+			sha: {
+				trigger: {
+					player: 'useCardToPlayered',
+				},
+				filter: function (event, player) {
+					return event.card.name == 'sha' && event.getParent().name == 'hok_jufen';
+				},
+				forced: true,
+				popup: false,
+				content: function () {
+					trigger.directHit.addArray(game.players);
+				},
+			},
+		},
+	},
+
 
 	// Y
 	// 瑶
@@ -5645,6 +6634,130 @@ const skills = {
 				}
 			}
 		}
+	},
+
+	// Z
+	// 猪八戒
+	hok_wushang: {
+		forced: true,
+		unique: true,
+		marktext: '血',
+		intro: {
+			name: '残血',
+			content: 'mark',
+		},
+		trigger: {
+			player: "damageEnd",
+			source: "damageEnd",
+		},
+		// 根据触发时机动态获取受伤害的数值
+		async content(event, trigger, player) {
+			const num = trigger.num;
+			if (num <= 0) return;
+
+			// 触发时机为受到伤害后
+			if (event.triggername === "damageEnd" && trigger.player === player) {
+				player.addMark("hok_wushang", num);
+				// 持续到下个回合结束，添加临时标记以便清理
+				if (!player.storage.hok_wushang_cleanup) {
+					player.storage.hok_wushang_cleanup = true;
+					// 添加下回合结束时的清除逻辑
+					const skill = lib.skill.hok_wushang;
+					if (!skill._markCleaning) {
+						skill._markCleaning = true;
+						lib.skill.hok_wushang_cleanup = {
+							trigger: { player: "phaseEnd" },
+							direct: true,
+							popup: false,
+							async content(event, trigger, player) {
+								player.removeMark("hok_wushang", player.countMark("hok_wushang"));
+								delete player.storage.hok_wushang_cleanup;
+							},
+						};
+					}
+					player.addSkill("hok_wushang_cleanup");
+				}
+			}
+			// 触发时机为造成伤害后
+			else {
+				const markNum = player.countMark("hok_wushang");
+				const removeNum = Math.min(num, markNum);
+				if (removeNum > 0) {
+					player.removeMark("hok_wushang", removeNum);
+					await player.recover(removeNum);
+				}
+			}
+		},
+		ai: {
+			maixie: true,
+			maixie_hp: true,
+			effect: {
+				target(card, player, target) {
+					if (get.tag(card, "damage")) {
+						if (!target.hasMark("hok_wushang")) return [1, 0.6];
+					}
+				},
+			},
+		},
+	},
+	hok_routan: {
+		enable: "phaseUse",
+		usable: 1,
+		filterCard: card => get.type(card) !== 'basic',
+		filterTarget: true,
+		filter(event, player) {
+			return player.countCards('hs', card => get.type(card) !== 'basic') > 0;
+		},
+		async content(event, trigger, player) {
+			const target = event.target;
+			// 对目标造成1点伤害
+			await target.damage(1);
+
+			// 若目标存活，令其选择一项
+			if (target.isIn()) {
+				const result = await target.chooseControl('选项一', '选项二', () => {
+					// AI 优先交牌保闪，除非手牌很充裕
+					if (target.countCards('he') > 2) return 1;
+					return 0;
+				}).set('choiceList', [
+					`将1张手牌交给${get.translation(player)}`,
+					'本回合不能使用或打出【闪】',
+				]).forResult();
+
+				if (result && result.control === '选项一') {
+					// 选项一：将1张牌交给玩家
+					if (target.countCards('he') > 0) {
+						await target.chooseToGive(player, 1, true, 'h');
+					}
+				} else {
+					// 选项二：本回合不能使用或打出【闪】
+					target.addTempSkill('hok_routan_block', 'phaseAfter');
+				}
+
+			}
+		},
+		ai: {
+			order: 6,
+			result: {
+				target: -1.5,
+			},
+		},
+	},
+	// 配合选项二的临时技能
+	hok_routan_block: {
+		mark: true,
+		marktext: '禁',
+		intro: {
+			content: '本回合不能使用或打出【闪】',
+		},
+		mod: {
+			cardEnabled(card) {
+				if (card.name === 'shan') return false;
+			},
+			cardRespondable(card) {
+				if (card.name === 'shan') return false;
+			},
+		},
 	},
 
 

@@ -913,58 +913,66 @@ const skills = {
 					player.storage.gunshiNum = player.countMark('wukong_gunshi');
 					switch (player.storage.gunshiNum) {
 						case 1:
-							const result1 = await player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, true, 'nodistance').forResult();
-							if (result1.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
+							{
+								const result1 = await player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, true, 'nodistance').forResult();
+								if (result1.bool) {
+									await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
+									player.storage.gunshiNum = 0;
+								}
+								break;
 							}
-							break;
 						case 2:
-							const result2 = await player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, false, 'nodistance').forResult();
-							if (result2.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
+							{
+								const result2 = await player.chooseUseTarget({ name: 'sha', nature: 'thunder' }, false, 'nodistance').forResult();
+								if (result2.bool) {
+									await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
+									player.storage.gunshiNum = 0;
+								}
+								break;
 							}
-							break;
 						case 3:
-							const result3 = await player.chooseTarget('选择雷杀的目标', function (card, player, target) {
-								return target != player && player.canUse({ name: 'sha', nature: 'thunder' }, target, false);
-							})
-								.set('ai', target => {
-									const player = get.player(),
-										card = { name: 'cha', nature: 'thunder' };
-									return get.effect(target, card, player, player);
+							{
+								const result3 = await player.chooseTarget('选择雷杀的目标', function (card, player, target) {
+									return target != player && player.canUse({ name: 'sha', nature: 'thunder' }, target, false);
 								})
-								.forResult();
-							if (result3.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
-								const targets = result3.targets;
-								let directHit = [];
-								directHit.addArray(targets);
-								player.useCard({ name: 'sha', nature: 'thunder' }, targets, false).set('directHit', directHit).forResult();
+									.set('ai', target => {
+										const player = get.player(),
+											card = { name: 'cha', nature: 'thunder' };
+										return get.effect(target, card, player, player);
+									})
+									.forResult();
+								if (result3.bool) {
+									await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
+									player.storage.gunshiNum = 0;
+									const targets = result3.targets;
+									let directHit = [];
+									directHit.addArray(targets);
+									player.useCard({ name: 'sha', nature: 'thunder' }, targets, false).set('directHit', directHit).forResult();
+								}
+								break;
 							}
-							break;
 						case 4:
-							const result4 = await player.chooseTarget('选择雷杀的目标', function (card, player, target) {
-								return target != player && player.canUse({ name: 'sha', nature: 'thunder' }, target, false);
-							})
-								.set('ai', target => {
-									const player = get.player(),
-										card = { name: 'cha', nature: 'thunder' };
-									return get.effect(target, card, player, player);
+							{
+								const result4 = await player.chooseTarget('选择雷杀的目标', function (card, player, target) {
+									return target != player && player.canUse({ name: 'sha', nature: 'thunder' }, target, false);
 								})
-								.forResult();
-							if (result4.bool) {
-								await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
-								player.storage.gunshiNum = 0;
-								const targets = result4.targets;
-								let directHit = [],
-									baseDamage = 2;
-								directHit.addArray(targets);
-								player.useCard({ name: 'sha', nature: 'thunder' }, targets, false).set('directHit', directHit).set('baseDamage', baseDamage).forResult();
+									.set('ai', target => {
+										const player = get.player(),
+											card = { name: 'cha', nature: 'thunder' };
+										return get.effect(target, card, player, player);
+									})
+									.forResult();
+								if (result4.bool) {
+									await player.removeMark('wukong_gunshi', player.storage.gunshiNum);
+									player.storage.gunshiNum = 0;
+									const targets = result4.targets;
+									let directHit = [],
+										baseDamage = 2;
+									directHit.addArray(targets);
+									player.useCard({ name: 'sha', nature: 'thunder' }, targets, false).set('directHit', directHit).set('baseDamage', baseDamage).forResult();
+								}
+								break;
 							}
-							break;
 						default:
 					}
 				},

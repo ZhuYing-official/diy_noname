@@ -14,11 +14,19 @@ game.laoShowNewPack = function () {
 		'更新内容：',
 		'修复：<王者荣耀>司空震(奔雷)的bug',
 		'削弱<王者荣耀>魔女斗篷：锁定技。你受到的锦囊牌或属性伤害-1 -> 锁定技。每回合限1次，你受到的锦囊牌或属性伤害-1。',
+		'重做：<王者荣耀>孙悟空',
+		'新增：<王者荣耀>扁鹊、金蝉、卢雅那、心魔六耳、猪八戒',
 		'To be continued...',
 	];
 	//更新武将
 	var Lao_players = [
 		'hok_sikongzhen',
+		'hok_sunwukong',
+		'hok_bianque',
+		'hok_jinchan',
+		'hok_luyana',
+		'hok_xinmoliuer',
+		'hok_zhubajie',
 	];
 	//加载
 	var dialog = ui.create.dialog(
@@ -151,7 +159,7 @@ let extensionPackage = {
 		author: '捞德一',
 		diskURL: '',
 		forumURL: '',
-		version: '0.0.4',
+		version: '0.0.5',
 		//壹、贰、叁、肆、伍、陆、柒、捌、玖、拾
 	},
 	files: {},

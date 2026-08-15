@@ -2,6 +2,7 @@ dist
 output
 node_modules
 package-lock.json
+temp
 
 # IDE
 .idea/

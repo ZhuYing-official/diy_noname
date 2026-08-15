@@ -12,6 +12,8 @@ const characters = {
 	hok_bailishouyue: ['male', 'qun', 3, ['hok_miaozhun', 'hok_miyan', 'hok_kuangju']],
 	// 百里玄策
 	hok_bailixuance: ['male', 'shu', 4, ['hok_rexue', 'hok_yangou', 'hok_lianshan']],
+	// 扁鹊
+	hok_bianque: ['male', 'wei', 3, ['hok_eyi', 'hok_eyi_limit', 'hok_jinyao', 'hok_mingzai']],
 
 	// C
 
@@ -51,6 +53,8 @@ const characters = {
 	// 	groupInGuozhan: "qun",
 	// 	isZhugong: true
 	// },
+	// 金蝉
+	hok_jinchan: ['male', 'qun', 4, ['hok_jinlan', 'hok_jingu', 'hok_zhangyin', 'hok_due'], ['zhu']],
 
 	// K
 	// 凯
@@ -63,6 +67,8 @@ const characters = {
 	hok_lanlingwang: ['male', 'jin', 4, ['hok_yinni', 'hok_yingshi', 'hok_anxi']],
 	// 李信
 	hok_lixin: ['male', 'shu', 4, ['hok_guangan', 'hok_huiren', 'hok_qiangzhan', 'hok_tongkuang']],
+	// 卢雅那
+	hok_luyana: ['female', 'shu', 3, ['hok_shehuan', 'hok_shefen']],
 
 	// M
 	// 马可波罗
@@ -86,7 +92,7 @@ const characters = {
 	// 司空震
 	hok_sikongzhen: ['male', 'qun', 4, ['hok_tianlei', 'hok_benlei', 'hok_leitingwanjun'], ['zhu']],
 	// 孙悟空
-	hok_sunwukong: ['male', 'shen', 4, ['hok_qitian', 'hok_shengbang', 'hok_houmao', 'hok_naogong'], ['qun']],
+	hok_sunwukong: ['male', 'shen', 4, ['hok_shengbang', 'hok_hushen', 'hok_douzhan', 'hok_ruyijingu'], ['qun']],
 
 	// T
 	// U
@@ -101,6 +107,8 @@ const characters = {
 	// X
 	// 项羽
 	hok_xiangyu: ['male', 'qun', 5, ['hok_pofu', 'hok_bawangzhan', 'hok_xianzhen'], ['zhu']],
+	// 心魔六耳
+	hok_xinmoliuer: ['male', 'qun', 4, ['hok_xinmo', 'hok_chenmie', 'hok_chongxiao', 'hok_jufen']],
 
 	// Y
 	// 瑶
@@ -111,6 +119,8 @@ const characters = {
 	hok_yuji: ['female', 'qun', 3, ['hok_chuge', 'hok_fengyou', 'hok_zhenqianwu']],
 
 	// Z
+	// 猪八戒
+	hok_zhubajie: ['male', 'qun', 5, ['hok_wushang', 'hok_routan']],
 
 	// SP
 	// SP李信
